@@ -1,0 +1,7 @@
+{
+    "parent" : "cworks:block/kabel2op", 
+    "textures" : {
+        "texture" : "cworks:blocks/exKabelO", 
+        "particle" : "cworks:blocks/exKabelO"
+    }
+}

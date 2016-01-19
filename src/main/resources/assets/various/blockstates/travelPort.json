@@ -1,0 +1,10 @@
+{
+    "variants" : {
+        "state=true" : {
+            "model" : "cworks:travelPort_ready"
+        }, 
+        "state=false" : {
+            "model" : "cworks:travelPort"
+        }
+    }
+}

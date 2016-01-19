@@ -1,0 +1,23 @@
+item.cworks:jetpack.name=Jetpack
+
+item.cworks:material_0.name=Ender Nugget
+item.cworks:material_1.name=Diamond Nugget
+item.cworks:material_2.name=Nether Nugget
+item.cworks:material_3.name=Sigma Nugget
+item.cworks:material_4.name=Sigma Gem
+item.cworks:material_5.name=Sigma Core
+
+item.cworks:travelRecipe_0.name=Travel Recipe
+item.cworks:travelRecipe_1.name=Advanced Travel Recipe
+
+item.cworks:pebble.name=Pebble
+
+item.cworks:sigmaPick.name=Sigma Pickaxe (%s Mode)
+item.cworks:sigmaPick.mode.normal=Normal
+item.cworks:sigmaPick.mode.vein=Vein
+item.cworks:sigmaPick.mode.detect=Detection
+item.cworks:sigmaPick.mode.tele=Remote
+
+tile.cworks:travelPort.name=Travel Port
+
+cworks.keybinding.jetpack=Jetpack GUI

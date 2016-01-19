@@ -1,0 +1,343 @@
+{
+    "variants" : {
+        "bottom=false,east=false,north=false,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel0", 
+            "uvlock" : true
+        }, 
+        "bottom=true,east=false,north=false,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel1", 
+            "uvlock" : true, 
+            "x" : 90
+        }, 
+        "bottom=false,east=true,north=false,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel1", 
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=false,east=false,north=true,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel1", 
+            "uvlock" : true, 
+            "y" : 0
+        }, 
+        "bottom=false,east=false,north=false,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel1", 
+            "uvlock" : true, 
+            "y" : 180
+        }, 
+        "bottom=false,east=false,north=false,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel1", 
+            "uvlock" : true, 
+            "x" : 270
+        }, 
+        "bottom=false,east=false,north=false,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel1", 
+            "uvlock" : true, 
+            "y" : 270
+        }, 
+        "bottom=true,east=false,north=false,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel2op", 
+            "uvlock" : true, 
+            "x" : 90
+        }, 
+        "bottom=false,east=true,north=false,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel2op",
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=false,east=false,north=true,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel2op", 
+            "uvlock" : true
+        }, 
+        "bottom=true,east=true,north=false,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 90
+        }, 
+        "bottom=true,east=false,north=true,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 270
+        }, 
+        "bottom=true,east=false,north=false,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 90
+        }, 
+        "bottom=true,east=false,north=false,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 180
+        }, 
+        "bottom=false,east=true,north=true,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true
+        }, 
+        "bottom=false,east=true,north=false,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=false,east=true,north=false,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 270
+        }, 
+        "bottom=false,east=false,north=true,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 270, 
+            "y" : 270
+        }, 
+        "bottom=false,east=false,north=true,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 180
+        }, 
+        "bottom=false,east=false,north=false,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 270, 
+            "y" : 90
+        }, 
+        "bottom=false,east=false,north=false,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "y" : 180
+        }, 
+        "bottom=false,east=false,north=false,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel2", 
+            "uvlock" : true, 
+            "x" : 270, 
+            "y" : 180
+        }, 
+        "bottom=true,east=true,north=false,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 90
+        }, 
+        "bottom=true,east=false,north=true,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 270
+        }, 
+        "bottom=true,east=false,north=false,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 90
+        }, 
+        "bottom=true,east=false,north=false,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 180
+        }, 
+        "bottom=true,east=true,north=false,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel3opH", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 90
+        }, 
+        "bottom=false,east=true,north=true,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 270
+        }, 
+        "bottom=false,east=true,north=false,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 90
+        }, 
+        "bottom=false,east=true,north=false,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel3opH", 
+            "uvlock" : true, 
+            "x" : 0, 
+            "y" : 270
+        }, 
+        "bottom=true,east=false,north=true,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel3opH", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 0
+        }, 
+        "bottom=false,east=true,north=true,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 0
+        }, 
+        "bottom=false,east=false,north=true,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel3opH", 
+            "uvlock" : true, 
+            "x" : 0, 
+            "y" : 0
+        }, 
+        "bottom=false,east=false,north=true,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel3op", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 180
+        }, 
+        "bottom=true,east=true,north=true,south=false,top=false,west=false" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "x" : 180
+        }, 
+        "bottom=true,east=true,north=false,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 90
+        }, 
+        "bottom=true,east=false,north=true,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 270
+        }, 
+        "bottom=true,east=false,north=false,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 180
+        }, 
+        "bottom=false,east=true,north=true,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "x" : 90
+        }, 
+        "bottom=false,east=true,north=false,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true
+        }, 
+        "bottom=false,east=false,north=true,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "y" : 180
+        }, 
+        "bottom=false,east=false,north=false,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel3ek", 
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=true,east=true,north=false,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel4op", 
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=true,east=false,north=true,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel4op", 
+            "uvlock" : true
+        }, 
+        "bottom=false,east=true,north=true,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel4opV", 
+            "uvlock" : true, 
+            "x" : 0, 
+            "y" : 90
+        }, 
+        "bottom=true,east=true,north=true,south=false,top=true,west=false" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 180
+        }, 
+        "bottom=true,east=true,north=false,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 270
+        }, 
+        "bottom=true,east=false,north=true,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 90, 
+            "y" : 90
+        }, 
+        "bottom=true,east=false,north=false,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 90
+        }, 
+        "bottom=true,east=true,north=true,south=false,top=false,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=true,east=true,north=false,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "y" : 270
+        }, 
+        "bottom=false,east=true,north=true,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 90
+        }, 
+        "bottom=false,east=true,north=false,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 270
+        }, 
+        "bottom=true,east=true,north=true,south=true,top=false,west=false" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "y" : 180
+        }, 
+        "bottom=true,east=false,north=true,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true
+        }, 
+        "bottom=false,east=true,north=true,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 180, 
+            "y" : 180
+        }, 
+        "bottom=false,east=false,north=true,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel4", 
+            "uvlock" : true, 
+            "x" : 180
+        }, 
+        "bottom=false,east=true,north=true,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel5V", 
+            "uvlock" : true
+        }, 
+        "bottom=true,east=false,north=true,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel5", 
+            "uvlock" : true
+        }, 
+        "bottom=true,east=true,north=false,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel5", 
+            "uvlock" : true, 
+            "y" : 270
+        }, 
+        "bottom=true,east=true,north=true,south=false,top=true,west=true" : {
+            "model" : "cworks:imKabel5", 
+            "uvlock" : true, 
+            "y" : 90
+        }, 
+        "bottom=true,east=true,north=true,south=true,top=false,west=true" : {
+            "model" : "cworks:imKabel5V", 
+            "uvlock" : true, 
+            "x" : 180
+        }, 
+        "bottom=true,east=true,north=true,south=true,top=true,west=false" : {
+            "model" : "cworks:imKabel5", 
+            "uvlock" : true, 
+            "y" : 180
+        }, 
+        "bottom=true,east=true,north=true,south=true,top=true,west=true" : {
+            "model" : "cworks:imKabel6", 
+            "uvlock" : true
+        }
+    }
+}

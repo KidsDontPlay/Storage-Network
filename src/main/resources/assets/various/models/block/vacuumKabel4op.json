@@ -1,0 +1,7 @@
+{
+    "parent" : "cworks:block/kabel4op", 
+    "textures" : {
+        "texture" : "cworks:blocks/vacuumKabel", 
+        "particle" : "cworks:blocks/vacuumKabel"
+    }
+}

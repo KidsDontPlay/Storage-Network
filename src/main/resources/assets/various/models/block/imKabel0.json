@@ -1,0 +1,7 @@
+{
+    "parent" : "cworks:block/kabel0", 
+    "textures" : {
+        "texture" : "cworks:blocks/imKabel", 
+        "particle" : "cworks:blocks/imKabel"
+    }
+}
