@@ -107,7 +107,6 @@ public class TileMaster extends TileEntity implements ITickable {
 			return;
 		for (BlockPos p : cables) {
 			if (((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
-				boolean pulledAny = false;
 				int range = 6;
 
 				int x = getPos().getX();

@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = CableWorks.MODID, name = CableWorks.MODNAME, version = CableWorks.VERSION, guiFactory = "mrriegel.cworks.GuiFactory")
+@Mod(modid = CableWorks.MODID, name = CableWorks.MODNAME, version = CableWorks.VERSION, guiFactory = "mrriegel.cworks.config.GuiFactory")
 public class CableWorks {
 	public static final String MODID = "cworks";
 	public static final String VERSION = "1.0";

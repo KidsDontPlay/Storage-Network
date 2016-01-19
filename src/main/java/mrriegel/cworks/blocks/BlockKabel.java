@@ -1,13 +1,14 @@
 package mrriegel.cworks.blocks;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import mrriegel.cworks.CreativeTab;
 import mrriegel.cworks.init.ModBlocks;
 import mrriegel.cworks.tile.TileKabel;
 import mrriegel.cworks.tile.TileMaster;
-import mrriegel.cworks.tile.TileKabel.Kind;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockFence;
@@ -84,9 +85,12 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos,
 			IBlockState state, Block neighborBlock) {
-		state = getActualState(state, worldIn, pos);
-		setConnections(worldIn, pos, state);
-		super.onNeighborBlockChange(worldIn, pos, state, neighborBlock);
+		if (neighborBlock instanceof BlockKabel
+				|| neighborBlock instanceof BlockRequest
+				|| neighborBlock instanceof BlockMaster) {
+			state = getActualState(state, worldIn, pos);
+			setConnections(worldIn, pos, state);
+		}
 	}
 
 	@Override
@@ -94,7 +98,6 @@ public class BlockKabel extends BlockContainer {
 			EntityLivingBase placer, ItemStack stack) {
 		state = getActualState(state, worldIn, pos);
 		setConnections(worldIn, pos, state);
-		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 
 	private void setConnections(World worldIn, BlockPos pos, IBlockState state) {
@@ -147,10 +150,10 @@ public class BlockKabel extends BlockContainer {
 
 	public boolean canConnectTo(IBlockAccess worldIn, BlockPos orig,
 			BlockPos pos) {
-		// System.out.println("can connect");
 		Block block = worldIn.getBlockState(pos).getBlock();
 		Block ori = worldIn.getBlockState(orig).getBlock();
-		if (block == ModBlocks.master || block instanceof BlockKabel)
+		if (block == ModBlocks.master || block instanceof BlockKabel
+				|| block == ModBlocks.request)
 			return true;
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return false;
@@ -162,16 +165,12 @@ public class BlockKabel extends BlockContainer {
 						.getSlotsForFace(face).length != 0);
 		if (!inventory && !sided)
 			return false;
-		// System.out.println("already inventory: "+isConnectedToInventory(worldIn,
-		// orig));
-		// if(1==1)return true;
-		if (isConnectedToInventory(worldIn, orig, pos))
-			return false;
 		return inventory || sided;
 	}
 
 	boolean isConnectedToInventory(IBlockAccess world, BlockPos orig,
 			BlockPos pos) {
+		IBlockState s = world.getBlockState(orig);
 		for (BlockPos p : TileMaster.getSides(orig)) {
 			if (p.equals(pos))
 				continue;
@@ -183,6 +182,22 @@ public class BlockKabel extends BlockContainer {
 				return true;
 		}
 		return false;
+	}
+
+	PropertyBool face2prop(EnumFacing face) {
+		if (face == EnumFacing.DOWN)
+			return BOTTOM;
+		if (face == EnumFacing.UP)
+			return TOP;
+		if (face == EnumFacing.NORTH)
+			return NORTH;
+		if (face == EnumFacing.SOUTH)
+			return SOUTH;
+		if (face == EnumFacing.EAST)
+			return EAST;
+		if (face == EnumFacing.WEST)
+			return WEST;
+		return null;
 	}
 
 	private EnumFacing get(BlockPos a, BlockPos b) {
@@ -203,12 +218,13 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
-		boolean n = this.canConnectTo(worldIn, pos, pos.north());
-		boolean s = this.canConnectTo(worldIn, pos, pos.south());
-		boolean w = this.canConnectTo(worldIn, pos, pos.west());
-		boolean e = this.canConnectTo(worldIn, pos, pos.east());
-		boolean u = this.canConnectTo(worldIn, pos, pos.up());
 		boolean d = this.canConnectTo(worldIn, pos, pos.down());
+		boolean u = this.canConnectTo(worldIn, pos, pos.up());
+		boolean e = this.canConnectTo(worldIn, pos, pos.east());
+		boolean w = this.canConnectTo(worldIn, pos, pos.west());
+		boolean s = this.canConnectTo(worldIn, pos, pos.south());
+		boolean n = this.canConnectTo(worldIn, pos, pos.north());
+		
 		float f = 0.3125F;
 		float f1 = 0.6875F;
 		float f2 = 0.3125F;
@@ -241,31 +257,16 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn,
 			BlockPos pos) {
-		return state
-				.withProperty(
-						NORTH,
-						Boolean.valueOf(this.canConnectTo(worldIn, pos,
-								pos.north())))
-				.withProperty(
-						EAST,
-						Boolean.valueOf(this.canConnectTo(worldIn, pos,
-								pos.east())))
-				.withProperty(
-						SOUTH,
-						Boolean.valueOf(this.canConnectTo(worldIn, pos,
-								pos.south())))
-				.withProperty(
-						WEST,
-						Boolean.valueOf(this.canConnectTo(worldIn, pos,
-								pos.west())))
-				.withProperty(
-						TOP,
-						Boolean.valueOf(this.canConnectTo(worldIn, pos,
-								pos.up())))
-				.withProperty(
-						BOTTOM,
-						Boolean.valueOf(this.canConnectTo(worldIn, pos,
-								pos.down())));
+		List o = new ArrayList();
+		boolean d = this.canConnectTo(worldIn, pos, pos.down());
+		boolean u = this.canConnectTo(worldIn, pos, pos.up());
+		boolean e = this.canConnectTo(worldIn, pos, pos.east());
+		boolean w = this.canConnectTo(worldIn, pos, pos.west());
+		boolean s = this.canConnectTo(worldIn, pos, pos.south());
+		boolean n = this.canConnectTo(worldIn, pos, pos.north());
+		return state.withProperty(NORTH, n).withProperty(EAST, e)
+				.withProperty(SOUTH, s).withProperty(WEST, w)
+				.withProperty(TOP, u).withProperty(BOTTOM, d);
 	}
 
 	@Override

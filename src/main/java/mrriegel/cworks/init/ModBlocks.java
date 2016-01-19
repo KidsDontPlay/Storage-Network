@@ -3,8 +3,10 @@ package mrriegel.cworks.init;
 import mrriegel.cworks.CableWorks;
 import mrriegel.cworks.blocks.BlockKabel;
 import mrriegel.cworks.blocks.BlockMaster;
+import mrriegel.cworks.blocks.BlockRequest;
 import mrriegel.cworks.tile.TileKabel;
 import mrriegel.cworks.tile.TileMaster;
+import mrriegel.cworks.tile.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -23,6 +25,7 @@ public class ModBlocks {
 	public static final Block vacuumKabel = new BlockKabel()
 	.setUnlocalizedName(CableWorks.MODID + ":vacuumKabel");
 	public static final Block master = new BlockMaster();
+	public static final Block request=new BlockRequest();
 
 	public static void init() {
 		GameRegistry.registerBlock(kabel, "kabel");
@@ -31,9 +34,11 @@ public class ModBlocks {
 		GameRegistry.registerBlock(imKabel, "imKabel");
 		GameRegistry.registerBlock(vacuumKabel, "vacuumKabel");
 		GameRegistry.registerBlock(master, "master");
+		GameRegistry.registerBlock(request, "request");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
+		GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
 	}
 
 }
