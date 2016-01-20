@@ -1,8 +1,11 @@
 package mrriegel.cworks.blocks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import mrriegel.cworks.CreativeTab;
@@ -10,6 +13,7 @@ import mrriegel.cworks.init.ModBlocks;
 import mrriegel.cworks.tile.TileKabel;
 import mrriegel.cworks.tile.TileMaster;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.material.Material;
@@ -35,8 +39,8 @@ public class BlockKabel extends BlockContainer {
 	public static final PropertyBool EAST = PropertyBool.create("east");
 	public static final PropertyBool SOUTH = PropertyBool.create("south");
 	public static final PropertyBool WEST = PropertyBool.create("west");
-	public static final PropertyBool TOP = PropertyBool.create("top");
-	public static final PropertyBool BOTTOM = PropertyBool.create("bottom");
+	public static final PropertyBool UP = PropertyBool.create("top");
+	public static final PropertyBool DOWN = PropertyBool.create("bottom");
 
 	public BlockKabel() {
 		super(Material.iron);
@@ -45,8 +49,8 @@ public class BlockKabel extends BlockContainer {
 				.withProperty(EAST, Boolean.valueOf(false))
 				.withProperty(SOUTH, Boolean.valueOf(false))
 				.withProperty(WEST, Boolean.valueOf(false))
-				.withProperty(TOP, Boolean.valueOf(false))
-				.withProperty(BOTTOM, Boolean.valueOf(false)));
+				.withProperty(UP, Boolean.valueOf(false))
+				.withProperty(DOWN, Boolean.valueOf(false)));
 		this.setCreativeTab(CreativeTab.tab1);
 	}
 
@@ -87,7 +91,8 @@ public class BlockKabel extends BlockContainer {
 			IBlockState state, Block neighborBlock) {
 		if (neighborBlock instanceof BlockKabel
 				|| neighborBlock instanceof BlockRequest
-				|| neighborBlock instanceof BlockMaster) {
+				|| neighborBlock instanceof BlockMaster
+				|| neighborBlock instanceof BlockAir) {
 			state = getActualState(state, worldIn, pos);
 			setConnections(worldIn, pos, state);
 		}
@@ -111,9 +116,9 @@ public class BlockKabel extends BlockContainer {
 			set.add(EnumFacing.EAST);
 		if (state.getValue(WEST))
 			set.add(EnumFacing.WEST);
-		if (state.getValue(BOTTOM))
+		if (state.getValue(DOWN))
 			set.add(EnumFacing.DOWN);
-		if (state.getValue(TOP))
+		if (state.getValue(UP))
 			set.add(EnumFacing.UP);
 		tile.setConnections(set);
 		tile.setMaster(null);
@@ -165,6 +170,8 @@ public class BlockKabel extends BlockContainer {
 						.getSlotsForFace(face).length != 0);
 		if (!inventory && !sided)
 			return false;
+		if (isConnectedToInventory(worldIn, orig, pos))
+			return false;
 		return inventory || sided;
 	}
 
@@ -186,9 +193,9 @@ public class BlockKabel extends BlockContainer {
 
 	PropertyBool face2prop(EnumFacing face) {
 		if (face == EnumFacing.DOWN)
-			return BOTTOM;
+			return DOWN;
 		if (face == EnumFacing.UP)
-			return TOP;
+			return UP;
 		if (face == EnumFacing.NORTH)
 			return NORTH;
 		if (face == EnumFacing.SOUTH)
@@ -200,7 +207,7 @@ public class BlockKabel extends BlockContainer {
 		return null;
 	}
 
-	private EnumFacing get(BlockPos a, BlockPos b) {
+	public static EnumFacing get(BlockPos a, BlockPos b) {
 		if (a.up().equals(b))
 			return EnumFacing.DOWN;
 		if (a.down().equals(b))
@@ -224,7 +231,7 @@ public class BlockKabel extends BlockContainer {
 		boolean w = this.canConnectTo(worldIn, pos, pos.west());
 		boolean s = this.canConnectTo(worldIn, pos, pos.south());
 		boolean n = this.canConnectTo(worldIn, pos, pos.north());
-		
+
 		float f = 0.3125F;
 		float f1 = 0.6875F;
 		float f2 = 0.3125F;
@@ -257,22 +264,99 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn,
 			BlockPos pos) {
-		List o = new ArrayList();
-		boolean d = this.canConnectTo(worldIn, pos, pos.down());
-		boolean u = this.canConnectTo(worldIn, pos, pos.up());
-		boolean e = this.canConnectTo(worldIn, pos, pos.east());
-		boolean w = this.canConnectTo(worldIn, pos, pos.west());
-		boolean s = this.canConnectTo(worldIn, pos, pos.south());
-		boolean n = this.canConnectTo(worldIn, pos, pos.north());
-		return state.withProperty(NORTH, n).withProperty(EAST, e)
-				.withProperty(SOUTH, s).withProperty(WEST, w)
-				.withProperty(TOP, u).withProperty(BOTTOM, d);
+		// TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+		// BlockPos inv = tile.getConnectedInventory();
+		// if(worldIn.getTileEntity(inv)==null||!(worldIn.getTileEntity(inv)
+		// instanceof IInventory))
+		// inv=null;
+		// if (worldIn.getTileEntity(pos.down()) instanceof IInventory
+		// && state.getValue(DOWN))
+		// inv = pos.down();
+		// else if (worldIn.getTileEntity(pos.up()) instanceof IInventory
+		// && state.getValue(UP))
+		// inv = pos.up();
+		// else if (worldIn.getTileEntity(pos.east()) instanceof IInventory
+		// && state.getValue(EAST))
+		// inv = pos.east();
+		// else if (worldIn.getTileEntity(pos.west()) instanceof IInventory
+		// && state.getValue(WEST))
+		// inv = pos.west();
+		// else if (worldIn.getTileEntity(pos.south()) instanceof IInventory
+		// && state.getValue(SOUTH))
+		// inv = pos.south();
+		// else if (worldIn.getTileEntity(pos.north()) instanceof IInventory
+		// && state.getValue(NORTH))
+		// inv = pos.north();
+		// Map<BlockPos, Boolean> mapNew = new HashMap<BlockPos, Boolean>();
+		boolean dNew = this.canConnectTo(worldIn, pos, pos.down());
+		boolean uNew = this.canConnectTo(worldIn, pos, pos.up());
+		boolean eNew = this.canConnectTo(worldIn, pos, pos.east());
+		boolean wNew = this.canConnectTo(worldIn, pos, pos.west());
+		boolean sNew = this.canConnectTo(worldIn, pos, pos.south());
+		boolean nNew = this.canConnectTo(worldIn, pos, pos.north());
+		// mapNew.put(pos.down(), dNew);
+		// mapNew.put(pos.up(), uNew);
+		// mapNew.put(pos.east(), eNew);
+		// mapNew.put(pos.west(), wNew);
+		// mapNew.put(pos.south(), sNew);
+		// mapNew.put(pos.north(), nNew);
+
+		// List<BlockPos> invs = getInventories(worldIn, mapNew);
+
+		// for (BlockPos p : invs) {
+		// if (p.equals(pos.down())) {
+		// if (state.getValue(BOTTOM) != dNew)
+		// dNew = false;
+		// }
+		// if (p.equals(pos.up())) {
+		// if (state.getValue(TOP) != uNew)
+		// uNew = false;
+		// }
+		// if (p.equals(pos.east())) {
+		// if (state.getValue(EAST) != eNew)
+		// eNew = false;
+		// }
+		// if (p.equals(pos.west())) {
+		// if (state.getValue(WEST) != wNew)
+		// wNew = false;
+		// }
+		// if (p.equals(pos.south())) {
+		// if (state.getValue(SOUTH) != sNew)
+		// sNew = false;
+		// }
+		// if (p.equals(pos.north())) {
+		// if (state.getValue(NORTH) != nNew)
+		// nNew = false;
+		// }
+		// }
+		boolean dOld = state.getValue(DOWN);
+		boolean uOld = state.getValue(UP);
+		boolean eOld = state.getValue(EAST);
+		boolean wOld = state.getValue(WEST);
+		boolean sOld = state.getValue(SOUTH);
+		boolean nOld = state.getValue(NORTH);
+
+		return state.withProperty(NORTH, nNew).withProperty(EAST, eNew)
+				.withProperty(SOUTH, sNew).withProperty(WEST, wNew)
+				.withProperty(UP, uNew).withProperty(DOWN, dNew);
+	}
+
+	List<BlockPos> getInventories(IBlockAccess worldIn,
+			Map<BlockPos, Boolean> map) {
+		List<BlockPos> lis = new ArrayList<BlockPos>();
+		for (Entry<BlockPos, Boolean> e : map.entrySet()) {
+			if (e.getValue()
+					&& worldIn.getTileEntity(e.getKey()) instanceof IInventory)
+				lis.add(e.getKey());
+
+		}
+		return lis;
 	}
 
 	@Override
 	protected BlockState createBlockState() {
 		return new BlockState(this, new IProperty[] { NORTH, EAST, WEST, SOUTH,
-				TOP, BOTTOM });
+				UP, DOWN });
 	}
 
 	@Override

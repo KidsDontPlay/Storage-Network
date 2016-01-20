@@ -1,7 +1,0 @@
-{
-    "parent" : "cworks:model/stamm", 
-    "textures" : {
-        "deck" : "cworks:blocks/totem_deck", 
-        "side" : "cworks:blocks/totem_side"
-    }
-}

@@ -1,28 +1,31 @@
 package mrriegel.cworks.tile;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-
-import scala.collection.parallel.BucketCombiner;
-
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 import mrriegel.cworks.init.ModBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 public class TileKabel extends TileEntity {
 	private Set<EnumFacing> connections;
 	private Kind kind;
 	private BlockPos master;
 	private int priority;
+	private Map<Integer, ItemStack> filter = new HashMap<Integer, ItemStack>();
+	private boolean meta, stock;
 
 	public enum Kind {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel;
@@ -60,6 +63,16 @@ public class TileKabel extends TileEntity {
 		master = new Gson().fromJson(compound.getString("master"),
 				new TypeToken<BlockPos>() {
 				}.getType());
+		priority = compound.getInteger("priority");
+		meta = compound.getBoolean("meta");
+		stock = compound.getBoolean("stock");
+		NBTTagList invList = compound.getTagList("crunchTE",
+				Constants.NBT.TAG_COMPOUND);
+		for (int i = 0; i < 9; i++) {
+			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			filter.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+		}
 
 	}
 
@@ -71,12 +84,20 @@ public class TileKabel extends TileEntity {
 			kind = getKind(worldObj, worldObj.getBlockState(pos).getBlock());
 		compound.setString("kind", kind.toString());
 		compound.setString("master", new Gson().toJson(master));
-	}
+		compound.setInteger("priority", priority);
+		compound.setBoolean("meta", meta);
+		compound.setBoolean("stock", stock);
+		NBTTagList invList = new NBTTagList();
+		for (int i = 0; i < 9; i++) {
+			if (filter.get(i) != null) {
+				NBTTagCompound stackTag = new NBTTagCompound();
+				stackTag.setByte("Slot", (byte) i);
+				filter.get(i).writeToNBT(stackTag);
+				invList.appendTag(stackTag);
+			}
+		}
+		compound.setTag("crunchTE", invList);
 
-	@Override
-	public void onLoad() {
-		// if (master != null)
-		// ((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 
 	public Set<EnumFacing> getConnections() {
@@ -85,6 +106,14 @@ public class TileKabel extends TileEntity {
 
 	public void setConnections(Set<EnumFacing> connections) {
 		this.connections = connections;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 	public BlockPos getMaster() {
@@ -101,4 +130,7 @@ public class TileKabel extends TileEntity {
 		return kind;
 	}
 
+	public void setKind(Kind kind) {
+		this.kind = kind;
+	}
 }

@@ -1,12 +1,20 @@
 package mrriegel.cworks.blocks;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import mrriegel.cworks.CreativeTab;
 import mrriegel.cworks.CableWorks;
+import mrriegel.cworks.helper.Inv;
+import mrriegel.cworks.init.ModBlocks;
+import mrriegel.cworks.tile.TileKabel;
 import mrriegel.cworks.tile.TileMaster;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -30,8 +38,21 @@ public class BlockMaster extends BlockContainer {
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
 			EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-		if (worldIn.getTileEntity(pos) != null)
-			((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
+		boolean hasMaster = false;
+		for (BlockPos p : TileMaster.getSides(pos)) {
+			if (worldIn.getTileEntity(p) instanceof TileKabel
+					&& ((TileKabel) worldIn.getTileEntity(p)).getMaster() != null) {
+				hasMaster = true;
+				break;
+			}
+		}
+		if (hasMaster) {
+			Block.spawnAsEntity(worldIn, pos, Inv.copyStack(stack, 1));
+			worldIn.setBlockToAir(pos);
+		} else {
+			if (worldIn.getTileEntity(pos) != null)
+				((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
+		}
 	}
 
 }

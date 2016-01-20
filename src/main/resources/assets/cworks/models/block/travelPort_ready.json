@@ -1,8 +1,0 @@
-{
-    "parent" : "cworks:model/orientable", 
-    "textures" : {
-        "top" : "cworks:blocks/travelPort_ready_top", 
-        "side" : "cworks:blocks/travelPort_side", 
-        "bottom" : "cworks:blocks/travelPort_bottom"
-    }
-}
