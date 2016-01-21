@@ -23,9 +23,9 @@ public class ModBlocks {
 	public static final Block imKabel = new BlockKabel()
 			.setUnlocalizedName(CableWorks.MODID + ":imKabel");
 	public static final Block vacuumKabel = new BlockKabel()
-	.setUnlocalizedName(CableWorks.MODID + ":vacuumKabel");
+			.setUnlocalizedName(CableWorks.MODID + ":vacuumKabel");
 	public static final Block master = new BlockMaster();
-	public static final Block request=new BlockRequest();
+	public static final Block request = new BlockRequest();
 
 	public static void init() {
 		GameRegistry.registerBlock(kabel, "kabel");

@@ -1,5 +1,6 @@
 package mrriegel.cworks.gui;
 
+import mrriegel.cworks.tile.TileKabel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,36 +9,24 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class CrunchItemInventory implements IInventory {
-	protected final int INVSIZE;
+public class InventoryFilter implements IInventory {
+	protected final int INVSIZE = 9;
 	protected ItemStack[] inv;
-	protected final int stackLimit;
-	public ItemStack storedInv = null;
+	TileKabel tile;
 
-	public CrunchItemInventory(int size, int stackLimit, ItemStack stack) {
-		this.INVSIZE = size;
-		inv = new ItemStack[size];
-		this.stackLimit = stackLimit;
-		this.storedInv = stack;
-		if (!storedInv.hasTagCompound()) {
-			storedInv.setTagCompound(new NBTTagCompound());
+	public InventoryFilter(TileKabel tile) {
+		inv = new ItemStack[INVSIZE];
+		this.tile = tile;
+		NBTTagCompound nbt = new NBTTagCompound();
+		tile.writeToNBT(nbt);
+		NBTTagList invList = nbt.getTagList("crunchTE",
+				Constants.NBT.TAG_COMPOUND);
+		for (int i = 0; i < 9; i++) {
+			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			setInventorySlotContents(i,
+					ItemStack.loadItemStackFromNBT(stackTag));
 		}
-		if (storedInv != null && storedInv.getTagCompound() != null) {
-			NBTTagList invList = storedInv.getTagCompound().getTagList(
-					"crunchItem", Constants.NBT.TAG_COMPOUND);
-			for (int i = 0; i < invList.tagCount(); i++) {
-				NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-				int slot = stackTag.getByte("Slot");
-				if (slot >= 0 && slot < getInv().length) {
-					setInventorySlotContents(slot,
-							ItemStack.loadItemStackFromNBT(stackTag));
-				}
-			}
-		}
-	}
-
-	public CrunchItemInventory(int size, ItemStack stack) {
-		this(size, 64, stack);
 	}
 
 	public ItemStack[] getInv() {
@@ -91,13 +80,12 @@ public class CrunchItemInventory implements IInventory {
 
 	@Override
 	public int getInventoryStackLimit() {
-		return this.stackLimit;
+		return 64;
 	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return player.getHeldItem() != null
-				&& player.getHeldItem().isItemEqual(storedInv);
+		return true;
 	}
 
 	@Override
@@ -111,7 +99,8 @@ public class CrunchItemInventory implements IInventory {
 
 	@Override
 	public String getName() {
-		return storedInv.getDisplayName();
+		return tile.getWorld().getBlockState(tile.getPos()).getBlock()
+				.getLocalizedName();
 	}
 
 	@Override
@@ -154,4 +143,5 @@ public class CrunchItemInventory implements IInventory {
 	@Override
 	public void closeInventory(EntityPlayer player) {
 	}
+
 }

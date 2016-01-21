@@ -19,8 +19,8 @@ public class Network {
 	public Network(TileEntity master, List<IInventory> inventories) {
 		this.master = master;
 		this.inventories = inventories;
-		world = ((TileEntity) master).getWorld();
-		masterPos = ((TileEntity) master).getPos();
+		world = master.getWorld();
+		masterPos = master.getPos();
 	}
 
 	public boolean addIInventory(IInventory inv) {
@@ -71,19 +71,19 @@ public class Network {
 
 	public void insert() {
 		update();
-//		if (master == null)
-//			return;
-//		for (int i = 0; i < master.getSizeInventory(); i++) {
-//			if (master.getStackInSlot(i) == null)
-//				continue;
-//			master.setInventorySlotContents(i, Inv.copyStack(master
-//					.getStackInSlot(i), Inv.addToInventoriesWithLeftover(
-//					master.getStackInSlot(i), inventories, false)));
-//			if (master.getStackInSlot(i).stackSize == 0)
-//				master.setInventorySlotContents(i, null);
-//			master.markDirty();
-//			world.markBlockForUpdate(masterPos);
-//			break;
-//		}
+		// if (master == null)
+		// return;
+		// for (int i = 0; i < master.getSizeInventory(); i++) {
+		// if (master.getStackInSlot(i) == null)
+		// continue;
+		// master.setInventorySlotContents(i, Inv.copyStack(master
+		// .getStackInSlot(i), Inv.addToInventoriesWithLeftover(
+		// master.getStackInSlot(i), inventories, false)));
+		// if (master.getStackInSlot(i).stackSize == 0)
+		// master.setInventorySlotContents(i, null);
+		// master.markDirty();
+		// world.markBlockForUpdate(masterPos);
+		// break;
+		// }
 	}
 }

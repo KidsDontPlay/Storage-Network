@@ -2,18 +2,11 @@ package mrriegel.cworks.helper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import mrriegel.cworks.blocks.BlockKabel;
-import mrriegel.cworks.init.ModBlocks;
-import mrriegel.cworks.tile.TileKabel;
-import mrriegel.cworks.tile.TileMaster;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 public class Inv {
@@ -40,44 +33,6 @@ public class Inv {
 
 	}
 
-	public static int addToInventoriesWithLeftover(ItemStack stack,
-			Map<IInventory, EnumFacing> inventorys, boolean simulate) {
-		if (stack == null)
-			return 0;
-		ItemStack in = stack.copy();
-		for (IInventory inv : getInventorys(inventorys, in, true)) {
-			int remain = addToInventoryWithLeftover(in, inv, simulate);
-			if (remain == 0)
-				return 0;
-			in = copyStack(in, remain);
-			inv.markDirty();
-		}
-		for (IInventory inv : getInventorys(inventorys, in, false)) {
-			int remain = addToInventoryWithLeftover(in, inv, simulate);
-			if (remain == 0)
-				return 0;
-			in = copyStack(in, remain);
-			inv.markDirty();
-		}
-		return in.stackSize;
-
-	}
-
-	private static EnumFacing getFace(ISidedInventory inv) {
-		List<BlockPos> neighbors = new ArrayList<BlockPos>();
-		TileEntity tile = (TileEntity) inv;
-		for (BlockPos p : TileMaster.getSides(tile.getPos())) {
-			if (tile.getWorld().getBlockState(p).getBlock() == ModBlocks.storageKabel)
-				neighbors.add(p);
-		}
-		for (BlockPos n : neighbors) {
-			EnumFacing f = BlockKabel.get(tile.getPos(), n);
-			TileKabel tk = tile.getWorld().getTileEntity(n);
-
-		}
-
-	}
-
 	public static boolean isInventorySame(IInventory a, IInventory b) {
 		if (!(a instanceof TileEntity) || !(b instanceof TileEntity))
 			return false;
@@ -86,27 +41,11 @@ public class Inv {
 		return aa.getPos().equals(bb.getPos());
 	}
 
-	static List<IInventory> getInventorys(
-			Map<IInventory, EnumFacing> inventorys, ItemStack stack,
-			boolean with) {
-		List<IInventory> lis = new ArrayList<IInventory>();
-		for (Entry<IInventory, EnumFacing> e : inventorys.entrySet()) {
-			IInventory inv = e.getKey();
-			if (with) {
-				if (contains(inv, stack, e.getValue()))
-					lis.add(inv);
-			} else {
-				if (!contains(inv, stack, e.getValue()))
-					lis.add(inv);
-			}
-		}
-		return lis;
-	}
-
-	static List<IInventory> getInventorys(List<IInventory> inventorys,
+	public static List<IInventory> getInventorys(List<IInventory> inventorys,
 			ItemStack stack, boolean with) {
 		List<IInventory> lis = new ArrayList<IInventory>();
 		for (IInventory inv : inventorys) {
+
 			if (with) {
 				if (contains(inv, stack))
 					lis.add(inv);
@@ -118,8 +57,34 @@ public class Inv {
 		return lis;
 	}
 
-	static boolean contains(IInventory inv, ItemStack stack, EnumFacing face) {
-		for (int i = 0; i < inv.getSizeInventory(); i++) {
+	public static List<IInventory> getInventorys(List<IInventory> inventorys,
+			ItemStack stack, boolean with, EnumFacing face) {
+		List<IInventory> lis = new ArrayList<IInventory>();
+		for (IInventory inv : inventorys) {
+			if (inv instanceof ISidedInventory) {
+				if (with) {
+					if (contains((ISidedInventory) inv, stack, face))
+						lis.add(inv);
+				} else {
+					if (!contains((ISidedInventory) inv, stack, face))
+						lis.add(inv);
+				}
+			} else {
+				if (with) {
+					if (contains(inv, stack))
+						lis.add(inv);
+				} else {
+					if (!contains(inv, stack))
+						lis.add(inv);
+				}
+			}
+		}
+		return lis;
+	}
+
+	public static boolean contains(ISidedInventory inv, ItemStack stack,
+			EnumFacing face) {
+		for (int i : inv.getSlotsForFace(face)) {
 			if (inv.getStackInSlot(i) != null
 					&& inv.getStackInSlot(i).isItemEqual(stack)
 					&& ItemStack.areItemStackTagsEqual(stack,
@@ -130,7 +95,7 @@ public class Inv {
 		return false;
 	}
 
-	static boolean contains(IInventory inv, ItemStack stack) {
+	public static boolean contains(IInventory inv, ItemStack stack) {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			if (inv.getStackInSlot(i) != null
 					&& inv.getStackInSlot(i).isItemEqual(stack)
@@ -228,7 +193,7 @@ public class Inv {
 		if (stack == null)
 			return null;
 		ItemStack tmp = stack.copy();
-		tmp.stackSize = size;
+		tmp.stackSize = Math.max(0, size);
 		return tmp;
 	}
 }

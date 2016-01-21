@@ -1,9 +1,9 @@
 package mrriegel.cworks.tile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import mrriegel.cworks.init.ModBlocks;
 import net.minecraft.block.Block;
@@ -20,12 +20,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 public class TileKabel extends TileEntity {
-	private Set<EnumFacing> connections;
 	private Kind kind;
-	private BlockPos master;
-	private int priority;
+	private BlockPos master, connectedInventory;
+	private EnumFacing inventoryFace;
 	private Map<Integer, ItemStack> filter = new HashMap<Integer, ItemStack>();
-	private boolean meta, stock;
+	private boolean meta, white;
 
 	public enum Kind {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel;
@@ -35,7 +34,6 @@ public class TileKabel extends TileEntity {
 	}
 
 	public TileKabel(World w, Block b) {
-		connections = new HashSet<EnumFacing>();
 		kind = getKind(w, b);
 	}
 
@@ -53,19 +51,53 @@ public class TileKabel extends TileEntity {
 		return null;
 	}
 
+	public static boolean canInsert(TileKabel tile, ItemStack stack) {
+		List<ItemStack> lis = new ArrayList<ItemStack>();
+		for (int i = 0; i < 9; i++) {
+			ItemStack s = tile.getFilter().get(i);
+			if (s != null)
+				lis.add(s.copy());
+		}
+		if (lis.isEmpty())
+			return true;
+		if (tile.isWhite()) {
+			boolean tmp = false;
+			for (ItemStack s : lis) {
+				if (tile.isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
+						.getItem()) {
+					tmp = true;
+					break;
+				}
+			}
+			return tmp;
+		} else {
+			boolean tmp = true;
+			for (ItemStack s : lis) {
+				if (tile.isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
+						.getItem()) {
+					tmp = false;
+					break;
+				}
+			}
+			return tmp;
+		}
+
+	}
+
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		connections = new Gson().fromJson(compound.getString("connections"),
-				new TypeToken<Set<EnumFacing>>() {
-				}.getType());
 		kind = Kind.valueOf(compound.getString("kind"));
 		master = new Gson().fromJson(compound.getString("master"),
 				new TypeToken<BlockPos>() {
 				}.getType());
-		priority = compound.getInteger("priority");
+		connectedInventory = new Gson().fromJson(
+				compound.getString("connectedInventory"),
+				new TypeToken<BlockPos>() {
+				}.getType());
+		inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
 		meta = compound.getBoolean("meta");
-		stock = compound.getBoolean("stock");
+		white = compound.getBoolean("white");
 		NBTTagList invList = compound.getTagList("crunchTE",
 				Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < 9; i++) {
@@ -79,14 +111,16 @@ public class TileKabel extends TileEntity {
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
-		compound.setString("connections", new Gson().toJson(connections));
 		if (kind == null)
 			kind = getKind(worldObj, worldObj.getBlockState(pos).getBlock());
 		compound.setString("kind", kind.toString());
 		compound.setString("master", new Gson().toJson(master));
-		compound.setInteger("priority", priority);
+		compound.setString("connectedInventory",
+				new Gson().toJson(connectedInventory));
+		if (inventoryFace != null)
+			compound.setString("inventoryFace", inventoryFace.toString());
 		compound.setBoolean("meta", meta);
-		compound.setBoolean("stock", stock);
+		compound.setBoolean("white", white);
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (filter.get(i) != null) {
@@ -98,22 +132,6 @@ public class TileKabel extends TileEntity {
 		}
 		compound.setTag("crunchTE", invList);
 
-	}
-
-	public Set<EnumFacing> getConnections() {
-		return connections;
-	}
-
-	public void setConnections(Set<EnumFacing> connections) {
-		this.connections = connections;
-	}
-
-	public int getPriority() {
-		return priority;
-	}
-
-	public void setPriority(int priority) {
-		this.priority = priority;
 	}
 
 	public BlockPos getMaster() {
@@ -132,5 +150,45 @@ public class TileKabel extends TileEntity {
 
 	public void setKind(Kind kind) {
 		this.kind = kind;
+	}
+
+	public BlockPos getConnectedInventory() {
+		return connectedInventory;
+	}
+
+	public void setConnectedInventory(BlockPos connectedInventory) {
+		this.connectedInventory = connectedInventory;
+	}
+
+	public EnumFacing getInventoryFace() {
+		return inventoryFace;
+	}
+
+	public void setInventoryFace(EnumFacing inventoryFace) {
+		this.inventoryFace = inventoryFace;
+	}
+
+	public Map<Integer, ItemStack> getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Map<Integer, ItemStack> filter) {
+		this.filter = filter;
+	}
+
+	public boolean isMeta() {
+		return meta;
+	}
+
+	public void setMeta(boolean meta) {
+		this.meta = meta;
+	}
+
+	public boolean isWhite() {
+		return white;
+	}
+
+	public void setWhite(boolean white) {
+		this.white = white;
 	}
 }

@@ -1,27 +1,25 @@
 package mrriegel.cworks.blocks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
+import mrriegel.cworks.CableWorks;
 import mrriegel.cworks.CreativeTab;
+import mrriegel.cworks.handler.GuiHandler;
 import mrriegel.cworks.init.ModBlocks;
 import mrriegel.cworks.tile.TileKabel;
 import mrriegel.cworks.tile.TileMaster;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockFence;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -87,15 +85,35 @@ public class BlockKabel extends BlockContainer {
 	}
 
 	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos,
+			IBlockState state, EntityPlayer playerIn, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
+		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+		switch (tile.getKind()) {
+		case exKabel:
+			playerIn.openGui(CableWorks.instance, GuiHandler.EXPORT, worldIn,
+					pos.getX(), pos.getY(), pos.getZ());
+			break;
+		case imKabel:
+			playerIn.openGui(CableWorks.instance, GuiHandler.IMPORT, worldIn,
+					pos.getX(), pos.getY(), pos.getZ());
+			break;
+		case storageKabel:
+			playerIn.openGui(CableWorks.instance, GuiHandler.STORAGE, worldIn,
+					pos.getX(), pos.getY(), pos.getZ());
+			break;
+		default:
+			break;
+		}
+		return super.onBlockActivated(worldIn, pos, state, playerIn, side,
+				hitX, hitY, hitZ);
+	}
+
+	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos,
 			IBlockState state, Block neighborBlock) {
-		if (neighborBlock instanceof BlockKabel
-				|| neighborBlock instanceof BlockRequest
-				|| neighborBlock instanceof BlockMaster
-				|| neighborBlock instanceof BlockAir) {
-			state = getActualState(state, worldIn, pos);
-			setConnections(worldIn, pos, state);
-		}
+		state = getActualState(state, worldIn, pos);
+		setConnections(worldIn, pos, state);
 	}
 
 	@Override
@@ -107,20 +125,35 @@ public class BlockKabel extends BlockContainer {
 
 	private void setConnections(World worldIn, BlockPos pos, IBlockState state) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-		Set<EnumFacing> set = new HashSet<EnumFacing>();
-		if (state.getValue(NORTH))
-			set.add(EnumFacing.NORTH);
-		if (state.getValue(SOUTH))
-			set.add(EnumFacing.SOUTH);
-		if (state.getValue(EAST))
-			set.add(EnumFacing.EAST);
-		if (state.getValue(WEST))
-			set.add(EnumFacing.WEST);
-		if (state.getValue(DOWN))
-			set.add(EnumFacing.DOWN);
-		if (state.getValue(UP))
-			set.add(EnumFacing.UP);
-		tile.setConnections(set);
+		EnumFacing face = null;
+		BlockPos con = null;
+		if (state.getValue(NORTH)
+				&& worldIn.getTileEntity(pos.north()) instanceof IInventory) {
+			face = EnumFacing.NORTH;
+			con = pos.north();
+		} else if (state.getValue(SOUTH)
+				&& worldIn.getTileEntity(pos.south()) instanceof IInventory) {
+			face = EnumFacing.SOUTH;
+			con = pos.south();
+		} else if (state.getValue(EAST)
+				&& worldIn.getTileEntity(pos.east()) instanceof IInventory) {
+			face = EnumFacing.EAST;
+			con = pos.east();
+		} else if (state.getValue(WEST)
+				&& worldIn.getTileEntity(pos.west()) instanceof IInventory) {
+			face = EnumFacing.WEST;
+			con = pos.west();
+		} else if (state.getValue(DOWN)
+				&& worldIn.getTileEntity(pos.down()) instanceof IInventory) {
+			face = EnumFacing.DOWN;
+			con = pos.down();
+		} else if (state.getValue(UP)
+				&& worldIn.getTileEntity(pos.up()) instanceof IInventory) {
+			face = EnumFacing.UP;
+			con = pos.up();
+		}
+		tile.setInventoryFace(face);
+		tile.setConnectedInventory(con);
 		tile.setMaster(null);
 		for (BlockPos n : TileMaster.getSides(pos)) {
 			if (tile.getMaster() != null)

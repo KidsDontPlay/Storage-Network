@@ -15,6 +15,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -59,14 +60,18 @@ public class TileMaster extends TileEntity implements ITickable {
 			cables = new HashSet<BlockPos>();
 		if (num >= 500) {
 			System.out.println("too much cables");
+			cables = new HashSet<BlockPos>();
 			return;
 		}
 		for (BlockPos bl : getSides(pos)) {
-			System.out.println("w: " + worldObj);
-			System.out.println("n: " + worldObj.getBlockState(bl));
 			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master
 					&& !bl.equals(this.pos)) {
-				return;
+				worldObj.getBlockState(bl)
+						.getBlock()
+						.dropBlockAsItem(worldObj, bl,
+								worldObj.getBlockState(bl), 0);
+				worldObj.setBlockToAir(pos);
+				continue;
 			}
 			if (worldObj.getBlockState(bl).getBlock() instanceof BlockKabel
 					&& !cables.contains(bl)
@@ -76,8 +81,6 @@ public class TileMaster extends TileEntity implements ITickable {
 				addCables(bl, num++);
 			}
 		}
-		// System.out.println("settrue");
-		// active = true;
 	}
 
 	private void addInventorys() {
@@ -87,26 +90,26 @@ public class TileMaster extends TileEntity implements ITickable {
 		for (BlockPos cable : cables) {
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(cable);
 			if (tile.getKind() == Kind.exKabel) {
-				for (EnumFacing face : tile.getConnections()) {
-					if (worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
-							&& worldObj.getChunkFromBlockCoords(
-									cable.offset(face)).isLoaded())
-						exInventorys.add(cable.offset(face));
-				}
+				EnumFacing face = tile.getInventoryFace();
+				if (face != null
+						&& worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
+						&& worldObj.getChunkFromBlockCoords(cable.offset(face))
+								.isLoaded())
+					exInventorys.add(cable.offset(face));
 			} else if (tile.getKind() == Kind.imKabel) {
-				for (EnumFacing face : tile.getConnections()) {
-					if (worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
-							&& worldObj.getChunkFromBlockCoords(
-									cable.offset(face)).isLoaded())
-						imInventorys.add(cable.offset(face));
-				}
+				EnumFacing face = tile.getInventoryFace();
+				if (face != null
+						&& worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
+						&& worldObj.getChunkFromBlockCoords(cable.offset(face))
+								.isLoaded())
+					imInventorys.add(cable.offset(face));
 			} else if (tile.getKind() == Kind.storageKabel) {
-				for (EnumFacing face : tile.getConnections()) {
-					if (worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
-							&& worldObj.getChunkFromBlockCoords(
-									cable.offset(face)).isLoaded())
-						storageInventorys.add(cable.offset(face));
-				}
+				EnumFacing face = tile.getInventoryFace();
+				if (face != null
+						&& worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
+						&& worldObj.getChunkFromBlockCoords(cable.offset(face))
+								.isLoaded())
+					storageInventorys.add(cable.offset(face));
 			}
 		}
 	}
@@ -129,18 +132,16 @@ public class TileMaster extends TileEntity implements ITickable {
 	}
 
 	public void vacuum() {
-		if (worldObj.getTotalWorldTime() % 20 != 0)
-			return;
 		if (cables == null)
 			refreshNetwork();
 		for (BlockPos p : cables) {
 			if (worldObj.getTileEntity(p) != null
 					&& ((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
-				int range = 6;
+				int range = 2;
 
-				int x = getPos().getX();
-				int y = getPos().getY();
-				int z = getPos().getZ();
+				int x = p.getX();
+				int y = p.getY();
+				int z = p.getZ();
 
 				List<EntityItem> items = worldObj.getEntitiesWithinAABB(
 						EntityItem.class,
@@ -152,82 +153,309 @@ public class TileMaster extends TileEntity implements ITickable {
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
 					if (!worldObj.isRemote) {
-						int rest = insertStack(stack);
+						int rest = insertStack(stack, null);
 						ItemStack r = stack.copy();
 						r.stackSize = rest;
 						if (rest <= 0)
 							item.setDead();
 						else
-							item.setEntityItemStack(stack);
+							item.setEntityItemStack(r);
+						break;
 					}
 				}
 			}
 		}
 	}
 
-	public int insertStack(ItemStack stack) {
-		List<IInventory> invs = new ArrayList<IInventory>();
-		for (BlockPos p : storageInventorys) {
-			IInventory inv = (IInventory) worldObj.getTileEntity(p);
-			if (inv == null)
+	public int insertStack(ItemStack stack, IInventory source) {
+		List<TileKabel> invs = new ArrayList<TileKabel>();
+		for (BlockPos p : cables) {
+			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (tile == null) {
+				refreshNetwork();
 				continue;
-			invs.add(inv);
+			}
+			if (tile.getKind() == Kind.storageKabel
+					&& tile.getConnectedInventory() != null) {
+				invs.add(tile);
+			}
 		}
-		return Inv.addToInventoriesWithLeftover(stack, invs, false);
+		return addToInventories(stack, invs, source);
+	}
+
+	int addToInventories(ItemStack stack, List<TileKabel> list,
+			IInventory source) {
+		if (stack == null)
+			return 0;
+		ItemStack in = stack.copy();
+		for (TileKabel t : list) {
+			IInventory inv = (IInventory) worldObj.getTileEntity(t
+					.getConnectedInventory());
+			if (inv instanceof ISidedInventory
+					&& !Inv.contains((ISidedInventory) inv, in,
+							t.getInventoryFace()))
+				continue;
+			if (!(inv instanceof ISidedInventory) && !Inv.contains(inv, in))
+				continue;
+			if (!TileKabel.canInsert(t, stack))
+				continue;
+			if (Inv.isInventorySame(inv, source))
+				continue;
+			int remain = (inv instanceof ISidedInventory) ? Inv
+					.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv,
+							t.getInventoryFace().getOpposite(), false) : Inv
+					.addToInventoryWithLeftover(in, inv, false);
+			if (remain == 0)
+				return 0;
+			in = Inv.copyStack(in, remain);
+			inv.markDirty();
+		}
+		for (TileKabel t : list) {
+			IInventory inv = (IInventory) worldObj.getTileEntity(t
+					.getConnectedInventory());
+			if (inv instanceof ISidedInventory
+					&& Inv.contains((ISidedInventory) inv, in,
+							t.getInventoryFace()))
+				continue;
+			if (!(inv instanceof ISidedInventory) && Inv.contains(inv, in))
+				continue;
+			if (!TileKabel.canInsert(t, stack))
+				continue;
+			if (Inv.isInventorySame(inv, source))
+				continue;
+			int remain = (inv instanceof ISidedInventory) ? Inv
+					.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv,
+							t.getInventoryFace().getOpposite(), false) : Inv
+					.addToInventoryWithLeftover(in, inv, false);
+			// ItemStack re=TileEntityHopper.putStackInInventoryAllSlots(inv,
+			// in, t.getInventoryFace().getOpposite());
+			if (remain == 0)
+				return 0;
+			in = Inv.copyStack(in, remain);
+			inv.markDirty();
+		}
+		return in.stackSize;
 	}
 
 	public void impor() {
-		if (worldObj.getTotalWorldTime() % 20 != 0)
-			return;
 		if (imInventorys == null || storageInventorys == null)
 			refreshNetwork();
-		List<IInventory> imInvs = new ArrayList<IInventory>();
-		for (BlockPos p : imInventorys) {
-			IInventory inv = (IInventory) worldObj.getTileEntity(p);
-			if (inv == null)
+		List<TileKabel> invs = new ArrayList<TileKabel>();
+		for (BlockPos p : cables) {
+			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (tile == null) {
+				refreshNetwork();
 				continue;
-			imInvs.add(inv);
+			}
+			if (tile.getKind() == Kind.imKabel
+					&& tile.getConnectedInventory() != null) {
+				invs.add(tile);
+			}
 		}
-		List<IInventory> storageInvs = new ArrayList<IInventory>();
-		for (BlockPos p : storageInventorys) {
-			IInventory inv = (IInventory) worldObj.getTileEntity(p);
-			if (inv == null)
-				continue;
-			storageInvs.add(inv);
-		}
-		// System.out.println("im: " + imInvs);
-		// System.out.println("stor; " + storageInvs);
-		for (IInventory inv : imInvs) {
+		for (TileKabel t : invs) {
+			IInventory inv = (IInventory) worldObj.getTileEntity(t
+					.getConnectedInventory());
 			if (!(inv instanceof ISidedInventory)) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
-					int num = inv.getStackInSlot(i).stackSize;
-					int rest = Inv.addToInventoriesWithLeftover(s.copy(),
-							storageInvs, false);
+					int num = s.stackSize;
+					int rest = insertStack(s.copy(), inv);
 					if (num == rest)
 						continue;
-					inv.setInventorySlotContents(
-							i,
-							rest > 0 ? Inv.copyStack(inv.getStackInSlot(i)
-									.copy(), rest) : null);
+					inv.setInventorySlotContents(i,
+							rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
 					inv.markDirty();
 					break;
 
+				}
+			} else {
+				for (int i : ((ISidedInventory) inv).getSlotsForFace(t
+						.getInventoryFace().getOpposite())) {
+					ItemStack s = inv.getStackInSlot(i);
+					if (s == null)
+						continue;
+					if (!((ISidedInventory) inv).canExtractItem(i, s, t
+							.getInventoryFace().getOpposite()))
+						continue;
+					int num = s.stackSize;
+					int rest = insertStack(s.copy(), inv);
+					if (num == rest)
+						continue;
+					inv.setInventorySlotContents(i,
+							rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					inv.markDirty();
+					break;
 				}
 			}
 		}
 	}
 
-	@Override
-	public void update() {
-		vacuum();
-		impor();
+	public void export() {
+		if (exInventorys == null || storageInventorys == null)
+			refreshNetwork();
+		List<TileKabel> invs = new ArrayList<TileKabel>();
+		for (BlockPos p : cables) {
+			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (tile == null) {
+				refreshNetwork();
+				continue;
+			}
+			if (tile.getKind() == Kind.exKabel
+					&& tile.getConnectedInventory() != null) {
+				invs.add(tile);
+			}
+		}
+		for (TileKabel t : invs) {
+			IInventory inv = (IInventory) worldObj.getTileEntity(t
+					.getConnectedInventory());
+			for (int i = 0; i < 9; i++) {
+				ItemStack fil = t.getFilter().get(i);
+				if (fil == null)
+					continue;
+				// ItemStack fil = new ItemStack(Blocks.hay_block);
+				int space = getSpace(fil, inv, t.getInventoryFace()
+						.getOpposite());
+				if (space == 0)
+					continue;
+				ItemStack rec = request(
+						fil,
+						Math.min(
+								Math.min(fil.getMaxStackSize(),
+										inv.getInventoryStackLimit()), space));
+				if (rec == null)
+					continue;
+
+				TileEntityHopper.putStackInInventoryAllSlots(inv, rec, t
+						.getInventoryFace().getOpposite());
+				break;
+			}
+		}
 	}
 
-	public Set<BlockPos> getCables() {
-		return cables;
+	private int getSpace(ItemStack fil, IInventory inv, EnumFacing face) {
+		int space = 0;
+		if (!(inv instanceof ISidedInventory)) {
+			for (int i = 0; i < inv.getSizeInventory(); i++) {
+				if (!inv.isItemValidForSlot(i, fil))
+					continue;
+				ItemStack slot = inv.getStackInSlot(i);
+				int max = Math.min(fil.getMaxStackSize(),
+						inv.getInventoryStackLimit());
+				if (slot == null) {
+					space += max;
+				} else {
+					if (slot.isItemEqual(fil)
+							&& ItemStack.areItemStackTagsEqual(fil, slot)) {
+						space += max - slot.stackSize;
+					}
+				}
+			}
+		} else {
+			for (int i : ((ISidedInventory) inv).getSlotsForFace(face)) {
+				if (!inv.isItemValidForSlot(i, fil)
+						|| !((ISidedInventory) inv).canInsertItem(i, fil, face))
+					continue;
+				ItemStack slot = inv.getStackInSlot(i);
+				int max = Math.min(fil.getMaxStackSize(),
+						inv.getInventoryStackLimit());
+				if (slot == null) {
+					space += max;
+				} else {
+					if (slot.isItemEqual(fil)
+							&& ItemStack.areItemStackTagsEqual(fil, slot)) {
+						space += max - slot.stackSize;
+					}
+				}
+			}
+		}
+		return space;
+	}
+
+	// boolean isIn(ItemStack stack, List<ItemStack> lis) {
+	// for (ItemStack s : lis) {
+	// if (s == null || stack == null)
+	// continue;
+	// if (stack.isItemEqual(s))
+	// return true;
+	// }
+	// return false;
+	// }
+
+	public ItemStack request(ItemStack stack, final int size) {
+		if (size == 0)
+			return null;
+		if (storageInventorys == null)
+			refreshNetwork();
+		List<TileKabel> invs = new ArrayList<TileKabel>();
+		for (BlockPos p : cables) {
+			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (tile == null) {
+				refreshNetwork();
+				continue;
+			}
+			if (tile.getKind() == Kind.storageKabel
+					&& tile.getConnectedInventory() != null) {
+				invs.add(tile);
+			}
+		}
+		int result = 0;
+		for (TileKabel t : invs) {
+			IInventory inv = (IInventory) worldObj.getTileEntity(t
+					.getConnectedInventory());
+			if (!(inv instanceof ISidedInventory)) {
+				for (int i = 0; i < inv.getSizeInventory(); i++) {
+					ItemStack s = inv.getStackInSlot(i);
+					if (s == null || !s.isItemEqual(stack))
+						continue;
+					int miss = size - result;
+					result += Math.min(s.stackSize, miss);
+					int rest = s.stackSize - miss;
+					System.out.println("auftrag: " + size);
+					System.out.println("rest: " + rest);
+					inv.setInventorySlotContents(i,
+							rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					inv.markDirty();
+					if (result == size)
+						return Inv.copyStack(stack, size);
+					break;
+
+				}
+			} else {
+				for (int i : ((ISidedInventory) inv).getSlotsForFace(t
+						.getInventoryFace().getOpposite())) {
+					ItemStack s = inv.getStackInSlot(i);
+					if (s == null || !s.isItemEqual(stack))
+						continue;
+					if (!((ISidedInventory) inv).canExtractItem(i, s, t
+							.getInventoryFace().getOpposite()))
+						continue;
+					int miss = size - result;
+					result += Math.min(s.stackSize, miss);
+					int rest = s.stackSize - miss;
+					inv.setInventorySlotContents(i,
+							rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					inv.markDirty();
+					if (result == size)
+						return Inv.copyStack(stack, size);
+					break;
+				}
+			}
+		}
+		if (result == 0)
+			return null;
+		return Inv.copyStack(stack, result);
+	}
+
+	@Override
+	public void update() {
+		if (worldObj.getTotalWorldTime() % 20 != 0)
+			return;
+		vacuum();
+		impor();
+		export();
+
 	}
 
 }

@@ -8,7 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockRequest extends BlockContainer{
+public class BlockRequest extends BlockContainer {
 
 	public BlockRequest() {
 		super(Material.iron);

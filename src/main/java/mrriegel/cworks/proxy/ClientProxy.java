@@ -36,8 +36,19 @@ public class ClientProxy extends CommonProxy {
 		mesher.register(Item.getItemFromBlock(ModBlocks.exKabel), 0,
 				new ModelResourceLocation(CableWorks.MODID + ":exKabel",
 						"inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.kabel), 0,
+				new ModelResourceLocation(CableWorks.MODID + ":kabel",
+						"inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.storageKabel), 0,
+				new ModelResourceLocation(CableWorks.MODID + ":storageKabel",
+						"inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.imKabel), 0,
+				new ModelResourceLocation(CableWorks.MODID + ":imKabel",
+						"inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.vacuumKabel), 0,
+				new ModelResourceLocation(CableWorks.MODID + ":vacuumKabel",
+						"inventory"));
 
-		
 	}
 
 	public void registerRenderers() {
