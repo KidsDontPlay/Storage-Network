@@ -10,6 +10,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -24,7 +27,8 @@ public class TileKabel extends TileEntity {
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
 	private Map<Integer, ItemStack> filter = new HashMap<Integer, ItemStack>();
-	private boolean meta, white;
+	private boolean meta = true, white;
+	private int priority;
 
 	public enum Kind {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel;
@@ -51,15 +55,13 @@ public class TileKabel extends TileEntity {
 		return null;
 	}
 
-	public static boolean canInsert(TileKabel tile, ItemStack stack) {
+	public static boolean canTransfer(TileKabel tile, ItemStack stack) {
 		List<ItemStack> lis = new ArrayList<ItemStack>();
 		for (int i = 0; i < 9; i++) {
 			ItemStack s = tile.getFilter().get(i);
 			if (s != null)
 				lis.add(s.copy());
 		}
-		if (lis.isEmpty())
-			return true;
 		if (tile.isWhite()) {
 			boolean tmp = false;
 			for (ItemStack s : lis) {
@@ -81,7 +83,6 @@ public class TileKabel extends TileEntity {
 			}
 			return tmp;
 		}
-
 	}
 
 	@Override
@@ -98,6 +99,7 @@ public class TileKabel extends TileEntity {
 		inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
 		meta = compound.getBoolean("meta");
 		white = compound.getBoolean("white");
+		priority = compound.getInteger("prio");
 		NBTTagList invList = compound.getTagList("crunchTE",
 				Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < 9; i++) {
@@ -121,6 +123,7 @@ public class TileKabel extends TileEntity {
 			compound.setString("inventoryFace", inventoryFace.toString());
 		compound.setBoolean("meta", meta);
 		compound.setBoolean("white", white);
+		compound.setInteger("prio", priority);
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (filter.get(i) != null) {
@@ -190,5 +193,26 @@ public class TileKabel extends TileEntity {
 
 	public void setWhite(boolean white) {
 		this.white = white;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound syncData = new NBTTagCompound();
+		this.writeToNBT(syncData);
+		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(),
+				this.getPos().getY(), this.getPos().getZ()), 1, syncData);
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+		readFromNBT(pkt.getNbtCompound());
 	}
 }

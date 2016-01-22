@@ -9,27 +9,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public class ContainerImport extends Container {
+public class ContainerCable extends Container {
 	InventoryFilter inv;
 	InventoryPlayer playerInv;
 	TileKabel tile;
 
-	public ContainerImport(TileKabel tile, InventoryPlayer playerInv) {
+	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
 		inv = new InventoryFilter(tile);
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
-			this.addSlotToContainer(new Slot(inv, j, 12 + j * 18, 20));
+			this.addSlotToContainer(new Slot(inv, j, 8 + j * 18, 26));
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9,
-						8 + j * 18, 84 - 39 + 15 + i * 18));
+						8 + j * 18, 84 - 39 + 10 + i * 18));
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
 			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18,
-					142 - 39 + 15));
+					142 - 39 + 10));
 		}
 	}
 
@@ -57,8 +57,8 @@ public class ContainerImport extends Container {
 	@Override
 	public ItemStack slotClick(int slotId, int clickedButton, int mode,
 			EntityPlayer playerIn) {
-		System.out.println(String.format("%d %d %d", slotId, clickedButton,
-				mode));
+		// System.out.println(String.format("%d %d %d", slotId, clickedButton,
+		// mode));
 		if (slotId >= 9 || slotId == -999)
 			return super.slotClick(slotId, clickedButton, mode, playerIn);
 		if (playerInv.getItemStack() == null) {

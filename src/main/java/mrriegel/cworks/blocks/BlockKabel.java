@@ -89,19 +89,20 @@ public class BlockKabel extends BlockContainer {
 			IBlockState state, EntityPlayer playerIn, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+		worldIn.markBlockForUpdate(pos);
 		switch (tile.getKind()) {
 		case exKabel:
-			playerIn.openGui(CableWorks.instance, GuiHandler.EXPORT, worldIn,
+			playerIn.openGui(CableWorks.instance, GuiHandler.CABLE, worldIn,
 					pos.getX(), pos.getY(), pos.getZ());
-			break;
+			return true;
 		case imKabel:
-			playerIn.openGui(CableWorks.instance, GuiHandler.IMPORT, worldIn,
+			playerIn.openGui(CableWorks.instance, GuiHandler.CABLE, worldIn,
 					pos.getX(), pos.getY(), pos.getZ());
-			break;
+			return true;
 		case storageKabel:
-			playerIn.openGui(CableWorks.instance, GuiHandler.STORAGE, worldIn,
+			playerIn.openGui(CableWorks.instance, GuiHandler.CABLE, worldIn,
 					pos.getX(), pos.getY(), pos.getZ());
-			break;
+			return true;
 		default:
 			break;
 		}

@@ -194,6 +194,8 @@ public class Inv {
 			return null;
 		ItemStack tmp = stack.copy();
 		tmp.stackSize = Math.max(0, size);
+		if(tmp.stackSize==0)
+			return null;
 		return tmp;
 	}
 }
