@@ -1,6 +1,7 @@
 package mrriegel.cworks.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import mrriegel.cworks.CableWorks;
 import mrriegel.cworks.helper.StackWrapper;
+import mrriegel.cworks.network.ClearMessage;
 import mrriegel.cworks.network.PacketHandler;
 import mrriegel.cworks.network.RequestMessage;
 import mrriegel.cworks.tile.TileMaster;
@@ -30,16 +32,8 @@ public class GuiRequest extends GuiContainer {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.ySize = 256;
-		stacks = ((TileMaster) ((ContainerRequest) inventorySlotsIn).tile
-				.getWorld().getTileEntity(
-						((ContainerRequest) inventorySlotsIn).tile.getMaster()))
-				.getStacks();
-		Collections.sort(stacks, new Comparator<StackWrapper>() {
-			@Override
-			public int compare(StackWrapper o1, StackWrapper o2) {
-				return Integer.compare(o1.getSize(), o2.getSize());
-			}
-		});
+		stacks = new ArrayList<StackWrapper>();
+
 		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
 		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
 				master.getX(), master.getY(), master.getZ(), null));
@@ -54,6 +48,12 @@ public class GuiRequest extends GuiContainer {
 		int j = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 		over = null;
+		Collections.sort(stacks, new Comparator<StackWrapper>() {
+			@Override
+			public int compare(StackWrapper o1, StackWrapper o2) {
+				return Integer.compare(o2.getSize(), o1.getSize());
+			}
+		});
 		for (int ii = 0; ii < Math.min(8, stacks.size()); ii++) {
 			new Slot(stacks.get(ii).getStack(), guiLeft + 10 + ii * 20,
 					guiTop + 10, stacks.get(ii).getSize()).drawSlot(mouseX,
@@ -67,13 +67,21 @@ public class GuiRequest extends GuiContainer {
 
 	}
 
+	boolean mouseOverX(int mx, int my) {
+		return isPointInRegion(63 - guiLeft, 110 - guiTop, 7, 7, mx, my);
+	}
+
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 			throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (over != null && (mouseButton == 0 || mouseButton == 1)) {
-			BlockPos master = ((ContainerRequest) inventorySlots).tile
-					.getMaster();
+		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
+		if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
+			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master
+					.getX(), master.getY(), master.getZ(), null));
+		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
+
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton,
 					master.getX(), master.getY(), master.getZ(), over));
 		}

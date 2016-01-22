@@ -52,10 +52,13 @@ public class TileMaster extends TileEntity implements ITickable {
 		for (TileKabel t : invs) {
 			IInventory inv = (IInventory) worldObj.getTileEntity(t
 					.getConnectedInventory());
+			if (inv == null)
+				continue;
 			if (inv instanceof ISidedInventory) {
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(t
 						.getInventoryFace().getOpposite())) {
 					if (inv.getStackInSlot(i) != null
+							&& TileKabel.canTransfer(t, inv.getStackInSlot(i))
 							&& ((ISidedInventory) inv).canExtractItem(i, inv
 									.getStackInSlot(i), t.getInventoryFace()
 									.getOpposite())) {
@@ -64,7 +67,8 @@ public class TileMaster extends TileEntity implements ITickable {
 				}
 			} else {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
-					if (inv.getStackInSlot(i) != null)
+					if (inv.getStackInSlot(i) != null
+							&& TileKabel.canTransfer(t, inv.getStackInSlot(i)))
 						addToList(stacks, inv.getStackInSlot(i).copy());
 				}
 			}
@@ -508,7 +512,7 @@ public class TileMaster extends TileEntity implements ITickable {
 
 	public ItemStack request(ItemStack stack, final int size, boolean meta,
 			boolean tag) {
-		if (size == 0||stack==null)
+		if (size == 0 || stack == null)
 			return null;
 		if (storageInventorys == null)
 			refreshNetwork();

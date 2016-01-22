@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -48,9 +49,16 @@ public class RequestMessage implements IMessage,
 				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj
 						.getTileEntity(new BlockPos(message.x, message.y,
 								message.z));
-				ctx.getServerHandler().playerEntity.inventory
-						.addItemStackToInventory(tile.request(message.stack,
-								message.id == 0 ? 64 : 1, true, true));
+				ItemStack s = TileEntityHopper.putStackInInventoryAllSlots(
+						ctx.getServerHandler().playerEntity.inventory,
+						message.stack, null);
+				if (s != null) {
+					ctx.getServerHandler().playerEntity
+							.dropPlayerItemWithRandomChoice(s, false);
+				}
+				// ctx.getServerHandler().playerEntity.inventory
+				// .addItemStackToInventory(tile.request(message.stack,
+				// message.id == 0 ? 64 : 1, true, true));
 				PacketHandler.INSTANCE.sendTo(
 						new StacksMessage(tile.getStacks()),
 						ctx.getServerHandler().playerEntity);

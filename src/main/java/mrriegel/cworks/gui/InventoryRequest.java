@@ -1,26 +1,26 @@
 package mrriegel.cworks.gui;
 
-import mrriegel.cworks.tile.TileKabel;
+import mrriegel.cworks.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class InventoryFilter implements IInventory {
-	protected final int INVSIZE = 9;
+public class InventoryRequest implements IInventory {
+	protected final int INVSIZE = 6;
 	protected ItemStack[] inv;
-	TileKabel tile;
+	TileRequest tile;
 
-	public InventoryFilter(TileKabel tile) {
+	public InventoryRequest(TileRequest tile) {
 		inv = new ItemStack[INVSIZE];
 		this.tile = tile;
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
-		NBTTagList invList = nbt.getTagList("crunchTE",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList invList = nbt.getTagList("back", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");

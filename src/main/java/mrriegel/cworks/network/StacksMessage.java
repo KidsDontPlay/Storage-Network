@@ -42,8 +42,10 @@ public class StacksMessage implements IMessage,
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				GuiRequest gui = (GuiRequest) Minecraft.getMinecraft().currentScreen;
-				gui.stacks = message.stacks;
+				if (Minecraft.getMinecraft().currentScreen instanceof GuiRequest) {
+					GuiRequest gui = (GuiRequest) Minecraft.getMinecraft().currentScreen;
+					gui.stacks = message.stacks;
+				}
 
 			}
 		});

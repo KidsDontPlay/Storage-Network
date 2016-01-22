@@ -102,10 +102,11 @@ public class TileKabel extends TileEntity {
 		priority = compound.getInteger("prio");
 		NBTTagList invList = compound.getTagList("crunchTE",
 				Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < 9; i++) {
+		filter = new HashMap<Integer, ItemStack>();
+		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			filter.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+			filter.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
 
 	}
