@@ -1,0 +1,7 @@
+{
+    "parent" : "storagenetwork:block/kabel5", 
+    "textures" : {
+        "texture" : "storagenetwork:blocks/imKabel", 
+        "particle" : "storagenetwork:blocks/imKabel"
+    }
+}

@@ -1,0 +1,8 @@
+tile.storagenetwork:kabel.name=Link Cable
+tile.storagenetwork:storageKabel.name=Storage Cable
+tile.storagenetwork:exKabel.name=Export Cable
+tile.storagenetwork:imKabel.name=Import Cable
+tile.storagenetwork:vacuumKabel.name=Vacuum Cable
+
+tile.storagenetwork:master.name=Cable Master
+tile.storagenetwork:request.name=Request Table

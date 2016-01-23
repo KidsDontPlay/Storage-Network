@@ -1,7 +1,0 @@
-{
-    "parent" : "cworks:block/kabel4opV", 
-    "textures" : {
-        "texture" : "cworks:blocks/imKabel", 
-        "particle" : "cworks:blocks/imKabel"
-    }
-}

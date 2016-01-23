@@ -1,7 +1,0 @@
-{
-    "parent" : "cworks:block/kabel3opH", 
-    "textures" : {
-        "texture" : "cworks:blocks/exKabel", 
-        "particle" : "cworks:blocks/exKabel"
-    }
-}

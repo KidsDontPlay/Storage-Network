@@ -1,7 +1,0 @@
-{
-    "parent" : "cworks:block/kabel3op", 
-    "textures" : {
-        "texture" : "cworks:blocks/storageKabel", 
-        "particle" : "cworks:blocks/storageKabel"
-    }
-}

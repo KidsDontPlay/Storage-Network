@@ -21,8 +21,8 @@ plugins {
 }
 */
 version = "1.8.9-1.0"
-group= "mrriegel.cworks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "CableWorks"
+group= "mrriegel.storagenetwork" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Storage Network"
 
 minecraft {
     version = "1.8.9-11.15.0.1709"
@@ -81,16 +81,3 @@ processResources
     }
 }
 
-repositories {
-  maven {
-    url "http://dvs1.progwml6.com/files/maven"
-  }
-}
-
-minecraft {
-  useDepAts = true
-}
-
-dependencies {
-  deobfCompile "mezz.jei:jei_1.8.9:2.19.0.93"
-}
