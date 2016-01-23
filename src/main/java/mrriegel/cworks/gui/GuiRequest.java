@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import mrriegel.cworks.CableWorks;
 import mrriegel.cworks.helper.StackWrapper;
 import mrriegel.cworks.network.ClearMessage;
 import mrriegel.cworks.network.PacketHandler;
 import mrriegel.cworks.network.RequestMessage;
-import mrriegel.cworks.tile.TileMaster;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -54,15 +52,29 @@ public class GuiRequest extends GuiContainer {
 				return Integer.compare(o2.getSize(), o1.getSize());
 			}
 		});
-		for (int ii = 0; ii < Math.min(8, stacks.size()); ii++) {
-			new Slot(stacks.get(ii).getStack(), guiLeft + 10 + ii * 20,
-					guiTop + 10, stacks.get(ii).getSize()).drawSlot(mouseX,
-					mouseY);
+		int index = 0;
+		for (int jj = 0; jj < 4; jj++) {
+			for (int ii = 0; ii < 8; ii++) {
+				int in = index;
+				if (in >= stacks.size())
+					break;
+				new Slot(stacks.get(in).getStack(), guiLeft + 10 + ii * 20,
+						guiTop + 10 + jj * 20, stacks.get(in).getSize())
+						.drawSlot(mouseX, mouseY);
+				index++;
+			}
 		}
-		for (int ii = 0; ii < Math.min(8, stacks.size()); ii++) {
-			new Slot(stacks.get(ii).getStack(), guiLeft + 10 + ii * 20,
-					guiTop + 10, stacks.get(ii).getSize()).drawTooltip(mouseX,
-					mouseY);
+		index = 0;
+		for (int jj = 0; jj < 4; jj++) {
+			for (int ii = 0; ii < 8; ii++) {
+				int in = index;
+				if (in >= stacks.size())
+					break;
+				new Slot(stacks.get(in).getStack(), guiLeft + 10 + ii * 20,
+						guiTop + 10 + jj * 20, stacks.get(in).getSize())
+						.drawTooltip(mouseX, mouseY);
+				index++;
+			}
 		}
 
 	}
@@ -81,7 +93,6 @@ public class GuiRequest extends GuiContainer {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master
 					.getX(), master.getY(), master.getZ(), null));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
-
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton,
 					master.getX(), master.getY(), master.getZ(), over));
 		}

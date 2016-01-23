@@ -1,20 +1,9 @@
 package mrriegel.cworks.network;
 
 import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import mrriegel.cworks.gui.GuiRequest;
-import mrriegel.cworks.helper.StackWrapper;
-import mrriegel.cworks.tile.TileKabel;
+import mrriegel.cworks.helper.Inv;
 import mrriegel.cworks.tile.TileMaster;
-import mrriegel.cworks.tile.TileRequest;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -49,16 +38,15 @@ public class RequestMessage implements IMessage,
 				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj
 						.getTileEntity(new BlockPos(message.x, message.y,
 								message.z));
-				ItemStack s = TileEntityHopper.putStackInInventoryAllSlots(
-						ctx.getServerHandler().playerEntity.inventory,
-						message.stack, null);
-				if (s != null) {
+				ItemStack stack = tile.request(message.stack,
+						message.id == 0 ? 64 : 1, true, true);
+				int rest = Inv.addToInventoryWithLeftover(stack,
+						ctx.getServerHandler().playerEntity.inventory, false);
+				if (rest != 0) {
 					ctx.getServerHandler().playerEntity
-							.dropPlayerItemWithRandomChoice(s, false);
+							.dropPlayerItemWithRandomChoice(
+									Inv.copyStack(stack, rest), false);
 				}
-				// ctx.getServerHandler().playerEntity.inventory
-				// .addItemStackToInventory(tile.request(message.stack,
-				// message.id == 0 ? 64 : 1, true, true));
 				PacketHandler.INSTANCE.sendTo(
 						new StacksMessage(tile.getStacks()),
 						ctx.getServerHandler().playerEntity);

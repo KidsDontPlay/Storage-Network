@@ -39,7 +39,7 @@ public class GuiHandler implements IGuiHandler {
 					z));
 			return new GuiCable(new ContainerCable(tile, player.inventory));
 		}
-		if(ID==REQUEST){
+		if (ID == REQUEST) {
 			return new GuiRequest(new ContainerRequest(
 					(TileRequest) world.getTileEntity(new BlockPos(x, y, z)),
 					player.inventory));

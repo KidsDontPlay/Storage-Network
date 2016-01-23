@@ -1,6 +1,5 @@
 package mrriegel.cworks.gui;
 
-import mrriegel.cworks.init.ModItems;
 import mrriegel.cworks.network.PacketHandler;
 import mrriegel.cworks.network.StacksMessage;
 import mrriegel.cworks.tile.TileMaster;
@@ -8,11 +7,7 @@ import mrriegel.cworks.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.ContainerDispenser;
-import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -20,11 +15,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.util.Constants;
 
 public class ContainerRequest extends Container {
@@ -33,6 +25,7 @@ public class ContainerRequest extends Container {
 	public InventoryCraftResult result;
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
 	public InventoryRequest back;
+	String inv = "";
 
 	class RSlot extends Slot {
 
@@ -44,7 +37,7 @@ public class ContainerRequest extends Container {
 		@Override
 		public void onSlotChanged() {
 			super.onSlotChanged();
-			slotChanged();
+			// slotChanged();
 		}
 
 	}
@@ -61,8 +54,14 @@ public class ContainerRequest extends Container {
 		@Override
 		public void onSlotChanged() {
 			super.onSlotChanged();
-			slotChanged();
-			onCraftMatrixChanged(null);
+			// slotChanged();
+			// onCraftMatrixChanged(null);
+		}
+
+		@Override
+		public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
+			super.onPickupFromSlot(playerIn, stack);
+			// this.onSlotChanged();
 		}
 
 	}
@@ -74,7 +73,8 @@ public class ContainerRequest extends Container {
 		result = new InventoryCraftResult();
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
-		NBTTagList invList = nbt.getTagList("matrix", Constants.NBT.TAG_COMPOUND);
+		NBTTagList invList = nbt.getTagList("matrix",
+				Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
@@ -85,7 +85,8 @@ public class ContainerRequest extends Container {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
 					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
 					(EntityPlayerMP) playerInv.player);
-
+		this.addSlotToContainer(new OutputSlot(playerInv.player, craftMatrix,
+				result, 0, 101, 128));
 		int index = 0;
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
@@ -100,8 +101,7 @@ public class ContainerRequest extends Container {
 						110 + i * 18));
 			}
 		}
-		this.addSlotToContainer(new OutputSlot(playerInv.player, craftMatrix,
-				result, index++, 101, 128));
+
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9,
@@ -124,15 +124,36 @@ public class ContainerRequest extends Container {
 					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
 					(EntityPlayerMP) playerInv.player);
 		}
+		if (!inv.equals(get())) {
+			slotChanged();
+			inv = get();
+		}
 	}
 
+	String get() {
+		String s = "";
+		for (int i = 0; i < back.INVSIZE; i++)
+			if (back.getStackInSlot(i) != null)
+				s += back.getStackInSlot(i).toString();
+		for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
+			if (craftMatrix.getStackInSlot(i) != null)
+				s += craftMatrix.getStackInSlot(i).toString();
+		return s;
+	}
+
+	@Override
 	public void onCraftMatrixChanged(IInventory inventoryIn) {
 		this.result.setInventorySlotContents(0, CraftingManager.getInstance()
 				.findMatchingRecipe(this.craftMatrix, tile.getWorld()));
 	}
 
+	@Override
+	public void onContainerClosed(EntityPlayer playerIn) {
+		super.onContainerClosed(playerIn);
+		slotChanged();
+	}
+
 	public void slotChanged() {
-//		onCraftMatrixChanged(null);
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
 		NBTTagList invList = new NBTTagList();
@@ -169,12 +190,11 @@ public class ContainerRequest extends Container {
 			itemstack = itemstack1.copy();
 
 			if (slotIndex <= 15) {
-				if (!this.mergeItemStack(itemstack1, 15, 15 + 37, true)) {
+				if (!this.mergeItemStack(itemstack1, 15, 15 + 37, true))
 					return null;
-				}
 				slot.onSlotChange(itemstack1, itemstack);
 			} else {
-				if (!this.mergeItemStack(itemstack1, 9, 15, false))
+				if (!this.mergeItemStack(itemstack1, 10, 16, false))
 					return null;
 			}
 			if (itemstack1.stackSize == 0) {
@@ -195,6 +215,12 @@ public class ContainerRequest extends Container {
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		return true;
+	}
+
+	@Override
+	public boolean canMergeSlot(ItemStack stack, Slot p_94530_2_) {
+		return p_94530_2_.inventory != this.result
+				&& super.canMergeSlot(stack, p_94530_2_);
 	}
 
 }

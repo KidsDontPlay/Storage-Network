@@ -3,6 +3,7 @@ package mrriegel.cworks.helper;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -110,10 +111,13 @@ public class Inv {
 	/** nicked from reika */
 	public static int addToInventoryWithLeftover(ItemStack stack,
 			IInventory inventory, boolean simulate) {
+		if (stack == null)
+			return 0;
+		int minus = inventory instanceof InventoryPlayer ? 4 : 0;
 		int left = stack.stackSize;
 		int max = Math.min(inventory.getInventoryStackLimit(),
 				stack.getMaxStackSize());
-		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+		for (int i = 0; i < inventory.getSizeInventory() - minus; i++) {
 			ItemStack in = inventory.getStackInSlot(i);
 			if (!inventory.isItemValidForSlot(i, stack))
 				continue;
@@ -130,7 +134,7 @@ public class Inv {
 				}
 			}
 		}
-		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+		for (int i = 0; i < inventory.getSizeInventory() - minus; i++) {
 			ItemStack in = inventory.getStackInSlot(i);
 			if (!inventory.isItemValidForSlot(i, stack))
 				continue;
@@ -194,7 +198,7 @@ public class Inv {
 			return null;
 		ItemStack tmp = stack.copy();
 		tmp.stackSize = Math.max(0, size);
-		if(tmp.stackSize==0)
+		if (tmp.stackSize == 0)
 			return null;
 		return tmp;
 	}

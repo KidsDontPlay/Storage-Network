@@ -1,21 +1,15 @@
 package mrriegel.cworks.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import io.netty.buffer.ByteBuf;
 import mrriegel.cworks.gui.GuiRequest;
 import mrriegel.cworks.helper.StackWrapper;
-import mrriegel.cworks.tile.TileKabel;
-import mrriegel.cworks.tile.TileMaster;
-import mrriegel.cworks.tile.TileRequest;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

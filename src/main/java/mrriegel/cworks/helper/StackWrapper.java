@@ -1,13 +1,7 @@
 package mrriegel.cworks.helper;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
-import net.minecraftforge.common.util.Constants;
 
 public class StackWrapper {
 	ItemStack stack;

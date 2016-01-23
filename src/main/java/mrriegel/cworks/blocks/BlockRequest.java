@@ -1,7 +1,5 @@
 package mrriegel.cworks.blocks;
 
-import com.sun.jna.platform.win32.WinDef.WPARAM;
-
 import mrriegel.cworks.CableWorks;
 import mrriegel.cworks.CreativeTab;
 import mrriegel.cworks.handler.GuiHandler;

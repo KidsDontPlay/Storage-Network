@@ -3,19 +3,12 @@ package mrriegel.cworks.tile;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 import mrriegel.cworks.gui.ContainerRequest;
-import mrriegel.cworks.gui.InventoryRequest;
 import mrriegel.cworks.helper.Inv;
 import mrriegel.cworks.network.PacketHandler;
 import mrriegel.cworks.network.RequestMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerWorkbench;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,6 +20,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 public class TileRequest extends TileEntity implements ITickable {
 	private BlockPos master;
@@ -46,7 +42,7 @@ public class TileRequest extends TileEntity implements ITickable {
 		 * 
 		 * weg
 		 */
-		if (worldObj.getTotalWorldTime() % 20 != 0)
+		if (worldObj.getTotalWorldTime() % 20 != 0 || worldObj.isRemote)
 			return;
 		// if(1==1)
 		// return;
@@ -60,7 +56,6 @@ public class TileRequest extends TileEntity implements ITickable {
 					back.put(i, null);
 					markDirty();
 					worldObj.markBlockForUpdate(pos);
-					System.out.println(i + "");
 					for (EntityPlayer p : MinecraftServer.getServer()
 							.getConfigurationManager().playerEntityList) {
 						Container c = p.openContainer;
