@@ -12,7 +12,6 @@ import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
@@ -31,8 +30,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class GuiRequest extends GuiContainer {
-	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID
-			+ ":textures/gui/request.png");
+	private ResourceLocation texture = new ResourceLocation(
+			StorageNetwork.MODID + ":textures/gui/request.png");
 	int page = 1, maxPage = 1;
 	public List<StackWrapper> stacks;
 	ItemStack over;
@@ -187,8 +186,6 @@ public class GuiRequest extends GuiContainer {
 		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
 		if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master
-					.getX(), master.getY(), master.getZ(), null));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton,
 					master.getX(), master.getY(), master.getZ(), over));
@@ -215,7 +212,6 @@ public class GuiRequest extends GuiContainer {
 		int x, y, size;
 
 		public Slot(ItemStack stack, int x, int y, int size) {
-			super();
 			this.stack = stack;
 			this.x = x;
 			this.y = y;

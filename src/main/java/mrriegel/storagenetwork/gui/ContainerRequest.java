@@ -1,7 +1,11 @@
 package mrriegel.storagenetwork.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.network.SyncMatrixMessage;
 import mrriegel.storagenetwork.network.SyncMessage;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -19,7 +23,6 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ContainerRequest extends Container {
 	public InventoryPlayer playerInv;
@@ -29,46 +32,8 @@ public class ContainerRequest extends Container {
 	public InventoryRequest back;
 	String inv = "";
 
-	class RSlot extends Slot {
-
-		public RSlot(IInventory inventoryIn, int index, int xPosition,
-				int yPosition) {
-			super(inventoryIn, index, xPosition, yPosition);
-		}
-
-		@Override
-		public void onSlotChanged() {
-			super.onSlotChanged();
-			// slotChanged();
-		}
-
-	}
-
-	class OutputSlot extends SlotCrafting {
-
-		public OutputSlot(EntityPlayer player,
-				InventoryCrafting craftingInventory, IInventory p_i45790_3_,
-				int slotIndex, int xPosition, int yPosition) {
-			super(player, craftingInventory, p_i45790_3_, slotIndex, xPosition,
-					yPosition);
-		}
-
-		@Override
-		public void onSlotChanged() {
-			super.onSlotChanged();
-			// slotChanged();
-			// onCraftMatrixChanged(null);
-		}
-
-		@Override
-		public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
-			super.onPickupFromSlot(playerIn, stack);
-			// this.onSlotChanged();
-		}
-
-	}
-
-	public ContainerRequest(TileRequest tile, InventoryPlayer playerInv) {
+	public ContainerRequest(final TileRequest tile,
+			final InventoryPlayer playerInv) {
 		this.tile = tile;
 		this.playerInv = playerInv;
 		back = new InventoryRequest(tile);
@@ -87,19 +52,44 @@ public class ContainerRequest extends Container {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
 					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
 					(EntityPlayerMP) playerInv.player);
-		this.addSlotToContainer(new OutputSlot(playerInv.player, craftMatrix,
-				result, 0, 101, 128));
+		this.addSlotToContainer(new SlotCrafting(playerInv.player, craftMatrix,
+				result, 0, 101, 128) {
+			@Override
+			public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
+				if (playerIn.worldObj.isRemote) {
+					super.onPickupFromSlot(playerIn, stack);
+					return;
+				}
+				List<ItemStack> lis = new ArrayList<ItemStack>();
+				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
+					lis.add(craftMatrix.getStackInSlot(i));
+				super.onPickupFromSlot(playerIn, stack);
+				TileMaster t = (TileMaster) tile.getWorld().getTileEntity(
+						tile.getMaster());
+				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
+					if (craftMatrix.getStackInSlot(i) == null) {
+						ItemStack req = t.request(lis.get(i), 1, true, true);
+						craftMatrix.setInventorySlotContents(i, req);
+						PacketHandler.INSTANCE.sendTo(new SyncMatrixMessage(
+								req, i), (EntityPlayerMP) playerIn);
+					}
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks()),
+						(EntityPlayerMP) playerIn);
+				detectAndSendChanges();
+			}
+
+		});
 		int index = 0;
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				this.addSlotToContainer(new RSlot(craftMatrix, index++,
+				this.addSlotToContainer(new Slot(craftMatrix, index++,
 						8 + j * 18, 110 + i * 18));
 			}
 		}
 		index = 0;
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 2; ++j) {
-				this.addSlotToContainer(new RSlot(back, index++, 134 + j * 18,
+				this.addSlotToContainer(new Slot(back, index++, 134 + j * 18,
 						110 + i * 18));
 			}
 		}
@@ -120,10 +110,6 @@ public class ContainerRequest extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		// for(int i=0;i<back.getSizeInventory();i++)
-		// System.out.print(FMLCommonHandler.instance().getEffectiveSide()+":"+
-		// back.getStackInSlot(i)+" ");
-		// System.out.println();
 		if (!tile.getWorld().isRemote
 				&& tile.getWorld().getTotalWorldTime() % 50 == 0) {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile

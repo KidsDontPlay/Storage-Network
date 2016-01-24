@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.api.IConnectable;
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModBlocks;
-import mrriegel.storagenetwork.tile.IConnection;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
-import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -94,16 +93,16 @@ public class BlockKabel extends BlockContainer {
 		worldIn.markBlockForUpdate(pos);
 		switch (tile.getKind()) {
 		case exKabel:
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn,
-					pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
+					worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		case imKabel:
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn,
-					pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
+					worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		case storageKabel:
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn,
-					pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
+					worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		default:
 			break;
@@ -126,7 +125,8 @@ public class BlockKabel extends BlockContainer {
 		setConnections(worldIn, pos, state);
 	}
 
-	private void setConnections(World worldIn, BlockPos pos, IBlockState state) {
+	public static void setConnections(World worldIn, BlockPos pos,
+			IBlockState state) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
@@ -163,9 +163,9 @@ public class BlockKabel extends BlockContainer {
 				break;
 			if (worldIn.getTileEntity(n) instanceof TileMaster)
 				tile.setMaster(worldIn.getTileEntity(n).getPos());
-			if (worldIn.getTileEntity(n) instanceof IConnection
-					&& ((IConnection) worldIn.getTileEntity(n)).getMaster() != null)
-				tile.setMaster(((IConnection) worldIn.getTileEntity(n))
+			if (worldIn.getTileEntity(n) instanceof IConnectable
+					&& ((IConnectable) worldIn.getTileEntity(n)).getMaster() != null)
+				tile.setMaster(((IConnectable) worldIn.getTileEntity(n))
 						.getMaster());
 		}
 		if (tile.getMaster() == null
@@ -177,21 +177,21 @@ public class BlockKabel extends BlockContainer {
 					.refreshNetwork();
 	}
 
-	private void setAllMastersNull(World world, BlockPos pos) {
+	private static void setAllMastersNull(World world, BlockPos pos) {
 		((TileKabel) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : TileMaster.getSides(pos)) {
-			if (world.getTileEntity(bl) instanceof IConnection
+			if (world.getTileEntity(bl) instanceof IConnectable
 					&& world.getChunkFromBlockCoords(bl).isLoaded()
-					&& ((IConnection) world.getTileEntity(bl)).getMaster() != null) {
-				((IConnection) world.getTileEntity(bl)).setMaster(null);
+					&& ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
+				((IConnectable) world.getTileEntity(bl)).setMaster(null);
 				setAllMastersNull(world, bl);
 			}
-//			if (world.getBlockState(bl).getBlock() instanceof BlockRequest
-//					&& world.getChunkFromBlockCoords(bl).isLoaded()
-//					&& ((TileRequest) world.getTileEntity(bl)).getMaster() != null) {
-//				((TileRequest) world.getTileEntity(bl)).setMaster(null);
-//				setAllMastersNull(world, bl);
-//			}
+			// if (world.getBlockState(bl).getBlock() instanceof BlockRequest
+			// && world.getChunkFromBlockCoords(bl).isLoaded()
+			// && ((TileRequest) world.getTileEntity(bl)).getMaster() != null) {
+			// ((TileRequest) world.getTileEntity(bl)).setMaster(null);
+			// setAllMastersNull(world, bl);
+			// }
 		}
 	}
 
@@ -306,77 +306,18 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn,
 			BlockPos pos) {
-		// TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-		// BlockPos inv = tile.getConnectedInventory();
-		// if(worldIn.getTileEntity(inv)==null||!(worldIn.getTileEntity(inv)
-		// instanceof IInventory))
-		// inv=null;
-		// if (worldIn.getTileEntity(pos.down()) instanceof IInventory
-		// && state.getValue(DOWN))
-		// inv = pos.down();
-		// else if (worldIn.getTileEntity(pos.up()) instanceof IInventory
-		// && state.getValue(UP))
-		// inv = pos.up();
-		// else if (worldIn.getTileEntity(pos.east()) instanceof IInventory
-		// && state.getValue(EAST))
-		// inv = pos.east();
-		// else if (worldIn.getTileEntity(pos.west()) instanceof IInventory
-		// && state.getValue(WEST))
-		// inv = pos.west();
-		// else if (worldIn.getTileEntity(pos.south()) instanceof IInventory
-		// && state.getValue(SOUTH))
-		// inv = pos.south();
-		// else if (worldIn.getTileEntity(pos.north()) instanceof IInventory
-		// && state.getValue(NORTH))
-		// inv = pos.north();
-		// Map<BlockPos, Boolean> mapNew = new HashMap<BlockPos, Boolean>();
 		boolean dNew = this.canConnectTo(worldIn, pos, pos.down());
 		boolean uNew = this.canConnectTo(worldIn, pos, pos.up());
 		boolean eNew = this.canConnectTo(worldIn, pos, pos.east());
 		boolean wNew = this.canConnectTo(worldIn, pos, pos.west());
 		boolean sNew = this.canConnectTo(worldIn, pos, pos.south());
 		boolean nNew = this.canConnectTo(worldIn, pos, pos.north());
-		// mapNew.put(pos.down(), dNew);
-		// mapNew.put(pos.up(), uNew);
-		// mapNew.put(pos.east(), eNew);
-		// mapNew.put(pos.west(), wNew);
-		// mapNew.put(pos.south(), sNew);
-		// mapNew.put(pos.north(), nNew);
-
-		// List<BlockPos> invs = getInventories(worldIn, mapNew);
-
-		// for (BlockPos p : invs) {
-		// if (p.equals(pos.down())) {
-		// if (state.getValue(BOTTOM) != dNew)
-		// dNew = false;
-		// }
-		// if (p.equals(pos.up())) {
-		// if (state.getValue(TOP) != uNew)
-		// uNew = false;
-		// }
-		// if (p.equals(pos.east())) {
-		// if (state.getValue(EAST) != eNew)
-		// eNew = false;
-		// }
-		// if (p.equals(pos.west())) {
-		// if (state.getValue(WEST) != wNew)
-		// wNew = false;
-		// }
-		// if (p.equals(pos.south())) {
-		// if (state.getValue(SOUTH) != sNew)
-		// sNew = false;
-		// }
-		// if (p.equals(pos.north())) {
-		// if (state.getValue(NORTH) != nNew)
-		// nNew = false;
-		// }
-		// }
-		boolean dOld = state.getValue(DOWN);
-		boolean uOld = state.getValue(UP);
-		boolean eOld = state.getValue(EAST);
-		boolean wOld = state.getValue(WEST);
-		boolean sOld = state.getValue(SOUTH);
-		boolean nOld = state.getValue(NORTH);
+		// boolean dOld = state.getValue(DOWN);
+		// boolean uOld = state.getValue(UP);
+		// boolean eOld = state.getValue(EAST);
+		// boolean wOld = state.getValue(WEST);
+		// boolean sOld = state.getValue(SOUTH);
+		// boolean nOld = state.getValue(NORTH);
 
 		return state.withProperty(NORTH, nNew).withProperty(EAST, eNew)
 				.withProperty(SOUTH, sNew).withProperty(WEST, wNew)

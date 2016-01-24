@@ -1,17 +1,9 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import mrriegel.storagenetwork.gui.ContainerRequest;
-import mrriegel.storagenetwork.gui.GuiRequest;
-import mrriegel.storagenetwork.helper.StackWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

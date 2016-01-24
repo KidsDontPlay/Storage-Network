@@ -21,8 +21,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiCable extends GuiContainer {
-	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID
-			+ ":textures/gui/cable.png");
+	private ResourceLocation texture = new ResourceLocation(
+			StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
 	Button pPlus, pMinus, meta, white;
 	TileKabel tile;

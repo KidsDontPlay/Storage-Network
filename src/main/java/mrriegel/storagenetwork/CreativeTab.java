@@ -1,9 +1,7 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.init.ModBlocks;
-import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 
 public class CreativeTab {

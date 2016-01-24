@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.tile;
 import java.util.HashMap;
 import java.util.Map;
 
-import mrriegel.storagenetwork.blocks.BlockKabel;
+import mrriegel.api.IConnectable;
 import mrriegel.storagenetwork.gui.ContainerRequest;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -26,7 +26,7 @@ import net.minecraftforge.common.util.Constants;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileRequest extends TileEntity implements ITickable,IConnection {
+public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	private BlockPos master;
 	public Map<Integer, ItemStack> back = new HashMap<Integer, ItemStack>();
 	public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
@@ -167,10 +167,12 @@ public class TileRequest extends TileEntity implements ITickable,IConnection {
 		readFromNBT(pkt.getNbtCompound());
 	}
 
+	@Override
 	public BlockPos getMaster() {
 		return master;
 	}
 
+	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
 	}

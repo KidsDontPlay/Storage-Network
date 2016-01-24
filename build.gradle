@@ -20,12 +20,12 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.8.9-1.0"
+version = "1.8.9-1.1"
 group= "mrriegel.storagenetwork" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "StorageNetwork"
 
 minecraft {
-    version = "1.8.9-11.15.0.1709"
+    version = "1.8.9-11.15.0.1718"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -38,27 +38,7 @@ minecraft {
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    deobfCompile "mezz.jei:jei_1.8.9:2.22.3.105"
 }
 
 processResources
@@ -80,4 +60,12 @@ processResources
         exclude 'mcmod.info'
     }
 }
+repositories {
+  maven {
+    url "http://dvs1.progwml6.com/files/maven"
+  }
+}
 
+minecraft {
+  useDepAts = true
+}

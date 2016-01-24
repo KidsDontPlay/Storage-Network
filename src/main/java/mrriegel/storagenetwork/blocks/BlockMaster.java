@@ -1,7 +1,15 @@
 package mrriegel.storagenetwork.blocks;
 
-import mrriegel.storagenetwork.StorageNetwork;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -64,36 +72,31 @@ public class BlockMaster extends BlockContainer {
 			float hitX, float hitY, float hitZ) {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		tile.refreshNetwork();
-		if (!worldIn.isRemote && playerIn.getHeldItem() == null) {
-			playerIn.addChatMessage(new ChatComponentText("Cables: "
-					+ tile.cables.size()));
-			int defaul = 0, storage = 0, ex = 0, im = 0, vac = 0;
-			for (BlockPos p : tile.cables) {
-				TileKabel k = (TileKabel) worldIn.getTileEntity(p);
-				switch (k.getKind()) {
-				case kabel:
-					defaul++;
-					break;
-				case storageKabel:
-					storage++;
-					break;
-				case exKabel:
-					ex++;
-					break;
-				case imKabel:
-					im++;
-					break;
-				case vacuumKabel:
-					vac++;
-					break;
-				}
+		if (!worldIn.isRemote) {
+			playerIn.addChatMessage(new ChatComponentText("Connectables: "
+					+ tile.connectables.size()));
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			for (BlockPos p : tile.connectables) {
+				String block = worldIn.getBlockState(p).getBlock()
+						.getLocalizedName();
+				map.put(block, map.get(block) != null ? (map.get(block) + 1)
+						: 1);
+
 			}
-			playerIn.addChatMessage(new ChatComponentText("   Link: " + defaul));
-			playerIn.addChatMessage(new ChatComponentText("   Storage: "
-					+ storage));
-			playerIn.addChatMessage(new ChatComponentText("   Export: " + ex));
-			playerIn.addChatMessage(new ChatComponentText("   Import: " + im));
-			playerIn.addChatMessage(new ChatComponentText("   Vacuum: " + vac));
+			List<Entry<String, Integer>> lis = new ArrayList<Map.Entry<String, Integer>>();
+			for (Entry<String, Integer> e : map.entrySet()) {
+				lis.add(e);
+			}
+			Collections.sort(lis, new Comparator<Entry<String, Integer>>() {
+				@Override
+				public int compare(Entry<String, Integer> o1,
+						Entry<String, Integer> o2) {
+					return Integer.compare(o2.getValue(), o1.getValue());
+				}
+			});
+			for (Entry<String, Integer> e : lis)
+				playerIn.addChatMessage(new ChatComponentText("   "
+						+ e.getKey() + ": " + e.getValue()));
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side,
 				hitX, hitY, hitZ);

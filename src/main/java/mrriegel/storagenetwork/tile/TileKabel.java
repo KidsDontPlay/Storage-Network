@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mrriegel.api.IConnectable;
 import mrriegel.storagenetwork.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -22,7 +23,7 @@ import net.minecraftforge.common.util.Constants;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileKabel extends TileEntity implements IConnection{
+public class TileKabel extends TileEntity implements IConnectable {
 	private Kind kind;
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
@@ -138,10 +139,12 @@ public class TileKabel extends TileEntity implements IConnection{
 
 	}
 
+	@Override
 	public BlockPos getMaster() {
 		return master;
 	}
 
+	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
 	}

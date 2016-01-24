@@ -1,8 +1,6 @@
 package mrriegel.storagenetwork.network;
 
-import tv.twitch.MessageLevel;
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.util.BlockPos;

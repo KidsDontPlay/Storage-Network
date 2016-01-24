@@ -1,8 +1,9 @@
-package mrriegel.storagenetwork.tile;
+package mrriegel.api;
 
 import net.minecraft.util.BlockPos;
 
-public interface IConnection {
+public interface IConnectable {
+
 	public BlockPos getMaster();
 
 	public void setMaster(BlockPos master);

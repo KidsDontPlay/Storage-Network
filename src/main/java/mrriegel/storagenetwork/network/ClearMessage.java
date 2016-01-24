@@ -40,6 +40,11 @@ public class ClearMessage implements IMessage,
 						else
 							c.craftMatrix.setInventorySlotContents(i,
 									Inv.copyStack(s, rest));
+						PacketHandler.INSTANCE.sendTo(
+								new StacksMessage(((TileMaster) w
+										.getTileEntity(c.tile.getMaster()))
+										.getStacks()),
+								ctx.getServerHandler().playerEntity);
 					}
 
 				}

@@ -40,14 +40,14 @@ public class ClientProxy extends CommonProxy {
 				new ModelResourceLocation(StorageNetwork.MODID + ":kabel",
 						"inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.storageKabel), 0,
-				new ModelResourceLocation(StorageNetwork.MODID + ":storageKabel",
-						"inventory"));
+				new ModelResourceLocation(StorageNetwork.MODID
+						+ ":storageKabel", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.imKabel), 0,
 				new ModelResourceLocation(StorageNetwork.MODID + ":imKabel",
 						"inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.vacuumKabel), 0,
-				new ModelResourceLocation(StorageNetwork.MODID + ":vacuumKabel",
-						"inventory"));
+				new ModelResourceLocation(
+						StorageNetwork.MODID + ":vacuumKabel", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.master), 0,
 				new ModelResourceLocation(StorageNetwork.MODID + ":master",
 						"inventory"));
