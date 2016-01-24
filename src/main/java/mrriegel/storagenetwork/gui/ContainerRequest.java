@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.gui;
 
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
+import mrriegel.storagenetwork.network.SyncMessage;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +19,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ContainerRequest extends Container {
 	public InventoryPlayer playerInv;
@@ -118,6 +120,10 @@ public class ContainerRequest extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
+		// for(int i=0;i<back.getSizeInventory();i++)
+		// System.out.print(FMLCommonHandler.instance().getEffectiveSide()+":"+
+		// back.getStackInSlot(i)+" ");
+		// System.out.println();
 		if (!tile.getWorld().isRemote
 				&& tile.getWorld().getTotalWorldTime() % 50 == 0) {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
@@ -177,6 +183,13 @@ public class ContainerRequest extends Container {
 		}
 		nbt.setTag("matrix", invList);
 		tile.readFromNBT(nbt);
+		if (!tile.getWorld().isRemote)
+			PacketHandler.INSTANCE.sendTo(
+					new SyncMessage(back.getStackInSlot(0), back
+							.getStackInSlot(1), back.getStackInSlot(2), back
+							.getStackInSlot(3), back.getStackInSlot(4), back
+							.getStackInSlot(5)),
+					(EntityPlayerMP) playerInv.player);
 
 	}
 

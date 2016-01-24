@@ -19,8 +19,10 @@ public class PacketHandler {
 				id++, Side.SERVER);
 		INSTANCE.registerMessage(ClearMessage.class, ClearMessage.class, id++,
 				Side.SERVER);
-		INSTANCE.registerMessage(SortMessage.class, SortMessage.class,
-				id++, Side.SERVER);
+		INSTANCE.registerMessage(SortMessage.class, SortMessage.class, id++,
+				Side.SERVER);
+		INSTANCE.registerMessage(SyncMessage.class, SyncMessage.class, id++,
+				Side.CLIENT);
 	}
 
 }

@@ -33,12 +33,12 @@ public class TileMaster extends TileEntity implements ITickable {
 	public List<BlockPos> cables, storageInventorys, imInventorys,
 			exInventorys;
 
-	// List<ItemStack> stacks = new ArrayList<ItemStack>();
-
 	public List<StackWrapper> getStacks() {
 		List<StackWrapper> stacks = new ArrayList<StackWrapper>();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : cables) {
+			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
+				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
 			if (tile == null) {
 				refreshNetwork();
@@ -138,11 +138,11 @@ public class TileMaster extends TileEntity implements ITickable {
 				worldObj.setBlockToAir(pos);
 				continue;
 			}
-			if (worldObj.getBlockState(bl).getBlock() instanceof BlockKabel
+			if (worldObj.getTileEntity(bl) instanceof IConnection
 					&& !cables.contains(bl)
 					&& worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				cables.add(bl);
-				((TileKabel) worldObj.getTileEntity(bl)).setMaster(this.pos);
+				((IConnection) worldObj.getTileEntity(bl)).setMaster(this.pos);
 				addCables(bl, num++);
 			}
 		}
@@ -153,6 +153,8 @@ public class TileMaster extends TileEntity implements ITickable {
 		imInventorys = new ArrayList<BlockPos>();
 		exInventorys = new ArrayList<BlockPos>();
 		for (BlockPos cable : cables) {
+			if (!(worldObj.getTileEntity(cable) instanceof TileKabel))
+				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(cable);
 			// for (BlockPos p : getSides(cable)) {
 			// if (worldObj.getTileEntity(p) instanceof TileRequest) {
@@ -217,6 +219,7 @@ public class TileMaster extends TileEntity implements ITickable {
 			refreshNetwork();
 		for (BlockPos p : cables) {
 			if (worldObj.getTileEntity(p) != null
+					&& worldObj.getTileEntity(p) instanceof TileKabel
 					&& ((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
 				int range = 2;
 
@@ -251,6 +254,8 @@ public class TileMaster extends TileEntity implements ITickable {
 	public int insertStack(ItemStack stack, IInventory source) {
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : cables) {
+			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
+				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
 			if (tile.getKind() == Kind.storageKabel
 					&& tile.getConnectedInventory() != null) {
@@ -330,6 +335,8 @@ public class TileMaster extends TileEntity implements ITickable {
 			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : cables) {
+			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
+				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
 			if (tile.getKind() == Kind.imKabel
 					&& tile.getConnectedInventory() != null) {
@@ -582,7 +589,7 @@ public class TileMaster extends TileEntity implements ITickable {
 	public void update() {
 		if (cables != null)
 			for (BlockPos p : cables)
-				if (!(worldObj.getTileEntity(p) instanceof TileKabel)) {
+				if (!(worldObj.getTileEntity(p) instanceof IConnection)) {
 					refreshNetwork();
 					break;
 				}

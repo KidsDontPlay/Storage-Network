@@ -9,6 +9,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModBlocks;
+import mrriegel.storagenetwork.tile.IConnection;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -162,9 +163,9 @@ public class BlockKabel extends BlockContainer {
 				break;
 			if (worldIn.getTileEntity(n) instanceof TileMaster)
 				tile.setMaster(worldIn.getTileEntity(n).getPos());
-			if (worldIn.getTileEntity(n) instanceof TileKabel
-					&& ((TileKabel) worldIn.getTileEntity(n)).getMaster() != null)
-				tile.setMaster(((TileKabel) worldIn.getTileEntity(n))
+			if (worldIn.getTileEntity(n) instanceof IConnection
+					&& ((IConnection) worldIn.getTileEntity(n)).getMaster() != null)
+				tile.setMaster(((IConnection) worldIn.getTileEntity(n))
 						.getMaster());
 		}
 		if (tile.getMaster() == null
@@ -179,10 +180,10 @@ public class BlockKabel extends BlockContainer {
 	private void setAllMastersNull(World world, BlockPos pos) {
 		((TileKabel) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : TileMaster.getSides(pos)) {
-			if (world.getBlockState(bl).getBlock() instanceof BlockKabel
+			if (world.getTileEntity(bl) instanceof IConnection
 					&& world.getChunkFromBlockCoords(bl).isLoaded()
-					&& ((TileKabel) world.getTileEntity(bl)).getMaster() != null) {
-				((TileKabel) world.getTileEntity(bl)).setMaster(null);
+					&& ((IConnection) world.getTileEntity(bl)).getMaster() != null) {
+				((IConnection) world.getTileEntity(bl)).setMaster(null);
 				setAllMastersNull(world, bl);
 			}
 //			if (world.getBlockState(bl).getBlock() instanceof BlockRequest

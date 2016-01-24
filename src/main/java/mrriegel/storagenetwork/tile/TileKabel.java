@@ -22,7 +22,7 @@ import net.minecraftforge.common.util.Constants;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileKabel extends TileEntity {
+public class TileKabel extends TileEntity implements IConnection{
 	private Kind kind;
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;

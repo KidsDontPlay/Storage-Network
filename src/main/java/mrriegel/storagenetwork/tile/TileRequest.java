@@ -26,7 +26,7 @@ import net.minecraftforge.common.util.Constants;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileRequest extends TileEntity implements ITickable {
+public class TileRequest extends TileEntity implements ITickable,IConnection {
 	private BlockPos master;
 	public Map<Integer, ItemStack> back = new HashMap<Integer, ItemStack>();
 	public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
@@ -47,8 +47,6 @@ public class TileRequest extends TileEntity implements ITickable {
 		master = masterAround(worldObj, pos);
 		if (worldObj.getTotalWorldTime() % 20 != 0 || worldObj.isRemote)
 			return;
-		// if(1==1)
-		// return;
 		for (int i = 0; i < 6; i++) {
 			ItemStack s = back.get(i);
 			if (s != null) {

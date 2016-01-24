@@ -45,8 +45,8 @@ public class BlockMaster extends BlockContainer {
 			}
 		}
 		if (hasMaster) {
-			Block.spawnAsEntity(worldIn, pos, Inv.copyStack(stack, 1));
 			worldIn.setBlockToAir(pos);
+			Block.spawnAsEntity(worldIn, pos, Inv.copyStack(stack, 1));
 		} else {
 			if (worldIn.getTileEntity(pos) != null)
 				((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
@@ -88,8 +88,7 @@ public class BlockMaster extends BlockContainer {
 					break;
 				}
 			}
-			playerIn.addChatMessage(new ChatComponentText("   Link: "
-					+ defaul));
+			playerIn.addChatMessage(new ChatComponentText("   Link: " + defaul));
 			playerIn.addChatMessage(new ChatComponentText("   Storage: "
 					+ storage));
 			playerIn.addChatMessage(new ChatComponentText("   Export: " + ex));
