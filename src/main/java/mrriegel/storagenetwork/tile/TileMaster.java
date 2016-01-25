@@ -5,12 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import mrriegel.api.IConnectable;
+import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
+import net.minecraft.block.BlockBreakable;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -124,7 +125,6 @@ public class TileMaster extends TileEntity implements ITickable {
 		if (connectables == null)
 			connectables = new ArrayList<BlockPos>();
 		if (num >= ConfigHandler.maxCable) {
-			System.out.println("too much cables");
 			connectables = new ArrayList<BlockPos>();
 			return;
 		}
@@ -227,7 +227,6 @@ public class TileMaster extends TileEntity implements ITickable {
 						AxisAlignedBB.fromBounds(x - range, y - range, z
 								- range, x + range + 1, y + range + 1, z
 								+ range + 1));
-				System.out.println(items);
 				for (EntityItem item : items) {
 					if (item.getAge() < 40 || item.isDead)
 						continue;
@@ -583,7 +582,6 @@ public class TileMaster extends TileEntity implements ITickable {
 		}
 		if (result == 0)
 			return null;
-		System.out.println(stack);
 		return Inv.copyStack(stack, result);
 	}
 

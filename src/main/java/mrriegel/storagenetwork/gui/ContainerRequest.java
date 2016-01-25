@@ -5,7 +5,6 @@ import java.util.List;
 
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
-import mrriegel.storagenetwork.network.SyncMatrixMessage;
 import mrriegel.storagenetwork.network.SyncMessage;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -66,12 +65,11 @@ public class ContainerRequest extends Container {
 				super.onPickupFromSlot(playerIn, stack);
 				TileMaster t = (TileMaster) tile.getWorld().getTileEntity(
 						tile.getMaster());
+				detectAndSendChanges();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					if (craftMatrix.getStackInSlot(i) == null) {
 						ItemStack req = t.request(lis.get(i), 1, true, true);
 						craftMatrix.setInventorySlotContents(i, req);
-						PacketHandler.INSTANCE.sendTo(new SyncMatrixMessage(
-								req, i), (EntityPlayerMP) playerIn);
 					}
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks()),
 						(EntityPlayerMP) playerIn);
@@ -105,21 +103,6 @@ public class ContainerRequest extends Container {
 		}
 		this.onCraftMatrixChanged(this.craftMatrix);
 
-	}
-
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-		if (!tile.getWorld().isRemote
-				&& tile.getWorld().getTotalWorldTime() % 50 == 0) {
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
-					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
-					(EntityPlayerMP) playerInv.player);
-		}
-		if (!inv.equals(get())) {
-			slotChanged();
-			inv = get();
-		}
 	}
 
 	String get() {
@@ -169,6 +152,7 @@ public class ContainerRequest extends Container {
 		}
 		nbt.setTag("matrix", invList);
 		tile.readFromNBT(nbt);
+		// detectAndSendChanges();
 		if (!tile.getWorld().isRemote)
 			PacketHandler.INSTANCE.sendTo(
 					new SyncMessage(back.getStackInSlot(0), back
@@ -213,6 +197,16 @@ public class ContainerRequest extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
+		if (!tile.getWorld().isRemote
+				&& tile.getWorld().getTotalWorldTime() % 50 == 0) {
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
+					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
+					(EntityPlayerMP) playerInv.player);
+		}
+		if (!inv.equals(get())) {
+			slotChanged();
+			inv = get();
+		}
 		return true;
 	}
 

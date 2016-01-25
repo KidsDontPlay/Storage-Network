@@ -23,8 +23,6 @@ public class PacketHandler {
 				Side.SERVER);
 		INSTANCE.registerMessage(SyncMessage.class, SyncMessage.class, id++,
 				Side.CLIENT);
-		INSTANCE.registerMessage(SyncMatrixMessage.class,
-				SyncMatrixMessage.class, id++, Side.CLIENT);
 		INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class,
 				id++, Side.SERVER);
 	}

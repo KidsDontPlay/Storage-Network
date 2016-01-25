@@ -1,4 +1,4 @@
-package mrriegel.api;
+package mrriegel.storagenetwork.api;
 
 import net.minecraft.util.BlockPos;
 

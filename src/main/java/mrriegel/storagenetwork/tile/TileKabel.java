@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mrriegel.api.IConnectable;
+import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.tile;
 import java.util.HashMap;
 import java.util.Map;
 
-import mrriegel.api.IConnectable;
+import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.gui.ContainerRequest;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.network.PacketHandler;
