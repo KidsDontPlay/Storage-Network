@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -150,10 +149,6 @@ public class TileMaster extends TileEntity implements ITickable {
 	private void addCables(BlockPos pos, int num) {
 		if (connectables == null)
 			connectables = new ArrayList<BlockPos>();
-		if (num >= ConfigHandler.maxCable) {
-			connectables = new ArrayList<BlockPos>();
-			return;
-		}
 		for (BlockPos bl : getSides(pos)) {
 			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master
 					&& !bl.equals(this.pos)
@@ -170,6 +165,7 @@ public class TileMaster extends TileEntity implements ITickable {
 					&& worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
+				worldObj.markBlockForUpdate(bl);
 				addCables(bl, num++);
 			}
 		}

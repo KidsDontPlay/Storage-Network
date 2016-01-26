@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -250,7 +251,12 @@ public class GuiRequest extends GuiContainer {
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				renderToolTip(stack, mx, my);
+				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+					renderToolTip(stack, mx, my);
+				else
+					drawHoveringText(
+							Arrays.asList(new String[] { "Amount: "
+									+ String.valueOf(size) }), mx, my);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}

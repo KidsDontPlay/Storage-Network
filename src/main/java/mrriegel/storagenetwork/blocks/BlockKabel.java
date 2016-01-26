@@ -164,41 +164,29 @@ public class BlockKabel extends BlockContainer {
 		}
 		tile.setInventoryFace(face);
 		tile.setConnectedInventory(con);
-		tile.setMaster(null);
-		for (BlockPos n : TileMaster.getSides(pos)) {
-			if (tile.getMaster() != null)
-				break;
-			if (worldIn.getTileEntity(n) instanceof TileMaster)
-				tile.setMaster(worldIn.getTileEntity(n).getPos());
-			if (worldIn.getTileEntity(n) instanceof IConnectable
-					&& ((IConnectable) worldIn.getTileEntity(n)).getMaster() != null)
-				tile.setMaster(((IConnectable) worldIn.getTileEntity(n))
-						.getMaster());
-		}
-		if (tile.getMaster() == null
-				|| worldIn.getTileEntity(tile.getMaster()) == null
-				|| !(worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster))
+		if (tile.getMaster() != null) {
+			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
+
+			tile.setMaster(null);
+			worldIn.markBlockForUpdate(pos);
 			setAllMastersNull(worldIn, pos);
-		if (tile.getMaster() != null)
-			((TileMaster) worldIn.getTileEntity(tile.getMaster()))
-					.refreshNetwork();
+			if (mas instanceof TileMaster)
+				((TileMaster) mas).refreshNetwork();
+
+		}
+
 	}
 
 	private static void setAllMastersNull(World world, BlockPos pos) {
-		((TileKabel) world.getTileEntity(pos)).setMaster(null);
+		((IConnectable) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : TileMaster.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable
 					&& world.getChunkFromBlockCoords(bl).isLoaded()
 					&& ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
+				world.markBlockForUpdate(bl);
 				setAllMastersNull(world, bl);
 			}
-			// if (world.getBlockState(bl).getBlock() instanceof BlockRequest
-			// && world.getChunkFromBlockCoords(bl).isLoaded()
-			// && ((TileRequest) world.getTileEntity(bl)).getMaster() != null) {
-			// ((TileRequest) world.getTileEntity(bl)).setMaster(null);
-			// setAllMastersNull(world, bl);
-			// }
 		}
 	}
 
