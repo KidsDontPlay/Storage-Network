@@ -11,7 +11,6 @@ import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
-import net.minecraft.block.BlockBreakable;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -29,6 +28,8 @@ import net.minecraft.util.ITickable;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
+import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
 public class TileMaster extends TileEntity implements ITickable {
 	public List<BlockPos> connectables, storageInventorys, imInventorys,
@@ -56,7 +57,18 @@ public class TileMaster extends TileEntity implements ITickable {
 					.getConnectedInventory());
 			if (inv == null)
 				continue;
-			if (inv instanceof ISidedInventory) {
+			if (inv instanceof IDrawerGroup) {
+				IDrawerGroup group = (IDrawerGroup) inv;
+				for (int i = 0; i < group.getDrawerCount(); i++) {
+					if (!group.isDrawerEnabled(i))
+						continue;
+					IDrawer drawer = group.getDrawer(i);
+					ItemStack stack = drawer.getStoredItemPrototype();
+					if (stack != null && stack.getItem() != null) {
+	                    addToList(stacks, stack, drawer.getStoredItemCount());
+	                }
+				}
+			} else if (inv instanceof ISidedInventory) {
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(t
 						.getInventoryFace().getOpposite())) {
 					if (inv.getStackInSlot(i) != null
@@ -91,6 +103,20 @@ public class TileMaster extends TileEntity implements ITickable {
 		}
 		if (!added)
 			lis.add(new StackWrapper(s, s.stackSize));
+	}
+	
+	private void addToList(List<StackWrapper> lis, ItemStack s,int num) {
+		boolean added = false;
+		for (int i = 0; i < lis.size(); i++) {
+			ItemStack stack = lis.get(i).getStack();
+			if (s.isItemEqual(stack)
+					&& ItemStack.areItemStackTagsEqual(stack, s)) {
+				lis.get(i).setSize(lis.get(i).getSize() + num);
+				added = true;
+			}
+		}
+		if (!added)
+			lis.add(new StackWrapper(s, num));
 	}
 
 	@Override
