@@ -64,8 +64,8 @@ public class TileMaster extends TileEntity implements ITickable {
 					IDrawer drawer = group.getDrawer(i);
 					ItemStack stack = drawer.getStoredItemPrototype();
 					if (stack != null && stack.getItem() != null) {
-	                    addToList(stacks, stack, drawer.getStoredItemCount());
-	                }
+						addToList(stacks, stack, drawer.getStoredItemCount());
+					}
 				}
 			} else if (inv instanceof ISidedInventory) {
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(t
@@ -103,8 +103,8 @@ public class TileMaster extends TileEntity implements ITickable {
 		if (!added)
 			lis.add(new StackWrapper(s, s.stackSize));
 	}
-	
-	private void addToList(List<StackWrapper> lis, ItemStack s,int num) {
+
+	private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
 		boolean added = false;
 		for (int i = 0; i < lis.size(); i++) {
 			ItemStack stack = lis.get(i).getStack();
@@ -116,6 +116,14 @@ public class TileMaster extends TileEntity implements ITickable {
 		}
 		if (!added)
 			lis.add(new StackWrapper(s, num));
+	}
+
+	public int getAmount(ItemStack s) {
+		for (StackWrapper w : getStacks()) {
+			if (w.getStack().isItemEqual(s))
+				return w.getSize();
+		}
+		return 0;
 	}
 
 	@Override
@@ -157,7 +165,7 @@ public class TileMaster extends TileEntity implements ITickable {
 						.getBlock()
 						.dropBlockAsItem(worldObj, bl,
 								worldObj.getBlockState(bl), 0);
-				worldObj.setBlockToAir(pos);
+				worldObj.setBlockToAir(bl);
 				continue;
 			}
 			if (worldObj.getTileEntity(bl) instanceof IConnectable
@@ -253,16 +261,16 @@ public class TileMaster extends TileEntity implements ITickable {
 					if (item.getAge() < 40 || item.isDead)
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
-					// if (!worldObj.isRemote) {
-					int rest = insertStack(stack, null);
-					ItemStack r = stack.copy();
-					r.stackSize = rest;
-					if (rest <= 0)
-						item.setDead();
-					else
-						item.setEntityItemStack(r);
-					break;
-					// }
+					if (!worldObj.isRemote) {
+						int rest = insertStack(stack, null);
+						ItemStack r = stack.copy();
+						r.stackSize = rest;
+						if (rest <= 0)
+							item.setDead();
+						else
+							item.setEntityItemStack(r);
+						break;
+					}
 				}
 			}
 		}
@@ -315,7 +323,6 @@ public class TileMaster extends TileEntity implements ITickable {
 			if (remain == 0)
 				return 0;
 			in = Inv.copyStack(in, remain);
-			// stacks = getStacks();
 			inv.markDirty();
 		}
 		for (TileKabel t : list) {
@@ -335,20 +342,15 @@ public class TileMaster extends TileEntity implements ITickable {
 					.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv,
 							t.getInventoryFace().getOpposite(), false) : Inv
 					.addToInventoryWithLeftover(in, inv, false);
-			// ItemStack re=TileEntityHopper.putStackInInventoryAllSlots(inv,
-			// in, t.getInventoryFace().getOpposite());
 			if (remain == 0)
 				return 0;
 			in = Inv.copyStack(in, remain);
-			// stacks = getStacks();
 			inv.markDirty();
 		}
 		return in.stackSize;
 	}
 
 	public void impor() {
-		if ((worldObj.getTotalWorldTime() + 10) % 30 != 0)
-			return;
 		if (imInventorys == null || storageInventorys == null)
 			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
@@ -371,6 +373,9 @@ public class TileMaster extends TileEntity implements ITickable {
 		for (TileKabel t : invs) {
 			IInventory inv = (IInventory) worldObj.getTileEntity(t
 					.getConnectedInventory());
+			if ((worldObj.getTotalWorldTime() + 10)
+					% (30 / (t.elements(0) + 1)) != 0)
+				continue;
 			if (!(inv instanceof ISidedInventory)) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					ItemStack s = inv.getStackInSlot(i);
@@ -378,14 +383,9 @@ public class TileMaster extends TileEntity implements ITickable {
 						continue;
 					if (!TileKabel.canTransfer(t, s))
 						continue;
-					// int num = s.stackSize;
-					// int rest = insertStack(s.copy(), inv);
-					// if (num == rest)
-					// continue;
-					// inv.setInventorySlotContents(i,
-					// rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
 					int num = s.stackSize;
-					int insert = Math.min(s.stackSize, 4);
+					int insert = Math.min(s.stackSize,
+							(int) Math.pow(2, t.elements(0) + 2));
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
@@ -395,7 +395,6 @@ public class TileMaster extends TileEntity implements ITickable {
 									+ rest) : Inv.copyStack(s.copy(), num
 									- insert));
 					inv.markDirty();
-					// stacks = getStacks();
 					break;
 
 				}
@@ -410,14 +409,9 @@ public class TileMaster extends TileEntity implements ITickable {
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t
 							.getInventoryFace().getOpposite()))
 						continue;
-					// int num = s.stackSize;
-					// int rest = insertStack(s.copy(), inv);
-					// if (num == rest)
-					// continue;
-					// inv.setInventorySlotContents(i,
-					// rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
 					int num = s.stackSize;
-					int insert = Math.min(s.stackSize, 4);
+					int insert = Math.min(s.stackSize,
+							(int) Math.pow(2, t.elements(0) + 2));
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
@@ -428,7 +422,6 @@ public class TileMaster extends TileEntity implements ITickable {
 									- insert));
 
 					inv.markDirty();
-					// stacks = getStacks();
 					break;
 				}
 			}
@@ -436,8 +429,6 @@ public class TileMaster extends TileEntity implements ITickable {
 	}
 
 	public void export() {
-		if ((worldObj.getTotalWorldTime() + 20) % 30 != 0)
-			return;
 		if (exInventorys == null || storageInventorys == null)
 			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
@@ -460,6 +451,9 @@ public class TileMaster extends TileEntity implements ITickable {
 		for (TileKabel t : invs) {
 			IInventory inv = (IInventory) worldObj.getTileEntity(t
 					.getConnectedInventory());
+			if ((worldObj.getTotalWorldTime() + 20)
+					% (30 / (t.elements(0) + 1)) != 0)
+				continue;
 			for (int i = 0; i < 9; i++) {
 				ItemStack fil = t.getFilter().get(i);
 				if (fil == null)
@@ -475,7 +469,9 @@ public class TileMaster extends TileEntity implements ITickable {
 						Math.min(
 								Math.min(fil.getMaxStackSize(),
 										inv.getInventoryStackLimit()),
-								Math.min(space, 4)), t.isMeta(), false);
+								Math.min(space,
+										(int) Math.pow(2, t.elements(0) + 2))),
+						t.isMeta(), false);
 				if (rec == null)
 					continue;
 

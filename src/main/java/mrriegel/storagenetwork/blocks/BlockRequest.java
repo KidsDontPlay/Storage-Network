@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.blocks;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -13,6 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -42,27 +44,62 @@ public class BlockRequest extends BlockContainer {
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos,
 			IBlockState state, Block neighborBlock) {
+
 		for (BlockPos p : TileMaster.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof TileKabel) {
-				if (((TileKabel) worldIn.getTileEntity(p)).getMaster() != null)
+			if (worldIn.getTileEntity(p) instanceof IConnectable) {
+				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
 					((TileRequest) worldIn.getTileEntity(pos))
-							.setMaster(((TileKabel) worldIn.getTileEntity(p))
+							.setMaster(((IConnectable) worldIn.getTileEntity(p))
 									.getMaster());
 			}
+			if (worldIn.getTileEntity(p) instanceof TileMaster) {
+				((TileRequest) worldIn.getTileEntity(pos)).setMaster(p);
+			}
 		}
+		setConnections(worldIn, pos);
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
 			EntityLivingBase placer, ItemStack stack) {
+
 		for (BlockPos p : TileMaster.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof TileKabel) {
-				if (((TileKabel) worldIn.getTileEntity(p)).getMaster() != null)
+			if (worldIn.getTileEntity(p) instanceof IConnectable) {
+				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
 					((TileRequest) worldIn.getTileEntity(pos))
-							.setMaster(((TileKabel) worldIn.getTileEntity(p))
+							.setMaster(((IConnectable) worldIn.getTileEntity(p))
 									.getMaster());
 			}
+			if (worldIn.getTileEntity(p) instanceof TileMaster) {
+				((TileRequest) worldIn.getTileEntity(pos)).setMaster(p);
+			}
 		}
+		setConnections(worldIn, pos);
+	}
+
+	public static void setConnections(World worldIn, BlockPos pos) {
+		TileRequest tile = (TileRequest) worldIn.getTileEntity(pos);
+
+		if (tile.getMaster() == null) {
+			for (BlockPos p : TileMaster.getSides(pos)) {
+				if (worldIn.getTileEntity(p) instanceof TileMaster) {
+					tile.setMaster(p);
+				}
+			}
+		}
+		if (tile.getMaster() != null) {
+			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
+
+			tile.setMaster(null);
+			worldIn.markBlockForUpdate(pos);
+			BlockKabel.setAllMastersNull(worldIn, pos);
+			if (mas instanceof TileMaster) {
+				((TileMaster) mas).refreshNetwork();
+				System.out.println("bäm");
+			}
+
+		}
+
 	}
 
 	@Override
@@ -97,7 +134,7 @@ public class BlockRequest extends BlockContainer {
 		super.breakBlock(worldIn, pos, state);
 	}
 
-	private void spawnItemStack(World worldIn, double x, double y, double z,
+	public static void spawnItemStack(World worldIn, double x, double y, double z,
 			ItemStack stack) {
 		if (stack == null)
 			return;
@@ -113,9 +150,9 @@ public class BlockRequest extends BlockContainer {
 			}
 
 			stack.stackSize -= i;
-			EntityItem entityitem = new EntityItem(worldIn, x + f, y
-					+ f1, z + f2, new ItemStack(
-					stack.getItem(), i, stack.getMetadata()));
+			EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z
+					+ f2,
+					new ItemStack(stack.getItem(), i, stack.getMetadata()));
 
 			if (stack.hasTagCompound()) {
 				entityitem.getEntityItem().setTagCompound(

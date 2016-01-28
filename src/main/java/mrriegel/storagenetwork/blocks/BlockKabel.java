@@ -10,10 +10,13 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModBlocks;
+import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileKabel;
+import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -44,6 +47,7 @@ public class BlockKabel extends BlockContainer {
 
 	public BlockKabel() {
 		super(Material.iron);
+		this.setHardness(1.4F);
 		this.setDefaultState(this.blockState.getBaseState()
 				.withProperty(NORTH, Boolean.valueOf(false))
 				.withProperty(EAST, Boolean.valueOf(false))
@@ -98,22 +102,60 @@ public class BlockKabel extends BlockContainer {
 			float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
-		switch (tile.getKind()) {
-		case exKabel:
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
-					worldIn, pos.getX(), pos.getY(), pos.getZ());
-			return true;
-		case imKabel:
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
-					worldIn, pos.getX(), pos.getY(), pos.getZ());
-			return true;
-		case storageKabel:
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
-					worldIn, pos.getX(), pos.getY(), pos.getZ());
-			return true;
-		default:
-			break;
-		}
+		if (playerIn.getHeldItem() != null
+				&& playerIn.getHeldItem().getItem() == ModItems.upgrade
+				&& !playerIn.isSneaking()
+				&& (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel)) {
+			switch (playerIn.getHeldItem().getItemDamage()) {
+			case 0:
+				if (tile.elements(0) < 4) {
+					tile.getDeque().push(0);
+					playerIn.getHeldItem().stackSize--;
+					if (playerIn.getHeldItem().stackSize <= 0)
+						playerIn.inventory.setInventorySlotContents(
+								playerIn.inventory.currentItem, null);
+				}
+				break;
+			case 1:
+				if (tile.elements(1) < 1) {
+					tile.getDeque().push(1);
+					playerIn.getHeldItem().stackSize--;
+					if (playerIn.getHeldItem().stackSize <= 0)
+						playerIn.inventory.setInventorySlotContents(
+								playerIn.inventory.currentItem, null);
+				}
+				break;
+
+			default:
+				break;
+			}
+		} else if (playerIn.getHeldItem() == null
+				&& playerIn.isSneaking()
+				&& (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel)) {
+			if (!tile.getDeque().isEmpty()) {
+				if (playerIn.inventory.addItemStackToInventory(new ItemStack(
+						ModItems.upgrade, 1, tile.getDeque().peekFirst()))) {
+					tile.getDeque().pollFirst();
+				}
+
+			}
+		} else
+			switch (tile.getKind()) {
+			case exKabel:
+				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
+						worldIn, pos.getX(), pos.getY(), pos.getZ());
+				return true;
+			case imKabel:
+				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
+						worldIn, pos.getX(), pos.getY(), pos.getZ());
+				return true;
+			case storageKabel:
+				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE,
+						worldIn, pos.getX(), pos.getY(), pos.getZ());
+				return true;
+			default:
+				break;
+			}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side,
 				hitX, hitY, hitZ);
 	}
@@ -164,20 +206,28 @@ public class BlockKabel extends BlockContainer {
 		}
 		tile.setInventoryFace(face);
 		tile.setConnectedInventory(con);
+		if (tile.getMaster() == null) {
+			for (BlockPos p : TileMaster.getSides(pos)) {
+				if (worldIn.getTileEntity(p) instanceof TileMaster) {
+					tile.setMaster(p);
+				}
+			}
+		}
 		if (tile.getMaster() != null) {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 
 			tile.setMaster(null);
 			worldIn.markBlockForUpdate(pos);
 			setAllMastersNull(worldIn, pos);
-			if (mas instanceof TileMaster)
+			if (mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
+			}
 
 		}
 
 	}
 
-	private static void setAllMastersNull(World world, BlockPos pos) {
+	public static void setAllMastersNull(World world, BlockPos pos) {
 		((IConnectable) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : TileMaster.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable
@@ -329,6 +379,22 @@ public class BlockKabel extends BlockContainer {
 
 		}
 		return lis;
+	}
+
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+
+		if (tileentity instanceof TileKabel) {
+			TileKabel tile = (TileKabel) tileentity;
+			while (!tile.getDeque().isEmpty()) {
+				BlockRequest.spawnItemStack(worldIn, pos.getX(), pos.getY(),
+						pos.getZ(), new ItemStack(ModItems.upgrade, 1, tile
+								.getDeque().pollFirst()));
+			}
+		}
+
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	@Override

@@ -30,8 +30,9 @@ public class GuiCable extends GuiContainer {
 	public GuiCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
-		this.ySize = 137;
 		this.tile = ((ContainerCable) inventorySlots).tile;
+//		System.out.println(tile.elements(1));
+		this.ySize = 137;// + tile.elements(1) >= 1 ? 30 : 0;
 		this.kind = tile.getKind();
 	}
 
@@ -46,6 +47,8 @@ public class GuiCable extends GuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
+		if (tile.elements(1) >= 1)
+			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
 		fontRendererObj.drawString(
 				String.valueOf(tile.getPriority()),
 				guiLeft

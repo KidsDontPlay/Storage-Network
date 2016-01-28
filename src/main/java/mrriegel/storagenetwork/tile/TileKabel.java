@@ -1,6 +1,8 @@
 package mrriegel.storagenetwork.tile;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -30,6 +33,10 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Map<Integer, ItemStack> filter = new HashMap<Integer, ItemStack>();
 	private boolean meta = true, white;
 	private int priority;
+	private Deque<Integer> deque = new ArrayDeque<Integer>();
+	private boolean mode = true;
+	private int limit = 0;
+	ItemStack stack = null;
 
 	public enum Kind {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel;
@@ -40,6 +47,16 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public TileKabel(World w, Block b) {
 		kind = getKind(w, b);
+	}
+
+	public int elements(int num) {
+		int res = 0;
+		Deque<Integer> d = new ArrayDeque<Integer>(deque);
+		while (!d.isEmpty()) {
+			if (d.pollFirst() == num)
+				res++;
+		}
+		return res;
 	}
 
 	public static Kind getKind(World world, Block b) {
@@ -101,6 +118,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 		meta = compound.getBoolean("meta");
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
+		deque = new Gson().fromJson(compound.getString("deque"),
+				new TypeToken<Deque<Integer>>() {
+				}.getType());
+		mode = compound.getBoolean("mode");
+		limit = compound.getInteger("limit");
+		if (compound.hasKey("stack", 10))
+			stack = (ItemStack.loadItemStackFromNBT(compound
+					.getCompoundTag("stack")));
+		else
+			stack = null;
+		// id = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("id"));
 		NBTTagList invList = compound.getTagList("crunchTE",
 				Constants.NBT.TAG_COMPOUND);
 		filter = new HashMap<Integer, ItemStack>();
@@ -126,6 +154,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setBoolean("meta", meta);
 		compound.setBoolean("white", white);
 		compound.setInteger("prio", priority);
+		compound.setString("deque", new Gson().toJson(deque));
+		compound.setBoolean("mode", mode);
+		compound.setInteger("limit", limit);
+		if (stack != null)
+			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
+
+		// NBTTagCompound nbt = new NBTTagCompound();
+		// if (id != null) {
+		// id.writeToNBT(nbt);
+		// }
+		// compound.setTag("id", nbt);
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (filter.get(i) != null) {
@@ -207,12 +246,19 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.priority = priority;
 	}
 
+	public Deque<Integer> getDeque() {
+		return deque;
+	}
+
+	public void setDeque(Deque<Integer> deque) {
+		this.deque = deque;
+	}
+
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(),
-				this.getPos().getY(), this.getPos().getZ()), 1, syncData);
+		return new S35PacketUpdateTileEntity(getPos(), 1, syncData);
 	}
 
 	@Override

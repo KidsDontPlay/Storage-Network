@@ -44,7 +44,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 
 	@Override
 	public void update() {
-		master = masterAround(worldObj, pos);
 		if (worldObj.getTotalWorldTime() % 20 != 0 || worldObj.isRemote)
 			return;
 		for (int i = 0; i < 6; i++) {
@@ -88,17 +87,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 				}
 			}
 		}
-	}
-
-	BlockPos masterAround(World worldIn, BlockPos pos) {
-		for (BlockPos p : TileMaster.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof TileKabel) {
-				if (((TileKabel) worldIn.getTileEntity(p)).getMaster() != null) {
-					return ((TileKabel) worldIn.getTileEntity(p)).getMaster();
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override

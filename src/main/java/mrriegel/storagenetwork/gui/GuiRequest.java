@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -28,6 +29,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiRequest extends GuiContainer {
@@ -208,6 +210,25 @@ public class GuiRequest extends GuiContainer {
 		}
 	}
 
+	@Override
+	public void handleMouseInput() throws IOException {
+		super.handleMouseInput();
+		int i = Mouse.getX() * this.width / this.mc.displayWidth;
+		int j = this.height - Mouse.getY() * this.height
+				/ this.mc.displayHeight - 1;
+		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7)
+				&& j < (guiTop + 90)) {
+			int mouse = Mouse.getEventDWheel();
+			if (mouse == 0)
+				return;
+			if (mouse > 0 && page > 1)
+				page--;
+			if (mouse < 0 && page < maxPage)
+				page++;
+		}
+
+	}
+
 	class Slot {
 		ItemStack stack;
 		int x, y, size;
@@ -222,16 +243,17 @@ public class GuiRequest extends GuiContainer {
 		void drawSlot(int mx, int my) {
 			RenderHelper.enableGUIStandardItemLighting();
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-			mc.getRenderItem().renderItemOverlayIntoGUI(
-					fontRendererObj,
-					stack,
-					x,
-					y,
-					size < 1000 ? String.valueOf(size)
-							: size < 1000000 ? String.valueOf(size).substring(
-									0, 1)
-									+ "K" : String.valueOf(size)
-									.substring(0, 1) + "M");
+			String amount = size < 1000 ? String.valueOf(size)
+					: size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+			if (ConfigHandler.smallFont) {
+				GlStateManager.pushMatrix();
+				GlStateManager.scale(.5f, .5f, .5f);
+				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj,
+						stack, x * 2 + 16, y * 2 + 16, amount);
+				GlStateManager.popMatrix();
+			} else
+				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj,
+						stack, x, y, amount);
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
