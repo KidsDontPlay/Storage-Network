@@ -25,6 +25,8 @@ public class PacketHandler {
 				Side.CLIENT);
 		INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class,
 				id++, Side.SERVER);
+		INSTANCE.registerMessage(LimitMessage.class, LimitMessage.class, id++,
+				Side.SERVER);
 	}
 
 }

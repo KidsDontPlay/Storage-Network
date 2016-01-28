@@ -6,3 +6,7 @@ tile.storagenetwork:vacuumKabel.name=Vacuum Cable
 
 tile.storagenetwork:master.name=Cable Master
 tile.storagenetwork:request.name=Request Table
+
+item.storagenetwork:upgrade_0.name=Speed Upgrade
+item.storagenetwork:upgrade_1.name=Operation Upgrade
+item.storagenetwork:upgrade_2.name=Stack Upgrade

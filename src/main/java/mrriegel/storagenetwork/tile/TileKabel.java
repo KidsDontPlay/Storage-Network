@@ -17,7 +17,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -36,6 +35,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Deque<Integer> deque = new ArrayDeque<Integer>();
 	private boolean mode = true;
 	private int limit = 0;
+
 	ItemStack stack = null;
 
 	public enum Kind {
@@ -73,17 +73,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 		return null;
 	}
 
-	public static boolean canTransfer(TileKabel tile, ItemStack stack) {
+	public boolean canTransfer(ItemStack stack) {
 		List<ItemStack> lis = new ArrayList<ItemStack>();
 		for (int i = 0; i < 9; i++) {
-			ItemStack s = tile.getFilter().get(i);
+			ItemStack s = getFilter().get(i);
 			if (s != null)
 				lis.add(s.copy());
 		}
-		if (tile.isWhite()) {
+		if (isWhite()) {
 			boolean tmp = false;
 			for (ItemStack s : lis) {
-				if (tile.isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
+				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
 						.getItem()) {
 					tmp = true;
 					break;
@@ -93,13 +93,27 @@ public class TileKabel extends TileEntity implements IConnectable {
 		} else {
 			boolean tmp = true;
 			for (ItemStack s : lis) {
-				if (tile.isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
+				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
 						.getItem()) {
 					tmp = false;
 					break;
 				}
 			}
 			return tmp;
+		}
+	}
+
+	public boolean status() {
+		if (elements(1) < 1)
+			return true;
+		TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
+		if (getStack() == null)
+			return true;
+		int amount = m.getAmount(getStack());
+		if (isMode()) {
+			return amount > getLimit();
+		} else {
+			return amount <= getLimit();
 		}
 	}
 
@@ -128,7 +142,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 					.getCompoundTag("stack")));
 		else
 			stack = null;
-		// id = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("id"));
 		NBTTagList invList = compound.getTagList("crunchTE",
 				Constants.NBT.TAG_COMPOUND);
 		filter = new HashMap<Integer, ItemStack>();
@@ -160,11 +173,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
 
-		// NBTTagCompound nbt = new NBTTagCompound();
-		// if (id != null) {
-		// id.writeToNBT(nbt);
-		// }
-		// compound.setTag("id", nbt);
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (filter.get(i) != null) {
@@ -252,6 +260,30 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public void setDeque(Deque<Integer> deque) {
 		this.deque = deque;
+	}
+
+	public boolean isMode() {
+		return mode;
+	}
+
+	public void setMode(boolean mode) {
+		this.mode = mode;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public ItemStack getStack() {
+		return stack;
+	}
+
+	public void setStack(ItemStack stack) {
+		this.stack = stack;
 	}
 
 	@Override

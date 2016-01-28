@@ -2,30 +2,34 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.tile.TileKabel;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class ButtonMessage implements IMessage,
-		IMessageHandler<ButtonMessage, IMessage> {
-	int id, x, y, z;
+public class LimitMessage implements IMessage,
+		IMessageHandler<LimitMessage, IMessage> {
+	int limit, x, y, z;
+	ItemStack stack;
 
-	public ButtonMessage() {
+	public LimitMessage() {
 	}
 
-	public ButtonMessage(int id, int x, int y, int z) {
+	public LimitMessage(int limit, int x, int y, int z, ItemStack stack) {
 		super();
-		this.id = id;
+		this.limit = limit;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.stack = stack;
 	}
 
 	@Override
-	public IMessage onMessage(final ButtonMessage message,
+	public IMessage onMessage(final LimitMessage message,
 			final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
@@ -34,23 +38,8 @@ public class ButtonMessage implements IMessage,
 				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj
 						.getTileEntity(new BlockPos(message.x, message.y,
 								message.z));
-				switch (message.id) {
-				case 0:
-					tile.setPriority(tile.getPriority() - 1);
-					break;
-				case 1:
-					tile.setPriority(tile.getPriority() + 1);
-					break;
-				case 2:
-					tile.setMeta(!tile.isMeta());
-					break;
-				case 3:
-					tile.setWhite(!tile.isWhite());
-					break;
-				case 4:
-					tile.setMode(!tile.isMode());
-					break;
-				}
+				tile.setLimit(message.limit);
+				tile.setStack(message.stack);
 			}
 		});
 		return null;
@@ -61,7 +50,8 @@ public class ButtonMessage implements IMessage,
 		this.x = buf.readInt();
 		this.y = buf.readInt();
 		this.z = buf.readInt();
-		this.id = buf.readInt();
+		this.limit = buf.readInt();
+		this.stack = ByteBufUtils.readItemStack(buf);
 	}
 
 	@Override
@@ -69,7 +59,8 @@ public class ButtonMessage implements IMessage,
 		buf.writeInt(this.x);
 		buf.writeInt(this.y);
 		buf.writeInt(this.z);
-		buf.writeInt(this.id);
+		buf.writeInt(this.limit);
+		ByteBufUtils.writeItemStack(buf, this.stack);
 	}
 
 }

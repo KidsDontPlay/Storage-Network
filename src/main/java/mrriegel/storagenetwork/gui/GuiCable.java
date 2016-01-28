@@ -6,17 +6,23 @@ import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.network.ButtonMessage;
+import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -24,16 +30,21 @@ public class GuiCable extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(
 			StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
-	Button pPlus, pMinus, meta, white;
+	Button pPlus, pMinus, meta, white, acti;
 	TileKabel tile;
+	private GuiTextField searchBar;
+	boolean operate;
+	ItemStack stack;
 
 	public GuiCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.tile = ((ContainerCable) inventorySlots).tile;
-//		System.out.println(tile.elements(1));
-		this.ySize = 137;// + tile.elements(1) >= 1 ? 30 : 0;
+		operate = tile.elements(1) >= 1;
+		this.ySize = 137;
 		this.kind = tile.getKind();
+		stack = tile.getStack();
+
 	}
 
 	@Override
@@ -55,7 +66,12 @@ public class GuiCable extends GuiContainer {
 						+ 34
 						- fontRendererObj.getStringWidth(String.valueOf(tile
 								.getPriority())) / 2, guiTop + 10, 4210752);
-
+		if (operate) {
+			searchBar.drawTextBox();
+			RenderHelper.enableGUIStandardItemLighting();
+			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8,
+					guiTop - 18);
+		}
 	}
 
 	@Override
@@ -64,7 +80,7 @@ public class GuiCable extends GuiContainer {
 		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
 		int my = this.height - Mouse.getY() * this.height
 				/ this.mc.displayHeight - 1;
-		if (mx > guiLeft + 27 && mx < guiLeft + 35 && my > guiTop + 10
+		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10
 				&& my < guiTop + 20) {
 			List<String> list = new ArrayList<String>();
 			list.add("Priority");
@@ -73,6 +89,18 @@ public class GuiCable extends GuiContainer {
 			this.drawHoveringText(list, mx, my, fontRendererObj);
 			GlStateManager.popMatrix();
 			GlStateManager.enableLighting();
+		}
+		if (operate && mouseX > guiLeft + 7 && mouseX < guiLeft + 25
+				&& mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+			GlStateManager.disableLighting();
+			GlStateManager.disableDepth();
+			int j1 = guiLeft + 8;
+			int k1 = guiTop - 18;
+			GlStateManager.colorMask(true, true, true, false);
+			drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+			GlStateManager.colorMask(true, true, true, true);
+			GlStateManager.enableLighting();
+			GlStateManager.enableDepth();
 		}
 	}
 
@@ -89,6 +117,36 @@ public class GuiCable extends GuiContainer {
 			white = new Button(3, guiLeft + 110, guiTop + 5, "");
 			buttonList.add(white);
 		}
+		if (operate) {
+			Keyboard.enableRepeatEvents(true);
+			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36,
+					guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
+			searchBar.setMaxStringLength(30);
+			searchBar.setEnableBackgroundDrawing(false);
+			searchBar.setVisible(true);
+			searchBar.setTextColor(16777215);
+			searchBar.setCanLoseFocus(false);
+			searchBar.setFocused(true);
+			searchBar.setText(tile.getLimit() + "");
+			// searchBar.setCursorPositionEnd();
+			acti = new Button(4, guiLeft + 127, guiTop - 18, "");
+			buttonList.add(acti);
+		}
+	}
+
+	@Override
+	protected void mouseReleased(int mouseX, int mouseY, int state) {
+		if (operate && mouseX > guiLeft + 7 && mouseX < guiLeft + 25
+				&& mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+			stack = mc.thePlayer.inventory.getItemStack();
+			tile.setStack(stack);
+			int num = searchBar.getText().isEmpty() ? 0 : Integer
+					.valueOf(searchBar.getText());
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile
+					.getPos().getX(), tile.getPos().getY(), tile.getPos()
+					.getZ(), stack));
+		} else
+			super.mouseReleased(mouseX, mouseY, state);
 	}
 
 	@Override
@@ -109,7 +167,40 @@ public class GuiCable extends GuiContainer {
 		case 3:
 			tile.setWhite(!tile.isWhite());
 			break;
+		case 4:
+			tile.setMode(!tile.isMode());
+			break;
 		}
+	}
+
+	@Override
+	protected void keyTyped(char c, int p_73869_2_) throws IOException {
+		if (!this.checkHotbarKeys(p_73869_2_)) {
+			Keyboard.enableRepeatEvents(true);
+			String s = "";
+			if (operate) {
+				s = searchBar.getText();
+			}
+			if (operate && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
+				if (!StringUtils.isNumeric(searchBar.getText())
+						&& !searchBar.getText().isEmpty())
+					searchBar.setText(s);
+				int num = searchBar.getText().isEmpty() ? 0 : Integer
+						.valueOf(searchBar.getText());
+				tile.setLimit(num);
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile
+						.getPos().getX(), tile.getPos().getY(), tile.getPos()
+						.getZ(), stack));
+			} else {
+				super.keyTyped(c, p_73869_2_);
+			}
+		}
+	}
+
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		Keyboard.enableRepeatEvents(false);
 	}
 
 	class Button extends GuiButton {
@@ -150,6 +241,15 @@ public class GuiCable extends GuiContainer {
 					else
 						this.drawTexturedModalRect(this.xPosition + 1,
 								this.yPosition + 3, 190, 83, 13, 10);
+
+				}
+				if (id == 4) {
+					if (tile.isMode())
+						this.drawTexturedModalRect(this.xPosition + 0,
+								this.yPosition + 0, 176, 94, 16, 15);
+					else
+						this.drawTexturedModalRect(this.xPosition + 0,
+								this.yPosition + 0, 176 + 16, 94, 16, 15);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);

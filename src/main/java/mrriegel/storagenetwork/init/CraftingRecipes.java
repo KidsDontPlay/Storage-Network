@@ -29,6 +29,14 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.master), "dkd",
 				"kck", "dkd", 'd', Blocks.quartz_block, 'k', ModBlocks.kabel,
 				'c', Items.diamond);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 0),
+				" c ", "gig", " c ", 'c', Blocks.redstone_block, 'i',
+				Items.iron_ingot, 'g', Items.gold_ingot);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 1),
+				"c", "i", "c", 'c', Items.comparator, 'i', Items.iron_ingot);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 2),
+				" c ", "gig", " c ", 'c', Blocks.redstone_block, 'i',
+				Items.iron_ingot, 'g', Items.blaze_powder);
 	}
 
 }

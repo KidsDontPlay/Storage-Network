@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -56,7 +57,8 @@ public class TileMaster extends TileEntity implements ITickable {
 					.getConnectedInventory());
 			if (inv == null)
 				continue;
-			if (inv instanceof IDrawerGroup) {
+			if (inv instanceof InventoryLargeChest) {
+			} else if (inv instanceof IDrawerGroup) {
 				IDrawerGroup group = (IDrawerGroup) inv;
 				for (int i = 0; i < group.getDrawerCount(); i++) {
 					if (!group.isDrawerEnabled(i))
@@ -71,7 +73,7 @@ public class TileMaster extends TileEntity implements ITickable {
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(t
 						.getInventoryFace().getOpposite())) {
 					if (inv.getStackInSlot(i) != null
-							&& TileKabel.canTransfer(t, inv.getStackInSlot(i))
+							&& t.canTransfer(inv.getStackInSlot(i))
 							&& ((ISidedInventory) inv).canExtractItem(i, inv
 									.getStackInSlot(i), t.getInventoryFace()
 									.getOpposite())) {
@@ -81,7 +83,7 @@ public class TileMaster extends TileEntity implements ITickable {
 			} else {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					if (inv.getStackInSlot(i) != null
-							&& TileKabel.canTransfer(t, inv.getStackInSlot(i)))
+							&& t.canTransfer(inv.getStackInSlot(i)))
 						addToList(stacks, inv.getStackInSlot(i).copy());
 				}
 			}
@@ -312,7 +314,7 @@ public class TileMaster extends TileEntity implements ITickable {
 				continue;
 			if (!(inv instanceof ISidedInventory) && !Inv.contains(inv, in))
 				continue;
-			if (!TileKabel.canTransfer(t, stack))
+			if (!t.canTransfer(stack))
 				continue;
 			if (Inv.isInventorySame(inv, source))
 				continue;
@@ -334,7 +336,7 @@ public class TileMaster extends TileEntity implements ITickable {
 				continue;
 			if (!(inv instanceof ISidedInventory) && Inv.contains(inv, in))
 				continue;
-			if (!TileKabel.canTransfer(t, stack))
+			if (!t.canTransfer(stack))
 				continue;
 			if (Inv.isInventorySame(inv, source))
 				continue;
@@ -381,11 +383,13 @@ public class TileMaster extends TileEntity implements ITickable {
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
-					if (!TileKabel.canTransfer(t, s))
+					if (!t.canTransfer(s))
+						continue;
+					if (!t.status())
 						continue;
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
-							(int) Math.pow(2, t.elements(0) + 2));
+							(int) Math.pow(2, t.elements(2) + 2));
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
@@ -404,7 +408,9 @@ public class TileMaster extends TileEntity implements ITickable {
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
-					if (!TileKabel.canTransfer(t, s))
+					if (!t.canTransfer(s))
+						continue;
+					if (!t.status())
 						continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t
 							.getInventoryFace().getOpposite()))
@@ -556,7 +562,9 @@ public class TileMaster extends TileEntity implements ITickable {
 						continue;
 					if (s.getItem() != stack.getItem() && !meta)
 						continue;
-					if (!TileKabel.canTransfer(t, s))
+					if (!t.canTransfer(s))
+						continue;
+					if (!t.status())
 						continue;
 					int miss = size - result;
 					result += Math.min(s.stackSize, miss);
@@ -581,7 +589,9 @@ public class TileMaster extends TileEntity implements ITickable {
 						continue;
 					if (s.getItem() != stack.getItem() && !meta)
 						continue;
-					if (!TileKabel.canTransfer(t, s))
+					if (!t.canTransfer(s))
+						continue;
+					if (!t.status())
 						continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t
 							.getInventoryFace().getOpposite()))

@@ -12,18 +12,17 @@ import net.minecraft.nbt.NBTTagList;
 public class ContainerCable extends Container {
 	InventoryFilter inv;
 	InventoryPlayer playerInv;
-	InventoryFilter id;
 	TileKabel tile;
 
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
 		inv = new InventoryFilter(tile, 9);
-		id = new InventoryFilter(tile, 1);
+		// id = new InventoryFilter(tile, 1);
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
 			this.addSlotToContainer(new Slot(inv, j, 8 + j * 18, 26));
 		}
-		this.addSlotToContainer(new Slot(id, 0, 8, -18));
+		// this.addSlotToContainer(new Slot(id, 0, 8, -18));
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9,
@@ -54,22 +53,16 @@ public class ContainerCable extends Container {
 			}
 		}
 		nbt.setTag("crunchTE", invList);
-//		NBTTagCompound nbtz = new NBTTagCompound();
-//		if (id.getStackInSlot(0) != null) {
-//			id.getStackInSlot(0).writeToNBT(nbtz);
-//		}
-//		nbt.setTag("id", nbtz);
-		if (id.getStackInSlot(0) != null)
-			nbt.setTag("stack", id.getStackInSlot(0).writeToNBT(new NBTTagCompound()));
+		// if (id.getStackInSlot(0) != null)
+		// nbt.setTag("stack", id.getStackInSlot(0).writeToNBT(new
+		// NBTTagCompound()));
 		tile.readFromNBT(nbt);
 	}
 
 	@Override
 	public ItemStack slotClick(int slotId, int clickedButton, int mode,
 			EntityPlayer playerIn) {
-		// System.out.println(String.format("%d %d %d", slotId, clickedButton,
-		// mode));
-		if (slotId >= 10 || slotId == -999)
+		if (slotId >= 9 || slotId == -999)
 			return super.slotClick(slotId, clickedButton, mode, playerIn);
 		if (playerInv.getItemStack() == null) {
 			getSlot(slotId).putStack(null);

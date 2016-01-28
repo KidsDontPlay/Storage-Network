@@ -4,7 +4,6 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
@@ -14,7 +13,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -109,6 +107,8 @@ public class BlockRequest extends BlockContainer {
 		TileRequest tile = (TileRequest) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
 		if (tile.getMaster() != null) {
+			((TileMaster) worldIn.getTileEntity(tile.getMaster()))
+					.refreshNetwork();
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST,
 					worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
@@ -134,8 +134,8 @@ public class BlockRequest extends BlockContainer {
 		super.breakBlock(worldIn, pos, state);
 	}
 
-	public static void spawnItemStack(World worldIn, double x, double y, double z,
-			ItemStack stack) {
+	public static void spawnItemStack(World worldIn, double x, double y,
+			double z, ItemStack stack) {
 		if (stack == null)
 			return;
 		float f = RANDOM.nextFloat() * 0.8F + 0.1F;

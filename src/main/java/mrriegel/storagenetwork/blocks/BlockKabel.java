@@ -16,7 +16,6 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -119,6 +118,15 @@ public class BlockKabel extends BlockContainer {
 			case 1:
 				if (tile.elements(1) < 1) {
 					tile.getDeque().push(1);
+					playerIn.getHeldItem().stackSize--;
+					if (playerIn.getHeldItem().stackSize <= 0)
+						playerIn.inventory.setInventorySlotContents(
+								playerIn.inventory.currentItem, null);
+				}
+				break;
+			case 2:
+				if (tile.elements(2) < 4) {
+					tile.getDeque().push(2);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(
