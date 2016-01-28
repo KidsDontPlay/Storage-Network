@@ -104,7 +104,8 @@ public class BlockKabel extends BlockContainer {
 		if (playerIn.getHeldItem() != null
 				&& playerIn.getHeldItem().getItem() == ModItems.upgrade
 				&& !playerIn.isSneaking()
-				&& (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel)) {
+				&& (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel)
+				&& tile.getDeque() != null) {
 			switch (playerIn.getHeldItem().getItemDamage()) {
 			case 0:
 				if (tile.elements(0) < 4) {
@@ -139,7 +140,8 @@ public class BlockKabel extends BlockContainer {
 			}
 		} else if (playerIn.getHeldItem() == null
 				&& playerIn.isSneaking()
-				&& (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel)) {
+				&& (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel)
+				&& tile.getDeque() != null) {
 			if (!tile.getDeque().isEmpty()) {
 				if (playerIn.inventory.addItemStackToInventory(new ItemStack(
 						ModItems.upgrade, 1, tile.getDeque().peekFirst()))) {
@@ -395,7 +397,7 @@ public class BlockKabel extends BlockContainer {
 
 		if (tileentity instanceof TileKabel) {
 			TileKabel tile = (TileKabel) tileentity;
-			while (!tile.getDeque().isEmpty()) {
+			while (tile.getDeque() != null && !tile.getDeque().isEmpty()) {
 				BlockRequest.spawnItemStack(worldIn, pos.getX(), pos.getY(),
 						pos.getZ(), new ItemStack(ModItems.upgrade, 1, tile
 								.getDeque().pollFirst()));

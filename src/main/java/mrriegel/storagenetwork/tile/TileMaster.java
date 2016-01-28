@@ -417,7 +417,7 @@ public class TileMaster extends TileEntity implements ITickable {
 						continue;
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
-							(int) Math.pow(2, t.elements(0) + 2));
+							(int) Math.pow(2, t.elements(2) + 2));
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
@@ -476,7 +476,7 @@ public class TileMaster extends TileEntity implements ITickable {
 								Math.min(fil.getMaxStackSize(),
 										inv.getInventoryStackLimit()),
 								Math.min(space,
-										(int) Math.pow(2, t.elements(0) + 2))),
+										(int) Math.pow(2, t.elements(2) + 2))),
 						t.isMeta(), false);
 				if (rec == null)
 					continue;

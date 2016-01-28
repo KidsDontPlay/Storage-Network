@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Map<Integer, ItemStack> filter = new HashMap<Integer, ItemStack>();
 	private boolean meta = true, white;
 	private int priority;
-	private Deque<Integer> deque = new ArrayDeque<Integer>();
+	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
 	private boolean mode = true;
 	private int limit = 0;
 
@@ -51,7 +50,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public int elements(int num) {
 		int res = 0;
-		Deque<Integer> d = new ArrayDeque<Integer>(deque);
+		ArrayDeque<Integer> d = deque != null ? new ArrayDeque<Integer>(deque)
+				: new ArrayDeque<Integer>();
 		while (!d.isEmpty()) {
 			if (d.pollFirst() == num)
 				res++;
@@ -133,7 +133,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
 		deque = new Gson().fromJson(compound.getString("deque"),
-				new TypeToken<Deque<Integer>>() {
+				new TypeToken<ArrayDeque<Integer>>() {
 				}.getType());
 		mode = compound.getBoolean("mode");
 		limit = compound.getInteger("limit");
@@ -254,11 +254,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.priority = priority;
 	}
 
-	public Deque<Integer> getDeque() {
+	public ArrayDeque<Integer> getDeque() {
 		return deque;
 	}
 
-	public void setDeque(Deque<Integer> deque) {
+	public void setDeque(ArrayDeque<Integer> deque) {
 		this.deque = deque;
 	}
 
