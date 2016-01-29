@@ -8,7 +8,8 @@ public class ConfigHandler {
 
 	public static Configuration config;
 
-	public static boolean smallFont;
+	public static boolean smallFont, lavaNeeded;
+	public static int lavaCapacity, energyMultilplier;
 
 	public static void refreshConfig(File file) {
 		config = new Configuration(file);
@@ -17,6 +18,12 @@ public class ConfigHandler {
 		smallFont = config
 				.get(Configuration.CATEGORY_CLIENT, "smallFont", true)
 				.getBoolean();
+		lavaNeeded = config.get(Configuration.CATEGORY_GENERAL, "lavaNeeded",
+				true).getBoolean();
+		lavaCapacity = config.get(Configuration.CATEGORY_GENERAL,
+				"lavaCapacity", 8).getInt();
+		energyMultilplier = config.get(Configuration.CATEGORY_GENERAL,
+				"energyMultilplier", 3).getInt();
 
 		if (config.hasChanged()) {
 			config.save();

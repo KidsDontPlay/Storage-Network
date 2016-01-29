@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -25,15 +26,25 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
-public class TileMaster extends TileEntity implements ITickable {
+public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 	public List<BlockPos> connectables, storageInventorys, imInventorys,
 			exInventorys;
+	public FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME
+			* ConfigHandler.lavaCapacity);
 
 	public List<StackWrapper> getStacks() {
 		List<StackWrapper> stacks = new ArrayList<StackWrapper>();
@@ -144,6 +155,7 @@ public class TileMaster extends TileEntity implements ITickable {
 		exInventorys = new Gson().fromJson(compound.getString("exInventorys"),
 				new TypeToken<List<BlockPos>>() {
 				}.getType());
+		tank.readFromNBT(compound);
 	}
 
 	@Override
@@ -154,6 +166,7 @@ public class TileMaster extends TileEntity implements ITickable {
 				new Gson().toJson(storageInventorys));
 		compound.setString("imInventorys", new Gson().toJson(imInventorys));
 		compound.setString("exInventorys", new Gson().toJson(exInventorys));
+		tank.writeToNBT(compound);
 	}
 
 	private void addCables(BlockPos pos, int num) {
@@ -260,7 +273,8 @@ public class TileMaster extends TileEntity implements ITickable {
 								- range, x + range + 1, y + range + 1, z
 								+ range + 1));
 				for (EntityItem item : items) {
-					if (item.getAge() < 40 || item.isDead)
+					if (item.getAge() < 40 || item.isDead
+							|| !consumeLava(item.getEntityItem().stackSize))
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
 					if (!worldObj.isRemote) {
@@ -390,6 +404,8 @@ public class TileMaster extends TileEntity implements ITickable {
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
 							(int) Math.pow(2, t.elements(2) + 2));
+					if (!consumeLava(insert + t.elements(0)))
+						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
@@ -418,6 +434,8 @@ public class TileMaster extends TileEntity implements ITickable {
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
 							(int) Math.pow(2, t.elements(2) + 2));
+					if (!consumeLava(insert + t.elements(0)))
+						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
@@ -470,14 +488,13 @@ public class TileMaster extends TileEntity implements ITickable {
 						.getOpposite());
 				if (space == 0)
 					continue;
-				ItemStack rec = request(
-						fil,
-						Math.min(
-								Math.min(fil.getMaxStackSize(),
-										inv.getInventoryStackLimit()),
-								Math.min(space,
-										(int) Math.pow(2, t.elements(2) + 2))),
-						t.isMeta(), false);
+				int num = Math.min(
+						Math.min(fil.getMaxStackSize(),
+								inv.getInventoryStackLimit()),
+						Math.min(space, (int) Math.pow(2, t.elements(2) + 2)));
+				if (!consumeLava(num + t.elements(0)))
+					continue;
+				ItemStack rec = request(fil, num, t.isMeta(), false);
 				if (rec == null)
 					continue;
 
@@ -627,6 +644,15 @@ public class TileMaster extends TileEntity implements ITickable {
 
 	}
 
+	boolean consumeLava(int num) {
+		if (!ConfigHandler.lavaNeeded)
+			return true;
+		if (tank.getFluidAmount() < num * ConfigHandler.energyMultilplier)
+			return false;
+		tank.drain(num * ConfigHandler.energyMultilplier, true);
+		return true;
+	}
+
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
@@ -638,6 +664,44 @@ public class TileMaster extends TileEntity implements ITickable {
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
+	}
+
+	@Override
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		if (resource == null || !canFill(from, resource.getFluid())) {
+			return 0;
+		}
+		return tank.fill(resource, doFill);
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, FluidStack resource,
+			boolean doDrain) {
+		if (tank.getFluid() == null || resource == null
+				|| !resource.isFluidEqual(tank.getFluid())) {
+			return null;
+		}
+		return tank.drain(resource.amount, doDrain);
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+		return tank.drain(maxDrain, doDrain);
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return fluid.equals(FluidRegistry.LAVA);
+	}
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return false;
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		return new FluidTankInfo[] { tank.getInfo() };
 	}
 
 }

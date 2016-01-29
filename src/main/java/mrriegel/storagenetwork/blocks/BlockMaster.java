@@ -25,6 +25,9 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 public class BlockMaster extends BlockContainer {
 
@@ -72,7 +75,30 @@ public class BlockMaster extends BlockContainer {
 			float hitX, float hitY, float hitZ) {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		tile.refreshNetwork();
+		ItemStack s = playerIn.getHeldItem();
+		if (s != null && FluidContainerRegistry.isContainer(s)) {
+			int space = tile.tank.getCapacity() - tile.tank.getFluidAmount();
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(s);
+			if (liquid != null && liquid.getFluid().equals(FluidRegistry.LAVA)
+					&& space >= liquid.amount) {
+				ItemStack container = s.getItem().getContainerItem(s);
+				tile.tank.fill(liquid, true);
+				if (!playerIn.capabilities.isCreativeMode) {
+					s.stackSize--;
+					if (s.stackSize <= 0)
+						playerIn.inventory.setInventorySlotContents(
+								playerIn.inventory.currentItem, null);
+					playerIn.inventory.addItemStackToInventory(container);
+					playerIn.openContainer.detectAndSendChanges();
+				}
+
+			}
+			return true;
+		}
 		if (!worldIn.isRemote) {
+			playerIn.addChatMessage(new ChatComponentText("Lava: "
+					+ tile.tank.getFluidAmount() + "/"
+					+ tile.tank.getCapacity()));
 			playerIn.addChatMessage(new ChatComponentText("Connectables: "
 					+ tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
