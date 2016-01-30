@@ -10,7 +10,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.gui.RecipeLayout;
 import mezz.jei.gui.ingredients.GuiIngredient;
-import mrriegel.storagenetwork.gui.ContainerRequest;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RecipeMessage;

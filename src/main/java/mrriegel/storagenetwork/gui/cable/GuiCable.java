@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui;
+package mrriegel.storagenetwork.gui.cable;
 
 import java.io.IOException;
 import java.util.ArrayList;

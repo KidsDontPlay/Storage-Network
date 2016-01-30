@@ -66,6 +66,14 @@ public class ClientProxy extends CommonProxy {
 			mesher.register(ModItems.upgrade, i, new ModelResourceLocation(
 					StorageNetwork.MODID + ":upgrade_" + i, "inventory"));
 		}
+		for (int i = 0; i < 2; i++) {
+			ModelBakery
+					.registerItemVariants(ModItems.remote,
+							new ResourceLocation(StorageNetwork.MODID
+									+ ":remote_" + i));
+			mesher.register(ModItems.remote, i, new ModelResourceLocation(
+					StorageNetwork.MODID + ":remote_" + i, "inventory"));
+		}
 
 	}
 

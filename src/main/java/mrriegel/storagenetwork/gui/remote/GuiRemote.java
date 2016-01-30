@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui;
+package mrriegel.storagenetwork.gui.remote;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,12 +9,12 @@ import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.network.ClearMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
+import mrriegel.storagenetwork.network.RemoteMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
-import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -32,25 +32,30 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class GuiRequest extends GuiContainer {
+public class GuiRemote extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(
-			StorageNetwork.MODID + ":textures/gui/request.png");
+			StorageNetwork.MODID + ":textures/gui/remote.png");
 	int page = 1, maxPage = 1;
 	public List<StackWrapper> stacks;
 	ItemStack over;
 	private GuiTextField searchBar;
 	private Button direction, sort, left, right;
-	TileRequest tile;
 
-	public GuiRequest(Container inventorySlotsIn) {
+	public GuiRemote(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.ySize = 256;
 		stacks = new ArrayList<StackWrapper>();
-		tile = ((ContainerRequest) inventorySlots).tile;
-		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
-		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
-				master.getX(), master.getY(), master.getZ(), null));
+
+		PacketHandler.INSTANCE
+				.sendToServer(new RemoteMessage(0, NBTHelper.getInt(
+						Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"),
+						NBTHelper.getInt(Minecraft.getMinecraft().thePlayer
+								.getHeldItem(), "y"), NBTHelper.getInt(
+								Minecraft.getMinecraft().thePlayer
+										.getHeldItem(), "z"), NBTHelper.getInt(
+								Minecraft.getMinecraft().thePlayer
+										.getHeldItem(), "id"), null));
 	}
 
 	@Override
@@ -58,21 +63,22 @@ public class GuiRequest extends GuiContainer {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
 		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81,
-				guiTop + 96, 85, fontRendererObj.FONT_HEIGHT);
+				guiTop + 96 + 64, 85, fontRendererObj.FONT_HEIGHT);
 		searchBar.setMaxStringLength(30);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
 		searchBar.setCanLoseFocus(false);
 		searchBar.setFocused(true);
-		direction = new Button(0, guiLeft + 7, guiTop + 93, "");
+		direction = new Button(0, guiLeft + 7, guiTop + 93 + 64, "");
 		buttonList.add(direction);
-		sort = new Button(1, guiLeft + 21, guiTop + 93, "");
+		sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
 		buttonList.add(sort);
-		left = new Button(2, guiLeft + 44, guiTop + 93, "<");
+		left = new Button(2, guiLeft + 44, guiTop + 93 + 64, "<");
 		buttonList.add(left);
-		right = new Button(3, guiLeft + 58, guiTop + 93, ">");
+		right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
 		buttonList.add(right);
+
 	}
 
 	@Override
@@ -94,11 +100,13 @@ public class GuiRequest extends GuiContainer {
 					tmp.add(s);
 		}
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
-			int mul = tile.downwards ? -1 : 1;
+			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? -1
+					: 1;
 
 			@Override
 			public int compare(StackWrapper o2, StackWrapper o1) {
-				switch (tile.sort) {
+				switch (Sort.valueOf(NBTHelper.getString(
+						mc.thePlayer.getHeldItem(), "sort"))) {
 				case AMOUNT:
 					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
 				case NAME:
@@ -162,10 +170,6 @@ public class GuiRequest extends GuiContainer {
 
 	}
 
-	boolean mouseOverX(int mx, int my) {
-		return isPointInRegion(63 - guiLeft, 110 - guiTop, 7, 7, mx, my);
-	}
-
 	@Override
 	public void onGuiClosed() {
 		super.onGuiClosed();
@@ -180,24 +184,30 @@ public class GuiRequest extends GuiContainer {
 		if (button.id == 3 && page < maxPage)
 			page++;
 		if (button.id == 0)
-			tile.downwards = !tile.downwards;
+			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down",
+					!NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
 		else if (button.id == 1)
-			tile.sort = tile.sort.next();
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos()
-				.getX(), tile.getPos().getY(), tile.getPos().getZ(),
-				tile.downwards, tile.sort));
+			NBTHelper.setString(
+					mc.thePlayer.getHeldItem(),
+					"sort",
+					Sort.valueOf(
+							NBTHelper.getString(mc.thePlayer.getHeldItem(),
+									"sort")).next().toString());
+		// PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos()
+		// .getX(), tile.getPos().getY(), tile.getPos().getZ(),
+		// tile.downwards, tile.sort));
 	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 			throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
-		if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
-			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
-		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton,
-					master.getX(), master.getY(), master.getZ(), over));
+		if (over != null && (mouseButton == 0 || mouseButton == 1)) {
+			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton,
+					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"),
+					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"),
+					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"),
+					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), over));
 		}
 	}
 
@@ -206,10 +216,12 @@ public class GuiRequest extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				BlockPos master = ((ContainerRequest) inventorySlots).tile
-						.getMaster();
-				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
-						master.getX(), master.getY(), master.getZ(), null));
+				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0,
+						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"),
+						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"),
+						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"),
+						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"),
+						null));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -223,7 +235,7 @@ public class GuiRequest extends GuiContainer {
 		int j = this.height - Mouse.getY() * this.height
 				/ this.mc.displayHeight - 1;
 		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7)
-				&& j < (guiTop + 90)) {
+				&& j < (guiTop + 90+64)) {
 			int mouse = Mouse.getEventDWheel();
 			if (mouse == 0)
 				return;
@@ -321,14 +333,19 @@ public class GuiRequest extends GuiContainer {
 				this.drawTexturedModalRect(this.xPosition, this.yPosition,
 						162 + 14 * k, 0, 14, 14);
 				if (id == 0) {
-					this.drawTexturedModalRect(this.xPosition + 4,
-							this.yPosition + 3, 176 + (tile.downwards ? 6 : 0),
+					this.drawTexturedModalRect(
+							this.xPosition + 4,
+							this.yPosition + 3,
+							176 + (NBTHelper.getBoolean(
+									mc.thePlayer.getHeldItem(), "down") ? 6 : 0),
 							14, 6, 8);
 				}
 				if (id == 1) {
 					this.drawTexturedModalRect(this.xPosition + 4,
-							this.yPosition + 3,
-							188 + (tile.sort == Sort.AMOUNT ? 6 : 0), 14, 6, 8);
+							this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper
+									.getString(mc.thePlayer.getHeldItem(),
+											"sort")) == Sort.AMOUNT ? 6 : 0),
+							14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);

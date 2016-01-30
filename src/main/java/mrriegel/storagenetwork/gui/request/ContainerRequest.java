@@ -1,8 +1,9 @@
-package mrriegel.storagenetwork.gui;
+package mrriegel.storagenetwork.gui.request;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.network.SyncMessage;
@@ -49,7 +50,7 @@ public class ContainerRequest extends Container {
 		}
 		if (!tile.getWorld().isRemote)
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
-					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
+					.getWorld().getTileEntity(tile.getMaster())).getStacks(),GuiHandler.REQUEST),
 					(EntityPlayerMP) playerInv.player);
 		this.addSlotToContainer(new SlotCrafting(playerInv.player, craftMatrix,
 				result, 0, 101, 128) {
@@ -71,7 +72,7 @@ public class ContainerRequest extends Container {
 						ItemStack req = t.request(lis.get(i), 1, true, true);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
-				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks()),
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(),GuiHandler.REQUEST),
 						(EntityPlayerMP) playerIn);
 				detectAndSendChanges();
 			}
@@ -200,7 +201,7 @@ public class ContainerRequest extends Container {
 		if (!tile.getWorld().isRemote
 				&& tile.getWorld().getTotalWorldTime() % 50 == 0) {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile
-					.getWorld().getTileEntity(tile.getMaster())).getStacks()),
+					.getWorld().getTileEntity(tile.getMaster())).getStacks(),GuiHandler.REQUEST),
 					(EntityPlayerMP) playerInv.player);
 		}
 		if (!inv.equals(get())) {

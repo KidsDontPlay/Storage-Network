@@ -5,7 +5,8 @@ import io.netty.buffer.ByteBuf;
 import java.util.HashMap;
 import java.util.Map;
 
-import mrriegel.storagenetwork.gui.ContainerRequest;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -81,7 +82,7 @@ public class RecipeMessage implements IMessage,
 				}
 				con.slotChanged();
 				PacketHandler.INSTANCE.sendTo(
-						new StacksMessage(tile.getStacks()),
+						new StacksMessage(tile.getStacks(), GuiHandler.REQUEST),
 						ctx.getServerHandler().playerEntity);
 
 			}

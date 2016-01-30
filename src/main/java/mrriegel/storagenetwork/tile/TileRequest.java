@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.gui.ContainerRequest;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;

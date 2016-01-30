@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui;
+package mrriegel.storagenetwork.gui.cable;
 
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.entity.player.EntityPlayer;

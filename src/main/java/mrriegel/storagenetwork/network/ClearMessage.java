@@ -1,7 +1,8 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.ContainerRequest;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -43,8 +44,8 @@ public class ClearMessage implements IMessage,
 						PacketHandler.INSTANCE.sendTo(
 								new StacksMessage(((TileMaster) w
 										.getTileEntity(c.tile.getMaster()))
-										.getStacks()),
-								ctx.getServerHandler().playerEntity);
+										.getStacks(), GuiHandler.REQUEST), ctx
+										.getServerHandler().playerEntity);
 					}
 
 				}

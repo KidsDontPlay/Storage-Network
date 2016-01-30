@@ -1,7 +1,7 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.ContainerRequest;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
