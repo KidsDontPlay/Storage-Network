@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -49,8 +50,8 @@ public class BlockMaster extends BlockContainer {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 		boolean hasMaster = false;
 		for (BlockPos p : TileMaster.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof TileKabel
-					&& ((TileKabel) worldIn.getTileEntity(p)).getMaster() != null) {
+			if (worldIn.getTileEntity(p) instanceof IConnectable
+					&& ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null) {
 				hasMaster = true;
 				break;
 			}

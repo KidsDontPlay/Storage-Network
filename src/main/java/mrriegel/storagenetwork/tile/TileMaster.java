@@ -68,8 +68,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					.getConnectedInventory());
 			if (inv == null)
 				continue;
-			if (inv instanceof InventoryLargeChest) {
-			} else if (inv instanceof IDrawerGroup) {
+			else if (inv instanceof IDrawerGroup) {
 				IDrawerGroup group = (IDrawerGroup) inv;
 				for (int i = 0; i < group.getDrawerCount(); i++) {
 					if (!group.isDrawerEnabled(i))
@@ -88,33 +87,21 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 							&& ((ISidedInventory) inv).canExtractItem(i, inv
 									.getStackInSlot(i), t.getInventoryFace()
 									.getOpposite())) {
-						addToList(stacks, inv.getStackInSlot(i).copy());
+						addToList(stacks, inv.getStackInSlot(i).copy(),
+								inv.getStackInSlot(i).stackSize);
 					}
 				}
 			} else {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					if (inv.getStackInSlot(i) != null
 							&& t.canTransfer(inv.getStackInSlot(i)))
-						addToList(stacks, inv.getStackInSlot(i).copy());
+						addToList(stacks, inv.getStackInSlot(i).copy(),
+								inv.getStackInSlot(i).stackSize);
 				}
 			}
 
 		}
 		return stacks;
-	}
-
-	private void addToList(List<StackWrapper> lis, ItemStack s) {
-		boolean added = false;
-		for (int i = 0; i < lis.size(); i++) {
-			ItemStack stack = lis.get(i).getStack();
-			if (s.isItemEqual(stack)
-					&& ItemStack.areItemStackTagsEqual(stack, s)) {
-				lis.get(i).setSize(lis.get(i).getSize() + s.stackSize);
-				added = true;
-			}
-		}
-		if (!added)
-			lis.add(new StackWrapper(s, s.stackSize));
 	}
 
 	private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
@@ -647,9 +634,9 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 	boolean consumeLava(int num) {
 		if (!ConfigHandler.lavaNeeded)
 			return true;
-		if (tank.getFluidAmount() < num * ConfigHandler.energyMultilplier)
+		if (tank.getFluidAmount() < (num * ConfigHandler.energyMultilplier) / 2)
 			return false;
-		tank.drain(num * ConfigHandler.energyMultilplier, true);
+		tank.drain((num * ConfigHandler.energyMultilplier) / 2, true);
 		return true;
 	}
 

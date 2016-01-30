@@ -120,14 +120,20 @@ public class GuiRequest extends GuiContainer {
 			page = 1;
 		if (page > maxPage)
 			page = maxPage;
-		if (page == 1)
+		if (page == 1) {
 			left.visible = false;
-		else
+			left.enabled = false;
+		} else {
 			left.visible = true;
-		if (page == maxPage)
+			left.enabled = true;
+		}
+		if (page == maxPage) {
 			right.visible = false;
-		else
+			right.enabled = false;
+		} else {
 			right.visible = true;
+			right.enabled = true;
+		}
 		int index = (page - 1) * 32;
 		for (int jj = 0; jj < 4; jj++) {
 			for (int ii = 0; ii < 8; ii++) {

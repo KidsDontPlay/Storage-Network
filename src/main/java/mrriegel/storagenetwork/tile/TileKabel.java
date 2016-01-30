@@ -50,8 +50,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public int elements(int num) {
 		int res = 0;
-		ArrayDeque<Integer> d = deque != null ? new ArrayDeque<Integer>(deque)
-				: new ArrayDeque<Integer>();
+		ArrayDeque<Integer> d = new ArrayDeque<Integer>(deque);
 		while (!d.isEmpty()) {
 			if (d.pollFirst() == num)
 				res++;
@@ -135,6 +134,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 		deque = new Gson().fromJson(compound.getString("deque"),
 				new TypeToken<ArrayDeque<Integer>>() {
 				}.getType());
+		if (deque == null)
+			deque = new ArrayDeque<Integer>();
 		mode = compound.getBoolean("mode");
 		limit = compound.getInteger("limit");
 		if (compound.hasKey("stack", 10))

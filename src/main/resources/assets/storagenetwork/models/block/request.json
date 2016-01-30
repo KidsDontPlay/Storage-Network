@@ -1,6 +1,7 @@
 {
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "storagenetwork:blocks/request"
+    "parent" : "storagenetwork:model/top", 
+    "textures" : {
+        "top" : "storagenetwork:blocks/request_top", 
+        "rest" : "storagenetwork:blocks/request_rest"
     }
 }
