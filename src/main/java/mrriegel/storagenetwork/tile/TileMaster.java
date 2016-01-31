@@ -14,7 +14,6 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -32,7 +31,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.reflect.TypeToken;
@@ -260,7 +258,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 								- range, x + range + 1, y + range + 1, z
 								+ range + 1));
 				for (EntityItem item : items) {
-					if (item.getAge() < 40 || item.isDead
+					if (item.ticksExisted < 40 || item.isDead
 							|| !consumeLava(item.getEntityItem().stackSize))
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
@@ -391,7 +389,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
 							(int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeLava(insert + t.elements(0)))
+					if (!consumeLava(insert + t.elements(0) / 2))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -421,7 +419,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
 							(int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeLava(insert + t.elements(0)))
+					if (!consumeLava(insert + t.elements(0) / 2))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -479,7 +477,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						Math.min(fil.getMaxStackSize(),
 								inv.getInventoryStackLimit()),
 						Math.min(space, (int) Math.pow(2, t.elements(2) + 2)));
-				if (!consumeLava(num + t.elements(0)))
+				if (!consumeLava(num + t.elements(0) / 2))
 					continue;
 				ItemStack rec = request(fil, num, t.isMeta(), false);
 				if (rec == null)
@@ -628,15 +626,17 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 		vacuum();
 		impor();
 		export();
+		// if (worldObj.getTotalWorldTime() % 40 == 0)
+		// System.out.println("tick");
 
 	}
 
 	boolean consumeLava(int num) {
 		if (!ConfigHandler.lavaNeeded)
 			return true;
-		if (tank.getFluidAmount() < (num * ConfigHandler.energyMultilplier) / 2)
+		if (tank.getFluidAmount() < num * ConfigHandler.energyMultilplier)
 			return false;
-		tank.drain((num * ConfigHandler.energyMultilplier) / 2, true);
+		tank.drain(num * ConfigHandler.energyMultilplier, true);
 		return true;
 	}
 

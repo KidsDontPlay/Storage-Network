@@ -1,12 +1,11 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
@@ -50,13 +49,20 @@ public class InsertMessage implements IMessage,
 							.getTileEntity(new BlockPos(message.x, message.y,
 									message.z));
 					int rest = tile.insertStack(message.stack, null);
-					if (rest != 0)
+					if (rest != 0) {
 						ctx.getServerHandler().playerEntity.inventory
 								.setItemStack(Inv
 										.copyStack(message.stack, rest));
-					else
+						PacketHandler.INSTANCE.sendTo(
+								new StackMessage(Inv.copyStack(message.stack,
+										rest)),
+								ctx.getServerHandler().playerEntity);
+					} else {
 						ctx.getServerHandler().playerEntity.inventory
 								.setItemStack(null);
+						PacketHandler.INSTANCE.sendTo(new StackMessage(null),
+								ctx.getServerHandler().playerEntity);
+					}
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
 						((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer)
 								.detectAndSendChanges();

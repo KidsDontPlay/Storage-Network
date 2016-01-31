@@ -10,14 +10,15 @@ import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -47,31 +48,30 @@ public class ItemRemote extends Item {
 	public void addInformation(ItemStack stack, EntityPlayer playerIn,
 			List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
-		if (NBTHelper.getBoolean(stack, "bound")) {
-			tooltip.add(MinecraftServer.getServer().worldServerForDimension(
-					NBTHelper.getInt(stack, "id")).provider.getDimensionName()
-					+ " x: "
-					+ (int) NBTHelper.getInt(stack, "x")
-					+ ", y: "
-					+ (int) NBTHelper.getInt(stack, "y")
-					+ ", z: "
-					+ (int) NBTHelper.getInt(stack, "z"));
+		if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
+			tooltip.add("Dimension: " + NBTHelper.getInt(stack, "id") + ", x: "
+					+ NBTHelper.getInt(stack, "x") + ", y: "
+					+ NBTHelper.getInt(stack, "y") + ", z: "
+					+ NBTHelper.getInt(stack, "z"));
 		}
 	}
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn,
 			EntityPlayer playerIn) {
+		if (worldIn.isRemote)
+			return super.onItemRightClick(itemStackIn, worldIn, playerIn);
 		int x = NBTHelper.getInt(itemStackIn, "x");
 		int y = NBTHelper.getInt(itemStackIn, "y");
 		int z = NBTHelper.getInt(itemStackIn, "z");
 		World world = MinecraftServer.getServer().worldServerForDimension(
 				NBTHelper.getInt(itemStackIn, "id"));
-		if (NBTHelper.getBoolean(itemStackIn, "bound")) {
+		if (NBTHelper.getBoolean(itemStackIn, "bound")
+				&& world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
 			if ((itemStackIn.getItemDamage() == 0
 					&& NBTHelper.getInt(itemStackIn, "id") == worldIn.provider
-							.getDimensionId() && playerIn.getDistance(x, y, z) <= 64)
-					|| itemStackIn.getItemDamage() == 1)
+							.getDimensionId() && playerIn.getDistance(x, y, z) <= 32)
+					|| itemStackIn.getItemDamage() == 1) {
 				if (world.getChunkFromBlockCoords(new BlockPos(x, y, z))
 						.isLoaded()) {
 					((TileMaster) world.getTileEntity(new BlockPos(x, y, z)))
@@ -83,6 +83,12 @@ public class ItemRemote extends Item {
 					playerIn.openGui(StorageNetwork.instance,
 							GuiHandler.REMOTE, world, x, y, z);
 				}
+			} else if (itemStackIn.getItemDamage() == 0
+					&& (NBTHelper.getInt(itemStackIn, "id") == worldIn.provider
+							.getDimensionId() || playerIn.getDistance(x, y, z) > 32))
+				if (!worldIn.isRemote)
+					playerIn.addChatMessage(new ChatComponentText(
+							"Out of Range"));
 		}
 		return super.onItemRightClick(itemStackIn, worldIn, playerIn);
 	}
@@ -105,6 +111,8 @@ public class ItemRemote extends Item {
 	}
 
 	public static TileMaster getTile(ItemStack stack) {
+		if (stack == null)
+			return null;
 		TileEntity t = MinecraftServer
 				.getServer()
 				.worldServerForDimension(NBTHelper.getInt(stack, "id"))

@@ -36,8 +36,11 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 	@Override
 	public IRecipeTransferError transferRecipe(Container container,
 			RecipeLayout recipeLayout, EntityPlayer player, boolean doTransfer) {
-		return transferRecipe(container, recipeLayout, player, false,
-				doTransfer);
+		if (player.worldObj.isRemote)
+			return null;
+		else
+			return transferRecipe(container, recipeLayout, player, false,
+					doTransfer);
 	}
 
 	@Override

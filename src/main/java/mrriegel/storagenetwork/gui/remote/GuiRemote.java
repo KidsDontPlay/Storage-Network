@@ -9,13 +9,12 @@ import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RemoteMessage;
-import mrriegel.storagenetwork.network.RequestMessage;
+import mrriegel.storagenetwork.network.SortMessage;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -26,7 +25,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
@@ -80,6 +78,15 @@ public class GuiRemote extends GuiContainer {
 		right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
 		buttonList.add(right);
 
+	}
+
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (mc.thePlayer.getHeldItem() == null) {
+			mc.thePlayer.closeScreen();
+			return;
+		}
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
 	@Override
@@ -194,9 +201,12 @@ public class GuiRemote extends GuiContainer {
 					Sort.valueOf(
 							NBTHelper.getString(mc.thePlayer.getHeldItem(),
 									"sort")).next().toString());
-		// PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos()
-		// .getX(), tile.getPos().getY(), tile.getPos().getZ(),
-		// tile.downwards, tile.sort));
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInt(
+				mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(
+				mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(
+				mc.thePlayer.getHeldItem(), "z"), NBTHelper.getBoolean(
+				mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper
+				.getString(mc.thePlayer.getHeldItem(), "sort"))));
 	}
 
 	@Override

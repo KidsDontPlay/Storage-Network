@@ -1,8 +1,11 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.gui.remote.ContainerRemote;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -35,6 +38,13 @@ public class SortMessage implements IMessage,
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
+				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
+					ItemStack s = ctx.getServerHandler().playerEntity
+							.getHeldItem();
+					NBTHelper.setBoolean(s, "down", message.direction);
+					NBTHelper.setString(s, "sort", message.sort.toString());
+					return;
+				}
 				TileRequest tile = (TileRequest) ctx.getServerHandler().playerEntity.worldObj
 						.getTileEntity(new BlockPos(message.x, message.y,
 								message.z));

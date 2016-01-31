@@ -11,8 +11,8 @@ import java.util.Map.Entry;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Inv;
-import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -97,9 +97,10 @@ public class BlockMaster extends BlockContainer {
 			return true;
 		}
 		if (!worldIn.isRemote) {
-			playerIn.addChatMessage(new ChatComponentText("Lava: "
-					+ tile.tank.getFluidAmount() + "/"
-					+ tile.tank.getCapacity()));
+			if (ConfigHandler.lavaNeeded)
+				playerIn.addChatMessage(new ChatComponentText("Lava: "
+						+ tile.tank.getFluidAmount() + "/"
+						+ tile.tank.getCapacity()));
 			playerIn.addChatMessage(new ChatComponentText("Connectables: "
 					+ tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();

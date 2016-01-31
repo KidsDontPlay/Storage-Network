@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class CraftingRecipes {
 
 	public static void init() {
-		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.kabel, 16), "sss",
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.kabel, 8), "sss",
 				"ili", "sss", 's', new ItemStack(Blocks.stone_slab), 'i',
 				Items.iron_ingot, 'l', new ItemStack(Items.dye, 1, 4));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.exKabel, 4),
@@ -37,6 +37,12 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 2),
 				" c ", "gig", " c ", 'c', Blocks.redstone_block, 'i',
 				Items.iron_ingot, 'g', Items.blaze_powder);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 0),
+				" c ", "eie", " c ", 'c', Items.gold_ingot, 'i',
+				ModBlocks.storageKabel, 'e', Items.ender_pearl);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 1), "c",
+				"i", "d", 'c', Items.nether_star, 'i', ModItems.remote, 'd',
+				Items.diamond);
 	}
 
 }
