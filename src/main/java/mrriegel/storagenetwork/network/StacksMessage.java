@@ -65,7 +65,6 @@ public class StacksMessage implements IMessage,
 			w.readFromNBT(compound);
 			stacks.add(w);
 		}
-		System.out.println(stacks);
 	}
 
 	@Override
@@ -77,6 +76,5 @@ public class StacksMessage implements IMessage,
 			w.writeToNBT(compound);
 			ByteBufUtils.writeTag(buf, compound);
 		}
-		System.out.println(stacks);
 	}
 }

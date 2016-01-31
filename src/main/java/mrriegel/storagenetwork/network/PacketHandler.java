@@ -29,6 +29,8 @@ public class PacketHandler {
 				Side.SERVER);
 		INSTANCE.registerMessage(RemoteMessage.class, RemoteMessage.class,
 				id++, Side.SERVER);
+		INSTANCE.registerMessage(InsertMessage.class, InsertMessage.class,
+				id++, Side.SERVER);
 	}
 
 }

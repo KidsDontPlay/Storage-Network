@@ -14,6 +14,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -101,5 +102,17 @@ public class ItemRemote extends Item {
 		}
 		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY,
 				hitZ);
+	}
+
+	public static TileMaster getTile(ItemStack stack) {
+		TileEntity t = MinecraftServer
+				.getServer()
+				.worldServerForDimension(NBTHelper.getInt(stack, "id"))
+				.getTileEntity(
+						new BlockPos(NBTHelper.getInt(stack, "x"), NBTHelper
+								.getInt(stack, "y"), NBTHelper.getInt(stack,
+								"z")));
+		return t instanceof TileMaster ? (TileMaster) t : null;
+
 	}
 }

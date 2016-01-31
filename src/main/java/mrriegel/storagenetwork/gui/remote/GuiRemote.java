@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RemoteMessage;
 import mrriegel.storagenetwork.network.RequestMessage;
@@ -119,8 +120,8 @@ public class GuiRemote extends GuiContainer {
 				return 0;
 			}
 		});
-		maxPage = tmp.size() / 32;
-		if (tmp.size() % 32 != 0)
+		maxPage = tmp.size() / 56;
+		if (tmp.size() % 56 != 0)
 			maxPage++;
 		if (maxPage < 1)
 			maxPage = 1;
@@ -142,8 +143,8 @@ public class GuiRemote extends GuiContainer {
 			right.visible = true;
 			right.enabled = true;
 		}
-		int index = (page - 1) * 32;
-		for (int jj = 0; jj < 4; jj++) {
+		int index = (page - 1) * 56;
+		for (int jj = 0; jj < 7; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
@@ -154,8 +155,8 @@ public class GuiRemote extends GuiContainer {
 				index++;
 			}
 		}
-		index = (page - 1) * 32;
-		for (int jj = 0; jj < 4; jj++) {
+		index = (page - 1) * 56;
+		for (int jj = 0; jj < 7; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
@@ -202,12 +203,26 @@ public class GuiRemote extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 			throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (over != null && (mouseButton == 0 || mouseButton == 1)) {
+		if (over != null && mc.thePlayer.inventory.getItemStack() == null
+				&& (mouseButton == 0 || mouseButton == 1)) {
 			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton,
 					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"),
 					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"),
 					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"),
 					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), over));
+		}
+		int i = Mouse.getX() * this.width / this.mc.displayWidth;
+		int j = this.height - Mouse.getY() * this.height
+				/ this.mc.displayHeight - 1;
+		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7)
+				&& i < (guiLeft + xSize - 7) && j > (guiTop + 7)
+				&& j < (guiTop + 90 + 64)) {
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper
+					.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(
+					mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(
+					mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(
+					mc.thePlayer.getHeldItem(), "id"), mc.thePlayer.inventory
+					.getItemStack()));
 		}
 	}
 
@@ -235,7 +250,7 @@ public class GuiRemote extends GuiContainer {
 		int j = this.height - Mouse.getY() * this.height
 				/ this.mc.displayHeight - 1;
 		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7)
-				&& j < (guiTop + 90+64)) {
+				&& j < (guiTop + 90 + 64)) {
 			int mouse = Mouse.getEventDWheel();
 			if (mouse == 0)
 				return;

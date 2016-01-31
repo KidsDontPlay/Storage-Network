@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.gui.request.InventoryRequest;
+import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.Inv;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.init.ModItems;
+import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.network.SyncMessage;
@@ -23,6 +27,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 public class ContainerRemote extends Container {
@@ -46,6 +53,8 @@ public class ContainerRemote extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
+		if (playerIn.worldObj.isRemote)
+			return null;
 		ItemStack itemstack = null;
 		Slot slot = this.inventorySlots.get(slotIndex);
 
@@ -53,24 +62,21 @@ public class ContainerRemote extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (slotIndex <= 15) {
-				if (!this.mergeItemStack(itemstack1, 15, 15 + 37, true))
+			TileMaster tile = ItemRemote.getTile(playerIn.getHeldItem());
+			if (tile != null) {
+				int rest = tile.insertStack(itemstack1, null);
+				ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1,
+						rest);
+				slot.putStack(stack);
+				detectAndSendChanges();
+				PacketHandler.INSTANCE.sendTo(
+						new StacksMessage(tile.getStacks(), GuiHandler.REMOTE),
+						(EntityPlayerMP) playerIn);
+				if (stack == null)
 					return null;
-				slot.onSlotChange(itemstack1, itemstack);
-			} else {
-				if (!this.mergeItemStack(itemstack1, 10, 16, false))
-					return null;
+				slot.onPickupFromSlot(playerIn, itemstack1);
+				return itemstack1;
 			}
-			if (itemstack1.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
-				slot.onSlotChanged();
-			}
-
-			if (itemstack1.stackSize == itemstack.stackSize) {
-				return null;
-			}
-			slot.onPickupFromSlot(playerIn, itemstack1);
 		}
 
 		return itemstack;
@@ -78,6 +84,12 @@ public class ContainerRemote extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
+		if (!playerIn.worldObj.isRemote
+				&& playerIn.worldObj.getTotalWorldTime() % 50 == 0)
+			PacketHandler.INSTANCE.sendTo(
+					new StacksMessage(ItemRemote
+							.getTile(playerIn.getHeldItem()).getStacks(),
+							GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
 		return playerIn.getHeldItem() != null
 				&& playerIn.getHeldItem().getItem() == ModItems.remote;
 	}
