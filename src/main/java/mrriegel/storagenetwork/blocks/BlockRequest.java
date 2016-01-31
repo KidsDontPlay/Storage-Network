@@ -109,6 +109,7 @@ public class BlockRequest extends BlockContainer {
 		if (!worldIn.isRemote&&tile.getMaster() != null) {
 			((TileMaster) worldIn.getTileEntity(tile.getMaster()))
 					.refreshNetwork();
+			worldIn.markBlockForUpdate(pos);
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST,
 					worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;

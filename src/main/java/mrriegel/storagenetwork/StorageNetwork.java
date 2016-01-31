@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;

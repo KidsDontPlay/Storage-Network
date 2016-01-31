@@ -41,14 +41,15 @@ public class GuiRequest extends GuiContainer {
 	private GuiTextField searchBar;
 	private Button direction, sort, left, right;
 	TileRequest tile;
+	BlockPos master;
 
 	public GuiRequest(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.ySize = 256;
-		stacks = new ArrayList<StackWrapper>();
+		this.stacks = new ArrayList<StackWrapper>();
 		tile = ((ContainerRequest) inventorySlots).tile;
-		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
+		master = tile.getMaster();
 		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
 				master.getX(), master.getY(), master.getZ(), null));
 	}
@@ -192,9 +193,10 @@ public class GuiRequest extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 			throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		BlockPos master = ((ContainerRequest) inventorySlots).tile.getMaster();
 		if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master
+					.getX(), master.getY(), master.getZ(), null));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton,
 					master.getX(), master.getY(), master.getZ(), over));
@@ -206,8 +208,6 @@ public class GuiRequest extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				BlockPos master = ((ContainerRequest) inventorySlots).tile
-						.getMaster();
 				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
 						master.getX(), master.getY(), master.getZ(), null));
 			} else {

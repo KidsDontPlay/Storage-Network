@@ -5,10 +5,13 @@ import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
+import mrriegel.storagenetwork.network.StacksMessage;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,7 +58,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 					back.put(i, null);
 					markDirty();
 					worldObj.markBlockForUpdate(pos);
-					for (EntityPlayer p : MinecraftServer.getServer()
+					for (EntityPlayerMP p : MinecraftServer.getServer()
 							.getConfigurationManager().playerEntityList) {
 						Container c = p.openContainer;
 						if (c instanceof ContainerRequest
@@ -63,9 +66,10 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 										this.pos))
 							((ContainerRequest) c).back
 									.setInventorySlotContents(i, back.get(i));
+						PacketHandler.INSTANCE.sendTo(
+								new StacksMessage(tile.getStacks(),
+										GuiHandler.REQUEST), p);
 					}
-					PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
-							master.getX(), master.getY(), master.getZ(), null));
 					break;
 				} else if (rest == num)
 					continue;
@@ -73,15 +77,16 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 					back.put(i, Inv.copyStack(s, rest));
 					markDirty();
 					worldObj.markBlockForUpdate(pos);
-					for (EntityPlayer p : MinecraftServer.getServer()
+					for (EntityPlayerMP p : MinecraftServer.getServer()
 							.getConfigurationManager().playerEntityList) {
 						Container c = p.openContainer;
 						if (c instanceof ContainerRequest)
 							((ContainerRequest) c).back
 									.setInventorySlotContents(i, back.get(i));
+						PacketHandler.INSTANCE.sendTo(
+								new StacksMessage(tile.getStacks(),
+										GuiHandler.REQUEST), p);
 					}
-					PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,
-							master.getX(), master.getY(), master.getZ(), null));
 					break;
 				}
 			}

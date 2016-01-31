@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -36,9 +37,13 @@ public class RequestMessage implements IMessage,
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj
-						.getTileEntity(new BlockPos(message.x, message.y,
-								message.z));
+				// TileMaster tile = (TileMaster)
+				// ctx.getServerHandler().playerEntity.worldObj
+				// .getTileEntity(new BlockPos(message.x, message.y,
+				// message.z));
+				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx
+						.getServerHandler().playerEntity.openContainer).tile
+						.getMaster());
 				ItemStack stack = tile.request(message.stack,
 						message.id == 0 ? 64 : 1, true, true);
 				int rest = Inv.addToInventoryWithLeftover(stack,
