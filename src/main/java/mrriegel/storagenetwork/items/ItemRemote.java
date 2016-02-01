@@ -18,7 +18,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -82,7 +81,9 @@ public class ItemRemote extends Item {
 								Sort.NAME.toString());
 					playerIn.openGui(StorageNetwork.instance,
 							GuiHandler.REMOTE, world, x, y, z);
-				}
+				} else
+					playerIn.addChatMessage(new ChatComponentText(
+							"Cable Master not loaded."));
 			} else if (itemStackIn.getItemDamage() == 0
 					&& (NBTHelper.getInt(itemStackIn, "id") == worldIn.provider
 							.getDimensionId() || playerIn.getDistance(x, y, z) > 32))

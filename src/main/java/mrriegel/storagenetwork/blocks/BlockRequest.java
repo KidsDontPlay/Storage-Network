@@ -106,7 +106,7 @@ public class BlockRequest extends BlockContainer {
 			float hitX, float hitY, float hitZ) {
 		TileRequest tile = (TileRequest) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
-		if (!worldIn.isRemote&&tile.getMaster() != null) {
+		if (!worldIn.isRemote && tile.getMaster() != null) {
 			((TileMaster) worldIn.getTileEntity(tile.getMaster()))
 					.refreshNetwork();
 			worldIn.markBlockForUpdate(pos);

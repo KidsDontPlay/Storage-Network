@@ -6,7 +6,6 @@ import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -41,21 +40,25 @@ public class RequestMessage implements IMessage,
 				// ctx.getServerHandler().playerEntity.worldObj
 				// .getTileEntity(new BlockPos(message.x, message.y,
 				// message.z));
-				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx
-						.getServerHandler().playerEntity.openContainer).tile
-						.getMaster());
-				ItemStack stack = tile.request(message.stack,
-						message.id == 0 ? 64 : 1, true, true);
-				int rest = Inv.addToInventoryWithLeftover(stack,
-						ctx.getServerHandler().playerEntity.inventory, false);
-				if (rest != 0) {
-					ctx.getServerHandler().playerEntity
-							.dropPlayerItemWithRandomChoice(
-									Inv.copyStack(stack, rest), false);
+				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
+					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx
+							.getServerHandler().playerEntity.openContainer).tile
+							.getMaster());
+					ItemStack stack = tile.request(message.stack,
+							message.id == 0 ? 64 : 1, true, true);
+					int rest = Inv.addToInventoryWithLeftover(stack,
+							ctx.getServerHandler().playerEntity.inventory,
+							false);
+					if (rest != 0) {
+						ctx.getServerHandler().playerEntity
+								.dropPlayerItemWithRandomChoice(
+										Inv.copyStack(stack, rest), false);
+					}
+					PacketHandler.INSTANCE.sendTo(
+							new StacksMessage(tile.getStacks(),
+									GuiHandler.REQUEST),
+							ctx.getServerHandler().playerEntity);
 				}
-				PacketHandler.INSTANCE.sendTo(
-						new StacksMessage(tile.getStacks(), GuiHandler.REQUEST),
-						ctx.getServerHandler().playerEntity);
 
 			}
 		});
