@@ -93,7 +93,6 @@ public class BlockRequest extends BlockContainer {
 			BlockKabel.setAllMastersNull(worldIn, pos);
 			if (mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
-				System.out.println("bäm");
 			}
 
 		}

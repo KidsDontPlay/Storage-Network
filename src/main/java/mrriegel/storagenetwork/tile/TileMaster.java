@@ -258,8 +258,10 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 								- range, x + range + 1, y + range + 1, z
 								+ range + 1));
 				for (EntityItem item : items) {
-					if (item.ticksExisted < 40 || item.isDead
-							|| !consumeLava(item.getEntityItem().stackSize))
+					if (item.ticksExisted < 40
+							|| item.isDead
+							|| !consumeLava(item.getEntityItem().stackSize,
+									false))
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
 					if (!worldObj.isRemote) {
@@ -389,7 +391,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
 							(int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeLava(insert + t.elements(0) / 2))
+					if (!consumeLava(insert + t.elements(0) / 2, false))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -419,7 +421,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize,
 							(int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeLava(insert + t.elements(0) / 2))
+					if (!consumeLava(insert + t.elements(0) / 2, false))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -465,6 +467,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 				continue;
 			for (int i = 0; i < 9; i++) {
 				ItemStack fil = t.getFilter().get(i);
+
 				if (fil == null)
 					continue;
 				if (storageInventorys.contains(t.getPos()))
@@ -473,15 +476,18 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						.getOpposite());
 				if (space == 0)
 					continue;
+				if (!t.status())
+					continue;
 				int num = Math.min(
 						Math.min(fil.getMaxStackSize(),
 								inv.getInventoryStackLimit()),
 						Math.min(space, (int) Math.pow(2, t.elements(2) + 2)));
-				if (!consumeLava(num + t.elements(0) / 2))
+				if (!consumeLava(num + t.elements(0) / 2, true))
 					continue;
 				ItemStack rec = request(fil, num, t.isMeta(), false);
 				if (rec == null)
 					continue;
+				consumeLava(rec.stackSize + t.elements(0) / 2, false);
 
 				TileEntityHopper.putStackInInventoryAllSlots(inv, rec, t
 						.getInventoryFace().getOpposite());
@@ -566,8 +572,8 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						continue;
 					if (!t.canTransfer(s))
 						continue;
-					if (!t.status())
-						continue;
+//					if (!t.status())
+//						continue;
 					int miss = size - result;
 					result += Math.min(s.stackSize, miss);
 					int rest = s.stackSize - miss;
@@ -593,8 +599,8 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						continue;
 					if (!t.canTransfer(s))
 						continue;
-					if (!t.status())
-						continue;
+//					if (!t.status())
+//						continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t
 							.getInventoryFace().getOpposite()))
 						continue;
@@ -631,12 +637,13 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 
 	}
 
-	boolean consumeLava(int num) {
+	boolean consumeLava(int num, boolean simulate) {
 		if (!ConfigHandler.lavaNeeded)
 			return true;
 		if (tank.getFluidAmount() < num * ConfigHandler.energyMultilplier)
 			return false;
-		tank.drain(num * ConfigHandler.energyMultilplier, true);
+		if (!simulate)
+			tank.drain(num * ConfigHandler.energyMultilplier, true);
 		return true;
 	}
 
