@@ -25,6 +25,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -555,6 +556,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 				invs.add(tile);
 			}
 		}
+		ItemStack res = null;
 		int result = 0;
 		for (TileKabel t : invs) {
 			IInventory inv = (IInventory) worldObj.getTileEntity(t
@@ -564,6 +566,8 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
+					if (res != null && !s.isItemEqual(res))
+						continue;
 					if (!ItemStack.areItemStackTagsEqual(s, stack) && tag)
 						continue;
 					if (!s.isItemEqual(stack) && meta)
@@ -572,16 +576,18 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						continue;
 					if (!t.canTransfer(s))
 						continue;
-//					if (!t.status())
-//						continue;
+					// if (!t.status())
+					// continue;
 					int miss = size - result;
 					result += Math.min(s.stackSize, miss);
 					int rest = s.stackSize - miss;
 					inv.setInventorySlotContents(i,
 							rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					if (res == null)
+						res = s.copy();
 					inv.markDirty();
 					if (result == size)
-						return Inv.copyStack(stack, size);
+						return Inv.copyStack(res, size);
 					// break;
 
 				}
@@ -591,6 +597,8 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
+					if (res != null && !s.isItemEqual(res))
+						continue;
 					if (!ItemStack.areItemStackTagsEqual(s, stack) && tag)
 						continue;
 					if (!s.isItemEqual(stack) && meta)
@@ -599,8 +607,8 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						continue;
 					if (!t.canTransfer(s))
 						continue;
-//					if (!t.status())
-//						continue;
+					// if (!t.status())
+					// continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t
 							.getInventoryFace().getOpposite()))
 						continue;
@@ -609,16 +617,18 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 					int rest = s.stackSize - miss;
 					inv.setInventorySlotContents(i,
 							rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					if (res == null)
+						res = s.copy();
 					inv.markDirty();
 					if (result == size)
-						return Inv.copyStack(stack, size);
+						return Inv.copyStack(res, size);
 					// break;
 				}
 			}
 		}
 		if (result == 0)
 			return null;
-		return Inv.copyStack(stack, result);
+		return Inv.copyStack(res, result);
 	}
 
 	@Override
