@@ -1,0 +1,7 @@
+{
+    "parent": "storagenetwork:model/stamm",
+    "textures": {
+        "deck": "storagenetwork:blocks/master_deck",
+        "side": "storagenetwork:blocks/master_side"
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "parent" : "storagenetwork:block/imKabel0", 
+    "display" : {
+        "thirdperson" : {
+            "rotation" : [10, -45, 170], 
+            "translation" : [0, 1.5, -2.75], 
+            "scale" : [0.475, 0.475, 0.475]
+        }, 
+        "gui" : {
+            "scale" : [1.675, 1.675, 1.675]
+        }, 
+        "firstperson" : {
+            "scale" : [1.575, 1.575, 1.575]
+        }, 
+        "ground" : {
+            "scale" : [1.575, 1.575, 1.575]
+        }
+    }
+}

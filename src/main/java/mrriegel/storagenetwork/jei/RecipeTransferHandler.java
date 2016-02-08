@@ -54,7 +54,7 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 					GuiIngredient ingredient = (GuiIngredient) inputs.get(slot
 							.getSlotIndex() + 1);
 					if (ingredient != null) {
-						map.put(j, ingredient.getAll());
+						map.put(j, ingredient.getAllIngredients());
 
 					}
 				}

@@ -1,0 +1,7 @@
+{
+    "parent" : "storagenetwork:block/kabel3op", 
+    "textures" : {
+        "texture" : "storagenetwork:blocks/exKabel", 
+        "particle" : "storagenetwork:blocks/exKabel"
+    }
+}
