@@ -17,8 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class StacksMessage implements IMessage,
-		IMessageHandler<StacksMessage, IMessage> {
+public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, IMessage> {
 	int size, id;
 	List<StackWrapper> stacks;
 
@@ -33,18 +32,15 @@ public class StacksMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final StacksMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final StacksMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = Minecraft.getMinecraft();
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (message.id == GuiHandler.REMOTE
-						&& Minecraft.getMinecraft().currentScreen instanceof GuiRemote) {
+				if (message.id == GuiHandler.REMOTE && Minecraft.getMinecraft().currentScreen instanceof GuiRemote) {
 					GuiRemote gui = (GuiRemote) Minecraft.getMinecraft().currentScreen;
 					gui.stacks = message.stacks;
-				} else if (message.id == GuiHandler.REQUEST
-						&& Minecraft.getMinecraft().currentScreen instanceof GuiRequest) {
+				} else if (message.id == GuiHandler.REQUEST && Minecraft.getMinecraft().currentScreen instanceof GuiRequest) {
 					GuiRequest gui = (GuiRequest) Minecraft.getMinecraft().currentScreen;
 					gui.stacks = message.stacks;
 				}

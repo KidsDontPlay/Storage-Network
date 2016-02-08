@@ -45,13 +45,11 @@ public class BlockMaster extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
-			EntityLivingBase placer, ItemStack stack) {
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 		boolean hasMaster = false;
 		for (BlockPos p : TileMaster.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof IConnectable
-					&& ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null) {
+			if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null) {
 				hasMaster = true;
 				break;
 			}
@@ -71,24 +69,20 @@ public class BlockMaster extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos,
-			IBlockState state, EntityPlayer playerIn, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		tile.refreshNetwork();
 		ItemStack s = playerIn.getHeldItem();
 		if (s != null && FluidContainerRegistry.isContainer(s)) {
 			int space = tile.tank.getCapacity() - tile.tank.getFluidAmount();
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(s);
-			if (liquid != null && liquid.getFluid().equals(FluidRegistry.LAVA)
-					&& space >= liquid.amount) {
+			if (liquid != null && liquid.getFluid().equals(FluidRegistry.LAVA) && space >= liquid.amount) {
 				ItemStack container = s.getItem().getContainerItem(s);
 				tile.tank.fill(liquid, true);
 				if (!playerIn.capabilities.isCreativeMode) {
 					s.stackSize--;
 					if (s.stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(
-								playerIn.inventory.currentItem, null);
+						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
 					playerIn.inventory.addItemStackToInventory(container);
 					playerIn.openContainer.detectAndSendChanges();
 				}
@@ -98,17 +92,12 @@ public class BlockMaster extends BlockContainer {
 		}
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.lavaNeeded)
-				playerIn.addChatMessage(new ChatComponentText("Lava: "
-						+ tile.tank.getFluidAmount() + "/"
-						+ tile.tank.getCapacity()));
-			playerIn.addChatMessage(new ChatComponentText("Connectables: "
-					+ tile.connectables.size()));
+				playerIn.addChatMessage(new ChatComponentText("Lava: " + tile.tank.getFluidAmount() + "/" + tile.tank.getCapacity()));
+			playerIn.addChatMessage(new ChatComponentText("Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			for (BlockPos p : tile.connectables) {
-				String block = worldIn.getBlockState(p).getBlock()
-						.getLocalizedName();
-				map.put(block, map.get(block) != null ? (map.get(block) + 1)
-						: 1);
+				String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
+				map.put(block, map.get(block) != null ? (map.get(block) + 1) : 1);
 
 			}
 			List<Entry<String, Integer>> lis = new ArrayList<Map.Entry<String, Integer>>();
@@ -117,17 +106,14 @@ public class BlockMaster extends BlockContainer {
 			}
 			Collections.sort(lis, new Comparator<Entry<String, Integer>>() {
 				@Override
-				public int compare(Entry<String, Integer> o1,
-						Entry<String, Integer> o2) {
+				public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
 					return Integer.compare(o2.getValue(), o1.getValue());
 				}
 			});
 			for (Entry<String, Integer> e : lis)
-				playerIn.addChatMessage(new ChatComponentText("   "
-						+ e.getKey() + ": " + e.getValue()));
+				playerIn.addChatMessage(new ChatComponentText("   " + e.getKey() + ": " + e.getValue()));
 		}
-		return super.onBlockActivated(worldIn, pos, state, playerIn, side,
-				hitX, hitY, hitZ);
+		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
 	}
 
 }

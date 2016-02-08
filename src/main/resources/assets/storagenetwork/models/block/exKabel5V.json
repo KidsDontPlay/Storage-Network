@@ -1,7 +1,0 @@
-{
-    "parent" : "storagenetwork:block/kabel5V", 
-    "textures" : {
-        "texture" : "storagenetwork:blocks/exKabel", 
-        "particle" : "storagenetwork:blocks/exKabel"
-    }
-}

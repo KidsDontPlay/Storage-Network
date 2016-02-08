@@ -15,16 +15,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class ModBlocks {
 	public static final Block master = new BlockMaster();
 	public static final Block request = new BlockRequest();
-	public static final Block kabel = new BlockKabel()
-			.setUnlocalizedName(StorageNetwork.MODID + ":kabel");
-	public static final Block storageKabel = new BlockKabel()
-			.setUnlocalizedName(StorageNetwork.MODID + ":storageKabel");
-	public static final Block exKabel = new BlockKabel()
-			.setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
-	public static final Block imKabel = new BlockKabel()
-			.setUnlocalizedName(StorageNetwork.MODID + ":imKabel");
-	public static final Block vacuumKabel = new BlockKabel()
-			.setUnlocalizedName(StorageNetwork.MODID + ":vacuumKabel");
+	public static final Block kabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":kabel");
+	public static final Block storageKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":storageKabel");
+	public static final Block exKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
+	public static final Block imKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":imKabel");
+	public static final Block vacuumKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":vacuumKabel");
 
 	public static void init() {
 		GameRegistry.registerBlock(master, "master");

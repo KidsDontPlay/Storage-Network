@@ -34,16 +34,12 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 	}
 
 	@Override
-	public IRecipeTransferError transferRecipe(Container container,
-			RecipeLayout recipeLayout, EntityPlayer player, boolean doTransfer) {
-		return transferRecipe(container, recipeLayout, player, false,
-				doTransfer);
+	public IRecipeTransferError transferRecipe(Container container, RecipeLayout recipeLayout, EntityPlayer player, boolean doTransfer) {
+		return transferRecipe(container, recipeLayout, player, false, doTransfer);
 	}
 
 	@Override
-	public IRecipeTransferError transferRecipe(Container container,
-			IRecipeLayout recipeLayout, EntityPlayer player,
-			boolean maxTransfer, boolean doTransfer) {
+	public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
 		if (doTransfer) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			Map inputs = recipeLayout.getItemStacks().getGuiIngredients();
@@ -51,8 +47,7 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 			for (int j = 0; j < container.inventorySlots.size(); j++) {
 				Slot slot = container.inventorySlots.get(j);
 				if ((slot.inventory instanceof InventoryCrafting)) {
-					GuiIngredient ingredient = (GuiIngredient) inputs.get(slot
-							.getSlotIndex() + 1);
+					GuiIngredient ingredient = (GuiIngredient) inputs.get(slot.getSlotIndex() + 1);
 					if (ingredient != null) {
 						map.put(j, ingredient.getAllIngredients());
 

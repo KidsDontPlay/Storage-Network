@@ -14,8 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class SortMessage implements IMessage,
-		IMessageHandler<SortMessage, IMessage> {
+public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMessage> {
 	int x, y, z;
 	boolean direction;
 	Sort sort;
@@ -32,22 +31,18 @@ public class SortMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final SortMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final SortMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-					ItemStack s = ctx.getServerHandler().playerEntity
-							.getHeldItem();
+					ItemStack s = ctx.getServerHandler().playerEntity.getHeldItem();
 					NBTHelper.setBoolean(s, "down", message.direction);
 					NBTHelper.setString(s, "sort", message.sort.toString());
 					return;
 				}
-				TileRequest tile = (TileRequest) ctx.getServerHandler().playerEntity.worldObj
-						.getTileEntity(new BlockPos(message.x, message.y,
-								message.z));
+				TileRequest tile = (TileRequest) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
 				tile.sort = message.sort;
 				tile.downwards = message.direction;
 			}

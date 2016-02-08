@@ -14,20 +14,17 @@ public abstract class CrunchItemContainer extends Container {
 	public ItemStack storedInv;
 	public InventoryPlayer playerInv;
 
-	public CrunchItemContainer(EntityPlayer player, InventoryPlayer playerInv,
-			CrunchItemInventory inv) {
+	public CrunchItemContainer(EntityPlayer player, InventoryPlayer playerInv, CrunchItemInventory inv) {
 		this.inv = inv;
 		storedInv = playerInv.getCurrentItem();
 		this.playerInv = playerInv;
 		if (storedInv != null && storedInv.getTagCompound() != null) {
-			NBTTagList invList = storedInv.getTagCompound().getTagList(
-					"crunchItem", Constants.NBT.TAG_COMPOUND);
+			NBTTagList invList = storedInv.getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < invList.tagCount(); i++) {
 				NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 				int slot = stackTag.getByte("Slot");
 				if (slot >= 0 && slot < inv.getInv().length) {
-					inv.setInventorySlotContents(slot,
-							ItemStack.loadItemStackFromNBT(stackTag));
+					inv.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
 				}
 			}
 		}
@@ -74,14 +71,12 @@ public abstract class CrunchItemContainer extends Container {
 			stack = stackInSlot.copy();
 
 			if (slot < inv.getSizeInventory()) {
-				if (!this.mergeItemStack(stackInSlot, inv.getSizeInventory(),
-						36 + inv.getSizeInventory(), true)) {
+				if (!this.mergeItemStack(stackInSlot, inv.getSizeInventory(), 36 + inv.getSizeInventory(), true)) {
 					return null;
 				}
 			}
 
-			else if (!this.mergeItemStack(stackInSlot, 0,
-					inv.getSizeInventory(), false)) {
+			else if (!this.mergeItemStack(stackInSlot, 0, inv.getSizeInventory(), false)) {
 				return null;
 			}
 

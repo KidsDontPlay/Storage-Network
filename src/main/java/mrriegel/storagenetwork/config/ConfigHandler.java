@@ -15,15 +15,10 @@ public class ConfigHandler {
 		config = new Configuration(file);
 		config.load();
 
-		smallFont = config
-				.get(Configuration.CATEGORY_CLIENT, "smallFont", true)
-				.getBoolean();
-		lavaNeeded = config.get(Configuration.CATEGORY_GENERAL, "lavaNeeded",
-				true).getBoolean();
-		lavaCapacity = config.get(Configuration.CATEGORY_GENERAL,
-				"lavaCapacity", 8).getInt();
-		energyMultilplier = config.get(Configuration.CATEGORY_GENERAL,
-				"energyMultilplier", 3).getInt();
+		smallFont = config.get(Configuration.CATEGORY_CLIENT, "smallFont", true).getBoolean();
+		lavaNeeded = config.get(Configuration.CATEGORY_GENERAL, "lavaNeeded", true).getBoolean();
+		lavaCapacity = config.get(Configuration.CATEGORY_GENERAL, "lavaCapacity", 8).getInt();
+		energyMultilplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultilplier", 3).getInt();
 
 		if (config.hasChanged()) {
 			config.save();

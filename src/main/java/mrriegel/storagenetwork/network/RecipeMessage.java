@@ -20,8 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class RecipeMessage implements IMessage,
-		IMessageHandler<RecipeMessage, IMessage> {
+public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, IMessage> {
 	NBTTagCompound nbt;
 
 	public RecipeMessage() {
@@ -42,21 +41,17 @@ public class RecipeMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final RecipeMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final RecipeMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest))
 					return;
-				ContainerRequest con = (ContainerRequest) ctx
-						.getServerHandler().playerEntity.openContainer;
-				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj
-						.getTileEntity(con.tile.getMaster());
+				ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
+				TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(con.tile.getMaster());
 				for (int j = 1; j < 10; j++) {
-					NBTTagList invList = message.nbt.getTagList("s" + j,
-							Constants.NBT.TAG_COMPOUND);
+					NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 					Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
 					for (int i = 0; i < invList.tagCount(); i++) {
 						NBTTagCompound stackTag = invList.getCompoundTagAt(i);
@@ -64,26 +59,19 @@ public class RecipeMessage implements IMessage,
 					}
 					for (int i = 0; i < lis.size(); i++) {
 						ItemStack s = lis.get(i);
-						if (s != null
-								&& con.craftMatrix.getStackInSlot(j - 1) == null
-								&& consumeItem(
-										ctx.getServerHandler().playerEntity.inventory,
-										s.copy())) {
+						if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null && consumeItem(ctx.getServerHandler().playerEntity.inventory, s.copy())) {
 							con.craftMatrix.setInventorySlotContents(j - 1, s);
 							break;
 						}
 						s = tile.request(lis.get(i), 1, true, true);
-						if (s != null
-								&& con.craftMatrix.getStackInSlot(j - 1) == null) {
+						if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
 							con.craftMatrix.setInventorySlotContents(j - 1, s);
 							break;
 						}
 					}
 				}
 				con.slotChanged();
-				PacketHandler.INSTANCE.sendTo(
-						new StacksMessage(tile.getStacks(), GuiHandler.REQUEST),
-						ctx.getServerHandler().playerEntity);
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
 			}
 		});
@@ -92,8 +80,7 @@ public class RecipeMessage implements IMessage,
 
 	boolean consumeItem(InventoryPlayer inv, ItemStack stack) {
 		for (int i = 0; i < inv.getSizeInventory() - 4; i++) {
-			if (inv.getStackInSlot(i) != null
-					&& inv.getStackInSlot(i).isItemEqual(stack)) {
+			if (inv.getStackInSlot(i) != null && inv.getStackInSlot(i).isItemEqual(stack)) {
 				inv.decrStackSize(i, 1);
 				return true;
 			}

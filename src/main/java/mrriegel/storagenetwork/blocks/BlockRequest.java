@@ -40,15 +40,12 @@ public class BlockRequest extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos,
-			IBlockState state, Block neighborBlock) {
+	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 
 		for (BlockPos p : TileMaster.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
-					((TileRequest) worldIn.getTileEntity(pos))
-							.setMaster(((IConnectable) worldIn.getTileEntity(p))
-									.getMaster());
+					((TileRequest) worldIn.getTileEntity(pos)).setMaster(((IConnectable) worldIn.getTileEntity(p)).getMaster());
 			}
 			if (worldIn.getTileEntity(p) instanceof TileMaster) {
 				((TileRequest) worldIn.getTileEntity(pos)).setMaster(p);
@@ -58,15 +55,12 @@ public class BlockRequest extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
-			EntityLivingBase placer, ItemStack stack) {
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 
 		for (BlockPos p : TileMaster.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
-					((TileRequest) worldIn.getTileEntity(pos))
-							.setMaster(((IConnectable) worldIn.getTileEntity(p))
-									.getMaster());
+					((TileRequest) worldIn.getTileEntity(pos)).setMaster(((IConnectable) worldIn.getTileEntity(p)).getMaster());
 			}
 			if (worldIn.getTileEntity(p) instanceof TileMaster) {
 				((TileRequest) worldIn.getTileEntity(pos)).setMaster(p);
@@ -100,21 +94,16 @@ public class BlockRequest extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos,
-			IBlockState state, EntityPlayer playerIn, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileRequest tile = (TileRequest) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
 		if (!worldIn.isRemote && tile.getMaster() != null) {
-			((TileMaster) worldIn.getTileEntity(tile.getMaster()))
-					.refreshNetwork();
+			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
 			worldIn.markBlockForUpdate(pos);
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST,
-					worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}
-		return super.onBlockActivated(worldIn, pos, state, playerIn, side,
-				hitX, hitY, hitZ);
+		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
 	}
 
 	@Override
@@ -124,18 +113,15 @@ public class BlockRequest extends BlockContainer {
 		if (tileentity instanceof TileRequest) {
 			TileRequest tile = (TileRequest) tileentity;
 			for (int i = 0; i < 9; i++) {
-				spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(),
-						tile.back.get(i));
-				spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(),
-						tile.matrix.get(i));
+				spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.back.get(i));
+				spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
 			}
 		}
 
 		super.breakBlock(worldIn, pos, state);
 	}
 
-	public static void spawnItemStack(World worldIn, double x, double y,
-			double z, ItemStack stack) {
+	public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {
 		if (stack == null)
 			return;
 		float f = RANDOM.nextFloat() * 0.8F + 0.1F;
@@ -150,19 +136,15 @@ public class BlockRequest extends BlockContainer {
 			}
 
 			stack.stackSize -= i;
-			EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z
-					+ f2,
-					new ItemStack(stack.getItem(), i, stack.getMetadata()));
+			EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
 
 			if (stack.hasTagCompound()) {
-				entityitem.getEntityItem().setTagCompound(
-						(NBTTagCompound) stack.getTagCompound().copy());
+				entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
 			}
 
 			float f3 = 0.05F;
 			entityitem.motionX = RANDOM.nextGaussian() * f3;
-			entityitem.motionY = RANDOM.nextGaussian() * f3
-					+ 0.20000000298023224D;
+			entityitem.motionY = RANDOM.nextGaussian() * f3 + 0.20000000298023224D;
 			entityitem.motionZ = RANDOM.nextGaussian() * f3;
 			worldIn.spawnEntityInWorld(entityitem);
 		}

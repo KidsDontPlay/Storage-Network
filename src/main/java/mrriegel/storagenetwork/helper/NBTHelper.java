@@ -8,8 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 
 public class NBTHelper {
 	public static boolean hasTag(ItemStack itemStack, String keyName) {
-		return itemStack != null && itemStack.getTagCompound() != null
-				&& itemStack.getTagCompound().hasKey(keyName);
+		return itemStack != null && itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey(keyName);
 	}
 
 	public static void removeTag(ItemStack itemStack, String keyName) {
@@ -31,11 +30,9 @@ public class NBTHelper {
 		}
 	}
 
-	public static NBTTagList getList(ItemStack stack, String tag, int objtype,
-			boolean nullifyOnFail) {
+	public static NBTTagList getList(ItemStack stack, String tag, int objtype, boolean nullifyOnFail) {
 		initNBTTagCompound(stack);
-		return hasTag(stack, tag) ? stack.getTagCompound().getTagList(tag,
-				objtype) : nullifyOnFail ? null : new NBTTagList();
+		return hasTag(stack, tag) ? stack.getTagCompound().getTagList(tag, objtype) : nullifyOnFail ? null : new NBTTagList();
 	}
 
 	public static void setList(ItemStack stack, String tag, NBTTagList list) {
@@ -43,8 +40,7 @@ public class NBTHelper {
 		stack.getTagCompound().setTag(tag, list);
 	}
 
-	public static void setLong(ItemStack itemStack, String keyName,
-			long keyValue) {
+	public static void setLong(ItemStack itemStack, String keyName, long keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setLong(keyName, keyValue);
@@ -61,8 +57,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getString(keyName);
 	}
 
-	public static void setString(ItemStack itemStack, String keyName,
-			String keyValue) {
+	public static void setString(ItemStack itemStack, String keyName, String keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setString(keyName, keyValue);
@@ -79,8 +74,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getBoolean(keyName);
 	}
 
-	public static void setBoolean(ItemStack itemStack, String keyName,
-			boolean keyValue) {
+	public static void setBoolean(ItemStack itemStack, String keyName, boolean keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setBoolean(keyName, keyValue);
@@ -97,8 +91,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getByte(keyName);
 	}
 
-	public static void setByte(ItemStack itemStack, String keyName,
-			byte keyValue) {
+	public static void setByte(ItemStack itemStack, String keyName, byte keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setByte(keyName, keyValue);
@@ -115,8 +108,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getShort(keyName);
 	}
 
-	public static void setShort(ItemStack itemStack, String keyName,
-			short keyValue) {
+	public static void setShort(ItemStack itemStack, String keyName, short keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setShort(keyName, keyValue);
@@ -133,8 +125,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getInteger(keyName);
 	}
 
-	public static void setInteger(ItemStack itemStack, String keyName,
-			int keyValue) {
+	public static void setInteger(ItemStack itemStack, String keyName, int keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setInteger(keyName, keyValue);
@@ -162,8 +153,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getFloat(keyName);
 	}
 
-	public static void setFloat(ItemStack itemStack, String keyName,
-			float keyValue) {
+	public static void setFloat(ItemStack itemStack, String keyName, float keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setFloat(keyName, keyValue);
@@ -180,8 +170,7 @@ public class NBTHelper {
 		return itemStack.getTagCompound().getDouble(keyName);
 	}
 
-	public static void setDouble(ItemStack itemStack, String keyName,
-			double keyValue) {
+	public static void setDouble(ItemStack itemStack, String keyName, double keyValue) {
 		initNBTTagCompound(itemStack);
 
 		itemStack.getTagCompound().setDouble(keyName, keyValue);

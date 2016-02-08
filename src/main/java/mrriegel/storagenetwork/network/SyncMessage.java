@@ -10,15 +10,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class SyncMessage implements IMessage,
-		IMessageHandler<SyncMessage, IMessage> {
+public class SyncMessage implements IMessage, IMessageHandler<SyncMessage, IMessage> {
 	ItemStack a, b, c, d, e, f;
 
 	public SyncMessage() {
 	}
 
-	public SyncMessage(ItemStack a, ItemStack b, ItemStack c, ItemStack d,
-			ItemStack e, ItemStack f) {
+	public SyncMessage(ItemStack a, ItemStack b, ItemStack c, ItemStack d, ItemStack e, ItemStack f) {
 		this.a = a;
 		this.b = b;
 		this.c = c;
@@ -28,15 +26,13 @@ public class SyncMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final SyncMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final SyncMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = Minecraft.getMinecraft();
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				if (Minecraft.getMinecraft().thePlayer.openContainer instanceof ContainerRequest) {
-					ContainerRequest con = ((ContainerRequest) Minecraft
-							.getMinecraft().thePlayer.openContainer);
+					ContainerRequest con = ((ContainerRequest) Minecraft.getMinecraft().thePlayer.openContainer);
 					con.back.setInventorySlotContents(0, message.a);
 					con.back.setInventorySlotContents(1, message.b);
 					con.back.setInventorySlotContents(2, message.c);

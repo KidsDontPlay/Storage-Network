@@ -1,5 +1,7 @@
 {
-    "variants": {
-        "normal": { "model": "storagenetwork:request" }
+    "variants" : {
+        "normal" : {
+            "model" : "storagenetwork:request"
+        }
     }
 }

@@ -1,5 +1,5 @@
 {
-    "parent" : "storagenetwork:block/vacuumKabel0", 
+    "parent" : "storagenetwork:block/vacuumKabel", 
     "display" : {
         "thirdperson" : {
             "rotation" : [10, -45, 170], 

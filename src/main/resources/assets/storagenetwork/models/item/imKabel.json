@@ -1,5 +1,5 @@
 {
-    "parent" : "storagenetwork:block/imKabel0", 
+    "parent" : "storagenetwork:block/imKabel", 
     "display" : {
         "thirdperson" : {
             "rotation" : [10, -45, 170], 

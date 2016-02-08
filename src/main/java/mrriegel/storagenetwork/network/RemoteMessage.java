@@ -15,8 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class RemoteMessage implements IMessage,
-		IMessageHandler<RemoteMessage, IMessage> {
+public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, IMessage> {
 	int id, x, y, z, dim;
 	ItemStack stack;
 
@@ -34,33 +33,20 @@ public class RemoteMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final RemoteMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final RemoteMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				World w = MinecraftServer.getServer().worldServerForDimension(
-						message.dim);
-				if (w.getTileEntity(new BlockPos(message.x, message.y,
-						message.z)) instanceof TileMaster) {
-					TileMaster tile = (TileMaster) w
-							.getTileEntity(new BlockPos(message.x, message.y,
-									message.z));
-					ItemStack stack = tile.request(message.stack,
-							message.id == 0 ? 64 : 1, true, true);
-					int rest = Inv.addToInventoryWithLeftover(stack,
-							ctx.getServerHandler().playerEntity.inventory,
-							false);
+				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
+				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
+					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
+					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : 1, true, true);
+					int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
 					if (rest != 0) {
-						ctx.getServerHandler().playerEntity
-								.dropPlayerItemWithRandomChoice(
-										Inv.copyStack(stack, rest), false);
+						ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
 					}
-					PacketHandler.INSTANCE.sendTo(
-							new StacksMessage(tile.getStacks(),
-									GuiHandler.REMOTE),
-							ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 				}
 
 			}

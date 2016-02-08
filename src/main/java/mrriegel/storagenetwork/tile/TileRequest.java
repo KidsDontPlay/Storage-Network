@@ -56,17 +56,11 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 					back.put(i, null);
 					markDirty();
 					worldObj.markBlockForUpdate(pos);
-					for (EntityPlayerMP p : MinecraftServer.getServer()
-							.getConfigurationManager().playerEntityList) {
+					for (EntityPlayerMP p : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
 						Container c = p.openContainer;
-						if (c instanceof ContainerRequest
-								&& ((ContainerRequest) c).tile.getPos().equals(
-										this.pos))
-							((ContainerRequest) c).back
-									.setInventorySlotContents(i, back.get(i));
-						PacketHandler.INSTANCE.sendTo(
-								new StacksMessage(tile.getStacks(),
-										GuiHandler.REQUEST), p);
+						if (c instanceof ContainerRequest && ((ContainerRequest) c).tile.getPos().equals(this.pos))
+							((ContainerRequest) c).back.setInventorySlotContents(i, back.get(i));
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), p);
 					}
 					break;
 				} else if (rest == num)
@@ -75,15 +69,11 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 					back.put(i, Inv.copyStack(s, rest));
 					markDirty();
 					worldObj.markBlockForUpdate(pos);
-					for (EntityPlayerMP p : MinecraftServer.getServer()
-							.getConfigurationManager().playerEntityList) {
+					for (EntityPlayerMP p : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
 						Container c = p.openContainer;
 						if (c instanceof ContainerRequest)
-							((ContainerRequest) c).back
-									.setInventorySlotContents(i, back.get(i));
-						PacketHandler.INSTANCE.sendTo(
-								new StacksMessage(tile.getStacks(),
-										GuiHandler.REQUEST), p);
+							((ContainerRequest) c).back.setInventorySlotContents(i, back.get(i));
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), p);
 					}
 					break;
 				}
@@ -94,13 +84,11 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		master = new Gson().fromJson(compound.getString("master"),
-				new TypeToken<BlockPos>() {
-				}.getType());
+		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
+		}.getType());
 		downwards = compound.getBoolean("dir");
 		sort = Sort.valueOf(compound.getString("sort"));
-		NBTTagList invList = compound.getTagList("back",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList invList = compound.getTagList("back", Constants.NBT.TAG_COMPOUND);
 		back = new HashMap<Integer, ItemStack>();
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
@@ -148,8 +136,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(),
-				this.getPos().getY(), this.getPos().getZ()), 1, syncData);
+		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ()), 1, syncData);
 	}
 
 	@Override

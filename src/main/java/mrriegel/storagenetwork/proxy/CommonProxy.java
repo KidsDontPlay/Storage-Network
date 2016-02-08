@@ -20,8 +20,7 @@ public class CommonProxy {
 	}
 
 	public void init(FMLInitializationEvent event) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(StorageNetwork.instance,
-				new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(StorageNetwork.instance, new GuiHandler());
 		ModBlocks.init();
 		ModItems.init();
 		CraftingRecipes.init();

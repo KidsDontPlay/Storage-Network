@@ -82,8 +82,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		if (isWhite()) {
 			boolean tmp = false;
 			for (ItemStack s : lis) {
-				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
-						.getItem()) {
+				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = true;
 					break;
 				}
@@ -92,8 +91,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		} else {
 			boolean tmp = true;
 			for (ItemStack s : lis) {
-				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s
-						.getItem()) {
+				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = false;
 					break;
 				}
@@ -120,31 +118,25 @@ public class TileKabel extends TileEntity implements IConnectable {
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		kind = Kind.valueOf(compound.getString("kind"));
-		master = new Gson().fromJson(compound.getString("master"),
-				new TypeToken<BlockPos>() {
-				}.getType());
-		connectedInventory = new Gson().fromJson(
-				compound.getString("connectedInventory"),
-				new TypeToken<BlockPos>() {
-				}.getType());
+		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
+		}.getType());
+		connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {
+		}.getType());
 		inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
 		meta = compound.getBoolean("meta");
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
-		deque = new Gson().fromJson(compound.getString("deque"),
-				new TypeToken<ArrayDeque<Integer>>() {
-				}.getType());
+		deque = new Gson().fromJson(compound.getString("deque"), new TypeToken<ArrayDeque<Integer>>() {
+		}.getType());
 		if (deque == null)
 			deque = new ArrayDeque<Integer>();
 		mode = compound.getBoolean("mode");
 		limit = compound.getInteger("limit");
 		if (compound.hasKey("stack", 10))
-			stack = (ItemStack.loadItemStackFromNBT(compound
-					.getCompoundTag("stack")));
+			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
-		NBTTagList invList = compound.getTagList("crunchTE",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
 		filter = new HashMap<Integer, ItemStack>();
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
@@ -161,8 +153,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 			kind = getKind(worldObj, worldObj.getBlockState(pos).getBlock());
 		compound.setString("kind", kind.toString());
 		compound.setString("master", new Gson().toJson(master));
-		compound.setString("connectedInventory",
-				new Gson().toJson(connectedInventory));
+		compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
 		if (inventoryFace != null)
 			compound.setString("inventoryFace", inventoryFace.toString());
 		compound.setBoolean("meta", meta);

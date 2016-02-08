@@ -23,14 +23,12 @@ public class CrunchItemInventory implements IInventory {
 			storedInv.setTagCompound(new NBTTagCompound());
 		}
 		if (storedInv != null && storedInv.getTagCompound() != null) {
-			NBTTagList invList = storedInv.getTagCompound().getTagList(
-					"crunchItem", Constants.NBT.TAG_COMPOUND);
+			NBTTagList invList = storedInv.getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < invList.tagCount(); i++) {
 				NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 				int slot = stackTag.getByte("Slot");
 				if (slot >= 0 && slot < getInv().length) {
-					setInventorySlotContents(slot,
-							ItemStack.loadItemStackFromNBT(stackTag));
+					setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
 				}
 			}
 		}
@@ -96,8 +94,7 @@ public class CrunchItemInventory implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return player.getHeldItem() != null
-				&& player.getHeldItem().isItemEqual(storedInv);
+		return player.getHeldItem() != null && player.getHeldItem().isItemEqual(storedInv);
 	}
 
 	@Override

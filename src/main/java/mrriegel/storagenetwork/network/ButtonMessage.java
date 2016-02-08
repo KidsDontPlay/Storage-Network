@@ -9,8 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class ButtonMessage implements IMessage,
-		IMessageHandler<ButtonMessage, IMessage> {
+public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, IMessage> {
 	int id, x, y, z;
 
 	public ButtonMessage() {
@@ -25,15 +24,12 @@ public class ButtonMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final ButtonMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final ButtonMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj
-						.getTileEntity(new BlockPos(message.x, message.y,
-								message.z));
+				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
 				switch (message.id) {
 				case 0:
 					tile.setPriority(tile.getPriority() - 1);

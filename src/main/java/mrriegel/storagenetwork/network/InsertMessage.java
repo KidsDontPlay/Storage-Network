@@ -16,8 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class InsertMessage implements IMessage,
-		IMessageHandler<InsertMessage, IMessage> {
+public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
 	int x, y, z, dim;
 	ItemStack stack;
 
@@ -34,42 +33,26 @@ public class InsertMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final InsertMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final InsertMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				World w = MinecraftServer.getServer().worldServerForDimension(
-						message.dim);
-				if (w.getTileEntity(new BlockPos(message.x, message.y,
-						message.z)) instanceof TileMaster) {
-					TileMaster tile = (TileMaster) w
-							.getTileEntity(new BlockPos(message.x, message.y,
-									message.z));
+				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
+				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
+					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
 					int rest = tile.insertStack(message.stack, null);
 					if (rest != 0) {
-						ctx.getServerHandler().playerEntity.inventory
-								.setItemStack(Inv
-										.copyStack(message.stack, rest));
-						PacketHandler.INSTANCE.sendTo(
-								new StackMessage(Inv.copyStack(message.stack,
-										rest)),
-								ctx.getServerHandler().playerEntity);
+						ctx.getServerHandler().playerEntity.inventory.setItemStack(Inv.copyStack(message.stack, rest));
+						PacketHandler.INSTANCE.sendTo(new StackMessage(Inv.copyStack(message.stack, rest)), ctx.getServerHandler().playerEntity);
 					} else {
-						ctx.getServerHandler().playerEntity.inventory
-								.setItemStack(null);
-						PacketHandler.INSTANCE.sendTo(new StackMessage(null),
-								ctx.getServerHandler().playerEntity);
+						ctx.getServerHandler().playerEntity.inventory.setItemStack(null);
+						PacketHandler.INSTANCE.sendTo(new StackMessage(null), ctx.getServerHandler().playerEntity);
 					}
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-						((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer)
-								.detectAndSendChanges();
+						((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer).detectAndSendChanges();
 					}
-					PacketHandler.INSTANCE.sendTo(
-							new StacksMessage(tile.getStacks(),
-									GuiHandler.REMOTE),
-							ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 				}
 
 			}

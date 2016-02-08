@@ -1,7 +1,0 @@
-{
-    "parent" : "storagenetwork:block/kabel6", 
-    "textures" : {
-        "texture" : "storagenetwork:blocks/vacuumKabel", 
-        "particle" : "storagenetwork:blocks/vacuumKabel"
-    }
-}

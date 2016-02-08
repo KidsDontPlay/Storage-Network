@@ -9,8 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class StackMessage implements IMessage,
-		IMessageHandler<StackMessage, IMessage> {
+public class StackMessage implements IMessage, IMessageHandler<StackMessage, IMessage> {
 	ItemStack a;
 
 	public StackMessage() {
@@ -21,14 +20,12 @@ public class StackMessage implements IMessage,
 	}
 
 	@Override
-	public IMessage onMessage(final StackMessage message,
-			final MessageContext ctx) {
+	public IMessage onMessage(final StackMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = Minecraft.getMinecraft();
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				Minecraft.getMinecraft().thePlayer.inventory
-						.setItemStack(message.a);
+				Minecraft.getMinecraft().thePlayer.inventory.setItemStack(message.a);
 
 			}
 		});
