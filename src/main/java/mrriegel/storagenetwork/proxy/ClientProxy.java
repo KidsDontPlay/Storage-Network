@@ -44,11 +44,11 @@ public class ClientProxy extends CommonProxy {
 
 	public void registerItemModels() {
 		ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-		mesher.register(Item.getItemFromBlock(ModBlocks.kabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":kabelN", "inventory"));
-		mesher.register(Item.getItemFromBlock(ModBlocks.exKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":exKabelN", "inventory"));
-		mesher.register(Item.getItemFromBlock(ModBlocks.storageKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":storageKabelN", "inventory"));
-		mesher.register(Item.getItemFromBlock(ModBlocks.imKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":imKabelN", "inventory"));
-		mesher.register(Item.getItemFromBlock(ModBlocks.vacuumKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":vacuumKabelN", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.kabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":kabel", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.exKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":exKabel", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.storageKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":storageKabel", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.imKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":imKabel", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.vacuumKabel), 0, new ModelResourceLocation(StorageNetwork.MODID + ":vacuumKabel", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.master), 0, new ModelResourceLocation(StorageNetwork.MODID + ":master", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.request), 0, new ModelResourceLocation(StorageNetwork.MODID + ":request", "inventory"));
 		for (int i = 0; i < ItemUpgrade.num; i++) {
@@ -69,30 +69,39 @@ public class ClientProxy extends CommonProxy {
 				return CableModel.kabel;
 			}
 		});
-		ModelLoader.setCustomStateMapper(ModBlocks.exKabel, new StateMapperBase() {
-			@Override
-			protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-				return CableModel.ex;
-			}
-		});
-		ModelLoader.setCustomStateMapper(ModBlocks.imKabel, new StateMapperBase() {
-			@Override
-			protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-				return CableModel.im;
-			}
-		});
-		ModelLoader.setCustomStateMapper(ModBlocks.storageKabel, new StateMapperBase() {
-			@Override
-			protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-				return CableModel.storage;
-			}
-		});
-		ModelLoader.setCustomStateMapper(ModBlocks.vacuumKabel, new StateMapperBase() {
-			@Override
-			protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-				return CableModel.vacuum;
-			}
-		});
+
+		// ModelLoader.setCustomStateMapper(ModBlocks.exKabel, new
+		// StateMapperBase() {
+		// @Override
+		// protected ModelResourceLocation getModelResourceLocation(IBlockState
+		// iBlockState) {
+		// return CableModel.ex;
+		// }
+		// });
+		// ModelLoader.setCustomStateMapper(ModBlocks.imKabel, new
+		// StateMapperBase() {
+		// @Override
+		// protected ModelResourceLocation getModelResourceLocation(IBlockState
+		// iBlockState) {
+		// return CableModel.im;
+		// }
+		// });
+		// ModelLoader.setCustomStateMapper(ModBlocks.storageKabel, new
+		// StateMapperBase() {
+		// @Override
+		// protected ModelResourceLocation getModelResourceLocation(IBlockState
+		// iBlockState) {
+		// return CableModel.storage;
+		// }
+		// });
+		// ModelLoader.setCustomStateMapper(ModBlocks.vacuumKabel, new
+		// StateMapperBase() {
+		// @Override
+		// protected ModelResourceLocation getModelResourceLocation(IBlockState
+		// iBlockState) {
+		// return CableModel.vacuum;
+		// }
+		// });
 	}
 
 }

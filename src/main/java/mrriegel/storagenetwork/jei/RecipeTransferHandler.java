@@ -8,7 +8,6 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.gui.RecipeLayout;
 import mezz.jei.gui.ingredients.GuiIngredient;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.network.ClearMessage;
@@ -31,11 +30,6 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 	@Override
 	public String getRecipeCategoryUid() {
 		return VanillaRecipeCategoryUid.CRAFTING;
-	}
-
-	@Override
-	public IRecipeTransferError transferRecipe(Container container, RecipeLayout recipeLayout, EntityPlayer player, boolean doTransfer) {
-		return transferRecipe(container, recipeLayout, player, false, doTransfer);
 	}
 
 	@Override

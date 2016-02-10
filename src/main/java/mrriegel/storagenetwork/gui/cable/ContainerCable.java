@@ -26,21 +26,17 @@ public class ContainerCable extends Container {
 		// this.addSlotToContainer(new Slot(id, 0, 8, -18));
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9,
-						8 + j * 18, 84 - 39 + 10 + i * 18));
+				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 - 39 + 10 + i * 18));
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18,
-					142 - 39 + 10));
+			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 142 - 39 + 10));
 		}
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return tile != null
-				&& tile.getMaster() != null
-				&& tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster;
+		return tile != null && tile.getMaster() != null && tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster;
 	}
 
 	public void slotChanged() {
@@ -63,8 +59,7 @@ public class ContainerCable extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int clickedButton, int mode,
-			EntityPlayer playerIn) {
+	public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
 		if (slotId >= 9 || slotId == -999)
 			return super.slotClick(slotId, clickedButton, mode, playerIn);
 		if (playerInv.getItemStack() == null) {
@@ -118,8 +113,7 @@ public class ContainerCable extends Container {
 
 	boolean in(ItemStack stack) {
 		for (int i = 0; i < 9; i++) {
-			if (getSlot(i).getHasStack()
-					&& getSlot(i).getStack().isItemEqual(stack))
+			if (getSlot(i).getHasStack() && getSlot(i).getStack().isItemEqual(stack))
 				return true;
 		}
 		return false;

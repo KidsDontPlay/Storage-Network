@@ -30,6 +30,7 @@ public class CableModel implements ISmartBlockModel {
 	public static final ModelResourceLocation im = new ModelResourceLocation(StorageNetwork.MODID + ":imKabel");
 	public static final ModelResourceLocation storage = new ModelResourceLocation(StorageNetwork.MODID + ":storageKabel");
 	public static final ModelResourceLocation vacuum = new ModelResourceLocation(StorageNetwork.MODID + ":vacuumKabel");
+	IBakedModel model = null;
 
 	@Override
 	public IBakedModel handleBlockState(IBlockState state) {
@@ -58,7 +59,8 @@ public class CableModel implements ISmartBlockModel {
 			node = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(StorageNetwork.MODID + ":blocks/vacuumKabelN");
 			line = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(StorageNetwork.MODID + ":blocks/vacuumKabel");
 		}
-		return new BakedModel(node, line, north, south, west, east, up, down);
+		model = new BakedModel(node, line, north, south, west, east, up, down);
+		return model;
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public class CableModel implements ISmartBlockModel {
 
 	@Override
 	public TextureAtlasSprite getParticleTexture() {
-		return null;
+		return model == null ? null : model.getParticleTexture();
 	}
 
 	@Override
@@ -99,6 +101,7 @@ public class CableModel implements ISmartBlockModel {
 	public class BakedModel implements IBakedModel {
 		private TextureAtlasSprite node;
 		private TextureAtlasSprite line;
+		private TextureAtlasSprite sprite;
 
 		private final Connect north;
 		private final Connect south;
@@ -118,15 +121,15 @@ public class CableModel implements ISmartBlockModel {
 			this.down = down;
 		}
 
-		private int[] vertexToInts(boolean node, double x, double y, double z, float u, float v) {
-			return new int[] { Float.floatToRawIntBits((float) x), Float.floatToRawIntBits((float) y), Float.floatToRawIntBits((float) z), -1, Float.floatToRawIntBits(this.node.getInterpolatedU(u)), Float.floatToRawIntBits(this.node.getInterpolatedV(v)), 0 };
+		private int[] vertexToInts(double x, double y, double z, float u, float v) {
+			return new int[] { Float.floatToRawIntBits((float) x), Float.floatToRawIntBits((float) y), Float.floatToRawIntBits((float) z), -1, Float.floatToRawIntBits(sprite.getInterpolatedU(u)), Float.floatToRawIntBits(sprite.getInterpolatedV(v)), 0 };
 		}
 
-		private BakedQuad createQuad(boolean node, Vec3 v1, Vec3 v2, Vec3 v3, Vec3 v4) {
+		private BakedQuad createQuad(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 v4) {
 			Vec3 normal = v1.subtract(v2).crossProduct(v3.subtract(v2));
 			EnumFacing side = LightUtil.toSide((float) normal.xCoord, (float) normal.yCoord, (float) normal.zCoord);
 
-			return new BakedQuad(Ints.concat(vertexToInts(node, v1.xCoord, v1.yCoord, v1.zCoord, 0, 0), vertexToInts(node, v2.xCoord, v2.yCoord, v2.zCoord, 0, 16), vertexToInts(node, v3.xCoord, v3.yCoord, v3.zCoord, 16, 16), vertexToInts(node, v4.xCoord, v4.yCoord, v4.zCoord, 16, 0)), -1, side);
+			return new BakedQuad(Ints.concat(vertexToInts(v1.xCoord, v1.yCoord, v1.zCoord, 0, 0), vertexToInts(v2.xCoord, v2.yCoord, v2.zCoord, 0, 16), vertexToInts(v3.xCoord, v3.yCoord, v3.zCoord, 16, 16), vertexToInts(v4.xCoord, v4.yCoord, v4.zCoord, 16, 0)), -1, side);
 		}
 
 		@Override
@@ -138,14 +141,14 @@ public class CableModel implements ISmartBlockModel {
 		public List<BakedQuad> getGeneralQuads() {
 			List<BakedQuad> quads = new ArrayList<BakedQuad>();
 			double o = .3125;
-			double a = .3125;
-			BakedQuad north = createQuad(true, new Vec3(o, 1 - o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, o, o), new Vec3(o, o, o));
-			BakedQuad south = createQuad(true, new Vec3(1 - o, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, o, 1 - o), new Vec3(1 - o, o, 1 - o));
-			BakedQuad west = createQuad(true, new Vec3(o, o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1 - o, o), new Vec3(o, o, o));
-			BakedQuad east = createQuad(true, new Vec3(1 - o, o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, o, 1 - o));
-			BakedQuad up = createQuad(true, new Vec3(1 - o, 1 - o, o), new Vec3(o, 1 - o, o), new Vec3(o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o));
-			BakedQuad down = createQuad(true, new Vec3(1 - o, o, 1 - o), new Vec3(o, o, 1 - o), new Vec3(o, o, o), new Vec3(1 - o, o, o));
-			if (!oo()) {
+			sprite = node;
+			BakedQuad north = createQuad(new Vec3(o, 1 - o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, o, o), new Vec3(o, o, o));
+			BakedQuad south = createQuad(new Vec3(1 - o, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, o, 1 - o), new Vec3(1 - o, o, 1 - o));
+			BakedQuad west = createQuad(new Vec3(o, o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1 - o, o), new Vec3(o, o, o));
+			BakedQuad east = createQuad(new Vec3(1 - o, o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, o, 1 - o));
+			BakedQuad up = createQuad(new Vec3(1 - o, 1 - o, o), new Vec3(o, 1 - o, o), new Vec3(o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o));
+			BakedQuad down = createQuad(new Vec3(1 - o, o, 1 - o), new Vec3(o, o, 1 - o), new Vec3(o, o, o), new Vec3(1 - o, o, o));
+			if (!oo() || !node.toString().contains("kabel")) {
 				quads.add(north);
 				quads.add(south);
 				quads.add(west);
@@ -153,58 +156,58 @@ public class CableModel implements ISmartBlockModel {
 				quads.add(up);
 				quads.add(down);
 			}
-			o = 1.0;
+			sprite = line;
 			o = .375;
 			if (connected(this.up)) {
-				quads.add(createQuad(false, new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1, o), new Vec3(1 - o, 1, 1 - o), new Vec3(1 - o, 1 - o, 1 - o)));
-				quads.add(createQuad(false, new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1, 1 - o), new Vec3(o, 1, o), new Vec3(o, 1 - a, o)));
-				quads.add(createQuad(false, new Vec3(o, 1, o), new Vec3(1 - o, 1, o), new Vec3(1 - o, 1 - a, o), new Vec3(o, 1 - a, o)));
-				quads.add(createQuad(false, new Vec3(o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, 1, 1 - o), new Vec3(o, 1, 1 - o)));
+				quads.add(createQuad(new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1, o), new Vec3(1 - o, 1, 1 - o), new Vec3(1 - o, 1 - o, 1 - o)));
+				quads.add(createQuad(new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1, 1 - o), new Vec3(o, 1, o), new Vec3(o, 1 - o, o)));
+				quads.add(createQuad(new Vec3(o, 1, o), new Vec3(1 - o, 1, o), new Vec3(1 - o, 1 - o, o), new Vec3(o, 1 - o, o)));
+				quads.add(createQuad(new Vec3(o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, 1, 1 - o), new Vec3(o, 1, 1 - o)));
 			} else {
-				quads.add(createQuad(false, new Vec3(o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, o), new Vec3(o, 1 - o, o)));
+				quads.add(createQuad(new Vec3(o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, o), new Vec3(o, 1 - o, o)));
 			}
 			if (connected(this.down)) {
-				quads.add(createQuad(false, new Vec3(1 - o, 0, o), new Vec3(1 - o, o, o), new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, 0, 1 - o)));
-				quads.add(createQuad(false, new Vec3(o, 0, 1 - o), new Vec3(o, o, 1 - o), new Vec3(o, o, o), new Vec3(o, 0, o)));
-				quads.add(createQuad(false, new Vec3(o, o, o), new Vec3(1 - o, o, o), new Vec3(1 - o, 0, o), new Vec3(o, 0, o)));
-				quads.add(createQuad(false, new Vec3(o, 0, 1 - o), new Vec3(1 - o, 0, 1 - o), new Vec3(1 - o, o, 1 - o), new Vec3(o, o, 1 - o)));
+				quads.add(createQuad(new Vec3(1 - o, 0, o), new Vec3(1 - o, o, o), new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, 0, 1 - o)));
+				quads.add(createQuad(new Vec3(o, 0, 1 - o), new Vec3(o, o, 1 - o), new Vec3(o, o, o), new Vec3(o, 0, o)));
+				quads.add(createQuad(new Vec3(o, o, o), new Vec3(1 - o, o, o), new Vec3(1 - o, 0, o), new Vec3(o, 0, o)));
+				quads.add(createQuad(new Vec3(o, 0, 1 - o), new Vec3(1 - o, 0, 1 - o), new Vec3(1 - o, o, 1 - o), new Vec3(o, o, 1 - o)));
 			} else {
-				quads.add(createQuad(false, new Vec3(o, a, o), new Vec3(1 - o, a, o), new Vec3(1 - o, a, 1 - o), new Vec3(o, a, 1 - o)));
+				quads.add(createQuad(new Vec3(o, o, o), new Vec3(1 - o, o, o), new Vec3(1 - o, o, 1 - o), new Vec3(o, o, 1 - o)));
 			}
 
 			if (connected(this.east)) {
-				quads.add(createQuad(false, new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1, 1 - o, 1 - o), new Vec3(1, 1 - o, o), new Vec3(1 - o, 1 - o, o)));
-				quads.add(createQuad(false, new Vec3(1 - o, o, o), new Vec3(1, o, o), new Vec3(1, o, 1 - o), new Vec3(1 - o, o, 1 - o)));
-				quads.add(createQuad(false, new Vec3(1 - o, 1 - o, o), new Vec3(1, 1 - o, o), new Vec3(1, o, o), new Vec3(1 - o, o, o)));
-				quads.add(createQuad(false, new Vec3(1 - o, o, 1 - o), new Vec3(1, o, 1 - o), new Vec3(1, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o)));
+				quads.add(createQuad(new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1, 1 - o, 1 - o), new Vec3(1, 1 - o, o), new Vec3(1 - o, 1 - o, o)));
+				quads.add(createQuad(new Vec3(1 - o, o, o), new Vec3(1, o, o), new Vec3(1, o, 1 - o), new Vec3(1 - o, o, 1 - o)));
+				quads.add(createQuad(new Vec3(1 - o, 1 - o, o), new Vec3(1, 1 - o, o), new Vec3(1, o, o), new Vec3(1 - o, o, o)));
+				quads.add(createQuad(new Vec3(1 - o, o, 1 - o), new Vec3(1, o, 1 - o), new Vec3(1, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o)));
 			} else {
-				quads.add(createQuad(false, new Vec3(1 - o, o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, o, 1 - o)));
+				quads.add(createQuad(new Vec3(1 - o, o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, o, 1 - o)));
 			}
 
 			if (connected(this.west)) {
-				quads.add(createQuad(false, new Vec3(0, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1 - o, o), new Vec3(0, 1 - o, o)));
-				quads.add(createQuad(false, new Vec3(0, o, o), new Vec3(o, o, o), new Vec3(o, o, 1 - o), new Vec3(0, o, 1 - o)));
-				quads.add(createQuad(false, new Vec3(0, 1 - o, o), new Vec3(o, 1 - o, o), new Vec3(o, o, o), new Vec3(0, o, o)));
-				quads.add(createQuad(false, new Vec3(0, o, 1 - o), new Vec3(o, o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(0, 1 - o, 1 - o)));
+				quads.add(createQuad(new Vec3(0, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1 - o, o), new Vec3(0, 1 - o, o)));
+				quads.add(createQuad(new Vec3(0, o, o), new Vec3(o, o, o), new Vec3(o, o, 1 - o), new Vec3(0, o, 1 - o)));
+				quads.add(createQuad(new Vec3(0, 1 - o, o), new Vec3(o, 1 - o, o), new Vec3(o, o, o), new Vec3(0, o, o)));
+				quads.add(createQuad(new Vec3(0, o, 1 - o), new Vec3(o, o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(0, 1 - o, 1 - o)));
 			} else {
-				quads.add(createQuad(false, new Vec3(o, o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1 - o, o), new Vec3(o, o, o)));
+				quads.add(createQuad(new Vec3(o, o, 1 - o), new Vec3(o, 1 - o, 1 - o), new Vec3(o, 1 - o, o), new Vec3(o, o, o)));
 			}
 
 			if (connected(this.north)) {
-				quads.add(createQuad(false, new Vec3(o, 1 - o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1 - o, 0), new Vec3(o, 1 - o, 0)));
-				quads.add(createQuad(false, new Vec3(o, o, 0), new Vec3(1 - o, o, 0), new Vec3(1 - o, o, o), new Vec3(o, o, o)));
-				quads.add(createQuad(false, new Vec3(1 - o, o, 0), new Vec3(1 - o, 1 - o, 0), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, o, o)));
-				quads.add(createQuad(false, new Vec3(o, o, o), new Vec3(o, 1 - o, o), new Vec3(o, 1 - o, 0), new Vec3(o, o, 0)));
+				quads.add(createQuad(new Vec3(o, 1 - o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, 1 - o, 0), new Vec3(o, 1 - o, 0)));
+				quads.add(createQuad(new Vec3(o, o, 0), new Vec3(1 - o, o, 0), new Vec3(1 - o, o, o), new Vec3(o, o, o)));
+				quads.add(createQuad(new Vec3(1 - o, o, 0), new Vec3(1 - o, 1 - o, 0), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, o, o)));
+				quads.add(createQuad(new Vec3(o, o, o), new Vec3(o, 1 - o, o), new Vec3(o, 1 - o, 0), new Vec3(o, o, 0)));
 			} else {
-				quads.add(createQuad(false, new Vec3(o, 1 - o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, o, o), new Vec3(o, o, o)));
+				quads.add(createQuad(new Vec3(o, 1 - o, o), new Vec3(1 - o, 1 - o, o), new Vec3(1 - o, o, o), new Vec3(o, o, o)));
 			}
 			if (connected(this.south)) {
-				quads.add(createQuad(false, new Vec3(o, 1 - o, 1), new Vec3(1 - o, 1 - o, 1), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o)));
-				quads.add(createQuad(false, new Vec3(o, o, 1 - o), new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, o, 1), new Vec3(o, o, 1)));
-				quads.add(createQuad(false, new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1), new Vec3(1 - o, o, 1)));
-				quads.add(createQuad(false, new Vec3(o, o, 1), new Vec3(o, 1 - o, 1), new Vec3(o, 1 - o, 1 - o), new Vec3(o, o, 1 - o)));
+				quads.add(createQuad(new Vec3(o, 1 - o, 1), new Vec3(1 - o, 1 - o, 1), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o)));
+				quads.add(createQuad(new Vec3(o, o, 1 - o), new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, o, 1), new Vec3(o, o, 1)));
+				quads.add(createQuad(new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(1 - o, 1 - o, 1), new Vec3(1 - o, o, 1)));
+				quads.add(createQuad(new Vec3(o, o, 1), new Vec3(o, 1 - o, 1), new Vec3(o, 1 - o, 1 - o), new Vec3(o, o, 1 - o)));
 			} else {
-				quads.add(createQuad(false, new Vec3(o, o, 1 - o), new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o)));
+				quads.add(createQuad(new Vec3(o, o, 1 - o), new Vec3(1 - o, o, 1 - o), new Vec3(1 - o, 1 - o, 1 - o), new Vec3(o, 1 - o, 1 - o)));
 			}
 			return quads;
 		}

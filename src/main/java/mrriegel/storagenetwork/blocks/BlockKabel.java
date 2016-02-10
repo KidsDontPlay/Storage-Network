@@ -51,7 +51,7 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-		return !false;
+		return false;
 	}
 
 	@Override
@@ -79,6 +79,8 @@ public class BlockKabel extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
+		if (tile.getMaster() == null)
+			return false;
 		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
 			switch (playerIn.getHeldItem().getItemDamage()) {
 			case 0:

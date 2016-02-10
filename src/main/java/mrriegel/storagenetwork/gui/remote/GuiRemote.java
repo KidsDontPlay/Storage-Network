@@ -32,8 +32,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiRemote extends GuiContainer {
-	private ResourceLocation texture = new ResourceLocation(
-			StorageNetwork.MODID + ":textures/gui/remote.png");
+	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/remote.png");
 	int page = 1, maxPage = 1;
 	public List<StackWrapper> stacks;
 	ItemStack over;
@@ -46,23 +45,14 @@ public class GuiRemote extends GuiContainer {
 		this.ySize = 256;
 		stacks = new ArrayList<StackWrapper>();
 
-		PacketHandler.INSTANCE
-				.sendToServer(new RemoteMessage(0, NBTHelper.getInt(
-						Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"),
-						NBTHelper.getInt(Minecraft.getMinecraft().thePlayer
-								.getHeldItem(), "y"), NBTHelper.getInt(
-								Minecraft.getMinecraft().thePlayer
-										.getHeldItem(), "z"), NBTHelper.getInt(
-								Minecraft.getMinecraft().thePlayer
-										.getHeldItem(), "id"), null));
+		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "y"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "z"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "id"), null));
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81,
-				guiTop + 96 + 64, 85, fontRendererObj.FONT_HEIGHT);
+		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96 + 64, 85, fontRendererObj.FONT_HEIGHT);
 		searchBar.setMaxStringLength(30);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
@@ -90,8 +80,7 @@ public class GuiRemote extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks,
-			int mouseX, int mouseY) {
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(texture);
 		int i = (this.width - this.xSize) / 2;
@@ -99,30 +88,22 @@ public class GuiRemote extends GuiContainer {
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 		over = null;
 		String search = searchBar.getText();
-		List<StackWrapper> tmp = search.equals("") ? new ArrayList<StackWrapper>(
-				stacks) : new ArrayList<StackWrapper>();
+		List<StackWrapper> tmp = search.equals("") ? new ArrayList<StackWrapper>(stacks) : new ArrayList<StackWrapper>();
 		if (!search.equals("")) {
 			for (StackWrapper s : stacks)
-				if (s.getStack().getDisplayName().toLowerCase()
-						.contains(search.toLowerCase()))
+				if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
 					tmp.add(s);
 		}
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
-			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? -1
-					: 1;
+			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? -1 : 1;
 
 			@Override
 			public int compare(StackWrapper o2, StackWrapper o1) {
-				switch (Sort.valueOf(NBTHelper.getString(
-						mc.thePlayer.getHeldItem(), "sort"))) {
+				switch (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))) {
 				case AMOUNT:
 					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
 				case NAME:
-					return o2
-							.getStack()
-							.getDisplayName()
-							.compareToIgnoreCase(o1.getStack().getDisplayName())
-							* mul;
+					return o2.getStack().getDisplayName().compareToIgnoreCase(o1.getStack().getDisplayName()) * mul;
 				}
 				return 0;
 			}
@@ -156,9 +137,7 @@ public class GuiRemote extends GuiContainer {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop
-						+ 10 + jj * 20, tmp.get(in).getSize()).drawSlot(mouseX,
-						mouseY);
+				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize()).drawSlot(mouseX, mouseY);
 				index++;
 			}
 		}
@@ -168,9 +147,7 @@ public class GuiRemote extends GuiContainer {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop
-						+ 10 + jj * 20, tmp.get(in).getSize()).drawTooltip(
-						mouseX, mouseY);
+				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize()).drawTooltip(mouseX, mouseY);
 				index++;
 			}
 		}
@@ -192,47 +169,22 @@ public class GuiRemote extends GuiContainer {
 		if (button.id == 3 && page < maxPage)
 			page++;
 		if (button.id == 0)
-			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down",
-					!NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
+			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
 		else if (button.id == 1)
-			NBTHelper.setString(
-					mc.thePlayer.getHeldItem(),
-					"sort",
-					Sort.valueOf(
-							NBTHelper.getString(mc.thePlayer.getHeldItem(),
-									"sort")).next().toString());
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInt(
-				mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(
-				mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(
-				mc.thePlayer.getHeldItem(), "z"), NBTHelper.getBoolean(
-				mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper
-				.getString(mc.thePlayer.getHeldItem(), "sort"))));
+			NBTHelper.setString(mc.thePlayer.getHeldItem(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")).next().toString());
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
-			throws IOException {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (over != null && mc.thePlayer.inventory.getItemStack() == null
-				&& (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton,
-					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"),
-					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"),
-					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"),
-					NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), over));
+		if (over != null && mc.thePlayer.inventory.getItemStack() == null && (mouseButton == 0 || mouseButton == 1)) {
+			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), over));
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
-		int j = this.height - Mouse.getY() * this.height
-				/ this.mc.displayHeight - 1;
-		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7)
-				&& i < (guiLeft + xSize - 7) && j > (guiTop + 7)
-				&& j < (guiTop + 90 + 64)) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper
-					.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(
-					mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(
-					mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(
-					mc.thePlayer.getHeldItem(), "id"), mc.thePlayer.inventory
-					.getItemStack()));
+		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 
@@ -241,12 +193,7 @@ public class GuiRemote extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0,
-						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"),
-						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"),
-						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"),
-						NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"),
-						null));
+				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), null));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -257,10 +204,8 @@ public class GuiRemote extends GuiContainer {
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
-		int j = this.height - Mouse.getY() * this.height
-				/ this.mc.displayHeight - 1;
-		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7)
-				&& j < (guiTop + 90 + 64)) {
+		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
 			int mouse = Mouse.getEventDWheel();
 			if (mouse == 0)
 				return;
@@ -286,25 +231,21 @@ public class GuiRemote extends GuiContainer {
 		void drawSlot(int mx, int my) {
 			RenderHelper.enableGUIStandardItemLighting();
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-			String amount = size < 1000 ? String.valueOf(size)
-					: size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
 			if (ConfigHandler.smallFont) {
 				GlStateManager.pushMatrix();
 				GlStateManager.scale(.5f, .5f, .5f);
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj,
-						stack, x * 2 + 16, y * 2 + 16, amount);
+				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
 				GlStateManager.popMatrix();
 			} else
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj,
-						stack, x, y, amount);
+				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				int j1 = x;
 				int k1 = y;
 				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433,
-						-2130706433);
+				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
 				GlStateManager.colorMask(true, true, true, true);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
@@ -319,58 +260,40 @@ public class GuiRemote extends GuiContainer {
 				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
 					renderToolTip(stack, mx, my);
 				else
-					drawHoveringText(
-							Arrays.asList(new String[] { "Amount: "
-									+ String.valueOf(size) }), mx, my);
+					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx, my);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}
 		}
 
 		private boolean isMouseOverSlot(int mouseX, int mouseY) {
-			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX,
-					mouseY);
+			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
 		}
 	}
 
 	class Button extends GuiButton {
 
-		public Button(int p_i1021_1_, int p_i1021_2_, int p_i1021_3_,
-				String p_i1021_6_) {
+		public Button(int p_i1021_1_, int p_i1021_2_, int p_i1021_3_, String p_i1021_6_) {
 			super(p_i1021_1_, p_i1021_2_, p_i1021_3_, 14, 14, p_i1021_6_);
 		}
 
 		@Override
-		public void drawButton(Minecraft p_146112_1_, int p_146112_2_,
-				int p_146112_3_) {
+		public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
 			if (this.visible) {
 				FontRenderer fontrenderer = p_146112_1_.fontRendererObj;
 				p_146112_1_.getTextureManager().bindTexture(texture);
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				this.hovered = p_146112_2_ >= this.xPosition
-						&& p_146112_3_ >= this.yPosition
-						&& p_146112_2_ < this.xPosition + this.width
-						&& p_146112_3_ < this.yPosition + this.height;
+				this.hovered = p_146112_2_ >= this.xPosition && p_146112_3_ >= this.yPosition && p_146112_2_ < this.xPosition + this.width && p_146112_3_ < this.yPosition + this.height;
 				int k = this.getHoverState(this.hovered);
 				GlStateManager.enableBlend();
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(770, 771);
-				this.drawTexturedModalRect(this.xPosition, this.yPosition,
-						162 + 14 * k, 0, 14, 14);
+				this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, 14, 14);
 				if (id == 0) {
-					this.drawTexturedModalRect(
-							this.xPosition + 4,
-							this.yPosition + 3,
-							176 + (NBTHelper.getBoolean(
-									mc.thePlayer.getHeldItem(), "down") ? 6 : 0),
-							14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4,
-							this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper
-									.getString(mc.thePlayer.getHeldItem(),
-											"sort")) == Sort.AMOUNT ? 6 : 0),
-							14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.AMOUNT ? 6 : 0), 14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
@@ -384,9 +307,7 @@ public class GuiRemote extends GuiContainer {
 					l = 16777120;
 				}
 
-				this.drawCenteredString(fontrenderer, this.displayString,
-						this.xPosition + this.width / 2, this.yPosition
-								+ (this.height - 8) / 2, l);
+				this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, l);
 			}
 		}
 	}

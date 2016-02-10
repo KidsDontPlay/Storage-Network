@@ -27,8 +27,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiCable extends GuiContainer {
-	private ResourceLocation texture = new ResourceLocation(
-			StorageNetwork.MODID + ":textures/gui/cable.png");
+	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
 	Button pPlus, pMinus, meta, white, acti;
 	TileKabel tile;
@@ -48,8 +47,7 @@ public class GuiCable extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks,
-			int mouseX, int mouseY) {
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(texture);
 		int i = (this.width - this.xSize) / 2;
@@ -60,17 +58,11 @@ public class GuiCable extends GuiContainer {
 		}
 		if (tile.elements(1) >= 1)
 			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
-		fontRendererObj.drawString(
-				String.valueOf(tile.getPriority()),
-				guiLeft
-						+ 34
-						- fontRendererObj.getStringWidth(String.valueOf(tile
-								.getPriority())) / 2, guiTop + 10, 4210752);
+		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
 		if (operate) {
 			searchBar.drawTextBox();
 			RenderHelper.enableGUIStandardItemLighting();
-			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8,
-					guiTop - 18);
+			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
 		}
 	}
 
@@ -78,10 +70,8 @@ public class GuiCable extends GuiContainer {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
-		int my = this.height - Mouse.getY() * this.height
-				/ this.mc.displayHeight - 1;
-		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10
-				&& my < guiTop + 20) {
+		int my = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10 && my < guiTop + 20) {
 			List<String> list = new ArrayList<String>();
 			list.add("Priority");
 			GlStateManager.pushMatrix();
@@ -90,8 +80,7 @@ public class GuiCable extends GuiContainer {
 			GlStateManager.popMatrix();
 			GlStateManager.enableLighting();
 		}
-		if (operate && mouseX > guiLeft + 7 && mouseX < guiLeft + 25
-				&& mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+		if (operate && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
 			GlStateManager.disableLighting();
 			GlStateManager.disableDepth();
 			int j1 = guiLeft + 8;
@@ -119,8 +108,7 @@ public class GuiCable extends GuiContainer {
 		}
 		if (operate) {
 			Keyboard.enableRepeatEvents(true);
-			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36,
-					guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
+			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36, guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
 			searchBar.setMaxStringLength(30);
 			searchBar.setEnableBackgroundDrawing(false);
 			searchBar.setVisible(true);
@@ -136,15 +124,11 @@ public class GuiCable extends GuiContainer {
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		if (operate && mouseX > guiLeft + 7 && mouseX < guiLeft + 25
-				&& mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+		if (operate && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
 			stack = mc.thePlayer.inventory.getItemStack();
 			tile.setStack(stack);
-			int num = searchBar.getText().isEmpty() ? 0 : Integer
-					.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile
-					.getPos().getX(), tile.getPos().getY(), tile.getPos()
-					.getZ(), stack));
+			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 		} else
 			super.mouseReleased(mouseX, mouseY, state);
 	}
@@ -152,8 +136,7 @@ public class GuiCable extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile
-				.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ()));
+		PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ()));
 		switch (button.id) {
 		case 0:
 			tile.setPriority(tile.getPriority() - 1);
@@ -182,15 +165,11 @@ public class GuiCable extends GuiContainer {
 				s = searchBar.getText();
 			}
 			if (operate && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
-				if (!StringUtils.isNumeric(searchBar.getText())
-						&& !searchBar.getText().isEmpty())
+				if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty())
 					searchBar.setText(s);
-				int num = searchBar.getText().isEmpty() ? 0 : Integer
-						.valueOf(searchBar.getText());
+				int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
 				tile.setLimit(num);
-				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile
-						.getPos().getX(), tile.getPos().getY(), tile.getPos()
-						.getZ(), stack));
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 			} else {
 				super.keyTyped(c, p_73869_2_);
 			}
@@ -205,51 +184,39 @@ public class GuiCable extends GuiContainer {
 
 	class Button extends GuiButton {
 
-		public Button(int p_i1021_1_, int p_i1021_2_, int p_i1021_3_,
-				String p_i1021_6_) {
+		public Button(int p_i1021_1_, int p_i1021_2_, int p_i1021_3_, String p_i1021_6_) {
 			super(p_i1021_1_, p_i1021_2_, p_i1021_3_, 16, 16, p_i1021_6_);
 		}
 
 		@Override
-		public void drawButton(Minecraft p_146112_1_, int p_146112_2_,
-				int p_146112_3_) {
+		public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
 			if (this.visible) {
 				FontRenderer fontrenderer = p_146112_1_.fontRendererObj;
 				p_146112_1_.getTextureManager().bindTexture(texture);
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				this.hovered = p_146112_2_ >= this.xPosition
-						&& p_146112_3_ >= this.yPosition
-						&& p_146112_2_ < this.xPosition + this.width
-						&& p_146112_3_ < this.yPosition + this.height;
+				this.hovered = p_146112_2_ >= this.xPosition && p_146112_3_ >= this.yPosition && p_146112_2_ < this.xPosition + this.width && p_146112_3_ < this.yPosition + this.height;
 				int k = this.getHoverState(this.hovered);
 				GlStateManager.enableBlend();
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(770, 771);
-				this.drawTexturedModalRect(this.xPosition, this.yPosition,
-						160 + 16 * k, 52, 16, 16);
+				this.drawTexturedModalRect(this.xPosition, this.yPosition, 160 + 16 * k, 52, 16, 16);
 				if (id == 2) {
-					this.drawTexturedModalRect(this.xPosition + 4,
-							this.yPosition + 4, 180, 70, 8, 9);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 4, 180, 70, 8, 9);
 					if (!tile.isMeta())
-						this.drawTexturedModalRect(this.xPosition + 2,
-								this.yPosition + 2, 195, 70, 12, 12);
+						this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, 195, 70, 12, 12);
 				}
 				if (id == 3) {
 					if (tile.isWhite())
-						this.drawTexturedModalRect(this.xPosition + 1,
-								this.yPosition + 3, 176, 83, 13, 10);
+						this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 176, 83, 13, 10);
 					else
-						this.drawTexturedModalRect(this.xPosition + 1,
-								this.yPosition + 3, 190, 83, 13, 10);
+						this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 190, 83, 13, 10);
 
 				}
 				if (id == 4) {
 					if (tile.isMode())
-						this.drawTexturedModalRect(this.xPosition + 0,
-								this.yPosition + 0, 176, 94, 16, 15);
+						this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176, 94, 16, 15);
 					else
-						this.drawTexturedModalRect(this.xPosition + 0,
-								this.yPosition + 0, 176 + 16, 94, 16, 15);
+						this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176 + 16, 94, 16, 15);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
@@ -263,9 +230,7 @@ public class GuiCable extends GuiContainer {
 					l = 16777120;
 				}
 
-				this.drawCenteredString(fontrenderer, this.displayString,
-						this.xPosition + this.width / 2, this.yPosition
-								+ (this.height - 8) / 2, l);
+				this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, l);
 			}
 		}
 	}

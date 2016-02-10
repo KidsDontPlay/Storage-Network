@@ -23,8 +23,7 @@ public class InventoryRequest implements IInventory {
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			setInventorySlotContents(slot,
-					ItemStack.loadItemStackFromNBT(stackTag));
+			setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
 	}
 
@@ -98,8 +97,7 @@ public class InventoryRequest implements IInventory {
 
 	@Override
 	public String getName() {
-		return tile.getWorld().getBlockState(tile.getPos()).getBlock()
-				.getLocalizedName();
+		return tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
 	}
 
 	@Override

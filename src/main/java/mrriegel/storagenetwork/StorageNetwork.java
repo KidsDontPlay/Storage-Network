@@ -1,11 +1,14 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -29,11 +32,38 @@ public class StorageNetwork {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.init(event);
+		NBTTagCompound tagCompound = new NBTTagCompound();
+		tagCompound.setString("ContainerClass", ContainerRequest.class.getName());
+
+		// tagCompound.setInteger("GridSlotNumber", 1);
+		// tagCompound.setInteger("GridSize", 9);
+		// tagCompound.setBoolean("HideButtons", false);
+		tagCompound.setBoolean("PhantomItems", false);
+
+		// tagCompound.setInteger("ButtonOffsetX", -16); // ignored if
+		// AlignToGrid is set
+		// tagCompound.setInteger("ButtonOffsetY", 16); // ignored if
+		// AlignToGrid is set
+		// ***** OR *****
+		tagCompound.setString("AlignToGrid", "left");
+
+		// NBTTagCompound tweakRotate = new NBTTagCompound();
+		// tweakRotate.setBoolean("Enabled", true);
+		// tweakRotate.setBoolean("ShowButton", true);
+		// tweakRotate.setInteger("ButtonX", 0); // ignored if AlignToGrid is
+		// set
+		// tweakRotate.setInteger("ButtonY", 18); // ignored if AlignToGrid is
+		// set
+		// tagCompound.setTag("TweakRotate", tweakRotate);
+		// [...] (same structure for "TweakBalance" and "TweakClear")
+
+		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+
 	}
 
 }

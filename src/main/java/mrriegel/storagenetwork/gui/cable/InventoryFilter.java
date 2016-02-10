@@ -21,18 +21,15 @@ public class InventoryFilter implements IInventory {
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
 		if (size == 9) {
-			NBTTagList invList = nbt.getTagList("crunchTE",
-					Constants.NBT.TAG_COMPOUND);
+			NBTTagList invList = nbt.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < invList.tagCount(); i++) {
 				NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 				int slot = stackTag.getByte("Slot");
-				setInventorySlotContents(slot,
-						ItemStack.loadItemStackFromNBT(stackTag));
+				setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
 			}
 		} else if (size == 1) {
 			if (nbt.hasKey("stack", 10))
-				setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(nbt
-						.getCompoundTag("stack")));
+				setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack")));
 			else
 				setInventorySlotContents(0, null);
 		}
@@ -108,8 +105,7 @@ public class InventoryFilter implements IInventory {
 
 	@Override
 	public String getName() {
-		return tile.getWorld().getBlockState(tile.getPos()).getBlock()
-				.getLocalizedName();
+		return tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
 	}
 
 	@Override

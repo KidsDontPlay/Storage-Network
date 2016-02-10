@@ -1,19 +1,19 @@
 {
-    "parent" : "storagenetwork:block/imKabel", 
+    "parent" : "storagenetwork:block/imKabelN", 
     "display" : {
         "thirdperson" : {
             "rotation" : [10, -45, 170], 
             "translation" : [0, 1.5, -2.75], 
-            "scale" : [0.475, 0.475, 0.475]
+            "scale" : [0.175, 0.175, 0.175]
         }, 
         "gui" : {
-            "scale" : [1.675, 1.675, 1.675]
+            "scale" : [0.575, 0.575, 0.575]
         }, 
         "firstperson" : {
-            "scale" : [1.575, 1.575, 1.575]
+            "scale" : [0.575, 0.575, 0.575]
         }, 
         "ground" : {
-            "scale" : [1.575, 1.575, 1.575]
+            "scale" : [0.575, 0.575, 0.575]
         }
     }
 }
