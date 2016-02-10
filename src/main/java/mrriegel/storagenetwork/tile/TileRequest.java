@@ -34,7 +34,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	public Sort sort = Sort.NAME;
 
 	public enum Sort {
-		AMOUNT, NAME;
+		AMOUNT, NAME, MOD;
 		private static Sort[] vals = values();
 
 		public Sort next() {

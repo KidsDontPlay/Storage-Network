@@ -97,7 +97,6 @@ public class GuiRequest extends GuiContainer {
 			for (StackWrapper s : stacks)
 				if (search.startsWith("@")) {
 					String name = Util.getModNameForItem(s.getStack().getItem());
-					System.out.println(name + " , " + s.getStack().getDisplayName());
 					if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
 						tmp.add(s);
 				} else if (search.startsWith("#")) {
@@ -150,6 +149,8 @@ public class GuiRequest extends GuiContainer {
 					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
 				case NAME:
 					return o2.getStack().getDisplayName().compareToIgnoreCase(o1.getStack().getDisplayName()) * mul;
+				case MOD:
+					return Util.getModNameForItem(o2.getStack().getItem()).compareToIgnoreCase(Util.getModNameForItem(o1.getStack().getItem())) * mul;
 				}
 				return 0;
 			}
@@ -228,7 +229,11 @@ public class GuiRequest extends GuiContainer {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
+		int i = Mouse.getX() * this.width / this.mc.displayWidth;
+		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103) && mouseButton == 1) {
+			searchBar.setText("");
+		} else if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
@@ -253,7 +258,7 @@ public class GuiRequest extends GuiContainer {
 		super.handleMouseInput();
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90)) {
+		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 90)) {
 			int mouse = Mouse.getEventDWheel();
 			if (mouse == 0)
 				return;
@@ -341,7 +346,7 @@ public class GuiRequest extends GuiContainer {
 					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (tile.downwards ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (tile.sort == Sort.AMOUNT ? 6 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (tile.sort == Sort.AMOUNT ? 6 : tile.sort == Sort.MOD ? 12 : 0), 14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
