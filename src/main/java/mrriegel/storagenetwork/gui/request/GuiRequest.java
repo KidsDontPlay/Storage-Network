@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.Util;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.network.ClearMessage;
@@ -23,14 +24,23 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.base.Joiner;
+import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class GuiRequest extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
@@ -85,8 +95,50 @@ public class GuiRequest extends GuiContainer {
 		List<StackWrapper> tmp = search.equals("") ? new ArrayList<StackWrapper>(stacks) : new ArrayList<StackWrapper>();
 		if (!search.equals("")) {
 			for (StackWrapper s : stacks)
-				if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
-					tmp.add(s);
+				if (search.startsWith("@")) {
+					String name = Util.getModNameForItem(s.getStack().getItem());
+					System.out.println(name + " , " + s.getStack().getDisplayName());
+					if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else if (search.startsWith("#")) {
+					String tooltipString;
+					try {
+						List<String> tooltip = s.getStack().getTooltip(mc.thePlayer, false);
+						tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
+						tooltipString = ChatFormatting.stripFormatting(tooltipString);
+						String modId = GameData.getItemRegistry().getNameForObject(s.getStack().getItem()).getResourceDomain();
+						tooltipString = tooltipString.replace(modId, "");
+						ModContainer mod = Loader.instance().getIndexedModList().get(modId);
+						String modName = mod == null ? "Minecraft" : mod.getName();
+						tooltipString = tooltipString.replace(modName, "");
+						tooltipString = tooltipString.replace(s.getStack().getDisplayName(), "");
+					} catch (RuntimeException ignored) {
+						tooltipString = "";
+					}
+					if (tooltipString.toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else if (search.startsWith("$")) {
+					StringBuilder oreDictStringBuilder = new StringBuilder();
+					for (int oreId : OreDictionary.getOreIDs(s.getStack())) {
+						String oreName = OreDictionary.getOreName(oreId);
+						oreDictStringBuilder.append(oreName).append(' ');
+					}
+					if (oreDictStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else if (search.startsWith("%")) {
+					StringBuilder creativeTabStringBuilder = new StringBuilder();
+					for (CreativeTabs creativeTab : s.getStack().getItem().getCreativeTabs()) {
+						if (creativeTab != null) {
+							String creativeTabName = creativeTab.getTranslatedTabLabel();
+							creativeTabStringBuilder.append(creativeTabName).append(' ');
+						}
+					}
+					if (creativeTabStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else {
+					if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
+						tmp.add(s);
+				}
 		}
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
 			int mul = tile.downwards ? -1 : 1;
