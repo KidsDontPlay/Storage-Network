@@ -39,28 +39,8 @@ public class StorageNetwork {
 		proxy.init(event);
 		NBTTagCompound tagCompound = new NBTTagCompound();
 		tagCompound.setString("ContainerClass", ContainerRequest.class.getName());
-
-		// tagCompound.setInteger("GridSlotNumber", 1);
-		// tagCompound.setInteger("GridSize", 9);
-		// tagCompound.setBoolean("HideButtons", false);
 		tagCompound.setBoolean("PhantomItems", false);
-
-		// tagCompound.setInteger("ButtonOffsetX", -16); // ignored if
-		// AlignToGrid is set
-		// tagCompound.setInteger("ButtonOffsetY", 16); // ignored if
-		// AlignToGrid is set
-		// ***** OR *****
 		tagCompound.setString("AlignToGrid", "left");
-
-		// NBTTagCompound tweakRotate = new NBTTagCompound();
-		// tweakRotate.setBoolean("Enabled", true);
-		// tweakRotate.setBoolean("ShowButton", true);
-		// tweakRotate.setInteger("ButtonX", 0); // ignored if AlignToGrid is
-		// set
-		// tweakRotate.setInteger("ButtonY", 18); // ignored if AlignToGrid is
-		// set
-		// tagCompound.setTag("TweakRotate", tweakRotate);
-		// [...] (same structure for "TweakBalance" and "TweakClear")
 
 		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
 	}
@@ -68,8 +48,6 @@ public class StorageNetwork {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
-		for(Entry<String, ModContainer> e:Loader.instance().getIndexedModList().entrySet())
-		System.out.println("qulf: "+e.getKey()+", "+e.getValue().getName());
 
 	}
 
