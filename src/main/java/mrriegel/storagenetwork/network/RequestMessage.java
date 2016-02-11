@@ -16,16 +16,19 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 	int id, x, y, z;
 	ItemStack stack;
+	boolean shift, ctrl;
 
 	public RequestMessage() {
 	}
 
-	public RequestMessage(int id, int x, int y, int z, ItemStack stack) {
+	public RequestMessage(int id, int x, int y, int z, ItemStack stack, boolean shift, boolean ctrl) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.stack = stack;
+		this.shift = shift;
+		this.ctrl = ctrl;
 	}
 
 	@Override
@@ -34,10 +37,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				// TileMaster tile = (TileMaster)
-				// ctx.getServerHandler().playerEntity.worldObj
-				// .getTileEntity(new BlockPos(message.x, message.y,
-				// message.z));
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
 					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : 1, true, true);
@@ -60,6 +59,8 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 		this.y = buf.readInt();
 		this.z = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
+		this.shift = buf.readBoolean();
+		this.ctrl = buf.readBoolean();
 	}
 
 	@Override
@@ -69,5 +70,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 		buf.writeInt(this.y);
 		buf.writeInt(this.z);
 		ByteBufUtils.writeItemStack(buf, this.stack);
+		buf.writeBoolean(this.shift);
+		buf.writeBoolean(this.ctrl);
 	}
 }

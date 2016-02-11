@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.Util;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -23,13 +24,21 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.base.Joiner;
+import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class GuiRemote extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/remote.png");
@@ -91,8 +100,49 @@ public class GuiRemote extends GuiContainer {
 		List<StackWrapper> tmp = search.equals("") ? new ArrayList<StackWrapper>(stacks) : new ArrayList<StackWrapper>();
 		if (!search.equals("")) {
 			for (StackWrapper s : stacks)
-				if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
-					tmp.add(s);
+				if (search.startsWith("@")) {
+					String name = Util.getModNameForItem(s.getStack().getItem());
+					if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else if (search.startsWith("#")) {
+					String tooltipString;
+					try {
+						List<String> tooltip = s.getStack().getTooltip(mc.thePlayer, false);
+						tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
+						tooltipString = ChatFormatting.stripFormatting(tooltipString);
+						String modId = GameData.getItemRegistry().getNameForObject(s.getStack().getItem()).getResourceDomain();
+						tooltipString = tooltipString.replace(modId, "");
+						ModContainer mod = Loader.instance().getIndexedModList().get(modId);
+						String modName = mod == null ? "Minecraft" : mod.getName();
+						tooltipString = tooltipString.replace(modName, "");
+						tooltipString = tooltipString.replace(s.getStack().getDisplayName(), "");
+					} catch (RuntimeException ignored) {
+						tooltipString = "";
+					}
+					if (tooltipString.toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else if (search.startsWith("$")) {
+					StringBuilder oreDictStringBuilder = new StringBuilder();
+					for (int oreId : OreDictionary.getOreIDs(s.getStack())) {
+						String oreName = OreDictionary.getOreName(oreId);
+						oreDictStringBuilder.append(oreName).append(' ');
+					}
+					if (oreDictStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else if (search.startsWith("%")) {
+					StringBuilder creativeTabStringBuilder = new StringBuilder();
+					for (CreativeTabs creativeTab : s.getStack().getItem().getCreativeTabs()) {
+						if (creativeTab != null) {
+							String creativeTabName = creativeTab.getTranslatedTabLabel();
+							creativeTabStringBuilder.append(creativeTabName).append(' ');
+						}
+					}
+					if (creativeTabStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
+						tmp.add(s);
+				} else {
+					if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
+						tmp.add(s);
+				}
 		}
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
 			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? -1 : 1;
@@ -104,6 +154,8 @@ public class GuiRemote extends GuiContainer {
 					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
 				case NAME:
 					return o2.getStack().getDisplayName().compareToIgnoreCase(o1.getStack().getDisplayName()) * mul;
+				case MOD:
+					return Util.getModNameForItem(o2.getStack().getItem()).compareToIgnoreCase(Util.getModNameForItem(o1.getStack().getItem())) * mul;
 				}
 				return 0;
 			}
@@ -183,6 +235,9 @@ public class GuiRemote extends GuiContainer {
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96 + 64) && j < (guiTop + 103 + 64) && mouseButton == 1) {
+			searchBar.setText("");
+		}
 		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
 			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), mc.thePlayer.inventory.getItemStack()));
 		}
@@ -293,7 +348,7 @@ public class GuiRemote extends GuiContainer {
 					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.AMOUNT ? 6 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.AMOUNT ? 6 : Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.MOD ? 12 : 0), 14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);

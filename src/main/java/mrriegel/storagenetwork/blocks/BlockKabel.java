@@ -1,7 +1,5 @@
 package mrriegel.storagenetwork.blocks;
 
-import java.util.Random;
-
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;

@@ -20,7 +20,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.8.9-1.4-tmp"
+version = "1.8.9-1.5.0"
 group= "mrriegel.storagenetwork" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "StorageNetwork"
 
@@ -38,7 +38,7 @@ minecraft {
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.8.9:2.25.10.149"
+    deobfCompile "mezz.jei:jei_1.8.9:2.25.11.150"
 }
 
 processResources

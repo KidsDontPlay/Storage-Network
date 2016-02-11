@@ -1,26 +1,21 @@
 package mrriegel.storagenetwork;
 
-import java.util.Map.Entry;
-
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameData;
 
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, guiFactory = "mrriegel.storagenetwork.config.GuiFactory")
 public class StorageNetwork {
 	public static final String MODID = "storagenetwork";
-	public static final String VERSION = "1.4";
+	public static final String VERSION = "1.5";
 	public static final String MODNAME = "Storage Network";
 
 	@Instance(StorageNetwork.MODID)

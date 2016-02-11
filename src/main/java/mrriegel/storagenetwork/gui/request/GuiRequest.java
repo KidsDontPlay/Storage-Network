@@ -28,7 +28,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -59,7 +58,7 @@ public class GuiRequest extends GuiContainer {
 		this.stacks = new ArrayList<StackWrapper>();
 		tile = ((ContainerRequest) inventorySlots).tile;
 		master = tile.getMaster();
-		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null));
+		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null, false, false));
 	}
 
 	@Override
@@ -235,9 +234,9 @@ public class GuiRequest extends GuiContainer {
 			searchBar.setText("");
 		} else if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null));
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null, false, false));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, master.getX(), master.getY(), master.getZ(), over));
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, master.getX(), master.getY(), master.getZ(), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		}
 	}
 
@@ -246,7 +245,7 @@ public class GuiRequest extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null));
+				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null, false, false));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -258,7 +257,7 @@ public class GuiRequest extends GuiContainer {
 		super.handleMouseInput();
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 90)) {
+		if (i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90)) {
 			int mouse = Mouse.getEventDWheel();
 			if (mouse == 0)
 				return;

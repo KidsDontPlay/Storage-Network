@@ -25,10 +25,10 @@ public class Util {
 			modNamesForIds.put(lowercaseId, modName);
 		}
 	}
-	
+
 	@Nonnull
 	public static String getModNameForItem(@Nonnull Item item) {
-		ResourceLocation itemResourceLocation = (ResourceLocation) GameData.getItemRegistry().getNameForObject(item);
+		ResourceLocation itemResourceLocation = GameData.getItemRegistry().getNameForObject(item);
 		String modId = itemResourceLocation.getResourceDomain();
 		String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
 		String modName = modNamesForIds.get(lowercaseModId);
