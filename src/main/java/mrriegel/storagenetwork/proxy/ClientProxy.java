@@ -6,6 +6,8 @@ import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.render.CableModel;
 import mrriegel.storagenetwork.render.ClientEventHandlers;
+import mrriegel.storagenetwork.render.CableRenderer;
+import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
@@ -17,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -63,12 +66,14 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	public void registerRenderers() {
-		ModelLoader.setCustomStateMapper(ModBlocks.kabel, new StateMapperBase() {
-			@Override
-			protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-				return CableModel.kabel;
-			}
-		});
+		ClientRegistry.bindTileEntitySpecialRenderer(TileKabel.class, new CableRenderer());
+		if (1 == 2)
+			ModelLoader.setCustomStateMapper(ModBlocks.kabel, new StateMapperBase() {
+				@Override
+				protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
+					return CableModel.kabel;
+				}
+			});
 
 		// ModelLoader.setCustomStateMapper(ModBlocks.exKabel, new
 		// StateMapperBase() {

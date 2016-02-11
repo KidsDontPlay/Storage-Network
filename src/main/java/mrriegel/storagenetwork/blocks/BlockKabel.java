@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.blocks;
 
+import java.util.Random;
+
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
@@ -66,13 +68,27 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public int getRenderType() {
-		return 3;
+		return 3 - 1;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public EnumWorldBlockLayer getBlockLayer() {
 		return EnumWorldBlockLayer.CUTOUT;
+	}
+
+	public void updateTE(World world, BlockPos pos, IExtendedBlockState state) {
+		TileKabel tile = (TileKabel) world.getTileEntity(pos);
+		if (tile == null)
+			return;
+		tile.north = state.getValue(BlockKabel.NORTH);
+		tile.south = state.getValue(BlockKabel.SOUTH);
+		tile.west = state.getValue(BlockKabel.WEST);
+		tile.east = state.getValue(BlockKabel.EAST);
+		tile.up = state.getValue(BlockKabel.UP);
+		tile.down = state.getValue(BlockKabel.DOWN);
+		world.markBlockForUpdate(pos);
+
 	}
 
 	@Override
@@ -139,6 +155,7 @@ public class BlockKabel extends BlockContainer {
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 		state = getExtendedState(state, worldIn, pos);
 		setConnections(worldIn, pos, state);
+		updateTE(worldIn, pos, (IExtendedBlockState) state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}
 

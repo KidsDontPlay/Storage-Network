@@ -10,6 +10,8 @@ public class ClientEventHandlers {
 
 	@SubscribeEvent
 	public void onModelBakeEvent(ModelBakeEvent event) {
+		if (1 == 1)
+			return;
 		Object kabel = event.modelRegistry.getObject(CableModel.kabel);
 		if (kabel != null) {
 			event.modelRegistry.putObject(CableModel.kabel, new CableModel());

@@ -41,7 +41,6 @@ public class StorageNetwork {
 		tagCompound.setString("ContainerClass", ContainerRequest.class.getName());
 		tagCompound.setBoolean("PhantomItems", false);
 		tagCompound.setString("AlignToGrid", "left");
-
 		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
 	}
 

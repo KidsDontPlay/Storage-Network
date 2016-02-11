@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -16,9 +17,11 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.util.Constants;
 
 import com.google.common.reflect.TypeToken;
@@ -34,6 +37,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
 	private boolean mode = true;
 	private int limit = 0;
+	public Connect north, south, east, west, up, down;
 
 	ItemStack stack = null;
 
@@ -143,6 +147,15 @@ public class TileKabel extends TileEntity implements IConnectable {
 			int slot = stackTag.getByte("Slot");
 			filter.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
+		try {
+			north = Connect.valueOf(compound.getString("north"));
+			south = Connect.valueOf(compound.getString("south"));
+			east = Connect.valueOf(compound.getString("east"));
+			west = Connect.valueOf(compound.getString("west"));
+			up = Connect.valueOf(compound.getString("up"));
+			down = Connect.valueOf(compound.getString("down"));
+		} catch (Exception e) {
+		}
 
 	}
 
@@ -174,8 +187,24 @@ public class TileKabel extends TileEntity implements IConnectable {
 				invList.appendTag(stackTag);
 			}
 		}
-		compound.setTag("crunchTE", invList);
+		try {
+			compound.setTag("crunchTE", invList);
+			compound.setString("north", north.toString());
+			compound.setString("south", south.toString());
+			compound.setString("east", east.toString());
+			compound.setString("west", west.toString());
+			compound.setString("up", up.toString());
+			compound.setString("down", down.toString());
+		} catch (Exception e) {
+		}
 
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		double renderExtention = 1.0d;
+		AxisAlignedBB bb = AxisAlignedBB.fromBounds(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
+		return bb;
 	}
 
 	@Override

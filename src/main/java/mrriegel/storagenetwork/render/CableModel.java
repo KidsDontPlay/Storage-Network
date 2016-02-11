@@ -41,6 +41,7 @@ public class CableModel implements ISmartBlockModel {
 		Connect east = extendedBlockState.getValue(BlockKabel.EAST);
 		Connect up = extendedBlockState.getValue(BlockKabel.UP);
 		Connect down = extendedBlockState.getValue(BlockKabel.DOWN);
+
 		TextureAtlasSprite node = null;
 		TextureAtlasSprite line = null;
 		if (state.getBlock() == ModBlocks.kabel) {
