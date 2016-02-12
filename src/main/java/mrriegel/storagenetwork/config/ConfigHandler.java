@@ -8,17 +8,18 @@ public class ConfigHandler {
 
 	public static Configuration config;
 
-	public static boolean smallFont, lavaNeeded;
-	public static int lavaCapacity, energyMultilplier;
+	public static boolean smallFont, energyNeeded;
+	public static int energyCapacity, energyMultilplier, rangeWirelessAccessor;
 
 	public static void refreshConfig(File file) {
 		config = new Configuration(file);
 		config.load();
 
 		smallFont = config.get(Configuration.CATEGORY_CLIENT, "smallFont", true).getBoolean();
-		lavaNeeded = config.get(Configuration.CATEGORY_GENERAL, "lavaNeeded", true).getBoolean();
-		lavaCapacity = config.get(Configuration.CATEGORY_GENERAL, "lavaCapacity", 8).getInt();
-		energyMultilplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultilplier", 3).getInt();
+		energyNeeded = config.get(Configuration.CATEGORY_GENERAL, "energyNeeded", true).getBoolean();
+		energyCapacity = config.get(Configuration.CATEGORY_GENERAL, "energyCapacity", 32000).getInt();
+		energyMultilplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultilplier", 20).getInt();
+		rangeWirelessAccessor = config.get(Configuration.CATEGORY_GENERAL, "rangeWirelessAccessor", 32).getInt();
 
 		if (config.hasChanged()) {
 			config.save();

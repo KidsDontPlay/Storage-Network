@@ -25,22 +25,19 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
-public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
+public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver {
 	public List<BlockPos> connectables, storageInventorys, imInventorys, exInventorys;
-	public FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * ConfigHandler.lavaCapacity);
+	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, 120, 0);
 
 	public List<StackWrapper> getStacks() {
 		List<StackWrapper> stacks = new ArrayList<StackWrapper>();
@@ -121,7 +118,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 		}.getType());
 		exInventorys = new Gson().fromJson(compound.getString("exInventorys"), new TypeToken<List<BlockPos>>() {
 		}.getType());
-		tank.readFromNBT(compound);
+		en.readFromNBT(compound);
 	}
 
 	@Override
@@ -131,7 +128,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 		compound.setString("storageInventorys", new Gson().toJson(storageInventorys));
 		compound.setString("imInventorys", new Gson().toJson(imInventorys));
 		compound.setString("exInventorys", new Gson().toJson(exInventorys));
-		tank.writeToNBT(compound);
+		en.writeToNBT(compound);
 	}
 
 	private void addCables(BlockPos pos, int num) {
@@ -216,7 +213,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 
 				List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.fromBounds(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
 				for (EntityItem item : items) {
-					if (item.ticksExisted < 40 || item.isDead || !consumeLava(item.getEntityItem().stackSize, false))
+					if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().stackSize, false))
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
 					if (!worldObj.isRemote) {
@@ -326,7 +323,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						continue;
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeLava(insert + t.elements(0) / 2, false))
+					if (!consumeRF(insert + t.elements(0), false))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -349,7 +346,7 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 						continue;
 					int num = s.stackSize;
 					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeLava(insert + t.elements(0) / 2, false))
+					if (!consumeRF(insert + t.elements(0), false))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -398,12 +395,12 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 				if (!t.status())
 					continue;
 				int num = Math.min(Math.min(fil.getMaxStackSize(), inv.getInventoryStackLimit()), Math.min(space, (int) Math.pow(2, t.elements(2) + 2)));
-				if (!consumeLava(num + t.elements(0) / 2, true))
+				if (!consumeRF(num + t.elements(0), true))
 					continue;
 				ItemStack rec = request(fil, num, t.isMeta(), false);
 				if (rec == null)
 					continue;
-				consumeLava(rec.stackSize + t.elements(0) / 2, false);
+				consumeRF(rec.stackSize + t.elements(0), false);
 
 				TileEntityHopper.putStackInInventoryAllSlots(inv, rec, t.getInventoryFace().getOpposite());
 				break;
@@ -544,18 +541,17 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 		vacuum();
 		impor();
 		export();
-		// if (worldObj.getTotalWorldTime() % 40 == 0)
-		// System.out.println("tick");
 
 	}
 
-	boolean consumeLava(int num, boolean simulate) {
-		if (!ConfigHandler.lavaNeeded)
+	boolean consumeRF(int num, boolean simulate) {
+		if (!ConfigHandler.energyNeeded)
 			return true;
-		if (tank.getFluidAmount() < num * ConfigHandler.energyMultilplier)
+		if (en.getEnergyStored() < num * ConfigHandler.energyMultilplier)
 			return false;
-		if (!simulate)
-			tank.drain(num * ConfigHandler.energyMultilplier, true);
+		if (!simulate) {
+			en.modifyEnergyStored(-num * ConfigHandler.energyMultilplier);
+		}
 		return true;
 	}
 
@@ -572,39 +568,23 @@ public class TileMaster extends TileEntity implements ITickable, IFluidHandler {
 	}
 
 	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if (resource == null || !canFill(from, resource.getFluid())) {
-			return 0;
-		}
-		return tank.fill(resource, doFill);
+	public int getEnergyStored(EnumFacing from) {
+		return en.getEnergyStored();
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if (tank.getFluid() == null || resource == null || !resource.isFluidEqual(tank.getFluid())) {
-			return null;
-		}
-		return tank.drain(resource.amount, doDrain);
+	public int getMaxEnergyStored(EnumFacing from) {
+		return en.getMaxEnergyStored();
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		return tank.drain(maxDrain, doDrain);
+	public boolean canConnectEnergy(EnumFacing from) {
+		return true;
 	}
 
 	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		return fluid.equals(FluidRegistry.LAVA);
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return false;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		return new FluidTankInfo[] { tank.getInfo() };
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+		return en.receiveEnergy(maxReceive, simulate);
 	}
 
 }

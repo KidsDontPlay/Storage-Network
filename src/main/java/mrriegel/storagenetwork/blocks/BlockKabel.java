@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.blocks;
 
+import java.util.List;
+
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
@@ -12,10 +14,12 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFence;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -121,7 +125,6 @@ public class BlockKabel extends BlockContainer {
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
 				}
 				break;
-
 			default:
 				break;
 			}

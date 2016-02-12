@@ -4,6 +4,7 @@ import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -60,7 +61,7 @@ public class ItemRemote extends Item {
 		int z = NBTHelper.getInt(itemStackIn, "z");
 		World world = MinecraftServer.getServer().worldServerForDimension(NBTHelper.getInt(itemStackIn, "id"));
 		if (NBTHelper.getBoolean(itemStackIn, "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
-			if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInt(itemStackIn, "id") == worldIn.provider.getDimensionId() && playerIn.getDistance(x, y, z) <= 32) || itemStackIn.getItemDamage() == 1) {
+			if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInt(itemStackIn, "id") == worldIn.provider.getDimensionId() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
 				if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
 					((TileMaster) world.getTileEntity(new BlockPos(x, y, z))).refreshNetwork();
 					if (playerIn.getHeldItem().getTagCompound().getString("sort").equals(""))
