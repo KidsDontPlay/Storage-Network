@@ -18,18 +18,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, IMessage> {
 	int id, x, y, z, dim;
 	ItemStack stack;
+	boolean shift, ctrl;
 
 	public RemoteMessage() {
 	}
 
-	public RemoteMessage(int id, int x, int y, int z, int dim, ItemStack stack) {
+	public RemoteMessage(int id, int x, int y, int z, int dim, ItemStack stack, boolean shift, boolean ctrl) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.dim = dim;
 		this.stack = stack;
-
+		this.shift = shift;
+		this.ctrl = ctrl;
 	}
 
 	@Override
@@ -41,10 +43,17 @@ public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, I
 				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
 				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
 					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
-					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : 1, true, true);
-					int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
-					if (rest != 0) {
-						ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true);
+					if (stack != null) {
+						if (message.shift) {
+							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
+							if (rest != 0) {
+								ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+							}
+						} else {
+							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
+							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
+						}
 					}
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 				}
@@ -62,6 +71,8 @@ public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, I
 		this.z = buf.readInt();
 		this.dim = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
+		this.shift = buf.readBoolean();
+		this.ctrl = buf.readBoolean();
 	}
 
 	@Override
@@ -72,5 +83,7 @@ public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, I
 		buf.writeInt(this.z);
 		buf.writeInt(this.dim);
 		ByteBufUtils.writeItemStack(buf, this.stack);
+		buf.writeBoolean(this.shift);
+		buf.writeBoolean(this.ctrl);
 	}
 }

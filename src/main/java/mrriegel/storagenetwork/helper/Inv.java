@@ -182,4 +182,60 @@ public class Inv {
 			return null;
 		return tmp;
 	}
+
+	public static int getAmount(ItemStack fil, IInventory inv, EnumFacing face) {
+		int amount = 0;
+		if (!(inv instanceof ISidedInventory)) {
+			for (int i = 0; i < inv.getSizeInventory(); i++) {
+				ItemStack slot = inv.getStackInSlot(i);
+				if (slot != null && slot.isItemEqual(fil)) {
+					amount += slot.stackSize;
+				}
+			}
+		} else {
+			for (int i : ((ISidedInventory) inv).getSlotsForFace(face)) {
+				if (!((ISidedInventory) inv).canInsertItem(i, fil, face))
+					continue;
+				ItemStack slot = inv.getStackInSlot(i);
+				if (slot != null && slot.isItemEqual(fil)) {
+					amount += slot.stackSize;
+				}
+			}
+		}
+		return amount;
+	}
+
+	public static int getSpace(ItemStack fil, IInventory inv, EnumFacing face) {
+		int space = 0;
+		if (!(inv instanceof ISidedInventory)) {
+			for (int i = 0; i < inv.getSizeInventory(); i++) {
+				if (!inv.isItemValidForSlot(i, fil))
+					continue;
+				ItemStack slot = inv.getStackInSlot(i);
+				int max = Math.min(fil.getMaxStackSize(), inv.getInventoryStackLimit());
+				if (slot == null) {
+					space += max;
+				} else {
+					if (slot.isItemEqual(fil) && ItemStack.areItemStackTagsEqual(fil, slot)) {
+						space += max - slot.stackSize;
+					}
+				}
+			}
+		} else {
+			for (int i : ((ISidedInventory) inv).getSlotsForFace(face)) {
+				if (!inv.isItemValidForSlot(i, fil) || !((ISidedInventory) inv).canInsertItem(i, fil, face))
+					continue;
+				ItemStack slot = inv.getStackInSlot(i);
+				int max = Math.min(fil.getMaxStackSize(), inv.getInventoryStackLimit());
+				if (slot == null) {
+					space += max;
+				} else {
+					if (slot.isItemEqual(fil) && ItemStack.areItemStackTagsEqual(fil, slot)) {
+						space += max - slot.stackSize;
+					}
+				}
+			}
+		}
+		return space;
+	}
 }

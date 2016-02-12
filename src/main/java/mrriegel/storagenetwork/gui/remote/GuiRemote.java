@@ -8,10 +8,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.Util;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RemoteMessage;
@@ -53,8 +53,7 @@ public class GuiRemote extends GuiContainer {
 		this.xSize = 176;
 		this.ySize = 256;
 		stacks = new ArrayList<StackWrapper>();
-
-		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "y"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "z"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "id"), null));
+		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "y"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "z"), NBTHelper.getInt(Minecraft.getMinecraft().thePlayer.getHeldItem(), "id"), null, false, false));
 	}
 
 	@Override
@@ -231,7 +230,7 @@ public class GuiRemote extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (over != null && mc.thePlayer.inventory.getItemStack() == null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), over));
+			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
@@ -248,7 +247,7 @@ public class GuiRemote extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), null));
+				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInt(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInt(mc.thePlayer.getHeldItem(), "id"), null, false, false));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}

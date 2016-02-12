@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemUpgrade extends Item {
-	public static final int num = 3;
+	public static final int num = 4;
 
 	public ItemUpgrade() {
 		super();

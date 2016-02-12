@@ -40,17 +40,19 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
 					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true);
-					if (message.shift) {
-						int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
-						if (rest != 0) {
-							ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+					if (stack != null) {
+						if (message.shift) {
+							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
+							if (rest != 0) {
+								ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+							}
+						} else {
+							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
+							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
-					} else {
-						ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
-						PacketHandler.INSTANCE.sendTo(new StackMessage(stack),ctx.getServerHandler().playerEntity);
 					}
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
-					
+
 				}
 
 			}

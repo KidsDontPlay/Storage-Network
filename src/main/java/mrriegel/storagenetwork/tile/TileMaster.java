@@ -389,8 +389,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (storageInventorys.contains(t.getPos()))
 					continue;
-				int space = getSpace(fil, inv, t.getInventoryFace().getOpposite());
-				if (space == 0)
+				int space = Math.min(Inv.getSpace(fil, inv, t.getInventoryFace().getOpposite()), (t.elements(3) < 1) ? Integer.MAX_VALUE : t.getLimit() - Inv.getAmount(fil, inv, t.getInventoryFace().getOpposite()));
+				if (space <= 0)
 					continue;
 				if (!t.status())
 					continue;
@@ -406,40 +406,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				break;
 			}
 		}
-	}
-
-	private int getSpace(ItemStack fil, IInventory inv, EnumFacing face) {
-		int space = 0;
-		if (!(inv instanceof ISidedInventory)) {
-			for (int i = 0; i < inv.getSizeInventory(); i++) {
-				if (!inv.isItemValidForSlot(i, fil))
-					continue;
-				ItemStack slot = inv.getStackInSlot(i);
-				int max = Math.min(fil.getMaxStackSize(), inv.getInventoryStackLimit());
-				if (slot == null) {
-					space += max;
-				} else {
-					if (slot.isItemEqual(fil) && ItemStack.areItemStackTagsEqual(fil, slot)) {
-						space += max - slot.stackSize;
-					}
-				}
-			}
-		} else {
-			for (int i : ((ISidedInventory) inv).getSlotsForFace(face)) {
-				if (!inv.isItemValidForSlot(i, fil) || !((ISidedInventory) inv).canInsertItem(i, fil, face))
-					continue;
-				ItemStack slot = inv.getStackInSlot(i);
-				int max = Math.min(fil.getMaxStackSize(), inv.getInventoryStackLimit());
-				if (slot == null) {
-					space += max;
-				} else {
-					if (slot.isItemEqual(fil) && ItemStack.areItemStackTagsEqual(fil, slot)) {
-						space += max - slot.stackSize;
-					}
-				}
-			}
-		}
-		return space;
 	}
 
 	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag) {

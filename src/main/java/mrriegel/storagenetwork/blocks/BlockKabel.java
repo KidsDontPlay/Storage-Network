@@ -110,7 +110,7 @@ public class BlockKabel extends BlockContainer {
 				}
 				break;
 			case 1:
-				if (tile.elements(1) < 1) {
+				if (tile.elements(1) < 1 && tile.elements(3) < 1) {
 					tile.getDeque().push(1);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
@@ -120,6 +120,14 @@ public class BlockKabel extends BlockContainer {
 			case 2:
 				if (tile.elements(2) < 4) {
 					tile.getDeque().push(2);
+					playerIn.getHeldItem().stackSize--;
+					if (playerIn.getHeldItem().stackSize <= 0)
+						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
+				}
+				break;
+			case 3:
+				if (tile.elements(3) < 1 && tile.elements(1) < 1&&tile.getKind()==Kind.exKabel) {
+					tile.getDeque().push(3);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);

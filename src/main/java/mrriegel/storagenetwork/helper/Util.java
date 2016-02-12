@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork;
+package mrriegel.storagenetwork.helper;
 
 import java.util.HashMap;
 import java.util.Locale;

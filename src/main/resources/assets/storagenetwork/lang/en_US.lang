@@ -10,6 +10,7 @@ tile.storagenetwork:request.name=Request Table
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade
 item.storagenetwork:upgrade_2.name=Stack Upgrade
+item.storagenetwork:upgrade_3.name=Stock Upgrade
 
 item.storagenetwork:remote_0.name=Wireless Accessor
 item.storagenetwork:remote_1.name=Advanced Wireless Accessor
