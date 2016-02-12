@@ -235,7 +235,7 @@ public class GuiRequest extends GuiContainer {
 		} else if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, master.getX(), master.getY(), master.getZ(), null, false, false));
-		} else if (over != null && (mouseButton == 0 || mouseButton == 1)) {
+		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, master.getX(), master.getY(), master.getZ(), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		}
 	}
