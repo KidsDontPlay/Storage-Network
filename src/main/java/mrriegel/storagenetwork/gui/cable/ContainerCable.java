@@ -18,7 +18,7 @@ import net.minecraftforge.common.util.Constants;
 public class ContainerCable extends Container {
 	// InventoryFilter inv;
 	InventoryPlayer playerInv;
-	TileKabel tile;
+	public TileKabel tile;
 	private Map<Integer, StackWrapper> filter;
 
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
@@ -100,7 +100,7 @@ public class ContainerCable extends Container {
 			if (itemstack1 == null)
 				return null;
 			for (int i = 0; i < 9; i++) {
-				if (filter.get(i) == null) {
+				if (filter.get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
 					filter.put(i, new StackWrapper(itemstack1.copy(), itemstack1.stackSize));
 					slotChanged();
 					break;
@@ -110,19 +110,19 @@ public class ContainerCable extends Container {
 		return null;
 	}
 
-//	int getSlot(ItemStack stack) {
-//		if (in(stack))
-//			return -1;
-//		for (int i = 0; i < 9; i++) {
-//			if (!getSlot(i).getHasStack())
-//				return i;
-//		}
-//		return -1;
-//	}
+	// int getSlot(ItemStack stack) {
+	// if (in(stack))
+	// return -1;
+	// for (int i = 0; i < 9; i++) {
+	// if (!getSlot(i).getHasStack())
+	// return i;
+	// }
+	// return -1;
+	// }
 
-	boolean in(ItemStack stack) {
+	boolean in(StackWrapper stack) {
 		for (int i = 0; i < 9; i++) {
-			if (getSlot(i).getHasStack() && getSlot(i).getStack().isItemEqual(stack))
+			if (filter.get(i) != null && filter.get(i).getStack().isItemEqual(stack.getStack()))
 				return true;
 		}
 		return false;

@@ -41,6 +41,7 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 					ContainerCable con = (ContainerCable) ctx.getServerHandler().playerEntity.openContainer;
 					con.getFilter().put(message.index, message.wrap);
 					con.slotChanged();
+					ctx.getServerHandler().playerEntity.worldObj.markBlockForUpdate(con.tile.getPos());
 				}
 			}
 		});

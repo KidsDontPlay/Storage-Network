@@ -7,6 +7,8 @@ import java.util.Random;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.init.ModItems;
+import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
@@ -24,6 +26,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,14 +63,16 @@ public class GuiCable extends GuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
-		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
-		if (tile.elements(1) >= 1) {
+		if (tile.elements(1) >= 1)
 			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
+		this.drawTexturedModalRect(i + 150, j + 6, 176, 110, 16, 16);
+		if (tile.elements(1) >= 1) {
 			searchBar.drawTextBox();
 			RenderHelper.enableGUIStandardItemLighting();
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
 			RenderHelper.disableStandardItemLighting();
 		}
+		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
 
 	}
 
@@ -106,6 +111,21 @@ public class GuiCable extends GuiContainer {
 			s.drawSlot(mouseX, mouseY);
 		for (Slot s : list)
 			s.drawTooltip(mouseX, mouseY);
+		// int i = Mouse.getX() * this.width / this.mc.displayWidth;
+		// int j = this.height - Mouse.getY() * this.height /
+		// this.mc.displayHeight - 1;
+		int i = mouseX;
+		int j = mouseY;
+		if (i > guiLeft + 150 && i < guiLeft + 166 && j > guiTop + 6 && j < guiTop + 22) {
+			List<String> list = new ArrayList<String>();
+			for (int ii = 0; ii < ItemUpgrade.num; ii++)
+				list.add(tile.elements(ii) + "x " + new ItemStack(ModItems.upgrade, 1, ii).getDisplayName());
+			GlStateManager.pushMatrix();
+			GlStateManager.disableLighting();
+			this.drawHoveringText(list, i, j, fontRendererObj);
+			GlStateManager.enableLighting();
+			GlStateManager.popMatrix();
+		}
 	}
 
 	@Override
@@ -153,19 +173,21 @@ public class GuiCable extends GuiContainer {
 		for (int i = 0; i < 9; i++) {
 			Slot e = list.get(i);
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
-				StackWrapper x = tile.getFilter().get(i);
-				if (mc.thePlayer.inventory.getItemStack() != null)
-					tile.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
-				else {
-					if (tile.getFilter().get(i) != null) {
+				ContainerCable con = (ContainerCable) inventorySlots;
+				StackWrapper x = con.getFilter().get(i);
+				if (mc.thePlayer.inventory.getItemStack() != null) {
+					if (!((ContainerCable) inventorySlots).in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1)))
+						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
+				} else {
+					if (x != null) {
 						if (mouseButton == 0)
-							tile.getFilter().get(i).setSize(tile.getFilter().get(i).getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+							x.setSize(x.getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
 						else if (mouseButton == 1)
-							tile.getFilter().get(i).setSize(tile.getFilter().get(i).getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+							x.setSize(x.getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
 						else if (mouseButton == 2)
-							tile.getFilter().put(i, null);
-						if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getSize() <= 0)
-							tile.getFilter().put(i, null);
+							con.getFilter().put(i, null);
+						if (x != null && x.getSize() <= 0)
+							con.getFilter().put(i, null);
 					}
 				}
 				((ContainerCable) inventorySlots).slotChanged();
@@ -222,6 +244,7 @@ public class GuiCable extends GuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
+		// ((ContainerCable) inventorySlots).slotChanged();
 	}
 
 	class Slot {
