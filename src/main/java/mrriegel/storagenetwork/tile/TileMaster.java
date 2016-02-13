@@ -66,7 +66,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					IDrawer drawer = group.getDrawer(i);
 					ItemStack stack = drawer.getStoredItemPrototype();
 					if (stack != null && stack.getItem() != null) {
-						addToList(stacks, stack, drawer.getStoredItemCount());
+						addToList(stacks, stack.copy(), drawer.getStoredItemCount());
 					}
 				}
 			} else if (inv instanceof ISidedInventory) {
@@ -383,13 +383,15 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if ((worldObj.getTotalWorldTime() + 20) % (30 / (t.elements(0) + 1)) != 0)
 				continue;
 			for (int i = 0; i < 9; i++) {
-				ItemStack fil = t.getFilter().get(i);
+				if (t.getFilter().get(i) == null)
+					continue;
+				ItemStack fil = t.getFilter().get(i).getStack();
 
 				if (fil == null)
 					continue;
 				if (storageInventorys.contains(t.getPos()))
 					continue;
-				int space = Math.min(Inv.getSpace(fil, inv, t.getInventoryFace().getOpposite()), (t.elements(3) < 1) ? Integer.MAX_VALUE : t.getLimit() - Inv.getAmount(fil, inv, t.getInventoryFace().getOpposite()));
+				int space = Math.min(Inv.getSpace(fil, inv, t.getInventoryFace().getOpposite()), (t.elements(3) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(fil, inv, t.getInventoryFace().getOpposite()));
 				if (space <= 0)
 					continue;
 				if (!t.status())

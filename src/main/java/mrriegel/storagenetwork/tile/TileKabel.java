@@ -8,6 +8,7 @@ import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
+import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Kind kind;
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
-	private Map<Integer, ItemStack> filter = new HashMap<Integer, ItemStack>();
+	private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
 	private boolean meta = true, white;
 	private int priority;
 	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
@@ -78,7 +79,9 @@ public class TileKabel extends TileEntity implements IConnectable {
 	public boolean canTransfer(ItemStack stack) {
 		List<ItemStack> lis = new ArrayList<ItemStack>();
 		for (int i = 0; i < 9; i++) {
-			ItemStack s = getFilter().get(i);
+			if (getFilter().get(i) == null)
+				continue;
+			ItemStack s = getFilter().get(i).getStack();
 			if (s != null)
 				lis.add(s.copy());
 		}
@@ -140,11 +143,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 		else
 			stack = null;
 		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
-		filter = new HashMap<Integer, ItemStack>();
+		filter = new HashMap<Integer, StackWrapper>();
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			filter.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
+			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
 		}
 		try {
 			north = Connect.valueOf(compound.getString("north"));
@@ -242,11 +245,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.inventoryFace = inventoryFace;
 	}
 
-	public Map<Integer, ItemStack> getFilter() {
+	public Map<Integer, StackWrapper> getFilter() {
 		return filter;
 	}
 
-	public void setFilter(Map<Integer, ItemStack> filter) {
+	public void setFilter(Map<Integer, StackWrapper> filter) {
 		this.filter = filter;
 	}
 

@@ -3,9 +3,12 @@ package mrriegel.storagenetwork.gui.cable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.network.ButtonMessage;
+import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileKabel;
@@ -17,6 +20,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -33,6 +38,7 @@ public class GuiCable extends GuiContainer {
 	TileKabel tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
+	ArrayList<Slot> list = new ArrayList<GuiCable.Slot>();
 
 	public GuiCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -54,17 +60,15 @@ public class GuiCable extends GuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
-		if (tile.elements(1) >= 1 || tile.elements(3) >= 1)
-			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
 		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
-		if (tile.elements(1) >= 1 || tile.elements(3) >= 1) {
+		if (tile.elements(1) >= 1) {
+			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
 			searchBar.drawTextBox();
-			if (tile.elements(1) >= 1) {
-				RenderHelper.enableGUIStandardItemLighting();
-				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
-				RenderHelper.disableStandardItemLighting();
-			}
+			RenderHelper.enableGUIStandardItemLighting();
+			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
+			RenderHelper.disableStandardItemLighting();
 		}
+
 	}
 
 	@Override
@@ -92,6 +96,16 @@ public class GuiCable extends GuiContainer {
 			GlStateManager.enableLighting();
 			GlStateManager.enableDepth();
 		}
+		list = new ArrayList<GuiCable.Slot>();
+		for (int ii = 0; ii < 9; ii++) {
+			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
+			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
+			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num));
+		}
+		for (Slot s : list)
+			s.drawSlot(mouseX, mouseY);
+		for (Slot s : list)
+			s.drawTooltip(mouseX, mouseY);
 	}
 
 	@Override
@@ -107,7 +121,7 @@ public class GuiCable extends GuiContainer {
 			white = new Button(3, guiLeft + 110, guiTop + 5, "");
 			buttonList.add(white);
 		}
-		if (tile.elements(1) >= 1 || tile.elements(3) >= 1) {
+		if (tile.elements(1) >= 1) {
 			Keyboard.enableRepeatEvents(true);
 			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36, guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
 			searchBar.setMaxStringLength(30);
@@ -117,11 +131,8 @@ public class GuiCable extends GuiContainer {
 			searchBar.setCanLoseFocus(false);
 			searchBar.setFocused(true);
 			searchBar.setText(tile.getLimit() + "");
-			// searchBar.setCursorPositionEnd();
-			if (tile.elements(1) >= 1) {
-				acti = new Button(4, guiLeft + 127, guiTop - 18, "");
-				buttonList.add(acti);
-			}
+			acti = new Button(4, guiLeft + 127, guiTop - 18, "");
+			buttonList.add(acti);
 		}
 	}
 
@@ -134,6 +145,34 @@ public class GuiCable extends GuiContainer {
 			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 		} else
 			super.mouseReleased(mouseX, mouseY, state);
+	}
+
+	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+		super.mouseClicked(mouseX, mouseY, mouseButton);
+		for (int i = 0; i < 9; i++) {
+			Slot e = list.get(i);
+			if (e.isMouseOverSlot(mouseX, mouseY)) {
+				StackWrapper x = tile.getFilter().get(i);
+				if (mc.thePlayer.inventory.getItemStack() != null)
+					tile.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
+				else {
+					if (tile.getFilter().get(i) != null) {
+						if (mouseButton == 0)
+							tile.getFilter().get(i).setSize(tile.getFilter().get(i).getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+						else if (mouseButton == 1)
+							tile.getFilter().get(i).setSize(tile.getFilter().get(i).getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+						else if (mouseButton == 2)
+							tile.getFilter().put(i, null);
+						if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getSize() <= 0)
+							tile.getFilter().put(i, null);
+					}
+				}
+				((ContainerCable) inventorySlots).slotChanged();
+				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i)));
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -164,10 +203,10 @@ public class GuiCable extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			String s = "";
-			if (tile.elements(1) >= 1 || tile.elements(3) >= 1) {
+			if (tile.elements(1) >= 1) {
 				s = searchBar.getText();
 			}
-			if ((tile.elements(1) >= 1 || tile.elements(3) >= 1) && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
+			if ((tile.elements(1) >= 1) && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
 				if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty())
 					searchBar.setText(s);
 				int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
@@ -183,6 +222,52 @@ public class GuiCable extends GuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
+	}
+
+	class Slot {
+		ItemStack stack;
+		int x, y, size;
+
+		public Slot(ItemStack stack, int x, int y, int size) {
+			this.stack = stack;
+			this.x = x;
+			this.y = y;
+			this.size = size;
+		}
+
+		void drawSlot(int mx, int my) {
+			if (stack != null) {
+				RenderHelper.enableGUIStandardItemLighting();
+				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+			}
+			if (this.isMouseOverSlot(mx, my)) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableDepth();
+				int j1 = x;
+				int k1 = y;
+				GlStateManager.colorMask(true, true, true, false);
+				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+				GlStateManager.colorMask(true, true, true, true);
+				GlStateManager.enableLighting();
+				GlStateManager.enableDepth();
+			}
+		}
+
+		void drawTooltip(int mx, int my) {
+			if (stack != null && this.isMouseOverSlot(mx, my)) {
+				GlStateManager.pushMatrix();
+				GlStateManager.disableLighting();
+				renderToolTip(stack, mx, my);
+				GlStateManager.popMatrix();
+				GlStateManager.enableLighting();
+			}
+		}
+
+		boolean isMouseOverSlot(int mouseX, int mouseY) {
+			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
+		}
 	}
 
 	class Button extends GuiButton {

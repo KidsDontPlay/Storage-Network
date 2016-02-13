@@ -46,4 +46,10 @@ public class StackWrapper {
 	public void setSize(int size) {
 		this.size = size;
 	}
+
+	public static StackWrapper loadStackWrapperFromNBT(NBTTagCompound nbt) {
+		StackWrapper wrap = new StackWrapper(null, 0);
+		wrap.readFromNBT(nbt);
+		return wrap.getStack() != null && wrap.getStack().getItem() != null ? wrap : null;
+	}
 }
