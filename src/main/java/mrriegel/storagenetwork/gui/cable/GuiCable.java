@@ -238,7 +238,6 @@ public class GuiCable extends GuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
-		// ((ContainerCable) inventorySlots).slotChanged();
 	}
 
 	class Slot {

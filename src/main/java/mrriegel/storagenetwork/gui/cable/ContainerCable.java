@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 public class ContainerCable extends Container {
-	// InventoryFilter inv;
 	InventoryPlayer playerInv;
 	public TileKabel tile;
 	private Map<Integer, StackWrapper> filter;
@@ -24,13 +23,6 @@ public class ContainerCable extends Container {
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
-		// inv = new InventoryFilter(tile, 9);
-		// id = new InventoryFilter(tile, 1);
-		/*
-		 * for (int j = 0; j < inv.getSizeInventory(); ++j) {
-		 * this.addSlotToContainer(new Slot(inv, j, 8 + j * 18, 26)); }
-		 */
-		// this.addSlotToContainer(new Slot(id, 0, 8, -18));
 		filter = new HashMap<Integer, StackWrapper>();
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
@@ -71,26 +63,6 @@ public class ContainerCable extends Container {
 		tile.readFromNBT(nbt);
 	}
 
-	// @Override
-	// public ItemStack slotClick(int slotId, int clickedButton, int mode,
-	// EntityPlayer playerIn) {
-	// if (slotId >= 9 || slotId == -999)
-	// return super.slotClick(slotId, clickedButton, mode, playerIn);
-	// if (playerInv.getItemStack() == null) {
-	// getSlot(slotId).putStack(null);
-	// slotChanged();
-	// } else {
-	// ItemStack s = playerInv.getItemStack().copy();
-	// if (!in(s)) {
-	// s.stackSize = 1;
-	// getSlot(slotId).putStack(s);
-	// slotChanged();
-	// }
-	// }
-	// return playerInv.getItemStack();
-	//
-	// }
-
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
 		Slot slot = this.inventorySlots.get(slotIndex);
@@ -109,16 +81,6 @@ public class ContainerCable extends Container {
 		}
 		return null;
 	}
-
-	// int getSlot(ItemStack stack) {
-	// if (in(stack))
-	// return -1;
-	// for (int i = 0; i < 9; i++) {
-	// if (!getSlot(i).getHasStack())
-	// return i;
-	// }
-	// return -1;
-	// }
 
 	boolean in(StackWrapper stack) {
 		for (int i = 0; i < 9; i++) {
