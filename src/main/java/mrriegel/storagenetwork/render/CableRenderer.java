@@ -1,14 +1,27 @@
 package mrriegel.storagenetwork.render;
 
+import org.lwjgl.opengl.GL11;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.tile.TileKabel;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
-public class CableRenderer extends TileEntitySpecialRenderer {
+public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
 	ModelCable model;
 	private final ResourceLocation link = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/link.png");
@@ -22,16 +35,43 @@ public class CableRenderer extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
-		// if (Minecraft.getMinecraft().thePlayer.getHeldItem() == null) {
-		// BlockPos p = new BlockPos(x, y, z);
-		// Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(BlockPumpkin.getStateById(0),
-		// p, te.getWorld(), Tessellator.getInstance().getWorldRenderer());
-		// return;
-		// }
+	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
+		if (te.covered) {
+			this.bindTexture(TextureMap.locationBlocksTexture);
+			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+			World world = te.getWorld();
+			BlockPos blockpos = te.getPos();
+			IBlockState iblockstate = Blocks.diamond_ore.getDefaultState();
+			if (iblockstate.getBlock() == Blocks.glass)
+				return;
+
+			GlStateManager.pushMatrix();
+			RenderHelper.disableStandardItemLighting();
+			GlStateManager.translate((float) x, (float) y, (float) z);
+			Tessellator tessellator = Tessellator.getInstance();
+			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+			worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+			int i = blockpos.getX();
+			int j = blockpos.getY();
+			int k = blockpos.getZ();
+
+			worldrenderer.setTranslation((double) ((float) (-i)), (double) (-j), (double) ((float) (-k)));
+
+			worldrenderer.color(1F, 1F, 1F, 1F);
+			IBakedModel ibakedmodel = blockrendererdispatcher.getModelFromBlockState(iblockstate, world, blockpos);
+			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, ibakedmodel, iblockstate, blockpos, worldrenderer, true);
+
+			worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
+			tessellator.draw();
+
+			RenderHelper.enableStandardItemLighting();
+			GlStateManager.popMatrix();
+			return;
+		}
+
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
-		switch (((TileKabel) te).getKind()) {
+		switch (te.getKind()) {
 		case kabel:
 			Minecraft.getMinecraft().renderEngine.bindTexture(link);
 			break;

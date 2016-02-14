@@ -9,7 +9,7 @@ public class ConfigHandler {
 	public static Configuration config;
 
 	public static boolean smallFont, energyNeeded;
-	public static int energyCapacity, energyMultilplier, rangeWirelessAccessor;
+	public static int energyCapacity, energyMultiplier, rangeWirelessAccessor;
 
 	public static void refreshConfig(File file) {
 		config = new Configuration(file);
@@ -18,7 +18,7 @@ public class ConfigHandler {
 		smallFont = config.get(Configuration.CATEGORY_CLIENT, "smallFont", true).getBoolean();
 		energyNeeded = config.get(Configuration.CATEGORY_GENERAL, "energyNeeded", true).getBoolean();
 		energyCapacity = config.get(Configuration.CATEGORY_GENERAL, "energyCapacity", 32000).getInt();
-		energyMultilplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultilplier", 20).getInt();
+		energyMultiplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultiplier", 20).getInt();
 		rangeWirelessAccessor = config.get(Configuration.CATEGORY_GENERAL, "rangeWirelessAccessor", 32).getInt();
 
 		if (config.hasChanged()) {

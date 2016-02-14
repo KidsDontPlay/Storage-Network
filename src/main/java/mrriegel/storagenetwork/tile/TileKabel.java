@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -39,6 +40,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private boolean mode = true;
 	private int limit = 0;
 	public Connect north, south, east, west, up, down;
+	public boolean covered;
+	public Block cover;
 
 	ItemStack stack = null;
 
@@ -138,6 +141,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		if (deque == null)
 			deque = new ArrayDeque<Integer>();
 		mode = compound.getBoolean("mode");
+		covered = compound.getBoolean("covered");
 		limit = compound.getInteger("limit");
 		if (compound.hasKey("stack", 10))
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
@@ -159,7 +163,12 @@ public class TileKabel extends TileEntity implements IConnectable {
 			down = Connect.valueOf(compound.getString("down"));
 		} catch (Exception e) {
 		}
-
+		String fs = compound.getString("cover");
+		if (fs == null || "null".equals(fs)) {
+			cover = null;
+		} else {
+			cover = Block.getBlockFromName(fs);
+		}
 	}
 
 	@Override
@@ -177,6 +186,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setInteger("prio", priority);
 		compound.setString("deque", new Gson().toJson(deque));
 		compound.setBoolean("mode", mode);
+		compound.setBoolean("covered", covered);
 		compound.setInteger("limit", limit);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
@@ -200,7 +210,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 			compound.setString("down", down.toString());
 		} catch (Exception e) {
 		}
-
+		if (cover != null) {
+			compound.setString("cover", Block.blockRegistry.getNameForObject(cover).getResourcePath());
+		} else {
+			compound.setString("cover", "null");
+		}
 	}
 
 	@Override

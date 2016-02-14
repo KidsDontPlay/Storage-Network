@@ -69,26 +69,6 @@ public class BlockMaster extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		tile.refreshNetwork();
-		// ItemStack s = playerIn.getHeldItem();
-		// if (s != null && FluidContainerRegistry.isContainer(s)) {
-		// int space = tile.tank.getCapacity() - tile.tank.getFluidAmount();
-		// FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(s);
-		// if (liquid != null && liquid.getFluid().equals(FluidRegistry.LAVA) &&
-		// space >= liquid.amount) {
-		// ItemStack container = s.getItem().getContainerItem(s);
-		// tile.tank.fill(liquid, true);
-		// if (!playerIn.capabilities.isCreativeMode) {
-		// s.stackSize--;
-		// if (s.stackSize <= 0)
-		// playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem,
-		// null);
-		// playerIn.inventory.addItemStackToInventory(container);
-		// playerIn.openContainer.detectAndSendChanges();
-		// }
-		//
-		// }
-		// return true;
-		// }
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
 				playerIn.addChatMessage(new ChatComponentText("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));

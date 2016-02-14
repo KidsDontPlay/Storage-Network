@@ -514,10 +514,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	boolean consumeRF(int num, boolean simulate) {
 		if (!ConfigHandler.energyNeeded)
 			return true;
-		if (en.getEnergyStored() < num * ConfigHandler.energyMultilplier)
+		if (en.getEnergyStored() < num * ConfigHandler.energyMultiplier)
 			return false;
 		if (!simulate) {
-			en.modifyEnergyStored(-num * ConfigHandler.energyMultilplier);
+			en.modifyEnergyStored(-num * ConfigHandler.energyMultiplier);
 		}
 		return true;
 	}

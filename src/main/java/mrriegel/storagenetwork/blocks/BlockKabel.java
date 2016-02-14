@@ -13,8 +13,11 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,6 +45,7 @@ public class BlockKabel extends BlockContainer {
 	public static final PropertyConnection EAST = new PropertyConnection("east");
 	public static final PropertyConnection UP = new PropertyConnection("up");
 	public static final PropertyConnection DOWN = new PropertyConnection("down");
+	public static final PropertyBool COVERED = PropertyBool.create("covered");
 
 	public BlockKabel() {
 		super(Material.iron);
@@ -334,7 +338,7 @@ public class BlockKabel extends BlockContainer {
 		Connect east = getConnect(world, pos, pos.east());
 		Connect up = getConnect(world, pos, pos.up());
 		Connect down = getConnect(world, pos, pos.down());
-		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
+		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVERED, ((TileKabel) world.getTileEntity(pos)).covered);
 	}
 
 	private Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
@@ -369,7 +373,7 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	protected BlockState createBlockState() {
-		IProperty[] listedProperties = new IProperty[0];
+		IProperty[] listedProperties = new IProperty[] { COVERED };
 		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN };
 		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
 	}
