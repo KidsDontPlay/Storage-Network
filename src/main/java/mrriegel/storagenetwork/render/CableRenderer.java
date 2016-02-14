@@ -23,6 +23,12 @@ public class CableRenderer extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+		// if (Minecraft.getMinecraft().thePlayer.getHeldItem() == null) {
+		// BlockPos p = new BlockPos(x, y, z);
+		// Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(BlockPumpkin.getStateById(0),
+		// p, te.getWorld(), Tessellator.getInstance().getWorldRenderer());
+		// return;
+		// }
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 		switch (((TileKabel) te).getKind()) {

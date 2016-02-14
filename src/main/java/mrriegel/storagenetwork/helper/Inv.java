@@ -183,13 +183,21 @@ public class Inv {
 		return tmp;
 	}
 
-	public static int getAmount(ItemStack fil, IInventory inv, EnumFacing face) {
+	public static int getAmount(ItemStack fil, IInventory inv, EnumFacing face, boolean meta) {
+		if (fil == null)
+			return 0;
 		int amount = 0;
 		if (!(inv instanceof ISidedInventory)) {
 			for (int i = 0; i < inv.getSizeInventory(); i++) {
 				ItemStack slot = inv.getStackInSlot(i);
-				if (slot != null && slot.isItemEqual(fil)) {
-					amount += slot.stackSize;
+				if (meta) {
+					if (slot != null && slot.isItemEqual(fil)) {
+						amount += slot.stackSize;
+					}
+				} else {
+					if (slot != null && slot.getItem() == fil.getItem()) {
+						amount += slot.stackSize;
+					}
 				}
 			}
 		} else {
@@ -197,8 +205,14 @@ public class Inv {
 				if (!((ISidedInventory) inv).canInsertItem(i, fil, face))
 					continue;
 				ItemStack slot = inv.getStackInSlot(i);
-				if (slot != null && slot.isItemEqual(fil)) {
-					amount += slot.stackSize;
+				if (meta) {
+					if (slot != null && slot.isItemEqual(fil)) {
+						amount += slot.stackSize;
+					}
+				} else {
+					if (slot != null && slot.getItem() == fil.getItem()) {
+						amount += slot.stackSize;
+					}
 				}
 			}
 		}

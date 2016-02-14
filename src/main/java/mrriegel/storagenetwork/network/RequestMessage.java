@@ -39,7 +39,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
-					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true);
+					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true, false);
 					if (stack != null) {
 						if (message.shift) {
 							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);

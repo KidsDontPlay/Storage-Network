@@ -17,14 +17,14 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		ConfigHandler.refreshConfig(event.getSuggestedConfigurationFile());
 		PacketHandler.init();
-
+		ModBlocks.init();
+		ModItems.init();
+		CraftingRecipes.init();
 	}
 
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(StorageNetwork.instance, new GuiHandler());
-		ModBlocks.init();
-		ModItems.init();
-		CraftingRecipes.init();
+
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {

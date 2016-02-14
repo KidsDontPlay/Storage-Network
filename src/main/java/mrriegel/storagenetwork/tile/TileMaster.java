@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
+import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -25,8 +26,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidTank;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 
@@ -310,7 +309,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		});
 		for (TileKabel t : invs) {
 			IInventory inv = (IInventory) worldObj.getTileEntity(t.getConnectedInventory());
-			if ((worldObj.getTotalWorldTime() + 10) % (30 / (t.elements(0) + 1)) != 0)
+			if ((worldObj.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 				continue;
 			if (!(inv instanceof ISidedInventory)) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -322,8 +321,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (!t.status())
 						continue;
 					int num = s.stackSize;
-					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeRF(insert + t.elements(0), false))
+					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
+					if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -345,8 +344,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t.getInventoryFace().getOpposite()))
 						continue;
 					int num = s.stackSize;
-					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(2) + 2));
-					if (!consumeRF(insert + t.elements(0), false))
+					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
+					if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
 						continue;
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
@@ -380,7 +379,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		});
 		for (TileKabel t : invs) {
 			IInventory inv = (IInventory) worldObj.getTileEntity(t.getConnectedInventory());
-			if ((worldObj.getTotalWorldTime() + 20) % (30 / (t.elements(0) + 1)) != 0)
+			if ((worldObj.getTotalWorldTime() + 20) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 				continue;
 			for (int i = 0; i < 9; i++) {
 				if (t.getFilter().get(i) == null)
@@ -391,18 +390,21 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (storageInventorys.contains(t.getPos()))
 					continue;
-				int space = Math.min(Inv.getSpace(fil, inv, t.getInventoryFace().getOpposite()), (t.elements(3) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(fil, inv, t.getInventoryFace().getOpposite()));
+				ItemStack g = request(fil, 1, t.isMeta(), false, true);
+				if (g == null)
+					continue;
+				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()), (t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(g, inv, t.getInventoryFace().getOpposite(), t.isMeta()));
 				if (space <= 0)
 					continue;
 				if (!t.status())
 					continue;
-				int num = Math.min(Math.min(fil.getMaxStackSize(), inv.getInventoryStackLimit()), Math.min(space, (int) Math.pow(2, t.elements(2) + 2)));
-				if (!consumeRF(num + t.elements(0), true))
+				int num = Math.min(Math.min(g.getMaxStackSize(), inv.getInventoryStackLimit()), Math.min(space, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2)));
+				if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
 					continue;
-				ItemStack rec = request(fil, num, t.isMeta(), false);
+				ItemStack rec = request(g, num, true, false, false);
 				if (rec == null)
 					continue;
-				consumeRF(rec.stackSize + t.elements(0), false);
+				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
 
 				TileEntityHopper.putStackInInventoryAllSlots(inv, rec, t.getInventoryFace().getOpposite());
 				break;
@@ -410,7 +412,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag) {
+	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag, boolean simulate) {
 		if (size == 0 || stack == null)
 			return null;
 		if (storageInventorys == null)
@@ -447,19 +449,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					if (!t.canTransfer(s))
 						continue;
-					// if (!t.status())
-					// continue;
 					int miss = size - result;
 					result += Math.min(s.stackSize, miss);
 					int rest = s.stackSize - miss;
-					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					if (!simulate)
+						inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
 					if (res == null)
 						res = s.copy();
 					inv.markDirty();
 					if (result == size)
 						return Inv.copyStack(res, size);
 					// break;
-
 				}
 			} else {
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(t.getInventoryFace().getOpposite())) {
@@ -476,14 +476,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					if (!t.canTransfer(s))
 						continue;
-					// if (!t.status())
-					// continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t.getInventoryFace().getOpposite()))
 						continue;
 					int miss = size - result;
 					result += Math.min(s.stackSize, miss);
 					int rest = s.stackSize - miss;
-					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
+					if (!simulate)
+						inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), rest) : null);
 					if (res == null)
 						res = s.copy();
 					inv.markDirty();
@@ -527,7 +526,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ()), 1, syncData);
+		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override

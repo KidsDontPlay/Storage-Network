@@ -43,7 +43,7 @@ public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, I
 				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
 				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
 					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
-					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true);
+					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true, false);
 					if (stack != null) {
 						if (message.shift) {
 							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);

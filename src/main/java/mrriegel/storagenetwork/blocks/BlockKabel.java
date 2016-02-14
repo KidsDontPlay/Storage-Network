@@ -1,7 +1,5 @@
 package mrriegel.storagenetwork.blocks;
 
-import java.util.List;
-
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
@@ -9,17 +7,16 @@ import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
+import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockFence;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -101,32 +98,32 @@ public class BlockKabel extends BlockContainer {
 			return false;
 		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
 			switch (playerIn.getHeldItem().getItemDamage()) {
-			case 0:
-				if (tile.elements(0) < 4) {
+			case ItemUpgrade.SPEED:
+				if (tile.elements(ItemUpgrade.SPEED) < 4) {
 					tile.getDeque().push(0);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
 				}
 				break;
-			case 1:
-				if (tile.elements(1) < 1 && tile.elements(3) < 1) {
+			case ItemUpgrade.OP:
+				if (tile.elements(ItemUpgrade.OP) < 1) {
 					tile.getDeque().push(1);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
 				}
 				break;
-			case 2:
-				if (tile.elements(2) < 4) {
+			case ItemUpgrade.STACK:
+				if (tile.elements(ItemUpgrade.STACK) < 4) {
 					tile.getDeque().push(2);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
 				}
 				break;
-			case 3:
-				if (tile.elements(3) < 1 && tile.elements(1) < 1&&tile.getKind()==Kind.exKabel) {
+			case ItemUpgrade.STOCK:
+				if (tile.elements(ItemUpgrade.STOCK) < 1 && tile.getKind() == Kind.exKabel) {
 					tile.getDeque().push(3);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)

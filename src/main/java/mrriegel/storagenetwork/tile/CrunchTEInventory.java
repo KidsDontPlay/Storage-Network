@@ -77,7 +77,7 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeSyncableDataToNBT(syncData);
-		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ()), 1, syncData);
+		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override

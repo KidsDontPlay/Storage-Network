@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.gui.cable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -22,11 +21,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,15 +59,23 @@ public class GuiCable extends GuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
-		if (tile.elements(1) >= 1)
+		if (tile.elements(ItemUpgrade.OP) >= 1)
 			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
 		this.drawTexturedModalRect(i + 150, j + 6, 176, 110, 16, 16);
-		if (tile.elements(1) >= 1) {
+		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			searchBar.drawTextBox();
 			RenderHelper.enableGUIStandardItemLighting();
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
 			RenderHelper.disableStandardItemLighting();
 		}
+		list = new ArrayList<GuiCable.Slot>();
+		for (int ii = 0; ii < 9; ii++) {
+			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
+			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
+			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num));
+		}
+		for (Slot s : list)
+			s.drawSlot(mouseX, mouseY);
 		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
 
 	}
@@ -90,7 +94,7 @@ public class GuiCable extends GuiContainer {
 			GlStateManager.popMatrix();
 			GlStateManager.enableLighting();
 		}
-		if (tile.elements(1) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
 			GlStateManager.disableLighting();
 			GlStateManager.disableDepth();
 			int j1 = guiLeft + 8;
@@ -101,24 +105,14 @@ public class GuiCable extends GuiContainer {
 			GlStateManager.enableLighting();
 			GlStateManager.enableDepth();
 		}
-		list = new ArrayList<GuiCable.Slot>();
-		for (int ii = 0; ii < 9; ii++) {
-			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
-			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num));
-		}
-		for (Slot s : list)
-			s.drawSlot(mouseX, mouseY);
+
 		for (Slot s : list)
 			s.drawTooltip(mouseX, mouseY);
-		// int i = Mouse.getX() * this.width / this.mc.displayWidth;
-		// int j = this.height - Mouse.getY() * this.height /
-		// this.mc.displayHeight - 1;
 		int i = mouseX;
 		int j = mouseY;
 		if (i > guiLeft + 150 && i < guiLeft + 166 && j > guiTop + 6 && j < guiTop + 22) {
 			List<String> list = new ArrayList<String>();
-			for (int ii = 0; ii < ItemUpgrade.num; ii++)
+			for (int ii = 0; ii < ItemUpgrade.NUM; ii++)
 				list.add(tile.elements(ii) + "x " + new ItemStack(ModItems.upgrade, 1, ii).getDisplayName());
 			GlStateManager.pushMatrix();
 			GlStateManager.disableLighting();
@@ -141,7 +135,7 @@ public class GuiCable extends GuiContainer {
 			white = new Button(3, guiLeft + 110, guiTop + 5, "");
 			buttonList.add(white);
 		}
-		if (tile.elements(1) >= 1) {
+		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			Keyboard.enableRepeatEvents(true);
 			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36, guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
 			searchBar.setMaxStringLength(30);
@@ -158,7 +152,7 @@ public class GuiCable extends GuiContainer {
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		if (tile.elements(1) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
 			stack = mc.thePlayer.inventory.getItemStack();
 			tile.setStack(stack);
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
@@ -225,10 +219,10 @@ public class GuiCable extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			String s = "";
-			if (tile.elements(1) >= 1) {
+			if (tile.elements(ItemUpgrade.OP) >= 1) {
 				s = searchBar.getText();
 			}
-			if ((tile.elements(1) >= 1) && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
+			if ((tile.elements(ItemUpgrade.OP) >= 1) && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
 				if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty())
 					searchBar.setText(s);
 				int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());

@@ -136,7 +136,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ()), 1, syncData);
+		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override

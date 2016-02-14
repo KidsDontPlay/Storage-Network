@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
+import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -107,7 +108,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	}
 
 	public boolean status() {
-		if (elements(1) < 1)
+		if (elements(ItemUpgrade.OP) < 1)
 			return true;
 		TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
 		if (getStack() == null)
@@ -313,7 +314,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(getPos(), 1, syncData);
+		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override

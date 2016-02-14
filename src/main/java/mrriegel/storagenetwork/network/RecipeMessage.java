@@ -63,7 +63,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 							con.craftMatrix.setInventorySlotContents(j - 1, s);
 							break;
 						}
-						s = tile.request(lis.get(i), 1, true, true);
+						s = tile.request(lis.get(i), 1, true, true, false);
 						if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
 							con.craftMatrix.setInventorySlotContents(j - 1, s);
 							break;

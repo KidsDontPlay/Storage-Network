@@ -11,7 +11,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemUpgrade extends Item {
-	public static final int num = 4;
+	public static final int NUM = 4;
+	public static final int SPEED = 0;
+	public static final int OP = 1;
+	public static final int STACK = 2;
+	public static final int STOCK = 3;
 
 	public ItemUpgrade() {
 		super();
@@ -23,7 +27,7 @@ public class ItemUpgrade extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs tab, List list) {
-		for (int i = 0; i < num; i++) {
+		for (int i = 0; i < NUM; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
