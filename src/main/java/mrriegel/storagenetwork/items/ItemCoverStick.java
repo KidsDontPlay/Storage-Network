@@ -1,35 +1,19 @@
 package mrriegel.storagenetwork.items;
 
-import java.util.List;
-
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileMaster;
-import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockGlass;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemCoverStick extends Item {
 
@@ -44,6 +28,8 @@ public class ItemCoverStick extends Item {
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			try {
+				if (playerIn.inventory.currentItem >= 8)
+					return false;
 				Block b = Block.getBlockFromItem(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItem());
 				if ((b.isBlockNormalCube() || b == Blocks.glass) && !(b instanceof ITileEntityProvider) && (playerIn.capabilities.isCreativeMode || tile.getCover() != null || playerIn.inventory.consumeInventoryItem(Item.getItemFromBlock(ModBlocks.cover))) && !playerIn.isSneaking()) {
 					tile.setCover(b);
@@ -66,4 +52,5 @@ public class ItemCoverStick extends Item {
 		}
 		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
 	}
+
 }

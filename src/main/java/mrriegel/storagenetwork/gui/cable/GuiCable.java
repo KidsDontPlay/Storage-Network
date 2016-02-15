@@ -3,6 +3,8 @@ package mrriegel.storagenetwork.gui.cable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -24,6 +26,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -76,6 +79,17 @@ public class GuiCable extends GuiContainer {
 		}
 		for (Slot s : list)
 			s.drawSlot(mouseX, mouseY);
+		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
+			GlStateManager.disableLighting();
+			GlStateManager.disableDepth();
+			int j1 = guiLeft + 8;
+			int k1 = guiTop - 18;
+			GlStateManager.colorMask(true, true, true, false);
+			drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+			GlStateManager.colorMask(true, true, true, true);
+			GlStateManager.enableLighting();
+			GlStateManager.enableDepth();
+		}
 		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
 
 	}
@@ -93,17 +107,6 @@ public class GuiCable extends GuiContainer {
 			this.drawHoveringText(list, mx, my, fontRendererObj);
 			GlStateManager.popMatrix();
 			GlStateManager.enableLighting();
-		}
-		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
-			GlStateManager.disableLighting();
-			GlStateManager.disableDepth();
-			int j1 = guiLeft + 8;
-			int k1 = guiTop - 18;
-			GlStateManager.colorMask(true, true, true, false);
-			drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-			GlStateManager.colorMask(true, true, true, true);
-			GlStateManager.enableLighting();
-			GlStateManager.enableDepth();
 		}
 
 		for (Slot s : list)
@@ -225,7 +228,12 @@ public class GuiCable extends GuiContainer {
 			if ((tile.elements(ItemUpgrade.OP) >= 1) && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
 				if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty())
 					searchBar.setText(s);
-				int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
+				int num = 0;
+				try {
+					num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
+				} catch (Exception e) {
+					searchBar.setText("0");
+				}
 				tile.setLimit(num);
 				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 			} else {
@@ -333,7 +341,22 @@ public class GuiCable extends GuiContainer {
 				} else if (this.hovered) {
 					l = 16777120;
 				}
-
+				List<String> lis = new ArrayList<String>();
+				String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit(), tile.getStack() != null ? tile.getStack().getDisplayName() : "Items");
+				List<String> matchList = new ArrayList<String>();
+				Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
+				Matcher regexMatcher = regex.matcher(s);
+				while (regexMatcher.find()) {
+					matchList.add(regexMatcher.group());
+				}
+				lis = new ArrayList<String>(matchList);
+				if (this.hovered && id == 4 && tile.getStack() != null) {
+					GlStateManager.pushMatrix();
+					GlStateManager.disableLighting();
+					drawHoveringText(lis, p_146112_2_, p_146112_3_, fontRendererObj);
+					GlStateManager.enableLighting();
+					GlStateManager.popMatrix();
+				}
 				this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, l);
 			}
 		}

@@ -1,7 +1,5 @@
 package mrriegel.storagenetwork.render;
 
-import org.lwjgl.opengl.GL11;
-
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.state.IBlockState;
@@ -16,10 +14,11 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import org.lwjgl.opengl.GL11;
 
 public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
@@ -54,8 +53,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			int j = blockpos.getY();
 			int k = blockpos.getZ();
 
-			worldrenderer.setTranslation((double) ((float) (-i)), (double) (-j), (double) ((float) (-k)));
-
+			worldrenderer.setTranslation(((-i)), (-j), ((-k)));
 			worldrenderer.color(1F, 1F, 1F, 1F);
 			IBakedModel ibakedmodel = blockrendererdispatcher.getModelFromBlockState(iblockstate, world, blockpos);
 			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, ibakedmodel, iblockstate, blockpos, worldrenderer, true);
@@ -92,7 +90,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
-		model.render((TileKabel) te);
+		model.render(te);
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
 	}

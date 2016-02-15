@@ -13,10 +13,8 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -73,13 +71,16 @@ public class BlockKabel extends BlockContainer {
 		return 3 - 1;
 	}
 
-//	@Override
-//	public int getLightValue(IBlockAccess world, BlockPos pos) {
-//		if (((TileKabel) world.getTileEntity(pos)).getCover() != null) {
-//			return ((TileKabel) world.getTileEntity(pos)).getCover().getLightValue();
-//		}
-//		return 0;
-//	}
+	// @Override
+	// public int getLightValue(IBlockAccess world, BlockPos pos) {
+	// System.out.println("light");
+	// IExtendedBlockState state = (IExtendedBlockState)
+	// getExtendedState(world.getBlockState(pos), world, pos);
+	// if (state.getValue(COVER) != null) {
+	// return state.getValue(COVER).getLightValue();
+	// }
+	// return 0;
+	// }
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -311,7 +312,7 @@ public class BlockKabel extends BlockContainer {
 			// ((World) worldIn).setTileEntity(pos, tileentity);
 			// }
 			// ((World) worldIn).markBlockForUpdate(pos);
-			if (((TileKabel) worldIn.getTileEntity(pos)).getCover() != null) {
+			if (worldIn.getTileEntity(pos) != null && ((TileKabel) worldIn.getTileEntity(pos)).getCover() != null) {
 				// if (state.getValue(COVER) != null) {
 				this.setBlockBounds(0f, 0f, 0f, 1f, 1f, 1f);
 				return;
@@ -363,7 +364,7 @@ public class BlockKabel extends BlockContainer {
 		Connect east = getConnect(world, pos, pos.east());
 		Connect up = getConnect(world, pos, pos.up());
 		Connect down = getConnect(world, pos, pos.down());
-		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVER, extendedBlockState.getValue(COVER));
+		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVER, ((TileKabel) world.getTileEntity(pos)).getCover());
 	}
 
 	private Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
