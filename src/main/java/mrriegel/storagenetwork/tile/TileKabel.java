@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -24,6 +26,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.util.Constants;
 
 import com.google.common.reflect.TypeToken;
@@ -40,8 +43,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private boolean mode = true;
 	private int limit = 0;
 	public Connect north, south, east, west, up, down;
-	public boolean covered;
-	public Block cover;
+	private Block cover;
+	private int coverMeta;
 
 	ItemStack stack = null;
 
@@ -136,12 +139,12 @@ public class TileKabel extends TileEntity implements IConnectable {
 		meta = compound.getBoolean("meta");
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
+		coverMeta = compound.getInteger("coverMeta");
 		deque = new Gson().fromJson(compound.getString("deque"), new TypeToken<ArrayDeque<Integer>>() {
 		}.getType());
 		if (deque == null)
 			deque = new ArrayDeque<Integer>();
 		mode = compound.getBoolean("mode");
-		covered = compound.getBoolean("covered");
 		limit = compound.getInteger("limit");
 		if (compound.hasKey("stack", 10))
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
@@ -184,9 +187,9 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setBoolean("meta", meta);
 		compound.setBoolean("white", white);
 		compound.setInteger("prio", priority);
+		compound.setInteger("coverMeta", coverMeta);
 		compound.setString("deque", new Gson().toJson(deque));
 		compound.setBoolean("mode", mode);
-		compound.setBoolean("covered", covered);
 		compound.setInteger("limit", limit);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
@@ -322,6 +325,22 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public void setStack(ItemStack stack) {
 		this.stack = stack;
+	}
+
+	public Block getCover() {
+		return cover;
+	}
+
+	public void setCover(Block cover) {
+		this.cover = cover;
+	}
+
+	public int getCoverMeta() {
+		return coverMeta;
+	}
+
+	public void setCoverMeta(int coverMeta) {
+		this.coverMeta = coverMeta;
 	}
 
 	@Override

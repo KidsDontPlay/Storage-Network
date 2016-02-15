@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.init;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.blocks.BlockCover;
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
@@ -20,6 +21,7 @@ public class ModBlocks {
 	public static final Block exKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
 	public static final Block imKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":imKabel");
 	public static final Block vacuumKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":vacuumKabel");
+	public static final Block cover = new BlockCover();
 
 	public static void init() {
 		GameRegistry.registerBlock(master, "master");
@@ -29,6 +31,7 @@ public class ModBlocks {
 		GameRegistry.registerBlock(exKabel, "exKabel");
 		GameRegistry.registerBlock(imKabel, "imKabel");
 		GameRegistry.registerBlock(vacuumKabel, "vacuumKabel");
+		GameRegistry.registerBlock(cover, "cover");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");

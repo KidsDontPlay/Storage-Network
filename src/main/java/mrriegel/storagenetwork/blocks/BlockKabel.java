@@ -16,7 +16,6 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -45,7 +44,7 @@ public class BlockKabel extends BlockContainer {
 	public static final PropertyConnection EAST = new PropertyConnection("east");
 	public static final PropertyConnection UP = new PropertyConnection("up");
 	public static final PropertyConnection DOWN = new PropertyConnection("down");
-	public static final PropertyBool COVERED = PropertyBool.create("covered");
+	public static final PropertyBlock COVER = new PropertyBlock("cover");
 
 	public BlockKabel() {
 		super(Material.iron);
@@ -74,6 +73,14 @@ public class BlockKabel extends BlockContainer {
 		return 3 - 1;
 	}
 
+//	@Override
+//	public int getLightValue(IBlockAccess world, BlockPos pos) {
+//		if (((TileKabel) world.getTileEntity(pos)).getCover() != null) {
+//			return ((TileKabel) world.getTileEntity(pos)).getCover().getLightValue();
+//		}
+//		return 0;
+//	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public EnumWorldBlockLayer getBlockLayer() {
@@ -98,7 +105,7 @@ public class BlockKabel extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
-		if (tile.getMaster() == null)
+		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
 			return false;
 		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
 			switch (playerIn.getHeldItem().getItemDamage()) {
@@ -293,6 +300,25 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
+		try {
+			// TileEntity tileentity = worldIn.getTileEntity(pos);
+			// IExtendedBlockState state = (IExtendedBlockState)
+			// worldIn.getBlockState(pos);
+			// ((World) worldIn).setBlockState(pos, state.withProperty(COVER,
+			// ((TileKabel) tileentity).getCover()), 2);
+			// if (tileentity != null) {
+			// tileentity.validate();
+			// ((World) worldIn).setTileEntity(pos, tileentity);
+			// }
+			// ((World) worldIn).markBlockForUpdate(pos);
+			if (((TileKabel) worldIn.getTileEntity(pos)).getCover() != null) {
+				// if (state.getValue(COVER) != null) {
+				this.setBlockBounds(0f, 0f, 0f, 1f, 1f, 1f);
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		boolean d = this.canConnectTo(worldIn, pos, pos.down());
 		boolean u = this.canConnectTo(worldIn, pos, pos.up());
 		boolean e = this.canConnectTo(worldIn, pos, pos.east());
@@ -331,14 +357,13 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
-
 		Connect north = getConnect(world, pos, pos.north());
 		Connect south = getConnect(world, pos, pos.south());
 		Connect west = getConnect(world, pos, pos.west());
 		Connect east = getConnect(world, pos, pos.east());
 		Connect up = getConnect(world, pos, pos.up());
 		Connect down = getConnect(world, pos, pos.down());
-		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVERED, ((TileKabel) world.getTileEntity(pos)).covered);
+		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVER, extendedBlockState.getValue(COVER));
 	}
 
 	private Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
@@ -373,14 +398,44 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	protected BlockState createBlockState() {
-		IProperty[] listedProperties = new IProperty[] { COVERED };
-		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN };
+		IProperty[] listedProperties = new IProperty[] {};
+		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN, COVER };
 		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new TileKabel(worldIn, this);
+	}
+
+	static class PropertyBlock implements IUnlistedProperty<Block> {
+
+		private final String name;
+
+		public PropertyBlock(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public boolean isValid(Block value) {
+			return true;
+		}
+
+		@Override
+		public Class<Block> getType() {
+			return Block.class;
+		}
+
+		@Override
+		public String valueToString(Block value) {
+			return value.toString();
+		}
+
 	}
 
 }

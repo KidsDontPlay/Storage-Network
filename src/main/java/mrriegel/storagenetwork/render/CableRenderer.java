@@ -36,15 +36,14 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
-		if (te.covered) {
+		if (te.getCover() != null) {
 			this.bindTexture(TextureMap.locationBlocksTexture);
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			World world = te.getWorld();
 			BlockPos blockpos = te.getPos();
-			IBlockState iblockstate = Blocks.diamond_ore.getDefaultState();
-			if (iblockstate.getBlock() == Blocks.glass)
+			IBlockState iblockstate = te.getCover().getStateFromMeta(te.getCoverMeta());
+			if (te.getCover() == Blocks.glass)
 				return;
-
 			GlStateManager.pushMatrix();
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.translate((float) x, (float) y, (float) z);
