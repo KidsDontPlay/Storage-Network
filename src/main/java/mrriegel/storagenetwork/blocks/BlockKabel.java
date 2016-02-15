@@ -71,17 +71,6 @@ public class BlockKabel extends BlockContainer {
 		return 3 - 1;
 	}
 
-	// @Override
-	// public int getLightValue(IBlockAccess world, BlockPos pos) {
-	// System.out.println("light");
-	// IExtendedBlockState state = (IExtendedBlockState)
-	// getExtendedState(world.getBlockState(pos), world, pos);
-	// if (state.getValue(COVER) != null) {
-	// return state.getValue(COVER).getLightValue();
-	// }
-	// return 0;
-	// }
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public EnumWorldBlockLayer getBlockLayer() {

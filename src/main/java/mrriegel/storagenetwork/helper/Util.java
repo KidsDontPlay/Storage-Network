@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
@@ -36,6 +37,8 @@ public class Util {
 			modName = WordUtils.capitalize(modId);
 			modNamesForIds.put(lowercaseModId, modName);
 		}
+		
 		return modName;
 	}
+
 }

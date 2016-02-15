@@ -9,9 +9,11 @@ import java.util.Map;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -210,7 +213,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		} catch (Exception e) {
 		}
 		if (cover != null) {
-			compound.setString("cover", Block.blockRegistry.getNameForObject(cover).getResourcePath());
+			compound.setString("cover", Block.blockRegistry.getNameForObject(cover).toString());
 		} else {
 			compound.setString("cover", "null");
 		}
