@@ -33,7 +33,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private EnumFacing inventoryFace;
 	private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
 	private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
-	private boolean meta = true, white;
+	private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
+	private boolean white;
 	private int priority;
 	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
 	private boolean mode = true;
@@ -89,7 +90,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 				if (s == null)
 					continue;
 				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				if (ore ? Util.equalOreDict(stack, s) : isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+				if (ore ? Util.equalOreDict(stack, s) : getMetas().get(i) ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = true;
 					break;
 				}
@@ -104,7 +105,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 				if (s == null)
 					continue;
 				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				if (ore ? Util.equalOreDict(stack, s) : isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+				if (ore ? Util.equalOreDict(stack, s) : getMetas().get(i) ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = false;
 					break;
 				}
@@ -136,7 +137,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {
 		}.getType());
 		inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
-		meta = compound.getBoolean("meta");
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
 		coverMeta = compound.getInteger("coverMeta");
@@ -150,6 +150,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
+
 		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
 		filter = new HashMap<Integer, StackWrapper>();
 		for (int i = 0; i < invList.tagCount(); i++) {
@@ -157,6 +158,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 			int slot = stackTag.getByte("Slot");
 			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
 		}
+
 		NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
 		ores = new HashMap<Integer, Boolean>();
 		for (int i = 0; i < 9; i++)
@@ -165,6 +167,16 @@ public class TileKabel extends TileEntity implements IConnectable {
 			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			ores.put(slot, stackTag.getBoolean("Ore"));
+		}
+
+		NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
+		metas = new HashMap<Integer, Boolean>();
+		for (int i = 0; i < 9; i++)
+			metas.put(i, true);
+		for (int i = 0; i < metaList.tagCount(); i++) {
+			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			metas.put(slot, stackTag.getBoolean("Meta"));
 		}
 		try {
 			north = Connect.valueOf(compound.getString("north"));
@@ -193,7 +205,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
 		if (inventoryFace != null)
 			compound.setString("inventoryFace", inventoryFace.toString());
-		compound.setBoolean("meta", meta);
 		compound.setBoolean("white", white);
 		compound.setInteger("prio", priority);
 		compound.setInteger("coverMeta", coverMeta);
@@ -224,6 +235,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 			}
 		}
 		compound.setTag("ores", oreList);
+
+		NBTTagList metaList = new NBTTagList();
+		for (int i = 0; i < 9; i++) {
+			if (metas.get(i) != null) {
+				NBTTagCompound stackTag = new NBTTagCompound();
+				stackTag.setByte("Slot", (byte) i);
+				stackTag.setBoolean("Meta", metas.get(i));
+				metaList.appendTag(stackTag);
+			}
+		}
+		compound.setTag("metas", metaList);
 		try {
 
 			compound.setString("north", north.toString());
@@ -300,12 +322,12 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.ores = ores;
 	}
 
-	public boolean isMeta() {
-		return meta;
+	public Map<Integer, Boolean> getMetas() {
+		return metas;
 	}
 
-	public void setMeta(boolean meta) {
-		this.meta = meta;
+	public void setMetas(Map<Integer, Boolean> metas) {
+		this.metas = metas;
 	}
 
 	public boolean isWhite() {

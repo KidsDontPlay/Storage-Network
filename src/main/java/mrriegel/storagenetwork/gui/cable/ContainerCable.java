@@ -20,6 +20,7 @@ public class ContainerCable extends Container {
 	public TileKabel tile;
 	private Map<Integer, StackWrapper> filter;
 	private Map<Integer, Boolean> ores;
+	private Map<Integer, Boolean> metas;
 
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
@@ -35,11 +36,17 @@ public class ContainerCable extends Container {
 		}
 		ores = new HashMap<Integer, Boolean>();
 		NBTTagList oreList = nbt.getTagList("ores", Constants.NBT.TAG_COMPOUND);
-		ores = new HashMap<Integer, Boolean>();
 		for (int i = 0; i < oreList.tagCount(); i++) {
 			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			ores.put(slot, stackTag.getBoolean("Ore"));
+		}
+		metas = new HashMap<Integer, Boolean>();
+		NBTTagList metaList = nbt.getTagList("metas", Constants.NBT.TAG_COMPOUND);
+		for (int i = 0; i < metaList.tagCount(); i++) {
+			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			metas.put(slot, stackTag.getBoolean("Meta"));
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -79,13 +86,22 @@ public class ContainerCable extends Container {
 			}
 		}
 		nbt.setTag("ores", oreList);
+		NBTTagList metaList = new NBTTagList();
+		for (int i = 0; i < 9; i++) {
+			if (metas.get(i) != null) {
+				NBTTagCompound stackTag = new NBTTagCompound();
+				stackTag.setByte("Slot", (byte) i);
+				stackTag.setBoolean("Meta", metas.get(i));
+				metaList.appendTag(stackTag);
+			}
+		}
+		nbt.setTag("metas", metaList);
 		tile.readFromNBT(nbt);
 	}
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
 		Slot slot = this.inventorySlots.get(slotIndex);
-
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
 			if (itemstack1 == null)
@@ -124,6 +140,14 @@ public class ContainerCable extends Container {
 
 	public void setOres(Map<Integer, Boolean> ores) {
 		this.ores = ores;
+	}
+
+	public Map<Integer, Boolean> getMetas() {
+		return metas;
+	}
+
+	public void setMetas(Map<Integer, Boolean> metas) {
+		this.metas = metas;
 	}
 
 }

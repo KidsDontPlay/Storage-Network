@@ -392,10 +392,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (storageInventorys.contains(t.getPos()))
 					continue;
-				ItemStack g = request(fil, 1, t.isMeta(), false, ore, true);
+				ItemStack g = request(fil, 1, t.getMetas().get(i), false, ore, true);
 				if (g == null)
 					continue;
-				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()), (t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(g, inv, t.getInventoryFace().getOpposite(), t.isMeta(), ore));
+				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()), (t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(g, inv, t.getInventoryFace().getOpposite(), t.getMetas().get(i), ore));
 				if (space <= 0)
 					continue;
 				if (!t.status())

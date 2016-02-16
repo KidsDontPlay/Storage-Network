@@ -100,12 +100,16 @@ public class GuiCable extends GuiContainer {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		for (int i = 0; i < 9; i++) {
 			Slot e = list.get(i);
-			if (e.stack != null && ((ContainerCable) inventorySlots).getOres().get(i) != null && ((ContainerCable) inventorySlots).getOres().get(i)) {
+			ContainerCable con = (ContainerCable) inventorySlots;
+			if (e.stack != null) {
 				RenderHelper.disableStandardItemLighting();
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				GlStateManager.disableBlend();
-				mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
+				if (con.getOres().get(i) != null && con.getOres().get(i))
+					mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
+				if (con.getMetas().get(i) != null && con.getMetas().get(i))
+					mc.fontRendererObj.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
 			}
@@ -145,8 +149,8 @@ public class GuiCable extends GuiContainer {
 		buttonList.add(pMinus);
 		pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
 		buttonList.add(pPlus);
-		meta = new Button(2, guiLeft + 78, guiTop + 5, "");
-		buttonList.add(meta);
+		// meta = new Button(2, guiLeft + 78, guiTop + 5, "");
+		// buttonList.add(meta);
 		if (kind == Kind.imKabel || kind == Kind.storageKabel) {
 			white = new Button(3, guiLeft + 110, guiTop + 5, "");
 			buttonList.add(white);
@@ -186,10 +190,10 @@ public class GuiCable extends GuiContainer {
 				ContainerCable con = (ContainerCable) inventorySlots;
 				StackWrapper x = con.getFilter().get(i);
 				if (mc.thePlayer.inventory.getItemStack() != null) {
-					if (!((ContainerCable) inventorySlots).in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
+					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
 						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
-						if (con.getOres().get(i) == null)
-							con.getOres().put(i, false);
+						con.getOres().put(i, false);
+						con.getMetas().put(i, true);
 					}
 				} else {
 					if (x != null) {
@@ -200,17 +204,17 @@ public class GuiCable extends GuiContainer {
 						else if (mouseButton == 2) {
 							con.getFilter().put(i, null);
 							con.getOres().put(i, false);
+							con.getMetas().put(i, true);
 						}
 						if (x != null && x.getSize() <= 0) {
 							con.getFilter().put(i, null);
 							con.getOres().put(i, false);
+							con.getMetas().put(i, true);
 						}
 					}
 				}
-				if (con.getOres().get(i) == null)
-					con.getOres().put(i, false);
-				((ContainerCable) inventorySlots).slotChanged();
-				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i)));
+				con.slotChanged();
+				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
 				break;
 			}
 		}
@@ -227,9 +231,9 @@ public class GuiCable extends GuiContainer {
 		case 1:
 			tile.setPriority(tile.getPriority() + 1);
 			break;
-		case 2:
-			tile.setMeta(!tile.isMeta());
-			break;
+		// case 2:
+		// tile.setMeta(!tile.isMeta());
+		// break;
 		case 3:
 			tile.setWhite(!tile.isWhite());
 			break;
@@ -240,28 +244,31 @@ public class GuiCable extends GuiContainer {
 	}
 
 	@Override
-	protected void keyTyped(char c, int p_73869_2_) throws IOException {
-		if (c == 'o') {
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (typedChar == 'o' || typedChar == 'm') {
 			for (int i = 0; i < 9; i++) {
 				Slot e = list.get(i);
 				int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
 				int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-				if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null && OreDictionary.getOreIDs(e.stack).length > 0) {
-					ContainerCable con = (ContainerCable) inventorySlots;
-					con.getOres().put(i, !con.getOres().get(i));
-					((ContainerCable) inventorySlots).slotChanged();
-					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i)));
+				ContainerCable con = (ContainerCable) inventorySlots;
+				if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null) {
+					if (typedChar == 'o' && OreDictionary.getOreIDs(e.stack).length > 0)
+						con.getOres().put(i, !con.getOres().get(i));
+					else if (typedChar == 'm')
+						con.getMetas().put(i, !con.getMetas().get(i));
+					con.slotChanged();
+					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
 					break;
 				}
 			}
 		}
-		if (!this.checkHotbarKeys(p_73869_2_)) {
+		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);
 			String s = "";
 			if (tile.elements(ItemUpgrade.OP) >= 1) {
 				s = searchBar.getText();
 			}
-			if ((tile.elements(ItemUpgrade.OP) >= 1) && this.searchBar.textboxKeyTyped(c, p_73869_2_)) {
+			if ((tile.elements(ItemUpgrade.OP) >= 1) && this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				if (!StringUtils.isNumeric(searchBar.getText()) && !searchBar.getText().isEmpty())
 					searchBar.setText(s);
 				int num = 0;
@@ -273,7 +280,7 @@ public class GuiCable extends GuiContainer {
 				tile.setLimit(num);
 				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 			} else {
-				super.keyTyped(c, p_73869_2_);
+				super.keyTyped(typedChar, keyCode);
 			}
 		}
 	}
@@ -352,11 +359,13 @@ public class GuiCable extends GuiContainer {
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 160 + 16 * k, 52, 16, 16);
-				if (id == 2) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 4, 180, 70, 8, 9);
-					if (!tile.isMeta())
-						this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, 195, 70, 12, 12);
-				}
+				// if (id == 2) {
+				// this.drawTexturedModalRect(this.xPosition + 4, this.yPosition
+				// + 4, 180, 70, 8, 9);
+				// if (!tile.isMeta())
+				// this.drawTexturedModalRect(this.xPosition + 2, this.yPosition
+				// + 2, 195, 70, 12, 12);
+				// }
 				if (id == 3) {
 					if (tile.isWhite())
 						this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 176, 83, 13, 10);

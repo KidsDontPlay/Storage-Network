@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.cable.ContainerCable;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
@@ -11,34 +12,28 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, IMessage> {
+public class TemplateMessage implements IMessage, IMessageHandler<TemplateMessage, IMessage> {
 	int index;
-	StackWrapper wrap;
 	boolean ore, meta;
 
-	public FilterMessage() {
+	public TemplateMessage() {
 	}
 
-	public FilterMessage(int index, StackWrapper wrap, boolean ore, boolean meta) {
+	public TemplateMessage(int index, boolean ore, boolean meta) {
 		this.index = index;
-		this.wrap = wrap;
 		this.ore = ore;
 		this.meta = meta;
 	}
 
 	@Override
-	public IMessage onMessage(final FilterMessage message, final MessageContext ctx) {
+	public IMessage onMessage(final TemplateMessage message, final MessageContext ctx) {
 		IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerCable) {
-					ContainerCable con = (ContainerCable) ctx.getServerHandler().playerEntity.openContainer;
-					con.getFilter().put(message.index, message.wrap);
-					con.getOres().put(message.index, message.ore);
-					con.getMetas().put(message.index, message.meta);
-					con.slotChanged();
-					ctx.getServerHandler().playerEntity.worldObj.markBlockForUpdate(con.tile.getPos());
+					NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.getHeldItem(), "ore" + message.index, message.ore);
+					NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.getHeldItem(), "meta" + message.index, message.meta);
 				}
 			}
 		});
@@ -50,7 +45,6 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 		this.index = buf.readInt();
 		this.ore = buf.readBoolean();
 		this.meta = buf.readBoolean();
-		this.wrap = StackWrapper.loadStackWrapperFromNBT(ByteBufUtils.readTag(buf));
 	}
 
 	@Override
@@ -58,9 +52,5 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 		buf.writeInt(this.index);
 		buf.writeBoolean(this.ore);
 		buf.writeBoolean(this.meta);
-		NBTTagCompound nbt = new NBTTagCompound();
-		if (this.wrap != null)
-			this.wrap.writeToNBT(nbt);
-		ByteBufUtils.writeTag(buf, nbt);
 	}
 }
