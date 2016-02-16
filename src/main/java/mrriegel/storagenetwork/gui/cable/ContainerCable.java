@@ -19,6 +19,7 @@ public class ContainerCable extends Container {
 	InventoryPlayer playerInv;
 	public TileKabel tile;
 	private Map<Integer, StackWrapper> filter;
+	private Map<Integer, Boolean> ores;
 
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
@@ -31,6 +32,14 @@ public class ContainerCable extends Container {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
+		}
+		ores = new HashMap<Integer, Boolean>();
+		NBTTagList oreList = nbt.getTagList("ores", Constants.NBT.TAG_COMPOUND);
+		ores = new HashMap<Integer, Boolean>();
+		for (int i = 0; i < oreList.tagCount(); i++) {
+			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			ores.put(slot, stackTag.getBoolean("Ore"));
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -60,6 +69,16 @@ public class ContainerCable extends Container {
 			}
 		}
 		nbt.setTag("crunchTE", invList);
+		NBTTagList oreList = new NBTTagList();
+		for (int i = 0; i < 9; i++) {
+			if (ores.get(i) != null) {
+				NBTTagCompound stackTag = new NBTTagCompound();
+				stackTag.setByte("Slot", (byte) i);
+				stackTag.setBoolean("Ore", ores.get(i));
+				oreList.appendTag(stackTag);
+			}
+		}
+		nbt.setTag("ores", oreList);
 		tile.readFromNBT(nbt);
 	}
 
@@ -74,6 +93,7 @@ public class ContainerCable extends Container {
 			for (int i = 0; i < 9; i++) {
 				if (filter.get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
 					filter.put(i, new StackWrapper(itemstack1.copy(), itemstack1.stackSize));
+					ores.put(i, false);
 					slotChanged();
 					break;
 				}
@@ -96,6 +116,14 @@ public class ContainerCable extends Container {
 
 	public void setFilter(Map<Integer, StackWrapper> filter) {
 		this.filter = filter;
+	}
+
+	public Map<Integer, Boolean> getOres() {
+		return ores;
+	}
+
+	public void setOres(Map<Integer, Boolean> ores) {
+		this.ores = ores;
 	}
 
 }

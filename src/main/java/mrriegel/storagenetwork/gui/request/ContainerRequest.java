@@ -62,7 +62,7 @@ public class ContainerRequest extends Container {
 				detectAndSendChanges();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					if (craftMatrix.getStackInSlot(i) == null) {
-						ItemStack req = t.request(lis.get(i), 1, true, true, false);
+						ItemStack req = t.request(lis.get(i), 1, true, true, false, false);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);

@@ -9,6 +9,7 @@ import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
@@ -384,16 +385,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			for (int i = 0; i < 9; i++) {
 				if (t.getFilter().get(i) == null)
 					continue;
+				boolean ore = t.getOres().get(i) == null ? false : t.getOres().get(i);
 				ItemStack fil = t.getFilter().get(i).getStack();
 
 				if (fil == null)
 					continue;
 				if (storageInventorys.contains(t.getPos()))
 					continue;
-				ItemStack g = request(fil, 1, t.isMeta(), false, true);
+				ItemStack g = request(fil, 1, t.isMeta(), false, ore, true);
 				if (g == null)
 					continue;
-				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()), (t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(g, inv, t.getInventoryFace().getOpposite(), t.isMeta()));
+				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()), (t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(g, inv, t.getInventoryFace().getOpposite(), t.isMeta(), ore));
 				if (space <= 0)
 					continue;
 				if (!t.status())
@@ -401,7 +403,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				int num = Math.min(Math.min(g.getMaxStackSize(), inv.getInventoryStackLimit()), Math.min(space, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2)));
 				if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
 					continue;
-				ItemStack rec = request(g, num, true, false, false);
+				ItemStack rec = request(g, num, true, false, false, false);
 				if (rec == null)
 					continue;
 				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
@@ -412,7 +414,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag, boolean simulate) {
+	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag, boolean ore, boolean simulate) {
 		if (size == 0 || stack == null)
 			return null;
 		if (storageInventorys == null)
@@ -441,12 +443,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					if (res != null && !s.isItemEqual(res))
 						continue;
-					if (!ItemStack.areItemStackTagsEqual(s, stack) && tag)
-						continue;
-					if (!s.isItemEqual(stack) && meta)
-						continue;
-					if (s.getItem() != stack.getItem() && !meta)
-						continue;
+					if (!ore) {
+						if (!ItemStack.areItemStackTagsEqual(s, stack) && tag)
+							continue;
+						if (!s.isItemEqual(stack) && meta)
+							continue;
+						if (s.getItem() != stack.getItem() && !meta)
+							continue;
+					} else {
+						if (!Util.equalOreDict(s, stack))
+							continue;
+					}
 					if (!t.canTransfer(s))
 						continue;
 					int miss = size - result;
@@ -468,12 +475,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					if (res != null && !s.isItemEqual(res))
 						continue;
-					if (!ItemStack.areItemStackTagsEqual(s, stack) && tag)
-						continue;
-					if (!s.isItemEqual(stack) && meta)
-						continue;
-					if (s.getItem() != stack.getItem() && !meta)
-						continue;
+					if (!ore) {
+						if (!ItemStack.areItemStackTagsEqual(s, stack) && tag)
+							continue;
+						if (!s.isItemEqual(stack) && meta)
+							continue;
+						if (s.getItem() != stack.getItem() && !meta)
+							continue;
+					} else {
+						if (!Util.equalOreDict(s, stack))
+							continue;
+					}
 					if (!t.canTransfer(s))
 						continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, t.getInventoryFace().getOpposite()))

@@ -1,14 +1,13 @@
 package mrriegel.storagenetwork.tile;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
@@ -33,6 +32,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
 	private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
+	private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
 	private boolean meta = true, white;
 	private int priority;
 	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
@@ -80,18 +80,16 @@ public class TileKabel extends TileEntity implements IConnectable {
 	}
 
 	public boolean canTransfer(ItemStack stack) {
-		List<ItemStack> lis = new ArrayList<ItemStack>();
-		for (int i = 0; i < 9; i++) {
-			if (getFilter().get(i) == null)
-				continue;
-			ItemStack s = getFilter().get(i).getStack();
-			if (s != null)
-				lis.add(s.copy());
-		}
 		if (isWhite()) {
 			boolean tmp = false;
-			for (ItemStack s : lis) {
-				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+			for (int i = 0; i < 9; i++) {
+				if (getFilter().get(i) == null)
+					continue;
+				ItemStack s = getFilter().get(i).getStack();
+				if (s == null)
+					continue;
+				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
+				if (ore ? Util.equalOreDict(stack, s) : isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = true;
 					break;
 				}
@@ -99,8 +97,14 @@ public class TileKabel extends TileEntity implements IConnectable {
 			return tmp;
 		} else {
 			boolean tmp = true;
-			for (ItemStack s : lis) {
-				if (isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+			for (int i = 0; i < 9; i++) {
+				if (getFilter().get(i) == null)
+					continue;
+				ItemStack s = getFilter().get(i).getStack();
+				if (s == null)
+					continue;
+				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
+				if (ore ? Util.equalOreDict(stack, s) : isMeta() ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = false;
 					break;
 				}
@@ -153,6 +157,15 @@ public class TileKabel extends TileEntity implements IConnectable {
 			int slot = stackTag.getByte("Slot");
 			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
 		}
+		NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
+		ores = new HashMap<Integer, Boolean>();
+		for (int i = 0; i < 9; i++)
+			ores.put(i, false);
+		for (int i = 0; i < oreList.tagCount(); i++) {
+			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			ores.put(slot, stackTag.getBoolean("Ore"));
+		}
 		try {
 			north = Connect.valueOf(compound.getString("north"));
 			south = Connect.valueOf(compound.getString("south"));
@@ -200,6 +213,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 			}
 		}
 		compound.setTag("crunchTE", invList);
+
+		NBTTagList oreList = new NBTTagList();
+		for (int i = 0; i < 9; i++) {
+			if (ores.get(i) != null) {
+				NBTTagCompound stackTag = new NBTTagCompound();
+				stackTag.setByte("Slot", (byte) i);
+				stackTag.setBoolean("Ore", ores.get(i));
+				oreList.appendTag(stackTag);
+			}
+		}
+		compound.setTag("ores", oreList);
 		try {
 
 			compound.setString("north", north.toString());
@@ -266,6 +290,14 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public void setFilter(Map<Integer, StackWrapper> filter) {
 		this.filter = filter;
+	}
+
+	public Map<Integer, Boolean> getOres() {
+		return ores;
+	}
+
+	public void setOres(Map<Integer, Boolean> ores) {
+		this.ores = ores;
 	}
 
 	public boolean isMeta() {

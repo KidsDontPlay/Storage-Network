@@ -10,7 +10,6 @@ import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.gui.template.GuiTemplate;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
-import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;

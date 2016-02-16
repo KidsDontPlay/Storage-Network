@@ -27,6 +27,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.oredict.OreDictionary;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -97,6 +98,18 @@ public class GuiCable extends GuiContainer {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		for (int i = 0; i < 9; i++) {
+			Slot e = list.get(i);
+			if (e.stack != null && ((ContainerCable) inventorySlots).getOres().get(i) != null && ((ContainerCable) inventorySlots).getOres().get(i)) {
+				RenderHelper.disableStandardItemLighting();
+				GlStateManager.disableLighting();
+				GlStateManager.disableDepth();
+				GlStateManager.disableBlend();
+				mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
+				GlStateManager.enableLighting();
+				GlStateManager.enableDepth();
+			}
+		}
 		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
 		int my = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10 && my < guiTop + 20) {
@@ -173,22 +186,31 @@ public class GuiCable extends GuiContainer {
 				ContainerCable con = (ContainerCable) inventorySlots;
 				StackWrapper x = con.getFilter().get(i);
 				if (mc.thePlayer.inventory.getItemStack() != null) {
-					if (!((ContainerCable) inventorySlots).in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1)))
+					if (!((ContainerCable) inventorySlots).in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
 						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
+						if (con.getOres().get(i) == null)
+							con.getOres().put(i, false);
+					}
 				} else {
 					if (x != null) {
 						if (mouseButton == 0)
 							x.setSize(x.getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
 						else if (mouseButton == 1)
 							x.setSize(x.getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
-						else if (mouseButton == 2)
+						else if (mouseButton == 2) {
 							con.getFilter().put(i, null);
-						if (x != null && x.getSize() <= 0)
+							con.getOres().put(i, false);
+						}
+						if (x != null && x.getSize() <= 0) {
 							con.getFilter().put(i, null);
+							con.getOres().put(i, false);
+						}
 					}
 				}
+				if (con.getOres().get(i) == null)
+					con.getOres().put(i, false);
 				((ContainerCable) inventorySlots).slotChanged();
-				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i)));
+				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i)));
 				break;
 			}
 		}
@@ -219,6 +241,20 @@ public class GuiCable extends GuiContainer {
 
 	@Override
 	protected void keyTyped(char c, int p_73869_2_) throws IOException {
+		if (c == 'o') {
+			for (int i = 0; i < 9; i++) {
+				Slot e = list.get(i);
+				int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
+				int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+				if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null && OreDictionary.getOreIDs(e.stack).length > 0) {
+					ContainerCable con = (ContainerCable) inventorySlots;
+					con.getOres().put(i, !con.getOres().get(i));
+					((ContainerCable) inventorySlots).slotChanged();
+					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i)));
+					break;
+				}
+			}
+		}
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			String s = "";
@@ -268,6 +304,7 @@ public class GuiCable extends GuiContainer {
 				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
 				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
 				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+
 			}
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();

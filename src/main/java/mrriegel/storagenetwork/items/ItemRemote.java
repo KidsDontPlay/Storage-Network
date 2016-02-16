@@ -47,8 +47,8 @@ public class ItemRemote extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
-		if (stack.hasTagCompound() && NBTHelper.getBoolean(stack , "bound")) {
-			tooltip.add("Dimension: " + NBTHelper.getInteger(stack , "id") + ", x: " + NBTHelper.getInteger(stack , "x") + ", y: " + NBTHelper.getInteger(stack , "y") + ", z: " + NBTHelper.getInteger(stack , "z"));
+		if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
+			tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "id") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
 		}
 	}
 
@@ -56,20 +56,20 @@ public class ItemRemote extends Item {
 	public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
 		if (worldIn.isRemote)
 			return super.onItemRightClick(itemStackIn, worldIn, playerIn);
-		int x = NBTHelper.getInteger(itemStackIn , "x");
-		int y = NBTHelper.getInteger(itemStackIn , "y");
-		int z = NBTHelper.getInteger(itemStackIn , "z");
-		World world = MinecraftServer.getServer().worldServerForDimension(NBTHelper.getInteger(itemStackIn , "id"));
-		if (NBTHelper.getBoolean(itemStackIn , "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
-			if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn , "id") == worldIn.provider.getDimensionId() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
+		int x = NBTHelper.getInteger(itemStackIn, "x");
+		int y = NBTHelper.getInteger(itemStackIn, "y");
+		int z = NBTHelper.getInteger(itemStackIn, "z");
+		World world = MinecraftServer.getServer().worldServerForDimension(NBTHelper.getInteger(itemStackIn, "id"));
+		if (NBTHelper.getBoolean(itemStackIn, "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
+			if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn, "id") == worldIn.provider.getDimensionId() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
 				if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
 					((TileMaster) world.getTileEntity(new BlockPos(x, y, z))).refreshNetwork();
-					if (NBTHelper.getString(itemStackIn, "sort")==null)
-						NBTHelper.setString(playerIn.getHeldItem() , "sort", Sort.NAME.toString());
+					if (NBTHelper.getString(itemStackIn, "sort") == null)
+						NBTHelper.setString(playerIn.getHeldItem(), "sort", Sort.NAME.toString());
 					playerIn.openGui(StorageNetwork.instance, GuiHandler.REMOTE, world, x, y, z);
 				} else
 					playerIn.addChatMessage(new ChatComponentText("Cable Master not loaded."));
-			} else if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn , "id") == worldIn.provider.getDimensionId() || playerIn.getDistance(x, y, z) > 32))
+			} else if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "id") == worldIn.provider.getDimensionId() || playerIn.getDistance(x, y, z) > 32))
 				if (!worldIn.isRemote)
 					playerIn.addChatMessage(new ChatComponentText("Out of Range"));
 		}
@@ -92,7 +92,7 @@ public class ItemRemote extends Item {
 	public static TileMaster getTile(ItemStack stack) {
 		if (stack == null)
 			return null;
-		TileEntity t = MinecraftServer.getServer().worldServerForDimension(NBTHelper.getInteger(stack , "id")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack , "x"), NBTHelper.getInteger(stack , "y"), NBTHelper.getInteger(stack , "z")));
+		TileEntity t = MinecraftServer.getServer().worldServerForDimension(NBTHelper.getInteger(stack, "id")).getTileEntity(new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z")));
 		return t instanceof TileMaster ? (TileMaster) t : null;
 
 	}

@@ -183,20 +183,25 @@ public class Inv {
 		return tmp;
 	}
 
-	public static int getAmount(ItemStack fil, IInventory inv, EnumFacing face, boolean meta) {
+	public static int getAmount(ItemStack fil, IInventory inv, EnumFacing face, boolean meta, boolean ore) {
 		if (fil == null)
 			return 0;
 		int amount = 0;
 		if (!(inv instanceof ISidedInventory)) {
 			for (int i = 0; i < inv.getSizeInventory(); i++) {
 				ItemStack slot = inv.getStackInSlot(i);
-				if (meta) {
-					if (slot != null && slot.isItemEqual(fil)) {
+				if (ore) {
+					if (slot != null && Util.equalOreDict(slot, fil))
 						amount += slot.stackSize;
-					}
 				} else {
-					if (slot != null && slot.getItem() == fil.getItem()) {
-						amount += slot.stackSize;
+					if (meta) {
+						if (slot != null && slot.isItemEqual(fil)) {
+							amount += slot.stackSize;
+						}
+					} else {
+						if (slot != null && slot.getItem() == fil.getItem()) {
+							amount += slot.stackSize;
+						}
 					}
 				}
 			}
@@ -205,13 +210,18 @@ public class Inv {
 				if (!((ISidedInventory) inv).canInsertItem(i, fil, face))
 					continue;
 				ItemStack slot = inv.getStackInSlot(i);
-				if (meta) {
-					if (slot != null && slot.isItemEqual(fil)) {
+				if (ore) {
+					if (slot != null && Util.equalOreDict(slot, fil))
 						amount += slot.stackSize;
-					}
 				} else {
-					if (slot != null && slot.getItem() == fil.getItem()) {
-						amount += slot.stackSize;
+					if (meta) {
+						if (slot != null && slot.isItemEqual(fil)) {
+							amount += slot.stackSize;
+						}
+					} else {
+						if (slot != null && slot.getItem() == fil.getItem()) {
+							amount += slot.stackSize;
+						}
 					}
 				}
 			}

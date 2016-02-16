@@ -14,13 +14,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, IMessage> {
 	int index;
 	StackWrapper wrap;
+	boolean ore;
 
 	public FilterMessage() {
 	}
 
-	public FilterMessage(int index, StackWrapper wrap) {
+	public FilterMessage(int index, StackWrapper wrap, boolean ore) {
 		this.index = index;
 		this.wrap = wrap;
+		this.ore = ore;
 	}
 
 	@Override
@@ -32,6 +34,7 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerCable) {
 					ContainerCable con = (ContainerCable) ctx.getServerHandler().playerEntity.openContainer;
 					con.getFilter().put(message.index, message.wrap);
+					con.getOres().put(message.index, message.ore);
 					con.slotChanged();
 					ctx.getServerHandler().playerEntity.worldObj.markBlockForUpdate(con.tile.getPos());
 				}
@@ -43,12 +46,14 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.index = buf.readInt();
+		this.ore = buf.readBoolean();
 		this.wrap = StackWrapper.loadStackWrapperFromNBT(ByteBufUtils.readTag(buf));
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.index);
+		buf.writeBoolean(this.ore);
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (this.wrap != null)
 			this.wrap.writeToNBT(nbt);

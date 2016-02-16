@@ -1,9 +1,9 @@
 package mrriegel.storagenetwork.gui.template;
 
+import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -13,12 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import mrriegel.storagenetwork.gui.CrunchItemContainer;
-import mrriegel.storagenetwork.gui.CrunchItemInventory;
-import mrriegel.storagenetwork.init.ModItems;
 
 public class ContainerTemplate extends Container {
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
