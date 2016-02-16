@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.init;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.items.ItemCoverStick;
 import mrriegel.storagenetwork.items.ItemRemote;
+import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -13,11 +14,13 @@ public class ModItems {
 	public static final Item upgrade = new ItemUpgrade();
 	public static final Item remote = new ItemRemote();
 	public static final Item coverstick = new ItemCoverStick();
+	public static final Item template = new ItemTemplate();
 
 	public static void init() {
 		GameRegistry.registerItem(upgrade, "upgrade");
 		GameRegistry.registerItem(remote, "remote");
 		GameRegistry.registerItem(coverstick, "coverstick");
+//		GameRegistry.registerItem(template, "template");
 	}
 
 }

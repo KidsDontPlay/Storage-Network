@@ -97,7 +97,7 @@ public class BlockRequest extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileRequest tile = (TileRequest) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
-		if (!worldIn.isRemote && tile.getMaster() != null) {
+		if (/* !worldIn.isRemote && */tile.getMaster() != null) {
 			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
 			worldIn.markBlockForUpdate(pos);
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());

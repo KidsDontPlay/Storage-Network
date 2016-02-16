@@ -19,6 +19,7 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -94,7 +95,7 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-		worldIn.markBlockForUpdate(pos);
+		onNeighborBlockChange(worldIn, pos, state, null);
 		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
 			return false;
 		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
@@ -291,20 +292,12 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
 		try {
-			// TileEntity tileentity = worldIn.getTileEntity(pos);
-			// IExtendedBlockState state = (IExtendedBlockState)
-			// worldIn.getBlockState(pos);
-			// ((World) worldIn).setBlockState(pos, state.withProperty(COVER,
-			// ((TileKabel) tileentity).getCover()), 2);
-			// if (tileentity != null) {
-			// tileentity.validate();
-			// ((World) worldIn).setTileEntity(pos, tileentity);
-			// }
-			// ((World) worldIn).markBlockForUpdate(pos);
-			if (worldIn.getTileEntity(pos) != null && ((TileKabel) worldIn.getTileEntity(pos)).getCover() != null) {
-				// if (state.getValue(COVER) != null) {
-				this.setBlockBounds(0f, 0f, 0f, 1f, 1f, 1f);
-				return;
+			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+			if (tile != null && tile.getCover() != null) {
+				if (tile.getCover() != Blocks.glass) {
+					this.setBlockBounds(0f, 0f, 0f, 1f, 1f, 1f);
+					return;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

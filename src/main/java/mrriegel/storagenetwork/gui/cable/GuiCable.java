@@ -75,7 +75,7 @@ public class GuiCable extends GuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num));
+			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop));
 		}
 		for (Slot s : list)
 			s.drawSlot(mouseX, mouseY);
@@ -250,13 +250,16 @@ public class GuiCable extends GuiContainer {
 
 	class Slot {
 		ItemStack stack;
-		int x, y, size;
+		int x, y, size, guiLeft, guiTop;
+		Minecraft mc = Minecraft.getMinecraft();
 
-		public Slot(ItemStack stack, int x, int y, int size) {
+		public Slot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop) {
 			this.stack = stack;
 			this.x = x;
 			this.y = y;
 			this.size = size;
+			this.guiLeft = guiLeft;
+			this.guiTop = guiTop;
 		}
 
 		void drawSlot(int mx, int my) {

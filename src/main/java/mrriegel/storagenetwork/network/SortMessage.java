@@ -38,8 +38,8 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
 					ItemStack s = ctx.getServerHandler().playerEntity.getHeldItem();
-					NBTHelper.setBoolean(s, "down", message.direction);
-					NBTHelper.setString(s, "sort", message.sort.toString());
+					NBTHelper.setBoolean(s.getTagCompound(), "down", message.direction);
+					NBTHelper.setString(s.getTagCompound(), "sort", message.sort.toString());
 					return;
 				}
 				TileRequest tile = (TileRequest) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));

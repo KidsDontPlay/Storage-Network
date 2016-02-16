@@ -60,7 +60,6 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
 			worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
 			tessellator.draw();
-
 			RenderHelper.enableStandardItemLighting();
 			GlStateManager.popMatrix();
 			return;

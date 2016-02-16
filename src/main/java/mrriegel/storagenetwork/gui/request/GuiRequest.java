@@ -19,7 +19,9 @@ import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -183,7 +185,7 @@ public class GuiRequest extends GuiContainer {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize()).drawSlot(mouseX, mouseY);
+				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop).drawSlot(mouseX, mouseY);
 				index++;
 			}
 		}
@@ -193,7 +195,7 @@ public class GuiRequest extends GuiContainer {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize()).drawTooltip(mouseX, mouseY);
+				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop).drawTooltip(mouseX, mouseY);
 				index++;
 			}
 		}
@@ -271,14 +273,18 @@ public class GuiRequest extends GuiContainer {
 
 	class Slot {
 		ItemStack stack;
-		int x, y, size;
+		int x, y, size, guiLeft, guiTop;
 
-		public Slot(ItemStack stack, int x, int y, int size) {
+		public Slot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop) {
 			this.stack = stack;
 			this.x = x;
 			this.y = y;
 			this.size = size;
+			this.guiLeft = guiLeft;
+			this.guiTop = guiTop;
 		}
+
+		Minecraft mc = Minecraft.getMinecraft();
 
 		void drawSlot(int mx, int my) {
 			RenderHelper.enableGUIStandardItemLighting();
@@ -287,10 +293,10 @@ public class GuiRequest extends GuiContainer {
 			if (ConfigHandler.smallFont) {
 				GlStateManager.pushMatrix();
 				GlStateManager.scale(.5f, .5f, .5f);
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
+				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
 				GlStateManager.popMatrix();
 			} else
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, amount);
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
@@ -363,5 +369,4 @@ public class GuiRequest extends GuiContainer {
 			}
 		}
 	}
-
 }
