@@ -21,21 +21,21 @@ public class NBTHelper {
 		}
 	}
 
-	private static void initNBTTagCompound(NBTTagCompound nbt) {
-		if (nbt == null) {
-			nbt = new NBTTagCompound();
+	private static void initNBTTagCompound(ItemStack stack) {
+		if (stack.getTagCompound() == null) {
+			stack.setTagCompound(new NBTTagCompound());
 		}
 	}
 
 	// list
-	public static NBTTagList getList(NBTTagCompound nbt, String tag, int objtype, boolean nullifyOnFail) {
-		initNBTTagCompound(nbt);
-		return hasTag(nbt, tag) ? nbt.getTagList(tag, objtype) : nullifyOnFail ? null : new NBTTagList();
+	public static NBTTagList getList(ItemStack stack, String tag, int objtype, boolean nullifyOnFail) {
+		initNBTTagCompound(stack);
+		return hasTag(stack.getTagCompound(), tag) ? stack.getTagCompound().getTagList(tag, objtype) : nullifyOnFail ? null : new NBTTagList();
 	}
 
-	public static void setList(NBTTagCompound nbt, String tag, NBTTagList list) {
-		initNBTTagCompound(nbt);
-		nbt.setTag(tag, list);
+	public static void setList(ItemStack stack, String tag, NBTTagList list) {
+		initNBTTagCompound(stack);
+		stack.getTagCompound().setTag(tag, list);
 	}
 
 	public static NBTTagList createList(NBTBase... list) {
@@ -53,171 +53,171 @@ public class NBTHelper {
 	}
 
 	// String
-	public static String getString(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static String getString(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
+		if (!stack.getTagCompound().hasKey(keyName)) {
 			return null;
 		}
 
-		return nbt.getString(keyName);
+		return stack.getTagCompound().getString(keyName);
 	}
 
-	public static void setString(NBTTagCompound nbt, String keyName, String keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setString(ItemStack stack, String keyName, String keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null)
-			nbt.setString(keyName, keyValue);
+			stack.getTagCompound().setString(keyName, keyValue);
 	}
 
 	// boolean
-	public static boolean getBoolean(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static boolean getBoolean(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setBoolean(nbt, keyName, false);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setBoolean(stack, keyName, false);
 		}
 
-		return nbt.getBoolean(keyName);
+		return stack.getTagCompound().getBoolean(keyName);
 	}
 
-	public static void setBoolean(NBTTagCompound nbt, String keyName, boolean keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setBoolean(ItemStack stack, String keyName, boolean keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setBoolean(keyName, keyValue);
+		stack.getTagCompound().setBoolean(keyName, keyValue);
 	}
 
 	// byte
-	public static byte getByte(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static byte getByte(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setByte(nbt, keyName, (byte) 0);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setByte(stack, keyName, (byte) 0);
 		}
 
-		return nbt.getByte(keyName);
+		return stack.getTagCompound().getByte(keyName);
 	}
 
-	public static void setByte(NBTTagCompound nbt, String keyName, byte keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setByte(ItemStack stack, String keyName, byte keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setByte(keyName, keyValue);
+		stack.getTagCompound().setByte(keyName, keyValue);
 	}
 
 	// short
-	public static short getShort(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static short getShort(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setShort(nbt, keyName, (short) 0);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setShort(stack, keyName, (short) 0);
 		}
 
-		return nbt.getShort(keyName);
+		return stack.getTagCompound().getShort(keyName);
 	}
 
-	public static void setShort(NBTTagCompound nbt, String keyName, short keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setShort(ItemStack stack, String keyName, short keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setShort(keyName, keyValue);
+		stack.getTagCompound().setShort(keyName, keyValue);
 	}
 
 	// int
-	public static int getInteger(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static int getInteger(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setInteger(nbt, keyName, 0);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setInteger(stack, keyName, 0);
 		}
 
-		return nbt.getInteger(keyName);
+		return stack.getTagCompound().getInteger(keyName);
 	}
 
-	public static void setInteger(NBTTagCompound nbt, String keyName, int keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setInteger(ItemStack stack, String keyName, int keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setInteger(keyName, keyValue);
+		stack.getTagCompound().setInteger(keyName, keyValue);
 	}
 
 	// long
-	public static long getLong(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static long getLong(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setLong(nbt, keyName, 0);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setLong(stack, keyName, 0);
 		}
 
-		return nbt.getLong(keyName);
+		return stack.getTagCompound().getLong(keyName);
 	}
 
-	public static void setLong(NBTTagCompound nbt, String keyName, long keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setLong(ItemStack stack, String keyName, long keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setLong(keyName, keyValue);
+		stack.getTagCompound().setLong(keyName, keyValue);
 	}
 
 	// float
-	public static float getFloat(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static float getFloat(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setFloat(nbt, keyName, 0);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setFloat(stack, keyName, 0);
 		}
 
-		return nbt.getFloat(keyName);
+		return stack.getTagCompound().getFloat(keyName);
 	}
 
-	public static void setFloat(NBTTagCompound nbt, String keyName, float keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setFloat(ItemStack stack, String keyName, float keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setFloat(keyName, keyValue);
+		stack.getTagCompound().setFloat(keyName, keyValue);
 	}
 
 	// double
-	public static double getDouble(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static double getDouble(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setDouble(nbt, keyName, 0);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setDouble(stack, keyName, 0);
 		}
 
-		return nbt.getDouble(keyName);
+		return stack.getTagCompound().getDouble(keyName);
 	}
 
-	public static void setDouble(NBTTagCompound nbt, String keyName, double keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setDouble(ItemStack stack, String keyName, double keyValue) {
+		initNBTTagCompound(stack);
 
-		nbt.setDouble(keyName, keyValue);
+		stack.getTagCompound().setDouble(keyName, keyValue);
 	}
 
 	// itemstack
-	public static ItemStack getItemStack(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static ItemStack getItemStack(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
-			setItemStack(nbt, keyName, null);
+		if (!stack.getTagCompound().hasKey(keyName)) {
+			setItemStack(stack, keyName, null);
 		}
-		NBTTagCompound res = (NBTTagCompound) nbt.getTag(keyName);
+		NBTTagCompound res = (NBTTagCompound) stack.getTagCompound().getTag(keyName);
 		return ItemStack.loadItemStackFromNBT(res);
 
 	}
 
-	public static void setItemStack(NBTTagCompound nbt, String keyName, ItemStack keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setItemStack(ItemStack stack, String keyName, ItemStack keyValue) {
+		initNBTTagCompound(stack);
 		NBTTagCompound res = new NBTTagCompound();
 		if (keyValue != null) {
 			keyValue.writeToNBT(res);
 		}
 
-		nbt.setTag(keyName, res);
+		stack.getTagCompound().setTag(keyName, res);
 	}
 
 	// enum
-	public static <E extends Enum<E>> E getEnum(NBTTagCompound nbt, String keyName, Class<E> clazz) {
-		initNBTTagCompound(nbt);
+	public static <E extends Enum<E>> E getEnum(ItemStack stack, String keyName, Class<E> clazz) {
+		initNBTTagCompound(stack);
 
-		if (!nbt.hasKey(keyName)) {
+		if (!stack.getTagCompound().hasKey(keyName)) {
 			return null;
 		}
-		String s = nbt.getString(keyName);
+		String s = stack.getTagCompound().getString(keyName);
 		for (E e : clazz.getEnumConstants()) {
 			if (e.toString().equals(s))
 				return e;
@@ -226,123 +226,123 @@ public class NBTHelper {
 
 	}
 
-	public static <E extends Enum<E>> void setEnum(NBTTagCompound nbt, String keyName, E keyValue) {
-		initNBTTagCompound(nbt);
+	public static <E extends Enum<E>> void setEnum(ItemStack stack, String keyName, E keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null)
-			nbt.setString(keyName, keyValue.toString());
+			stack.getTagCompound().setString(keyName, keyValue.toString());
 	}
 
 	// Stringlist
-	public static List<String> getStringList(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static List<String> getStringList(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
 		ArrayList<String> lis = new ArrayList<String>();
-		int size = getInteger(nbt, keyName + "Size");
+		int size = getInteger(stack, keyName + "Size");
 		for (int i = 0; i < size; i++)
-			lis.add(getString(nbt, keyName + ":" + i));
+			lis.add(getString(stack, keyName + ":" + i));
 		return lis;
 	}
 
-	public static void setStringList(NBTTagCompound nbt, String keyName, List<String> keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setStringList(ItemStack stack, String keyName, List<String> keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null) {
-			setInteger(nbt, keyName + "Size", keyValue.size());
+			setInteger(stack, keyName + "Size", keyValue.size());
 			for (int i = 0; i < keyValue.size(); i++) {
 				String s = keyValue.get(i);
 				if (s != null)
-					setString(nbt, keyName + ":" + i, s);
+					setString(stack, keyName + ":" + i, s);
 			}
 		}
 	}
 
 	// Booleanlist
-	public static List<Boolean> getBooleanList(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static List<Boolean> getBooleanList(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
 		ArrayList<Boolean> lis = new ArrayList<Boolean>();
-		int size = getInteger(nbt, keyName + "Size");
+		int size = getInteger(stack, keyName + "Size");
 		for (int i = 0; i < size; i++)
-			lis.add(getBoolean(nbt, keyName + ":" + i));
+			lis.add(getBoolean(stack, keyName + ":" + i));
 		return lis;
 	}
 
-	public static void setBooleanList(NBTTagCompound nbt, String keyName, List<Boolean> keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setBooleanList(ItemStack stack, String keyName, List<Boolean> keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null) {
-			setInteger(nbt, keyName + "Size", keyValue.size());
+			setInteger(stack, keyName + "Size", keyValue.size());
 			for (int i = 0; i < keyValue.size(); i++) {
 				Boolean s = keyValue.get(i);
 				if (s != null)
-					setBoolean(nbt, keyName + ":" + i, s);
+					setBoolean(stack, keyName + ":" + i, s);
 			}
 		}
 	}
 
 	// Integerlist
-	public static List<Integer> getIntegerList(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static List<Integer> getIntegerList(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
 		ArrayList<Integer> lis = new ArrayList<Integer>();
-		int size = getInteger(nbt, keyName + "Size");
+		int size = getInteger(stack, keyName + "Size");
 		for (int i = 0; i < size; i++)
-			lis.add(getInteger(nbt, keyName + ":" + i));
+			lis.add(getInteger(stack, keyName + ":" + i));
 		return lis;
 	}
 
-	public static void setIntegerList(NBTTagCompound nbt, String keyName, List<Integer> keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setIntegerList(ItemStack stack, String keyName, List<Integer> keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null) {
-			setInteger(nbt, keyName + "Size", keyValue.size());
+			setInteger(stack, keyName + "Size", keyValue.size());
 			for (int i = 0; i < keyValue.size(); i++) {
 				Integer s = keyValue.get(i);
 				if (s != null)
-					setInteger(nbt, keyName + ":" + i, s);
+					setInteger(stack, keyName + ":" + i, s);
 			}
 		}
 	}
 
 	// Doublelist
-	public static List<Double> getDoubleList(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static List<Double> getDoubleList(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
 		ArrayList<Double> lis = new ArrayList<Double>();
-		int size = getInteger(nbt, keyName + "Size");
+		int size = getInteger(stack, keyName + "Size");
 		for (int i = 0; i < size; i++)
-			lis.add(getDouble(nbt, keyName + ":" + i));
+			lis.add(getDouble(stack, keyName + ":" + i));
 		return lis;
 	}
 
-	public static void setDoubleList(NBTTagCompound nbt, String keyName, List<Double> keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setDoubleList(ItemStack stack, String keyName, List<Double> keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null) {
-			setInteger(nbt, keyName + "Size", keyValue.size());
+			setInteger(stack, keyName + "Size", keyValue.size());
 			for (int i = 0; i < keyValue.size(); i++) {
 				Double s = keyValue.get(i);
 				if (s != null)
-					setDouble(nbt, keyName + ":" + i, s);
+					setDouble(stack, keyName + ":" + i, s);
 			}
 		}
 	}
 
 	// Stacklist
-	public static List<ItemStack> getItemStackList(NBTTagCompound nbt, String keyName) {
-		initNBTTagCompound(nbt);
+	public static List<ItemStack> getItemStackList(ItemStack stack, String keyName) {
+		initNBTTagCompound(stack);
 
 		ArrayList<ItemStack> lis = new ArrayList<ItemStack>();
-		int size = getInteger(nbt, keyName + "Size");
+		int size = getInteger(stack, keyName + "Size");
 		for (int i = 0; i < size; i++)
-			lis.add(getItemStack(nbt, keyName + ":" + i));
+			lis.add(getItemStack(stack, keyName + ":" + i));
 		return lis;
 	}
 
-	public static void setItemStackList(NBTTagCompound nbt, String keyName, List<ItemStack> keyValue) {
-		initNBTTagCompound(nbt);
+	public static void setItemStackList(ItemStack stack, String keyName, List<ItemStack> keyValue) {
+		initNBTTagCompound(stack);
 		if (keyValue != null) {
-			setInteger(nbt, keyName + "Size", keyValue.size());
+			setInteger(stack, keyName + "Size", keyValue.size());
 			for (int i = 0; i < keyValue.size(); i++) {
 				ItemStack s = keyValue.get(i);
 				if (s != null)
-					setItemStack(nbt, keyName + ":" + i, s);
+					setItemStack(stack, keyName + ":" + i, s);
 			}
 		}
 	}

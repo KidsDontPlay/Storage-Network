@@ -27,7 +27,20 @@ public class ContainerRemote extends Container {
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
+			if (i == playerInv.currentItem)
+				this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232) {
+					@Override
+					public boolean isItemValid(ItemStack stack) {
+						return false;
+					}
+
+					@Override
+					public boolean canTakeStack(EntityPlayer playerIn) {
+						return false;
+					}
+				});
+			else
+				this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
 		}
 
 	}

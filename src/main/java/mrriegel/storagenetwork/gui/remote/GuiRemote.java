@@ -53,7 +53,7 @@ public class GuiRemote extends GuiContainer {
 		this.xSize = 176;
 		this.ySize = 256;
 		stacks = new ArrayList<StackWrapper>();
-		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound(), "x"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound(), "y"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound(), "z"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem().getTagCompound(), "id"), null, false, false));
+		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem() , "x"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem() , "y"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem() , "z"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem() , "id"), null, false, false));
 	}
 
 	@Override
@@ -144,11 +144,11 @@ public class GuiRemote extends GuiContainer {
 				}
 		}
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
-			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem().getTagCompound(), "down") ? -1 : 1;
+			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem() , "down") ? -1 : 1;
 
 			@Override
 			public int compare(StackWrapper o2, StackWrapper o1) {
-				switch (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem().getTagCompound(), "sort"))) {
+				switch (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem() , "sort"))) {
 				case AMOUNT:
 					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
 				case NAME:
@@ -220,17 +220,17 @@ public class GuiRemote extends GuiContainer {
 		if (button.id == 3 && page < maxPage)
 			page++;
 		if (button.id == 0)
-			NBTHelper.setBoolean(mc.thePlayer.getHeldItem().getTagCompound(), "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem().getTagCompound(), "down"));
+			NBTHelper.setBoolean(mc.thePlayer.getHeldItem() , "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem() , "down"));
 		else if (button.id == 1)
-			NBTHelper.setString(mc.thePlayer.getHeldItem().getTagCompound(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem().getTagCompound(), "sort")).next().toString());
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "z"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem().getTagCompound(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem().getTagCompound(), "sort"))));
+			NBTHelper.setString(mc.thePlayer.getHeldItem() , "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem() , "sort")).next().toString());
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "z"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem() , "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem() , "sort"))));
 	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (over != null && mc.thePlayer.inventory.getItemStack() == null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "id"), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "id"), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
@@ -238,7 +238,7 @@ public class GuiRemote extends GuiContainer {
 			searchBar.setText("");
 		}
 		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "id"), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "id"), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 
@@ -247,7 +247,7 @@ public class GuiRemote extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem().getTagCompound(), "id"), null, false, false));
+				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem() , "id"), null, false, false));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -348,10 +348,10 @@ public class GuiRemote extends GuiContainer {
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, 14, 14);
 				if (id == 0) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.getHeldItem().getTagCompound(), "down") ? 6 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.getHeldItem() , "down") ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem().getTagCompound(), "sort")) == Sort.AMOUNT ? 6 : Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem().getTagCompound(), "sort")) == Sort.MOD ? 12 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.AMOUNT ? 6 : Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.MOD ? 12 : 0), 14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
