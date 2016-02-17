@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.gui.template;
 
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -37,9 +38,14 @@ public class ContainerTemplate extends Container {
 				}
 			}
 			NBTTagCompound res = (NBTTagCompound) storedInv.getTagCompound().getTag("res");
-			craftResult.setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(res));
+			if (res != null)
+				craftResult.setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(res));
 		}
-		this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, 124, 35));
+		for (int i = 1; i < 10; i++) {
+			if (!NBTHelper.hasTag(storedInv.getTagCompound(), "meta" + i))
+				NBTHelper.setBoolean(storedInv, "meta" + i, true);
+		}
+		this.addSlotToContainer(new Slot(this.craftResult, 0, 124, 35));
 
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
@@ -56,13 +62,11 @@ public class ContainerTemplate extends Container {
 		for (int l = 0; l < 9; ++l) {
 			this.addSlotToContainer(new Slot(playerInventory, l, 8 + l * 18, 142));
 		}
-
-		this.onCraftMatrixChanged(this.craftMatrix);
 	}
 
-	@Override
-	public void onCraftMatrixChanged(IInventory inventoryIn) {
-		this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
+	public void slotChanged(boolean refresh) {
+		if (storedInv.getItemDamage() == 0 && refresh)
+			this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
 		if (!storedInv.hasTagCompound())
 			storedInv.setTagCompound(new NBTTagCompound());
 		NBTTagList invList = new NBTTagList();
@@ -81,7 +85,6 @@ public class ContainerTemplate extends Container {
 		}
 		storedInv.getTagCompound().setTag("res", res);
 		playerInv.mainInventory[playerInv.currentItem] = storedInv;
-
 	}
 
 	@Override
@@ -90,21 +93,15 @@ public class ContainerTemplate extends Container {
 			return super.slotClick(slotId, clickedButton, mode, playerIn);
 		if (playerInv.getItemStack() == null) {
 			getSlot(slotId).putStack(null);
-			onCraftMatrixChanged(null);
+			slotChanged(slotId != 0);
 		} else {
 			ItemStack s = playerInv.getItemStack().copy();
 			s.stackSize = 1;
 			getSlot(slotId).putStack(s);
-			onCraftMatrixChanged(null);
+			slotChanged(slotId != 0);
 		}
 		return playerInv.getItemStack();
 
-	}
-
-	@Override
-	public void onContainerClosed(EntityPlayer playerIn) {
-		onCraftMatrixChanged(null);
-		super.onContainerClosed(playerIn);
 	}
 
 	@Override

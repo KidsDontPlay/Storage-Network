@@ -3,12 +3,16 @@ package mrriegel.storagenetwork.helper;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -50,6 +54,36 @@ public class Util {
 				if (ar[i] == br[j])
 					return true;
 		return false;
+	}
+
+	public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {
+		if (stack == null || worldIn.isRemote)
+			return;
+		Random RANDOM = worldIn.rand;
+		float f = RANDOM.nextFloat() * 0.8F + 0.1F;
+		float f1 = RANDOM.nextFloat() * 0.8F + 0.1F;
+		float f2 = RANDOM.nextFloat() * 0.8F + 0.1F;
+
+		while (stack.stackSize > 0) {
+			int i = RANDOM.nextInt(21) + 10;
+
+			if (i > stack.stackSize) {
+				i = stack.stackSize;
+			}
+
+			stack.stackSize -= i;
+			EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
+
+			if (stack.hasTagCompound()) {
+				entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
+			}
+
+			float f3 = 0.05F;
+			entityitem.motionX = RANDOM.nextGaussian() * f3;
+			entityitem.motionY = RANDOM.nextGaussian() * f3 + 0.20000000298023224D;
+			entityitem.motionZ = RANDOM.nextGaussian() * f3;
+			worldIn.spawnEntityInWorld(entityitem);
+		}
 	}
 
 }

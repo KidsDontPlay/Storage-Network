@@ -31,10 +31,9 @@ public class TemplateMessage implements IMessage, IMessageHandler<TemplateMessag
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerCable) {
-					NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.getHeldItem(), "ore" + message.index, message.ore);
-					NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.getHeldItem(), "meta" + message.index, message.meta);
-				}
+				NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.getHeldItem(), "ore" + message.index, message.ore);
+				NBTHelper.setBoolean(ctx.getServerHandler().playerEntity.getHeldItem(), "meta" + message.index, message.meta);
+				ctx.getServerHandler().playerEntity.inventory.mainInventory[ctx.getServerHandler().playerEntity.inventory.currentItem] = ctx.getServerHandler().playerEntity.getHeldItem();
 			}
 		});
 		return null;

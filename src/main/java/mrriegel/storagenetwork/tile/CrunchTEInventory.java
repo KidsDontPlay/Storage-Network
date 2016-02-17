@@ -15,11 +15,12 @@ import net.minecraftforge.common.util.Constants;
 
 public abstract class CrunchTEInventory extends TileEntity implements IInventory {
 
-	public final int INVSIZE;
+	public int INVSIZE;
 	protected ItemStack[] inv;
-	protected final int stackLimit;
+	protected int stackLimit;
 
 	public CrunchTEInventory(int size, int stackLimit) {
+		super();
 		this.INVSIZE = size;
 		inv = new ItemStack[size];
 		this.stackLimit = stackLimit;
@@ -50,6 +51,8 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 				inv[slot] = ItemStack.loadItemStackFromNBT(stackTag);
 			}
 		}
+		this.INVSIZE = tag.getInteger("size");
+		this.stackLimit = tag.getInteger("limit");
 		readSyncableDataFromNBT(tag);
 	}
 
@@ -68,6 +71,8 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 			}
 		}
 		tag.setTag("crunchTE", invList);
+		tag.setInteger("size", INVSIZE);
+		tag.setInteger("limit", stackLimit);
 		writeSyncableDataToNBT(tag);
 	}
 
@@ -136,7 +141,7 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-		return this.worldObj.getTileEntity(new BlockPos(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ())) != this ? false : p_70300_1_.getDistanceSq(this.getPos().getX() + 0.5D, this.getPos().getY() + 0.5D, this.getPos().getZ() + 0.5D) <= 64.0D;
+		return this.worldObj.getTileEntity(pos) != this ? false : p_70300_1_.getDistanceSq(this.getPos().getX() + 0.5D, this.getPos().getY() + 0.5D, this.getPos().getZ() + 0.5D) <= 64.0D;
 
 	}
 
@@ -148,7 +153,7 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 	@Override
 	public ItemStack removeStackFromSlot(int index) {
 		if (this.inv[index] != null) {
-			ItemStack itemstack = this.inv[index];
+			ItemStack itemstack = this.inv[index].copy();
 			this.inv[index] = null;
 			return itemstack;
 		} else {

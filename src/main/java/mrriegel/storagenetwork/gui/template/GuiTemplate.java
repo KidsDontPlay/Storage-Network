@@ -46,10 +46,10 @@ public class GuiTemplate extends GuiContainer {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				GlStateManager.disableBlend();
-				 if (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "ore"))
-				mc.fontRendererObj.drawStringWithShadow("O", slot.xDisplayPosition + 10, slot.yDisplayPosition, 0x4f94cd);
-				 if (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "meta"))
-				mc.fontRendererObj.drawStringWithShadow("M", slot.xDisplayPosition + 1, slot.yDisplayPosition, 0xff4040);
+				if (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "ore" + i))
+					mc.fontRendererObj.drawStringWithShadow("O", slot.xDisplayPosition + 10, slot.yDisplayPosition, 0x4f94cd);
+				if (!NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "meta" + i))
+					mc.fontRendererObj.drawStringWithShadow("M", slot.xDisplayPosition + 1, slot.yDisplayPosition, 0xff4040);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
 			}
@@ -66,10 +66,10 @@ public class GuiTemplate extends GuiContainer {
 				Slot slot = con.getSlot(i);
 				if (slot.getHasStack() && isPointInRegion(slot.xDisplayPosition, slot.yDisplayPosition, 16, 16, mouseX, mouseY)) {
 					if (typedChar == 'o' && OreDictionary.getOreIDs(slot.getStack()).length > 0)
-						NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "ore" + i, !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "ore"));
+						NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "ore" + i, !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "ore" + i));
 					else if (typedChar == 'm')
-						NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "meta" + i, !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "meta"));
-					PacketHandler.INSTANCE.sendToServer(new TemplateMessage(i, NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "ore"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "meta")));
+						NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "meta" + i, !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "meta" + i));
+					PacketHandler.INSTANCE.sendToServer(new TemplateMessage(i, NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "ore" + i), NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "meta" + i)));
 					break;
 				}
 			}

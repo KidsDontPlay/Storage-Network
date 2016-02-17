@@ -23,6 +23,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -50,9 +51,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 	}
 
 	public TileKabel() {
+		super();
 	}
 
 	public TileKabel(World w, Block b) {
+		super();
 		kind = getKind(w, b);
 	}
 
@@ -173,6 +176,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		metas = new HashMap<Integer, Boolean>();
 		for (int i = 0; i < 9; i++)
 			metas.put(i, true);
+
 		for (int i = 0; i < metaList.tagCount(); i++) {
 			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");

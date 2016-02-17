@@ -20,6 +20,7 @@ public class GuiHandler implements IGuiHandler {
 	public static final int REQUEST = 3;
 	public static final int REMOTE = 4;
 	public static final int TEMPLATE = 5;
+	public static final int CONTAINER = 6;
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {

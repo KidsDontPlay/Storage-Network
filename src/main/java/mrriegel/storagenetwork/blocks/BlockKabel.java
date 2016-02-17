@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -372,7 +373,7 @@ public class BlockKabel extends BlockContainer {
 		if (tileentity instanceof TileKabel) {
 			TileKabel tile = (TileKabel) tileentity;
 			while (tile.getDeque() != null && !tile.getDeque().isEmpty()) {
-				BlockRequest.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModItems.upgrade, 1, tile.getDeque().pollFirst()));
+				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModItems.upgrade, 1, tile.getDeque().pollFirst()));
 			}
 		}
 

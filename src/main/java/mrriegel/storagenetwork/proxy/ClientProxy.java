@@ -64,50 +64,14 @@ public class ClientProxy extends CommonProxy {
 		}
 		mesher.register(ModItems.coverstick, 0, new ModelResourceLocation(StorageNetwork.MODID + ":coverstick", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.cover), 0, new ModelResourceLocation(StorageNetwork.MODID + ":cover", "inventory"));
+		for (int i = 0; i < 2; i++) {
+			ModelBakery.registerItemVariants(ModItems.template, new ResourceLocation(StorageNetwork.MODID + ":template_" + i));
+			mesher.register(ModItems.template, i, new ModelResourceLocation(StorageNetwork.MODID + ":template_" + i, "inventory"));
+		}
 	}
 
 	public void registerRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileKabel.class, new CableRenderer());
-		if (1 == 2)
-			ModelLoader.setCustomStateMapper(ModBlocks.kabel, new StateMapperBase() {
-				@Override
-				protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-					return CableModel.kabel;
-				}
-			});
-
-		// ModelLoader.setCustomStateMapper(ModBlocks.exKabel, new
-		// StateMapperBase() {
-		// @Override
-		// protected ModelResourceLocation getModelResourceLocation(IBlockState
-		// iBlockState) {
-		// return CableModel.ex;
-		// }
-		// });
-		// ModelLoader.setCustomStateMapper(ModBlocks.imKabel, new
-		// StateMapperBase() {
-		// @Override
-		// protected ModelResourceLocation getModelResourceLocation(IBlockState
-		// iBlockState) {
-		// return CableModel.im;
-		// }
-		// });
-		// ModelLoader.setCustomStateMapper(ModBlocks.storageKabel, new
-		// StateMapperBase() {
-		// @Override
-		// protected ModelResourceLocation getModelResourceLocation(IBlockState
-		// iBlockState) {
-		// return CableModel.storage;
-		// }
-		// });
-		// ModelLoader.setCustomStateMapper(ModBlocks.vacuumKabel, new
-		// StateMapperBase() {
-		// @Override
-		// protected ModelResourceLocation getModelResourceLocation(IBlockState
-		// iBlockState) {
-		// return CableModel.vacuum;
-		// }
-		// });
 	}
 
 }

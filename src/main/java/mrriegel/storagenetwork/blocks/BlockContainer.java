@@ -5,34 +5,32 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.tile.CrunchTEInventory;
+import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileMaster;
-import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class BlockRequest extends BlockContainer {
+public class BlockContainer extends net.minecraft.block.BlockContainer {
 
-	public BlockRequest() {
+	public BlockContainer() {
 		super(Material.iron);
 		this.setHardness(3.5F);
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":request");
+		this.setUnlocalizedName(StorageNetwork.MODID + ":container");
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileRequest();
+		return null;
 	}
 
 	@Override
@@ -42,7 +40,6 @@ public class BlockRequest extends BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-
 		for (BlockPos p : TileMaster.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
@@ -57,12 +54,11 @@ public class BlockRequest extends BlockContainer {
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-onNeighborBlockChange(worldIn, pos, state, null);
+		onNeighborBlockChange(worldIn, pos, state, null);
 	}
 
 	public static void setConnections(World worldIn, BlockPos pos) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
-
 		if (tile.getMaster() == null) {
 			for (BlockPos p : TileMaster.getSides(pos)) {
 				if (worldIn.getTileEntity(p) instanceof TileMaster) {
@@ -79,9 +75,7 @@ onNeighborBlockChange(worldIn, pos, state, null);
 			if (mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}
-
 		}
-
 	}
 
 	@Override
@@ -91,7 +85,7 @@ onNeighborBlockChange(worldIn, pos, state, null);
 		if (/* !worldIn.isRemote && */tile.getMaster() != null) {
 			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
 			worldIn.markBlockForUpdate(pos);
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
@@ -100,16 +94,13 @@ onNeighborBlockChange(worldIn, pos, state, null);
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TileEntity tileentity = worldIn.getTileEntity(pos);
-
-		if (tileentity instanceof TileRequest) {
-			TileRequest tile = (TileRequest) tileentity;
+		if (tileentity instanceof TileContainer) {
+			TileContainer tile = (TileContainer) tileentity;
 			for (int i = 0; i < 9; i++) {
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.back.get(i));
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
+				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getStackInSlot(i));
 			}
 		}
 
 		super.breakBlock(worldIn, pos, state);
 	}
-
 }

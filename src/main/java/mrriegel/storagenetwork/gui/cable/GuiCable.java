@@ -108,7 +108,7 @@ public class GuiCable extends GuiContainer {
 				GlStateManager.disableBlend();
 				if (con.getOres().get(i) != null && con.getOres().get(i))
 					mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
-				if (con.getMetas().get(i) != null && con.getMetas().get(i))
+				if (con.getMetas().get(i) == null || !con.getMetas().get(i))
 					mc.fontRendererObj.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
