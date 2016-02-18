@@ -36,13 +36,14 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (te.getCover() != null) {
+			if (te.getCover() == Blocks.glass)
+				return;
 			this.bindTexture(TextureMap.locationBlocksTexture);
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			World world = te.getWorld();
 			BlockPos blockpos = te.getPos();
 			IBlockState iblockstate = te.getCover().getStateFromMeta(te.getCoverMeta());
-			if (te.getCover() == Blocks.glass)
-				return;
+
 			GlStateManager.pushMatrix();
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.translate((float) x, (float) y, (float) z);
@@ -89,6 +90,8 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
+//		int r = (int) ((System.currentTimeMillis() / 4) % 360);
+//		GlStateManager.rotate(r, 0.0F, 1.0F, 0.0F);
 		model.render(te);
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();

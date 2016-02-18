@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.gui.container;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -39,25 +40,23 @@ public class GuiContainer extends net.minecraft.client.gui.inventory.GuiContaine
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		ContainerContainer con = (ContainerContainer) inventorySlots;
-		for (int k = 0; k < 9; k++) {
-			Slot slot = con.getSlot(k);
-			if (slot.getHasStack()) {
+		for (Slot slot : con.inventorySlots) {
+			if (slot.getHasStack() && slot.getStack().isItemEqual(new ItemStack(ModItems.template))) {
 				RenderHelper.disableStandardItemLighting();
 				GlStateManager.pushMatrix();
 				GlStateManager.disableDepth();
 				float scale = 0.6f;
-				float pos=1f/scale;
+				float pos = 1f / scale;
 				GlStateManager.scale(scale, scale, scale);
 				RenderHelper.enableGUIStandardItemLighting();
 				NBTTagCompound res = (NBTTagCompound) slot.getStack().getTagCompound().getTag("res");
-				mc.getRenderItem().zLevel+=500;
+				mc.getRenderItem().zLevel += 500;
 				if (res != null)
-					mc.getRenderItem().renderItemAndEffectIntoGUI(ItemStack.loadItemStackFromNBT(res), (int)(slot.xDisplayPosition * pos + 11), (int)(slot.yDisplayPosition * pos));
-				mc.getRenderItem().zLevel-=500;
+					mc.getRenderItem().renderItemAndEffectIntoGUI(ItemStack.loadItemStackFromNBT(res), (int) (slot.xDisplayPosition * pos + 11), (int) (slot.yDisplayPosition * pos));
+				mc.getRenderItem().zLevel -= 500;
 				RenderHelper.disableStandardItemLighting();
 				GlStateManager.enableDepth();
 				GlStateManager.popMatrix();
-				
 			}
 		}
 	}

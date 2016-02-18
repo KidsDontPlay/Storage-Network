@@ -1,14 +1,18 @@
 package mrriegel.storagenetwork.tile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.api.ITemplateContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class TileContainer extends CrunchTEInventory implements IConnectable {
+public class TileContainer extends CrunchTEInventory implements IConnectable, ITemplateContainer {
 	private BlockPos master;
 
 	public TileContainer() {
@@ -39,6 +43,15 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
+	}
+
+	@Override
+	public List<ItemStack> getTemplates() {
+		List<ItemStack> lis = new ArrayList<ItemStack>();
+		for (int i = 0; i < INVSIZE; i++)
+			if (getStackInSlot(i) != null)
+				lis.add(getStackInSlot(i).copy());
+		return lis;
 	}
 
 }

@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.gui.template;
 
+import org.lwjgl.input.Keyboard;
+
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,7 +94,21 @@ public class ContainerTemplate extends Container {
 		if (slotId >= 10 || slotId < 0)
 			return super.slotClick(slotId, clickedButton, mode, playerIn);
 		if (playerInv.getItemStack() == null) {
-			getSlot(slotId).putStack(null);
+			if (slotId != 0)
+				getSlot(slotId).putStack(null);
+			else {
+				if (getSlot(slotId).getHasStack()) {
+					if (clickedButton == 0)
+						getSlot(slotId).getStack().stackSize += (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1);
+					else if (clickedButton == 1)
+						getSlot(slotId).getStack().stackSize -= (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1);
+					else if (clickedButton == 2)
+						getSlot(slotId).putStack(null);
+					if (getSlot(slotId).getStack() != null && getSlot(slotId).getStack().stackSize <= 0)
+						getSlot(slotId).putStack(null);
+
+				}
+			}
 			slotChanged(slotId != 0);
 		} else {
 			ItemStack s = playerInv.getItemStack().copy();

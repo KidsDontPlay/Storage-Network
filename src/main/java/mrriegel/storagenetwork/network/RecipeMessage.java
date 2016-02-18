@@ -77,7 +77,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 						}
 					}
 					con.slotChanged();
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 				} else if (message.index == 1) {
 					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerTemplate))
 						return;

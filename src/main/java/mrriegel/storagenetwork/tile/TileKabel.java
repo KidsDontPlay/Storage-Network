@@ -6,6 +6,7 @@ import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
+import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -123,7 +124,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
 		if (getStack() == null)
 			return true;
-		int amount = m.getAmount(getStack(), true, false);
+		int amount = m.getAmount(new FilterItem(getStack(), true, false));
 		if (isMode()) {
 			return amount > getLimit();
 		} else {
