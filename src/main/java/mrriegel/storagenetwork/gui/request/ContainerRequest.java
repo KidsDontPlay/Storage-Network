@@ -45,8 +45,9 @@ public class ContainerRequest extends Container {
 			int slot = stackTag.getByte("Slot");
 			craftMatrix.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
+		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 		if (!tile.getWorld().isRemote)
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile.getWorld().getTileEntity(tile.getMaster())).getStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
 		this.addSlotToContainer(new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
 			@Override
 			public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
@@ -65,7 +66,7 @@ public class ContainerRequest extends Container {
 						ItemStack req = t.request(lis.get(i), 1, true, true, false, false);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
-				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);
 				detectAndSendChanges();
 			}
 
@@ -183,8 +184,9 @@ public class ContainerRequest extends Container {
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
 			return false;
+		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 50 == 0) {
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) tile.getWorld().getTileEntity(tile.getMaster())).getStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
 		}
 		if (!inv.equals(get())) {
 			slotChanged();

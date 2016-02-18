@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -51,7 +52,8 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+//					System.out.println("can: "+tile.canCraft(new ItemStack(Blocks.furnace), 1));
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
 				}
 

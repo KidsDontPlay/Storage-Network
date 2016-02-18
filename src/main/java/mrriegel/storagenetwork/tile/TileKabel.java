@@ -123,7 +123,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 		TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
 		if (getStack() == null)
 			return true;
-		int amount = m.getAmount(getStack());
+		int amount = m.getAmount(getStack(), true, false);
 		if (isMode()) {
 			return amount > getLimit();
 		} else {

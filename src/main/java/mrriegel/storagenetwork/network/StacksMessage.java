@@ -18,16 +18,18 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, IMessage> {
-	int size, id;
-	List<StackWrapper> stacks;
+	int size, csize, id;
+	List<StackWrapper> stacks, craftableStacks;
 
 	public StacksMessage() {
 	}
 
-	public StacksMessage(List<StackWrapper> stacks, int id) {
+	public StacksMessage(List<StackWrapper> stacks, List<StackWrapper> craftableStacks, int id) {
 		super();
 		this.stacks = stacks;
+		this.craftableStacks = craftableStacks;
 		this.size = stacks.size();
+		this.csize = craftableStacks.size();
 		this.id = id;
 	}
 
@@ -43,6 +45,7 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
 				} else if (message.id == GuiHandler.REQUEST && Minecraft.getMinecraft().currentScreen instanceof GuiRequest) {
 					GuiRequest gui = (GuiRequest) Minecraft.getMinecraft().currentScreen;
 					gui.stacks = message.stacks;
+					gui.craftableStacks = message.craftableStacks;
 				}
 
 			}
@@ -53,6 +56,7 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.size = buf.readInt();
+		this.csize = buf.readInt();
 		this.id = buf.readInt();
 		stacks = new ArrayList<StackWrapper>();
 		for (int i = 0; i < size; i++) {
@@ -61,13 +65,26 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
 			w.readFromNBT(compound);
 			stacks.add(w);
 		}
+		craftableStacks = new ArrayList<StackWrapper>();
+		for (int i = 0; i < csize; i++) {
+			NBTTagCompound compound = ByteBufUtils.readTag(buf);
+			StackWrapper w = new StackWrapper(null, 0);
+			w.readFromNBT(compound);
+			craftableStacks.add(w);
+		}
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.size);
+		buf.writeInt(this.csize);
 		buf.writeInt(this.id);
 		for (StackWrapper w : stacks) {
+			NBTTagCompound compound = new NBTTagCompound();
+			w.writeToNBT(compound);
+			ByteBufUtils.writeTag(buf, compound);
+		}
+		for (StackWrapper w : craftableStacks) {
 			NBTTagCompound compound = new NBTTagCompound();
 			w.writeToNBT(compound);
 			ByteBufUtils.writeTag(buf, compound);

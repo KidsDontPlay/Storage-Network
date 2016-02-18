@@ -44,7 +44,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 public class GuiRequest extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
 	int page = 1, maxPage = 1;
-	public List<StackWrapper> stacks;
+	public List<StackWrapper> stacks, craftableStacks;
 	ItemStack over;
 	private GuiTextField searchBar;
 	private Button direction, sort, left, right;
@@ -138,6 +138,9 @@ public class GuiRequest extends GuiContainer {
 						tmp.add(s);
 				}
 		}
+		if (craftableStacks != null)
+			for (StackWrapper s : craftableStacks)
+				tmp.add(s);
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
 			int mul = tile.downwards ? -1 : 1;
 

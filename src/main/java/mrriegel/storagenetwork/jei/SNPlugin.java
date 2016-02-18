@@ -12,8 +12,8 @@ import mezz.jei.api.JEIPlugin;
 public class SNPlugin implements IModPlugin {
 	@Override
 	public void register(IModRegistry registry) {
-		RecipeTransferHandler handler = new RecipeTransferHandler();
-		registry.getRecipeTransferRegistry().addRecipeTransferHandler(handler);
+		registry.getRecipeTransferRegistry().addRecipeTransferHandler(new RequestRecipeTransferHandler());
+		registry.getRecipeTransferRegistry().addRecipeTransferHandler(new TemplateRecipeTransferHandler());
 	}
 
 	@Override

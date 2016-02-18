@@ -30,7 +30,7 @@ public class BlockContainer extends net.minecraft.block.BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return null;
+		return new TileContainer();
 	}
 
 	@Override

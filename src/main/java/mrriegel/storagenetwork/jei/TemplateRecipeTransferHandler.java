@@ -9,8 +9,7 @@ import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.gui.ingredients.GuiIngredient;
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.network.ClearMessage;
+import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RecipeMessage;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,10 +20,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public class RecipeTransferHandler implements IRecipeTransferHandler {
+public class TemplateRecipeTransferHandler implements IRecipeTransferHandler {
 	@Override
 	public Class<? extends Container> getContainerClass() {
-		return ContainerRequest.class;
+		return ContainerTemplate.class;
 	}
 
 	@Override
@@ -35,7 +34,6 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 	@Override
 	public IRecipeTransferError transferRecipe(Container container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
 		if (doTransfer) {
-			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			Map inputs = recipeLayout.getItemStacks().getGuiIngredients();
 			Map<Integer, List<ItemStack>> map = new HashMap<Integer, List<ItemStack>>();
 			for (int j = 0; j < container.inventorySlots.size(); j++) {
@@ -61,7 +59,7 @@ public class RecipeTransferHandler implements IRecipeTransferHandler {
 					}
 				nbt.setTag("s" + j, invList);
 			}
-			PacketHandler.INSTANCE.sendToServer(new RecipeMessage(nbt));
+			PacketHandler.INSTANCE.sendToServer(new RecipeMessage(nbt, 1));
 		}
 		return null;
 	}

@@ -40,7 +40,7 @@ public class ItemTemplate extends Item {
 		if (playerIn.isSneaking()) {
 			itemStackIn.setTagCompound(new NBTTagCompound());
 		} else {
-			if (!worldIn.isRemote)
+			if (!worldIn.isRemote && itemStackIn.stackSize == 1)
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.TEMPLATE, worldIn, 0, 0, 0);
 		}
 		return super.onItemRightClick(itemStackIn, worldIn, playerIn);
@@ -57,6 +57,13 @@ public class ItemTemplate extends Item {
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
 		return this.getUnlocalizedName() + "_" + stack.getItemDamage();
+	}
+
+	@Override
+	public int getItemStackLimit(ItemStack stack) {
+		if (stack.getTagCompound() == null || stack.getTagCompound().equals(new NBTTagCompound()))
+			return 64;
+		return 1;
 	}
 
 }

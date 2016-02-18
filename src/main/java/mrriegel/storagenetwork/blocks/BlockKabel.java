@@ -9,6 +9,7 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
+import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -228,27 +229,12 @@ public class BlockKabel extends BlockContainer {
 		}
 	}
 
-	public boolean canConnectTo(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
-		Block block = worldIn.getBlockState(pos).getBlock();
-		Block ori = worldIn.getBlockState(orig).getBlock();
-		if (block == ModBlocks.master || block instanceof BlockKabel || block == ModBlocks.request)
-			return true;
-		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
-			return false;
-		boolean inventory = worldIn.getTileEntity(pos) instanceof IInventory && !(worldIn.getTileEntity(pos) instanceof ISidedInventory);
-		EnumFacing face = get(orig, pos);
-		boolean sided = worldIn.getTileEntity(pos) instanceof ISidedInventory && (((ISidedInventory) worldIn.getTileEntity(pos)).getSlotsForFace(face).length != 0);
-		if (!inventory && !sided)
-			return false;
-		if (isConnectedToInventory(worldIn, orig, pos))
-			return false;
-		return inventory || sided;
-	}
-
 	boolean isConnectedToInventory(IBlockAccess world, BlockPos orig, BlockPos pos) {
 		IBlockState s = world.getBlockState(orig);
 		for (BlockPos p : TileMaster.getSides(orig)) {
 			if (p.equals(pos))
+				continue;
+			if (world.getTileEntity(p) instanceof TileContainer)
 				continue;
 			if (world.getTileEntity(p) instanceof ISidedInventory && (((ISidedInventory) world.getTileEntity(p)).getSlotsForFace(get(orig, p)).length != 0))
 				return true;
@@ -303,12 +289,12 @@ public class BlockKabel extends BlockContainer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		boolean d = this.canConnectTo(worldIn, pos, pos.down());
-		boolean u = this.canConnectTo(worldIn, pos, pos.up());
-		boolean e = this.canConnectTo(worldIn, pos, pos.east());
-		boolean w = this.canConnectTo(worldIn, pos, pos.west());
-		boolean s = this.canConnectTo(worldIn, pos, pos.south());
-		boolean n = this.canConnectTo(worldIn, pos, pos.north());
+		boolean d = this.getConnect(worldIn, pos, pos.down())!=Connect.NULL;
+		boolean u = this.getConnect(worldIn, pos, pos.up())!=Connect.NULL;
+		boolean e = this.getConnect(worldIn, pos, pos.east())!=Connect.NULL;
+		boolean w = this.getConnect(worldIn, pos, pos.west())!=Connect.NULL;
+		boolean s = this.getConnect(worldIn, pos, pos.south())!=Connect.NULL;
+		boolean n = this.getConnect(worldIn, pos, pos.north())!=Connect.NULL;
 
 		float f = 0.3125F;
 		float f1 = 0.6875F;
@@ -353,7 +339,7 @@ public class BlockKabel extends BlockContainer {
 	private Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
 		Block ori = worldIn.getBlockState(orig).getBlock();
-		if (block == ModBlocks.master || block instanceof BlockKabel || block == ModBlocks.request)
+		if (worldIn.getTileEntity(pos) instanceof IConnectable)
 			return Connect.CONNECT;
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return Connect.NULL;

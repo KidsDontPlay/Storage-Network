@@ -1,6 +1,11 @@
 package mrriegel.storagenetwork.helper;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -53,6 +58,13 @@ public class Util {
 			for (int j = 0; j < br.length; j++)
 				if (ar[i] == br[j])
 					return true;
+		return false;
+	}
+
+	public static <E> boolean contains(List<E> list, E e, Comparator<? super E> c) {
+		for (E a : list)
+			if (c.compare(a, e) == 0)
+				return true;
 		return false;
 	}
 

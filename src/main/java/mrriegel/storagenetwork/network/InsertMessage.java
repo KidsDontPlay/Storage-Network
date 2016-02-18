@@ -52,7 +52,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
 						((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer).detectAndSendChanges();
 					}
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 				}
 
 			}

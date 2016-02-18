@@ -55,7 +55,7 @@ public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, I
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 				}
 
 			}

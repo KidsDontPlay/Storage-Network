@@ -2,12 +2,15 @@ package mrriegel.storagenetwork.handler;
 
 import mrriegel.storagenetwork.gui.cable.ContainerCable;
 import mrriegel.storagenetwork.gui.cable.GuiCable;
+import mrriegel.storagenetwork.gui.container.ContainerContainer;
+import mrriegel.storagenetwork.gui.container.GuiContainer;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.remote.GuiRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.gui.request.GuiRequest;
 import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.gui.template.GuiTemplate;
+import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,6 +39,8 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == TEMPLATE) {
 			return new ContainerTemplate(player.inventory);
 		}
+		if (ID == CONTAINER)
+			return new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		return null;
 	}
 
@@ -53,6 +58,9 @@ public class GuiHandler implements IGuiHandler {
 		}
 		if (ID == TEMPLATE) {
 			return new GuiTemplate(new ContainerTemplate(player.inventory));
+		}
+		if (ID == CONTAINER) {
+			return new GuiContainer(new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
 		}
 		return null;
 	}

@@ -1,5 +1,8 @@
 package mrriegel.storagenetwork.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -52,4 +55,5 @@ public class StackWrapper {
 		wrap.readFromNBT(nbt);
 		return wrap.getStack() != null && wrap.getStack().getItem() != null ? wrap : null;
 	}
+
 }

@@ -60,7 +60,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 						Container c = p.openContainer;
 						if (c instanceof ContainerRequest && ((ContainerRequest) c).tile.getPos().equals(this.pos))
 							((ContainerRequest) c).back.setInventorySlotContents(i, back.get(i));
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), p);
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REQUEST), p);
 					}
 					break;
 				} else if (rest == num)
@@ -73,7 +73,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 						Container c = p.openContainer;
 						if (c instanceof ContainerRequest)
 							((ContainerRequest) c).back.setInventorySlotContents(i, back.get(i));
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), GuiHandler.REQUEST), p);
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REQUEST), p);
 					}
 					break;
 				}

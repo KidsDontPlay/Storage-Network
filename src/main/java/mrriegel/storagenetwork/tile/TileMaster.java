@@ -1,23 +1,31 @@
 package mrriegel.storagenetwork.tile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -27,9 +35,12 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.oredict.OreDictionary;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
@@ -46,10 +57,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile == null) {
-				refreshNetwork();
-				return stacks;
-			}
 			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
@@ -86,6 +93,36 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return stacks;
 	}
 
+	public List<StackWrapper> getCraftableStacks() {
+		List<StackWrapper> craftableStacks = new ArrayList<StackWrapper>();
+		List<TileContainer> invs = new ArrayList<TileContainer>();
+		for (BlockPos p : connectables) {
+			if (!(worldObj.getTileEntity(p) instanceof TileContainer))
+				continue;
+			TileContainer tile = (TileContainer) worldObj.getTileEntity(p);
+			invs.add(tile);
+		}
+		List<StackWrapper> stacks = getStacks();
+		for (TileContainer t : invs) {
+			for (int i = 0; i < t.getSizeInventory(); i++) {
+				if (t.getStackInSlot(i) != null) {
+					NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
+					if (!Util.contains(stacks, new StackWrapper(ItemStack.loadItemStackFromNBT(res), 0), new Comparator<StackWrapper>() {
+						@Override
+						public int compare(StackWrapper o1, StackWrapper o2) {
+							if (o1.getStack().isItemEqual(o2.getStack()) && ItemStack.areItemStackTagsEqual(o2.getStack(), o1.getStack())) {
+								return 0;
+							}
+							return 1;
+						}
+					}))
+						addToList(craftableStacks, ItemStack.loadItemStackFromNBT(res), 0);
+				}
+			}
+		}
+		return craftableStacks;
+	}
+
 	private void addToList(List<StackWrapper> lis, ItemStack s, int num) {
 		boolean added = false;
 		for (int i = 0; i < lis.size(); i++) {
@@ -99,12 +136,133 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			lis.add(new StackWrapper(s, num));
 	}
 
-	public int getAmount(ItemStack s) {
+	public int getAmount(ItemStack s, boolean meta, boolean ore) {
+		int size = 0;
 		for (StackWrapper w : getStacks()) {
-			if (w.getStack().isItemEqual(s))
-				return w.getSize();
+			if (!ore) {
+				if (meta ? w.getStack().isItemEqual(s) : w.getStack().getItem() == s.getItem())
+					size += w.getSize();
+			} else {
+				if (Util.equalOreDict(w.getStack(), s))
+					size += w.getSize();
+			}
 		}
-		return 0;
+		return size;
+	}
+
+	public boolean canCraft(ItemStack stack, int num) {
+		List<ItemStack> templates = new ArrayList<ItemStack>();
+		for (BlockPos p : connectables) {
+			if (!(worldObj.getTileEntity(p) instanceof TileContainer))
+				continue;
+			TileContainer tile = (TileContainer) worldObj.getTileEntity(p);
+			for (int i = 0; i < tile.getSizeInventory(); i++) {
+				if (tile.getStackInSlot(i) != null) {
+					NBTTagCompound res = (NBTTagCompound) tile.getStackInSlot(i).getTagCompound().getTag("res");
+					ItemStack result = ItemStack.loadItemStackFromNBT(res);
+					if (result.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(result, stack))
+						templates.add(tile.getStackInSlot(i));
+				}
+			}
+		}
+		if (templates.size() == 0)
+			return false;
+		for (ItemStack s : templates) {
+			Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
+			Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
+			Map<Integer, Boolean> ores = Maps.<Integer, Boolean> newHashMap();
+			NBTTagList invList = s.getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);
+			for (int i = 0; i < invList.tagCount(); i++) {
+				NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+				int slot = stackTag.getByte("Slot");
+				stacks.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
+			}
+			for (int i = 1; i < 10; i++) {
+				metas.put(i - 1, NBTHelper.getBoolean(s, "meta" + i));
+				ores.put(i - 1, NBTHelper.getBoolean(s, "ore" + i));
+			}
+			List<StackWrapper> lis = getStacks();
+			for (int i = 0; i < num; i++) {
+				for (Entry<Integer, ItemStack> e : stacks.entrySet()) {
+					if (e.getValue() != null) {
+						boolean meta = metas.get(e.getKey()), ore = ores.get(e.getKey());
+						if (!consume(lis, e.getValue(), meta, ore))
+							return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private List<List<FilterItem>> getIngredients(ItemStack stack) {
+		List<List<FilterItem>> lists = new ArrayList<List<FilterItem>>();
+		for (BlockPos p : connectables) {
+			if (!(worldObj.getTileEntity(p) instanceof TileContainer))
+				continue;
+			TileContainer tile = (TileContainer) worldObj.getTileEntity(p);
+			for (int i = 0; i < tile.getSizeInventory(); i++) {
+				if (tile.getStackInSlot(i) != null) {
+					NBTTagCompound res = (NBTTagCompound) tile.getStackInSlot(i).getTagCompound().getTag("res");
+					ItemStack result = ItemStack.loadItemStackFromNBT(res);
+					if (result.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(result, stack)) {
+						Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
+						Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
+						Map<Integer, Boolean> ores = Maps.<Integer, Boolean> newHashMap();
+						NBTTagList invList = tile.getStackInSlot(i).getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);
+						for (int ii = 0; ii < invList.tagCount(); ii++) {
+							NBTTagCompound stackTag = invList.getCompoundTagAt(ii);
+							int slot = stackTag.getByte("Slot");
+							stacks.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
+						}
+						for (int ii = 1; ii < 10; i++) {
+							metas.put(ii - 1, NBTHelper.getBoolean(tile.getStackInSlot(i), "meta" + ii));
+							ores.put(ii - 1, NBTHelper.getBoolean(tile.getStackInSlot(i), "ore" + ii));
+						}
+						List<FilterItem> lis = new ArrayList<FilterItem>();
+						for (Entry<Integer, ItemStack> e : stacks.entrySet()) {
+							if (e.getValue() != null) {
+								boolean meta = metas.get(e.getKey()), ore = ores.get(e.getKey());
+								lis.add(new FilterItem(e.getValue(), meta, ore));
+							}
+						}
+						lists.add(lis);
+					}
+				}
+			}
+		}
+		return lists;
+	}
+
+	private boolean consume(List<StackWrapper> wraps, ItemStack stack, boolean meta, boolean ore) {
+		boolean found = false;
+		for (StackWrapper w : wraps) {
+			if (!ore) {
+				if (meta ? w.getStack().isItemEqual(stack) : w.getStack().getItem() == stack.getItem()) {
+					if (w.getSize() == 0) {
+
+					} else {
+						w.setSize(w.getSize() - 1);
+						found = true;
+						if (w.getSize() < 0)
+							return false;
+					}
+				}
+
+			} else {
+				if (Util.equalOreDict(w.getStack(), stack)) {
+					if (w.getSize() == 0) {
+
+					} else {
+						w.setSize(w.getSize() - 1);
+						found = true;
+						if (w.getSize() < 0)
+							return false;
+					}
+				}
+			}
+		}
+		return found;
 	}
 
 	@Override
