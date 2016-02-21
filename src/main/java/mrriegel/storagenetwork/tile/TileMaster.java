@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.tile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,6 +11,7 @@ import java.util.Map.Entry;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.api.ITemplateContainer;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.helper.CraftingTask;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.NBTHelper;
@@ -19,6 +21,7 @@ import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -46,6 +49,7 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver {
 	public List<BlockPos> connectables, storageInventorys, imInventorys, exInventorys;
 	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, 120, 0);
+	public List<CraftingTask> tasks = new ArrayList<CraftingTask>();
 
 	public List<StackWrapper> getStacks() {
 		List<StackWrapper> stacks = new ArrayList<StackWrapper>();
@@ -202,19 +206,70 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	}
 
-	public boolean canCraft(List<StackWrapper> orig, List<ItemStack> templates, int num) {
-		for (ItemStack s : templates) {
-			boolean done = false;
-			int times = num / s.stackSize;
+	public int canCraft(List<StackWrapper> orig, FilterItem fil, int num) {
+		for (ItemStack s : getTemplates(fil, false)) {
+			int result = 0;
+			boolean done = true;
+			List<StackWrapper> stacks = new ArrayList<StackWrapper>();
+			for (StackWrapper w : orig)
+				stacks.add(w.copy());
+			System.out.println("2: "+stacks);
+			int con = num / s.stackSize;
 			if (num % s.stackSize != 0)
-				times++;
-			List<StackWrapper> stacks = orig;
+				con++;
+			for (int i = 0; i < con; i++) {
+				boolean oneCraft = true;
+				for (FilterItem f : getIngredients(s)) {
+
+					while (true) {
+//						System.out.println(f.getStack());
+						boolean found = consume(stacks, f, con) == 1;
+						System.out.println("1: "+stacks);
+						if (!found) {
+							int t = canCraft(stacks, f, 1);
+							if (t != 0){
+								addToList(stacks, f.getStack(), t);}
+							else {
+								oneCraft = false;
+								break;
+							}
+						} else {
+							break;
+						}
+					}
+					// System.out.println("break");
+					// break;
+				}
+				if (oneCraft)
+					result += s.stackSize;
+			}
+			if (result >= num){
+				System.out.println("return: "+result+" "+fil.getStack());
+				return result;}
+
+		}
+		System.out.println("end");
+		return 0;
+	}
+
+	public ItemStack craft(FilterItem fil, int num) {
+		for (ItemStack s : getTemplates(fil, false)) {
+			boolean done = false;
+			ItemStack last = null;
 			for (FilterItem f : getIngredients(s)) {
-				if (consume(stacks, f, num)) {
+				int con = num / s.stackSize;
+				if (num % s.stackSize != 0)
+					con++;
+				// System.out.println("consume: "+con+" "+f.getStack());
+				ItemStack req = request(f.getStack(), con, f.isMeta(), false, f.isOre(), false);
+				if (req != null && req.stackSize == con) {
 					done = true;
 					continue;
 				}
-				if (canCraft(stacks, getTemplates(f, false), num)) {
+				int rest = con - req.stackSize;
+				// System.out.println("craft: "+con+" "+f.getStack());
+				ItemStack craft = craft(f, rest);
+				if (craft != null && craft.stackSize == rest) {
 					done = true;
 					continue;
 				}
@@ -222,81 +277,41 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				break;
 			}
 			if (done)
-				return true;
+				return null;
 
 		}
-		return false;
+		return null;
 	}
 
-	// private List<List<FilterItem>> getIngredients(ItemStack stack) {
-	// List<List<FilterItem>> lists = new ArrayList<List<FilterItem>>();
-	// for (BlockPos p : connectables) {
-	// if (!(worldObj.getTileEntity(p) instanceof TileContainer))
-	// continue;
-	// TileContainer tile = (TileContainer) worldObj.getTileEntity(p);
-	// for (int i = 0; i < tile.getSizeInventory(); i++) {
-	// if (tile.getStackInSlot(i) != null) {
-	// NBTTagCompound res = (NBTTagCompound)
-	// tile.getStackInSlot(i).getTagCompound().getTag("res");
-	// ItemStack result = ItemStack.loadItemStackFromNBT(res);
-	// if (result.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(result,
-	// stack)) {
-	// Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
-	// Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
-	// Map<Integer, Boolean> ores = Maps.<Integer, Boolean> newHashMap();
-	// NBTTagList invList =
-	// tile.getStackInSlot(i).getTagCompound().getTagList("crunchItem",
-	// Constants.NBT.TAG_COMPOUND);
-	// for (int ii = 0; ii < invList.tagCount(); ii++) {
-	// NBTTagCompound stackTag = invList.getCompoundTagAt(ii);
-	// int slot = stackTag.getByte("Slot");
-	// stacks.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
-	// }
-	// for (int ii = 1; ii < 10; i++) {
-	// metas.put(ii - 1, NBTHelper.getBoolean(tile.getStackInSlot(i), "meta" +
-	// ii));
-	// ores.put(ii - 1, NBTHelper.getBoolean(tile.getStackInSlot(i), "ore" +
-	// ii));
-	// }
-	// List<FilterItem> lis = new ArrayList<FilterItem>();
-	// for (Entry<Integer, ItemStack> e : stacks.entrySet()) {
-	// if (e.getValue() != null) {
-	// boolean meta = metas.get(e.getKey()), ore = ores.get(e.getKey());
-	// lis.add(new FilterItem(e.getValue(), meta, ore));
-	// }
-	// }
-	// lists.add(lis);
-	// }
-	// }
-	// }
-	// }
-	// return lists;
-	// }
-
-	private boolean consume(List<StackWrapper> wraps, FilterItem fil, int num) {
-		boolean found = false;
+	private int consume(List<StackWrapper> wraps, FilterItem fil, int num) {
 		boolean meta = fil.isMeta(), ore = fil.isOre();
 		ItemStack stack = fil.getStack();
+		// System.out.println(fil.getStack()+" "+num);
+		int rest = num;
 		for (StackWrapper w : wraps) {
 			if (!ore) {
 				if (meta ? w.getStack().isItemEqual(stack) : w.getStack().getItem() == stack.getItem()) {
-					if (w.getSize() >= num) {
-						System.out.println("dec: " + w.getStack());
-						w.setSize(w.getSize() - num);
-						found = true;
+					if (w.getSize() >= rest) {
+						w.setSize(w.getSize() - rest);
+						return num;
+					} else {
+						rest = rest - w.getSize();
+						w.setSize(0);
 					}
 				}
 			} else {
 				if (Util.equalOreDict(w.getStack(), stack)) {
-					if (w.getSize() >= num) {
-						System.out.println("dec: " + w.getStack());
-						w.setSize(w.getSize() - num);
-						found = true;
+					if (w.getSize() >= rest) {
+						w.setSize(w.getSize() - rest);
+						return num;
+					} else {
+						rest = rest - w.getSize();
+						w.setSize(0);
 					}
 				}
 			}
 		}
-		return found;
+		return num - rest;
 	}
 
 	@Override
@@ -311,6 +326,14 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		exInventorys = new Gson().fromJson(compound.getString("exInventorys"), new TypeToken<List<BlockPos>>() {
 		}.getType());
 		en.readFromNBT(compound);
+		NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
+		tasks = new ArrayList<CraftingTask>();
+		for (int i = 0; i < tasksList.tagCount(); i++) {
+			NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
+			CraftingTask t = new CraftingTask();
+			t.readFromNBT(stackTag);
+			tasks.add(t);
+		}
 	}
 
 	@Override
@@ -321,6 +344,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		compound.setString("imInventorys", new Gson().toJson(imInventorys));
 		compound.setString("exInventorys", new Gson().toJson(exInventorys));
 		en.writeToNBT(compound);
+		NBTTagList tasksList = new NBTTagList();
+		for (CraftingTask t : tasks) {
+			NBTTagCompound stackTag = new NBTTagCompound();
+			t.writeToNBT(stackTag);
+			tasksList.appendTag(stackTag);
+		}
+		compound.setTag("tasks", tasksList);
 	}
 
 	private void addCables(BlockPos pos, int num) {

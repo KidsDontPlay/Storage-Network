@@ -289,12 +289,12 @@ public class BlockKabel extends BlockContainer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		boolean d = this.getConnect(worldIn, pos, pos.down())!=Connect.NULL;
-		boolean u = this.getConnect(worldIn, pos, pos.up())!=Connect.NULL;
-		boolean e = this.getConnect(worldIn, pos, pos.east())!=Connect.NULL;
-		boolean w = this.getConnect(worldIn, pos, pos.west())!=Connect.NULL;
-		boolean s = this.getConnect(worldIn, pos, pos.south())!=Connect.NULL;
-		boolean n = this.getConnect(worldIn, pos, pos.north())!=Connect.NULL;
+		boolean d = this.getConnect(worldIn, pos, pos.down()) != Connect.NULL;
+		boolean u = this.getConnect(worldIn, pos, pos.up()) != Connect.NULL;
+		boolean e = this.getConnect(worldIn, pos, pos.east()) != Connect.NULL;
+		boolean w = this.getConnect(worldIn, pos, pos.west()) != Connect.NULL;
+		boolean s = this.getConnect(worldIn, pos, pos.south()) != Connect.NULL;
+		boolean n = this.getConnect(worldIn, pos, pos.north()) != Connect.NULL;
 
 		float f = 0.3125F;
 		float f1 = 0.6875F;
@@ -339,7 +339,7 @@ public class BlockKabel extends BlockContainer {
 	private Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
 		Block ori = worldIn.getBlockState(orig).getBlock();
-		if (worldIn.getTileEntity(pos) instanceof IConnectable)
+		if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)
 			return Connect.CONNECT;
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return Connect.NULL;

@@ -7,6 +7,7 @@ import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -54,7 +55,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 						}
 					}
 					FilterItem x = new FilterItem(new ItemStack(Blocks.chest), true, false);
-					System.out.println("can: " + tile.canCraft(tile.getStacks(), tile.getTemplates(x, false), 1));
+					System.out.println("can: " + tile.canCraft(tile.getStacks(), x, 1));
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
 				}

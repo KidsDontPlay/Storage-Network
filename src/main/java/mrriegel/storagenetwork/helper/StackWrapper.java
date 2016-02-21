@@ -50,6 +50,10 @@ public class StackWrapper {
 		this.size = size;
 	}
 
+	public StackWrapper copy() {
+		return new StackWrapper(stack.copy(), size);
+	}
+
 	public static StackWrapper loadStackWrapperFromNBT(NBTTagCompound nbt) {
 		StackWrapper wrap = new StackWrapper(null, 0);
 		wrap.readFromNBT(nbt);
