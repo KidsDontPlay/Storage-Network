@@ -73,7 +73,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					IDrawer drawer = group.getDrawer(i);
 					ItemStack stack = drawer.getStoredItemPrototype();
-					if (stack != null && stack.getItem() != null) {
+					if (stack != null && stack.getItem() != null && t.canTransfer(stack)) {
 						addToList(stacks, stack.copy(), drawer.getStoredItemCount());
 					}
 				}
@@ -206,14 +206,14 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	}
 
-	public int canCraft(List<StackWrapper> orig, FilterItem fil, int num) {
+	public int canCraft(List<StackWrapper> stacks, FilterItem fil, int num) {
 		for (ItemStack s : getTemplates(fil, false)) {
 			int result = 0;
 			boolean done = true;
-			List<StackWrapper> stacks = new ArrayList<StackWrapper>();
-			for (StackWrapper w : orig)
-				stacks.add(w.copy());
-			System.out.println("2: "+stacks);
+//			List<StackWrapper> stacks = new ArrayList<StackWrapper>();
+//			for (StackWrapper w : orig)
+//				stacks.add(w.copy());
+			System.out.println("2: " + stacks);
 			int con = num / s.stackSize;
 			if (num % s.stackSize != 0)
 				con++;
@@ -222,14 +222,14 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				for (FilterItem f : getIngredients(s)) {
 
 					while (true) {
-//						System.out.println(f.getStack());
+						// System.out.println(f.getStack());
 						boolean found = consume(stacks, f, con) == 1;
-						System.out.println("1: "+stacks);
+						System.out.println("1: " + stacks);
 						if (!found) {
 							int t = canCraft(stacks, f, 1);
-							if (t != 0){
-								addToList(stacks, f.getStack(), t);}
-							else {
+							if (t != 0) {
+								addToList(stacks, f.getStack(), t);
+							} else {
 								oneCraft = false;
 								break;
 							}
@@ -243,9 +243,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (oneCraft)
 					result += s.stackSize;
 			}
-			if (result >= num){
-				System.out.println("return: "+result+" "+fil.getStack());
-				return result;}
+			if (result >= num) {
+				System.out.println("return: " + result + " " + fil.getStack());
+				return result;
+			}
 
 		}
 		System.out.println("end");
@@ -293,20 +294,34 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (meta ? w.getStack().isItemEqual(stack) : w.getStack().getItem() == stack.getItem()) {
 					if (w.getSize() >= rest) {
 						w.setSize(w.getSize() - rest);
+						if (w.getSize() == 0) {
+//							w = null;
+							System.out.println("removed: "+wraps.remove(w));
+//							wraps.removeAll(Collections.singleton(null));
+						}
 						return num;
 					} else {
 						rest = rest - w.getSize();
-						w.setSize(0);
+//						w = null;
+						System.out.println("removed: "+wraps.remove(w));
+//						wraps.removeAll(Collections.singleton(null));
 					}
 				}
 			} else {
 				if (Util.equalOreDict(w.getStack(), stack)) {
 					if (w.getSize() >= rest) {
 						w.setSize(w.getSize() - rest);
+						if (w.getSize() == 0) {
+//							w = null;
+							System.out.println("removed: "+wraps.remove(w));
+//							wraps.removeAll(Collections.singleton(null));
+						}
 						return num;
 					} else {
 						rest = rest - w.getSize();
-						w.setSize(0);
+//						w = null;
+						System.out.println("removed: "+wraps.remove(w));
+//						wraps.removeAll(Collections.singleton(null));
 					}
 				}
 			}

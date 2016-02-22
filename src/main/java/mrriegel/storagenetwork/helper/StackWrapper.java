@@ -34,6 +34,14 @@ public class StackWrapper {
 		return "StackWrapper [stack=" + stack + ", size=" + size + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof StackWrapper))
+			return false;
+		StackWrapper o=(StackWrapper) obj;
+		return o.stack.isItemEqual(stack)&& ItemStack.areItemStackTagsEqual(o.stack, stack);
+	}
+
 	public ItemStack getStack() {
 		return stack;
 	}
