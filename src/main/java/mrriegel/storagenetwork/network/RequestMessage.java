@@ -41,22 +41,28 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 			@Override
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
-					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true, true, false, false);
+					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(
+							((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+					ItemStack stack = tile.request(message.stack, message.id == 0 ? 64 : message.ctrl ? 1 : 32, true,
+							true, false, false);
 					if (stack != null) {
 						if (message.shift) {
-							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
+							int rest = Inv.addToInventoryWithLeftover(stack,
+									ctx.getServerHandler().playerEntity.inventory, false);
 							if (rest != 0) {
-								ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+								ctx.getServerHandler().playerEntity
+										.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
 							}
 						} else {
 							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					FilterItem x = new FilterItem(new ItemStack(Blocks.chest), true, false);
-					System.out.println("can: " + tile.canCraft(tile.getStacks(), x,4));
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+					FilterItem x = new FilterItem(new ItemStack(Blocks.stone_brick_stairs), true, false);
+					System.out.println("can: " + tile.canCraft(tile.getStacks(), x, 40));
+					PacketHandler.INSTANCE.sendTo(
+							new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST),
+							ctx.getServerHandler().playerEntity);
 
 				}
 

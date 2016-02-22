@@ -58,7 +58,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
+			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null
+					&& worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
 		}
@@ -79,7 +80,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				}
 			} else if (inv instanceof ISidedInventory) {
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(t.getInventoryFace().getOpposite())) {
-					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i)) && ((ISidedInventory) inv).canExtractItem(i, inv.getStackInSlot(i), t.getInventoryFace().getOpposite())) {
+					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i)) && ((ISidedInventory) inv)
+							.canExtractItem(i, inv.getStackInSlot(i), t.getInventoryFace().getOpposite())) {
 						addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).stackSize);
 					}
 				}
@@ -108,15 +110,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			for (int i = 0; i < t.getSizeInventory(); i++) {
 				if (t.getStackInSlot(i) != null) {
 					NBTTagCompound res = (NBTTagCompound) t.getStackInSlot(i).getTagCompound().getTag("res");
-					if (!Util.contains(stacks, new StackWrapper(ItemStack.loadItemStackFromNBT(res), 0), new Comparator<StackWrapper>() {
-						@Override
-						public int compare(StackWrapper o1, StackWrapper o2) {
-							if (o1.getStack().isItemEqual(o2.getStack()) && ItemStack.areItemStackTagsEqual(o2.getStack(), o1.getStack())) {
-								return 0;
-							}
-							return 1;
-						}
-					}))
+					if (!Util.contains(stacks, new StackWrapper(ItemStack.loadItemStackFromNBT(res), 0),
+							new Comparator<StackWrapper>() {
+								@Override
+								public int compare(StackWrapper o1, StackWrapper o2) {
+									if (o1.getStack().isItemEqual(o2.getStack())
+											&& ItemStack.areItemStackTagsEqual(o2.getStack(), o1.getStack())) {
+										return 0;
+									}
+									return 1;
+								}
+							}))
 						addToList(craftableStacks, ItemStack.loadItemStackFromNBT(res), 0);
 				}
 			}
@@ -164,7 +168,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				NBTTagCompound res = (NBTTagCompound) s.getTagCompound().getTag("res");
 				ItemStack result = ItemStack.loadItemStackFromNBT(res);
 				if (!ore) {
-					if (!meta ? result.getItem() == stack.getItem() : result.isItemEqual(stack) && (!nbt || ItemStack.areItemStackTagsEqual(result, stack))) {
+					if (!meta ? result.getItem() == stack.getItem()
+							: result.isItemEqual(stack) && (!nbt || ItemStack.areItemStackTagsEqual(result, stack))) {
 						ItemStack a = s;
 						a.stackSize = result.stackSize;
 						templates.add(s);
@@ -206,25 +211,28 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	}
 
+	public int canCraft(FilterItem fil, int num) {
+		int max = 0;
+		for (ItemStack s : getTemplates(fil, false))
+			max = Math.max(max, canCraft(getStacks(), fil, num));
+		return max;
+	}
+
 	public int canCraft(List<StackWrapper> stacks, FilterItem fil, int num) {
 		for (ItemStack s : getTemplates(fil, false)) {
 			int result = 0;
 			boolean done = true;
-//			List<StackWrapper> stacks = new ArrayList<StackWrapper>();
-//			for (StackWrapper w : orig)
-//				stacks.add(w.copy());
-			System.out.println("2: " + stacks);
 			int con = num / s.stackSize;
 			if (num % s.stackSize != 0)
 				con++;
 			for (int i = 0; i < con; i++) {
 				boolean oneCraft = true;
 				for (FilterItem f : getIngredients(s)) {
-
+					if (!oneCraft)
+						break;
 					while (true) {
 						// System.out.println(f.getStack());
-						boolean found = consume(stacks, f, con) == 1;
-						System.out.println("1: " + stacks);
+						boolean found = consume(stacks, f, 1) == 1;
 						if (!found) {
 							int t = canCraft(stacks, f, 1);
 							if (t != 0) {
@@ -243,13 +251,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (oneCraft)
 					result += s.stackSize;
 			}
-			if (result >= num) {
-				System.out.println("return: " + result + " " + fil.getStack());
-				return result;
-			}
+			return result;
 
 		}
-		System.out.println("end");
 		return 0;
 	}
 
@@ -295,16 +299,16 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (w.getSize() >= rest) {
 						w.setSize(w.getSize() - rest);
 						if (w.getSize() == 0) {
-//							w = null;
-							System.out.println("removed: "+wraps.remove(w));
-//							wraps.removeAll(Collections.singleton(null));
+							// w = null;
+							wraps.remove(w);
+							// wraps.removeAll(Collections.singleton(null));
 						}
 						return num;
 					} else {
 						rest = rest - w.getSize();
-//						w = null;
-						System.out.println("removed: "+wraps.remove(w));
-//						wraps.removeAll(Collections.singleton(null));
+						// w = null;
+						wraps.remove(w);
+						// wraps.removeAll(Collections.singleton(null));
 					}
 				}
 			} else {
@@ -312,16 +316,16 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (w.getSize() >= rest) {
 						w.setSize(w.getSize() - rest);
 						if (w.getSize() == 0) {
-//							w = null;
-							System.out.println("removed: "+wraps.remove(w));
-//							wraps.removeAll(Collections.singleton(null));
+							// w = null;
+							wraps.remove(w);
+							// wraps.removeAll(Collections.singleton(null));
 						}
 						return num;
 					} else {
 						rest = rest - w.getSize();
-//						w = null;
-						System.out.println("removed: "+wraps.remove(w));
-//						wraps.removeAll(Collections.singleton(null));
+						// w = null;
+						wraps.remove(w);
+						// wraps.removeAll(Collections.singleton(null));
 					}
 				}
 			}
@@ -334,8 +338,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		super.readFromNBT(compound);
 		connectables = new Gson().fromJson(compound.getString("cables"), new TypeToken<List<BlockPos>>() {
 		}.getType());
-		storageInventorys = new Gson().fromJson(compound.getString("storageInventorys"), new TypeToken<List<BlockPos>>() {
-		}.getType());
+		storageInventorys = new Gson().fromJson(compound.getString("storageInventorys"),
+				new TypeToken<List<BlockPos>>() {
+				}.getType());
 		imInventorys = new Gson().fromJson(compound.getString("imInventorys"), new TypeToken<List<BlockPos>>() {
 		}.getType());
 		exInventorys = new Gson().fromJson(compound.getString("exInventorys"), new TypeToken<List<BlockPos>>() {
@@ -372,12 +377,14 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (connectables == null)
 			connectables = new ArrayList<BlockPos>();
 		for (BlockPos bl : getSides(pos)) {
-			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master && !bl.equals(this.pos)
+					&& worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl)
+					&& worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
 				worldObj.markBlockForUpdate(bl);
@@ -396,15 +403,18 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(cable);
 			if (tile.getKind() == Kind.exKabel) {
 				EnumFacing face = tile.getInventoryFace();
-				if (face != null && worldObj.getTileEntity(cable.offset(face)) instanceof IInventory && worldObj.getChunkFromBlockCoords(cable.offset(face)).isLoaded())
+				if (face != null && worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
+						&& worldObj.getChunkFromBlockCoords(cable.offset(face)).isLoaded())
 					exInventorys.add(cable.offset(face));
 			} else if (tile.getKind() == Kind.imKabel) {
 				EnumFacing face = tile.getInventoryFace();
-				if (face != null && worldObj.getTileEntity(cable.offset(face)) instanceof IInventory && worldObj.getChunkFromBlockCoords(cable.offset(face)).isLoaded())
+				if (face != null && worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
+						&& worldObj.getChunkFromBlockCoords(cable.offset(face)).isLoaded())
 					imInventorys.add(cable.offset(face));
 			} else if (tile.getKind() == Kind.storageKabel) {
 				EnumFacing face = tile.getInventoryFace();
-				if (face != null && worldObj.getTileEntity(cable.offset(face)) instanceof IInventory && worldObj.getChunkFromBlockCoords(cable.offset(face)).isLoaded())
+				if (face != null && worldObj.getTileEntity(cable.offset(face)) instanceof IInventory
+						&& worldObj.getChunkFromBlockCoords(cable.offset(face)).isLoaded())
 					storageInventorys.add(cable.offset(face));
 			}
 		}
@@ -441,14 +451,16 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (connectables == null)
 			refreshNetwork();
 		for (BlockPos p : connectables) {
-			if (worldObj.getTileEntity(p) != null && worldObj.getTileEntity(p) instanceof TileKabel && ((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
+			if (worldObj.getTileEntity(p) != null && worldObj.getTileEntity(p) instanceof TileKabel
+					&& ((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
 				int range = 2;
 
 				int x = p.getX();
 				int y = p.getY();
 				int z = p.getZ();
 
-				List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.fromBounds(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
+				List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB
+						.fromBounds(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
 				for (EntityItem item : items) {
 					if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().stackSize, false))
 						continue;
@@ -474,7 +486,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
+			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null
+					&& worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
 		}
@@ -502,7 +515,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (Inv.isInventorySame(inv, source))
 				continue;
-			int remain = (inv instanceof ISidedInventory) ? Inv.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv, t.getInventoryFace().getOpposite(), false) : Inv.addToInventoryWithLeftover(in, inv, false);
+			int remain = (inv instanceof ISidedInventory) ? Inv.addToSidedInventoryWithLeftover(in,
+					(ISidedInventory) inv, t.getInventoryFace().getOpposite(), false)
+					: Inv.addToInventoryWithLeftover(in, inv, false);
 			if (remain == 0)
 				return 0;
 			in = Inv.copyStack(in, remain);
@@ -518,7 +533,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (Inv.isInventorySame(inv, source))
 				continue;
-			int remain = (inv instanceof ISidedInventory) ? Inv.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv, t.getInventoryFace().getOpposite(), false) : Inv.addToInventoryWithLeftover(in, inv, false);
+			int remain = (inv instanceof ISidedInventory) ? Inv.addToSidedInventoryWithLeftover(in,
+					(ISidedInventory) inv, t.getInventoryFace().getOpposite(), false)
+					: Inv.addToInventoryWithLeftover(in, inv, false);
 			if (remain == 0)
 				return 0;
 			in = Inv.copyStack(in, remain);
@@ -535,7 +552,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile.getKind() == Kind.imKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
+			if (tile.getKind() == Kind.imKabel && tile.getConnectedInventory() != null
+					&& worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
 		}
@@ -565,7 +583,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
-					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), (num - insert) + rest) : Inv.copyStack(s.copy(), num - insert));
+					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), (num - insert) + rest)
+							: Inv.copyStack(s.copy(), num - insert));
 					inv.markDirty();
 					break;
 
@@ -588,7 +607,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					int rest = insertStack(Inv.copyStack(s, insert), inv);
 					if (insert == rest)
 						continue;
-					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), (num - insert) + rest) : Inv.copyStack(s.copy(), num - insert));
+					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), (num - insert) + rest)
+							: Inv.copyStack(s.copy(), num - insert));
 
 					inv.markDirty();
 					break;
@@ -605,7 +625,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile.getKind() == Kind.exKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
+			if (tile.getKind() == Kind.exKabel && tile.getConnectedInventory() != null
+					&& worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
 		}
@@ -632,12 +653,16 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				ItemStack g = request(fil, 1, t.getMetas().get(i), false, ore, true);
 				if (g == null)
 					continue;
-				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()), (t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE : t.getFilter().get(i).getSize() - Inv.getAmount(g, inv, t.getInventoryFace().getOpposite(), t.getMetas().get(i), ore));
+				int space = Math.min(Inv.getSpace(g, inv, t.getInventoryFace().getOpposite()),
+						(t.elements(ItemUpgrade.STOCK) < 1) ? Integer.MAX_VALUE
+								: t.getFilter().get(i).getSize() - Inv.getAmount(g, inv,
+										t.getInventoryFace().getOpposite(), t.getMetas().get(i), ore));
 				if (space <= 0)
 					continue;
 				if (!t.status())
 					continue;
-				int num = Math.min(Math.min(g.getMaxStackSize(), inv.getInventoryStackLimit()), Math.min(space, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2)));
+				int num = Math.min(Math.min(g.getMaxStackSize(), inv.getInventoryStackLimit()),
+						Math.min(space, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2)));
 				if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
 					continue;
 				ItemStack rec = request(g, num, true, false, false, false);
@@ -651,7 +676,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag, boolean ore, boolean simulate) {
+	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag, boolean ore,
+			boolean simulate) {
 		if (size == 0 || stack == null)
 			return null;
 		if (storageInventorys == null)

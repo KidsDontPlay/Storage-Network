@@ -57,7 +57,7 @@ public class BlockRequest extends BlockContainer {
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-onNeighborBlockChange(worldIn, pos, state, null);
+		onNeighborBlockChange(worldIn, pos, state, null);
 	}
 
 	public static void setConnections(World worldIn, BlockPos pos) {
