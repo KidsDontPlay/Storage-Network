@@ -1,7 +1,10 @@
 package mrriegel.storagenetwork.render;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.blocks.BlockKabel;
+import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -28,28 +31,35 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	private final ResourceLocation im = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/im.png");
 	private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/storage.png");
 	private final ResourceLocation vacuum = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/vacuum.png");
-
+	private final ResourceLocation craft = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/craft.png");
 	public CableRenderer() {
 		model = new ModelCable();
 	}
 
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
-		if (te.getCover() != null) {
+		boolean show = Minecraft.getMinecraft().thePlayer.getHeldItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem()) instanceof BlockKabel ;
+		if (te.getCover() != null && !show) {
 			if (te.getCover() == Blocks.glass)
 				return;
 			this.bindTexture(TextureMap.locationBlocksTexture);
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			World world = te.getWorld();
 			BlockPos blockpos = te.getPos();
-			IBlockState iblockstate = te.getCover().getStateFromMeta(te.getCoverMeta());
+			IBlockState iblockstate = show ? ModBlocks.cover.getDefaultState() : te.getCover().getStateFromMeta(te.getCoverMeta());
 
 			GlStateManager.pushMatrix();
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.translate((float) x, (float) y, (float) z);
+
 			Tessellator tessellator = Tessellator.getInstance();
 			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 			worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+//			worldrenderer.color(1F, 1F, 1F, .5F);
+//			GlStateManager.enableBlend();
+//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+//			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//			GlStateManager.color(1F, 1F, 1F, .5F);
 			int i = blockpos.getX();
 			int j = blockpos.getY();
 			int k = blockpos.getZ();
@@ -63,7 +73,8 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			tessellator.draw();
 			RenderHelper.enableStandardItemLighting();
 			GlStateManager.popMatrix();
-			return;
+			if (!show)
+				return;
 		}
 
 		GlStateManager.pushMatrix();
@@ -84,14 +95,17 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 		case vacuumKabel:
 			Minecraft.getMinecraft().renderEngine.bindTexture(vacuum);
 			break;
+		case craftKabel:
+			Minecraft.getMinecraft().renderEngine.bindTexture(craft);
+			break;
 		default:
 			break;
 
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
-//		int r = (int) ((System.currentTimeMillis() / 4) % 360);
-//		GlStateManager.rotate(r, 0.0F, 1.0F, 0.0F);
+		// int r = (int) ((System.currentTimeMillis() / 4) % 360);
+		// GlStateManager.rotate(r, 0.0F, 1.0F, 0.0F);
 		model.render(te);
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();

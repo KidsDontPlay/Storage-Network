@@ -90,11 +90,8 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 							NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 							lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
 						}
-						for (int i = 0; i < lis.size(); i++) {
-							ItemStack s = lis.get(i);
-							con.craftMatrix.setInventorySlotContents(j - 1, s);
-							break;
-						}
+						ItemStack s = lis.get(0);
+						con.craftMatrix.setInventorySlotContents(j - 1, s);
 					}
 					con.slotChanged(true);
 					con.detectAndSendChanges();

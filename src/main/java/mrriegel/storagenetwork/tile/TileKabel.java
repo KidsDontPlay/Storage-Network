@@ -48,7 +48,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	ItemStack stack = null;
 
 	public enum Kind {
-		kabel, exKabel, imKabel, storageKabel, vacuumKabel;
+		kabel, exKabel, imKabel, storageKabel, vacuumKabel, craftKabel;
 	}
 
 	public TileKabel() {
@@ -81,6 +81,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 			return Kind.storageKabel;
 		if (b == ModBlocks.vacuumKabel)
 			return Kind.vacuumKabel;
+		if (b == ModBlocks.craftKabel)
+			return Kind.craftKabel;
 		return null;
 	}
 

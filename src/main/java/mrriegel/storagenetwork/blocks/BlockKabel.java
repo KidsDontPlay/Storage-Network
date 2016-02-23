@@ -155,6 +155,9 @@ public class BlockKabel extends BlockContainer {
 			case storageKabel:
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 				return true;
+			case craftKabel:
+				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+				return true;
 			default:
 				break;
 			}

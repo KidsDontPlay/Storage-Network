@@ -4,21 +4,14 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
-import mrriegel.storagenetwork.render.CableModel;
 import mrriegel.storagenetwork.render.CableRenderer;
-import mrriegel.storagenetwork.render.ClientEventHandlers;
 import mrriegel.storagenetwork.tile.TileKabel;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -29,8 +22,6 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		MinecraftForge.EVENT_BUS.register(new ClientEventHandlers());
-		OBJLoader.instance.addDomain(StorageNetwork.MODID);
 		registerRenderers();
 	}
 

@@ -4,6 +4,8 @@ import mrriegel.storagenetwork.gui.cable.ContainerCable;
 import mrriegel.storagenetwork.gui.cable.GuiCable;
 import mrriegel.storagenetwork.gui.container.ContainerContainer;
 import mrriegel.storagenetwork.gui.container.GuiContainer;
+import mrriegel.storagenetwork.gui.crafter.ContainerCrafter;
+import mrriegel.storagenetwork.gui.crafter.GuiCrafter;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.remote.GuiRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
@@ -11,6 +13,7 @@ import mrriegel.storagenetwork.gui.request.GuiRequest;
 import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.gui.template.GuiTemplate;
 import mrriegel.storagenetwork.tile.TileContainer;
+import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +27,7 @@ public class GuiHandler implements IGuiHandler {
 	public static final int REMOTE = 4;
 	public static final int TEMPLATE = 5;
 	public static final int CONTAINER = 6;
+	public static final int CRAFTER = 7;
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -41,6 +45,8 @@ public class GuiHandler implements IGuiHandler {
 		}
 		if (ID == CONTAINER)
 			return new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+		if (ID == CRAFTER)
+			return new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z)));
 		return null;
 	}
 
@@ -62,6 +68,8 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == CONTAINER) {
 			return new GuiContainer(new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
 		}
+		if (ID == CRAFTER)
+			return new GuiCrafter(new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z))));
 		return null;
 	}
 }

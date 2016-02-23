@@ -185,7 +185,7 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 
 	@Override
 	public String getName() {
-		return null;
+		return worldObj.getBlockState(pos).getBlock().getLocalizedName();
 	}
 
 	@Override

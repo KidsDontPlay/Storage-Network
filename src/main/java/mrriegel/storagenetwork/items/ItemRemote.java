@@ -84,6 +84,7 @@ public class ItemRemote extends Item {
 			NBTHelper.setInteger(stack, "z", pos.getZ());
 			NBTHelper.setBoolean(stack, "bound", true);
 			NBTHelper.setInteger(stack, "id", worldIn.provider.getDimensionId());
+			NBTHelper.setString(stack, "sort", Sort.NAME.toString());
 			return true;
 		}
 		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);

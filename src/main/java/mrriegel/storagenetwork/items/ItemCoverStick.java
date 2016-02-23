@@ -30,8 +30,11 @@ public class ItemCoverStick extends Item {
 			try {
 				if (playerIn.inventory.currentItem >= 8)
 					return false;
-				Block b = Block.getBlockFromItem(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItem());
-				if ((b.isBlockNormalCube() || b == Blocks.glass) && !(b instanceof ITileEntityProvider) && (playerIn.capabilities.isCreativeMode || tile.getCover() != null || playerIn.inventory.consumeInventoryItem(Item.getItemFromBlock(ModBlocks.cover))) && !playerIn.isSneaking()) {
+				boolean valid = true;
+				if (playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1] == null)
+					valid = false;
+				Block b = !valid ? null : Block.getBlockFromItem(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItem());
+				if (!playerIn.isSneaking() && b != null && (b.isBlockNormalCube() || b == Blocks.glass) && !(b instanceof ITileEntityProvider) && (playerIn.capabilities.isCreativeMode || tile.getCover() != null || playerIn.inventory.consumeInventoryItem(Item.getItemFromBlock(ModBlocks.cover)))) {
 					tile.setCover(b);
 					tile.setCoverMeta(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItemDamage());
 					worldIn.markBlockForUpdate(pos);
@@ -46,6 +49,7 @@ public class ItemCoverStick extends Item {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				return false;
 			}
 			return true;
