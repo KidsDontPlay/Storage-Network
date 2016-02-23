@@ -58,8 +58,8 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					FilterItem x = new FilterItem(new ItemStack(Blocks.stone_brick_stairs), true, false);
-					System.out.println("can: " + tile.canCraft(tile.getStacks(), x, 40));
+					FilterItem x = new FilterItem(new ItemStack(Blocks.chest), true, false);
+					System.out.println("can: " + tile.canCraft(tile.getStacks(), x, 40,true));
 					PacketHandler.INSTANCE.sendTo(
 							new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST),
 							ctx.getServerHandler().playerEntity);

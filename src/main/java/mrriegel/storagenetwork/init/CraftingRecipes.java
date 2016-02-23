@@ -26,6 +26,8 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 0), " c ", "gig", " c ", 'c', Blocks.redstone_block, 'i', Items.iron_ingot, 'g', Items.gold_ingot);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 1), "c", "i", "c", 'c', Items.comparator, 'i', Items.iron_ingot);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 2), " c ", "gig", " c ", 'c', Blocks.redstone_block, 'i', Items.iron_ingot, 'g', Items.blaze_powder);
+		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.upgrade, 1, 3), new ItemStack(ModItems.upgrade, 1, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.upgrade, 1, 1), new ItemStack(ModItems.upgrade, 1, 3));
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 0), " c ", "eie", " c ", 'c', Items.gold_ingot, 'i', ModBlocks.storageKabel, 'e', Items.ender_pearl);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 1), "c", "i", "d", 'c', Items.nether_star, 'i', ModItems.remote, 'd', Items.diamond);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.coverstick), " rg", " sb", "s  ", 's', "stickWood", 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
