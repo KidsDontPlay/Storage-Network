@@ -5,7 +5,6 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.CrunchTEInventory;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;

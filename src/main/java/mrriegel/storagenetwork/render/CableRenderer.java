@@ -32,13 +32,14 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/storage.png");
 	private final ResourceLocation vacuum = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/vacuum.png");
 	private final ResourceLocation craft = new ResourceLocation(StorageNetwork.MODID + ":" + "textures/tile/craft.png");
+
 	public CableRenderer() {
 		model = new ModelCable();
 	}
 
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
-		boolean show = Minecraft.getMinecraft().thePlayer.getHeldItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem()) instanceof BlockKabel ;
+		boolean show = Minecraft.getMinecraft().thePlayer.getHeldItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem()) instanceof BlockKabel;
 		if (te.getCover() != null && !show) {
 			if (te.getCover() == Blocks.glass)
 				return;
@@ -55,11 +56,12 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			Tessellator tessellator = Tessellator.getInstance();
 			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 			worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-//			worldrenderer.color(1F, 1F, 1F, .5F);
-//			GlStateManager.enableBlend();
-//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-//			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//			GlStateManager.color(1F, 1F, 1F, .5F);
+			// worldrenderer.color(1F, 1F, 1F, .5F);
+			// GlStateManager.enableBlend();
+			// OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			// GlStateManager.blendFunc(GL11.GL_SRC_ALPHA,
+			// GL11.GL_ONE_MINUS_SRC_ALPHA);
+			// GlStateManager.color(1F, 1F, 1F, .5F);
 			int i = blockpos.getX();
 			int j = blockpos.getY();
 			int k = blockpos.getZ();

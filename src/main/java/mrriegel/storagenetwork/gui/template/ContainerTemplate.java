@@ -1,7 +1,5 @@
 package mrriegel.storagenetwork.gui.template;
 
-import org.lwjgl.input.Keyboard;
-
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,13 +9,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+
+import org.lwjgl.input.Keyboard;
 
 public class ContainerTemplate extends Container {
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);

@@ -2,16 +2,10 @@ package mrriegel.storagenetwork.gui.crafter;
 
 import mrriegel.storagenetwork.tile.TileCrafter;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiCrafter extends GuiContainer {
 	private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");
@@ -31,7 +25,7 @@ public class GuiCrafter extends GuiContainer {
 		this.mc.getTextureManager().bindTexture(furnaceGuiTextures);
 		TileCrafter tile = ((ContainerCrafter) inventorySlots).crafter;
 		int ii = tile.getProgress();
-		int jj = tile.DURATION;
+		int jj = TileCrafter.DURATION;
 		int l = jj != 0 && ii != 0 ? ii * 24 / jj : 0;
 		this.drawTexturedModalRect(i + 89, j + 35, 176, 14, l + 1, 16);
 	}

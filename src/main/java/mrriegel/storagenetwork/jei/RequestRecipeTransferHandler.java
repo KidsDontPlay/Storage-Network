@@ -61,7 +61,7 @@ public class RequestRecipeTransferHandler implements IRecipeTransferHandler {
 					}
 				nbt.setTag("s" + j, invList);
 			}
-			PacketHandler.INSTANCE.sendToServer(new RecipeMessage(nbt,0));
+			PacketHandler.INSTANCE.sendToServer(new RecipeMessage(nbt, 0));
 		}
 		return null;
 	}

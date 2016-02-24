@@ -1,13 +1,7 @@
 package mrriegel.storagenetwork.init;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -31,21 +25,7 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 0), " c ", "eie", " c ", 'c', Items.gold_ingot, 'i', ModBlocks.storageKabel, 'e', Items.ender_pearl);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 1), "c", "i", "d", 'c', Items.nether_star, 'i', ModItems.remote, 'd', Items.diamond);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.coverstick), " rg", " sb", "s  ", 's', "stickWood", 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cover, 24), "dcd", "c c", "dcd", 'c', Blocks.hardened_clay, 'd', new ItemStack(Items.dye, 1, OreDictionary.WILDCARD_VALUE)) {
-			@Override
-			public ItemStack getCraftingResult(InventoryCrafting var1) {
-				List<Integer> lis = new ArrayList<Integer>();
-				for (int i = 0; i < var1.getSizeInventory(); i++)
-					if (var1.getStackInSlot(i) != null && var1.getStackInSlot(i).getItem() == Items.dye)
-						lis.add(var1.getStackInSlot(i).getItemDamage());
-
-				Set<Integer> set = new HashSet<Integer>(lis);
-				if (set.size() == 4)
-					return output.copy();
-				else
-					return null;
-			}
-		});
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cover, 24), "dcd", "c c", "dcd", 'c', Blocks.hardened_clay, 'd', new ItemStack(Items.dye, 1, OreDictionary.WILDCARD_VALUE)));
 	}
 
 }

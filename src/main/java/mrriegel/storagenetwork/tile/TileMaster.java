@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.tile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +20,6 @@ import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -40,6 +38,7 @@ import net.minecraftforge.common.util.Constants;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -213,6 +212,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return max;
 	}
 
+	public List<ItemStack> so = Lists.newArrayList();
+
 	public int canCraft(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww) {
 		int result = 0;
 		for (int ii = 0; ii < getTemplates(fil, false).size(); ii++) {
@@ -235,6 +236,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 							int t = canCraft(stacks, f, 1, false);
 							if (t != 0) {
 								addToList(stacks, f.getStack(), t);
+								so.add(f.getStack());
+
 							} else {
 								oneCraft = false;
 								break;
@@ -373,7 +376,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (connectables == null)
 			connectables = new ArrayList<BlockPos>();
 		for (BlockPos bl : getSides(pos)) {
-			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
 				continue;

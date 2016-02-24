@@ -1,21 +1,13 @@
 package mrriegel.storagenetwork.gui.container;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileContainer;
-import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 
 public class ContainerContainer extends Container {
 	InventoryPlayer playerInv;

@@ -12,16 +12,18 @@ public class CraftingTask {
 	ItemStack output;
 	int outputSize;
 	int done;
+	boolean process;
 	BlockPos machine;
 
 	public CraftingTask() {
 	}
 
-	public CraftingTask(int id, ItemStack output, int outputSize, int done, BlockPos machine) {
+	public CraftingTask(int id, ItemStack output, int outputSize, int done, boolean process, BlockPos machine) {
 		this.id = id;
 		this.output = output;
 		this.outputSize = outputSize;
 		this.done = done;
+		this.process = process;
 		this.machine = machine;
 	}
 
@@ -33,12 +35,12 @@ public class CraftingTask {
 	}
 
 	public static int newID(List<CraftingTask> tasks) {
-		Random ran = new Random(0x440044 << 2 | 22 & Short.MAX_VALUE);
-		int i = ran.nextInt();
+		Random ran = new Random(0x440044 << 2 | 22 & Short.MIN_VALUE);
+		int i = 0;
 		while (true) {
 			for (CraftingTask t : tasks) {
 				if (t.id == i) {
-					i = ran.nextInt();
+					i = Math.abs(ran.nextInt(Short.MAX_VALUE));
 					continue;
 				}
 			}
@@ -54,6 +56,7 @@ public class CraftingTask {
 		nbt.setTag("outputStack", c);
 		nbt.setInteger("outputSize", outputSize);
 		nbt.setInteger("done", done);
+		nbt.setBoolean("process", process);
 		if (machine != null)
 			nbt.setLong("machinePos", machine.toLong());
 		else
@@ -65,6 +68,7 @@ public class CraftingTask {
 		output = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("outputStack"));
 		outputSize = nbt.getInteger("outputSize");
 		done = nbt.getInteger("done");
+		process = nbt.getBoolean("process");
 		machine = nbt.getLong("machinePos") == Long.MAX_VALUE ? null : BlockPos.fromLong(nbt.getLong("machinePos"));
 	}
 

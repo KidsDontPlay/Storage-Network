@@ -1,8 +1,5 @@
 package mrriegel.storagenetwork.helper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -38,8 +35,8 @@ public class StackWrapper {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof StackWrapper))
 			return false;
-		StackWrapper o=(StackWrapper) obj;
-		return o.stack.isItemEqual(stack)&& ItemStack.areItemStackTagsEqual(o.stack, stack);
+		StackWrapper o = (StackWrapper) obj;
+		return o.stack.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(o.stack, stack);
 	}
 
 	public ItemStack getStack() {

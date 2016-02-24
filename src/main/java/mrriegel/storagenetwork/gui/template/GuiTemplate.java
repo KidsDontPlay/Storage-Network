@@ -2,11 +2,7 @@ package mrriegel.storagenetwork.gui.template;
 
 import java.io.IOException;
 
-import org.lwjgl.input.Mouse;
-
-import mrriegel.storagenetwork.gui.cable.ContainerCable;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.TemplateMessage;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -17,6 +13,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.input.Mouse;
 
 public class GuiTemplate extends GuiContainer {
 	private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");

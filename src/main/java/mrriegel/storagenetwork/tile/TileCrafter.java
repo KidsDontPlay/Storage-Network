@@ -6,13 +6,12 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
 public class TileCrafter extends CrunchTEInventory implements ISidedInventory, ITickable {
-	public static final int DURATION=20;
+	public static final int DURATION = 20;
 	int progress;
 
 	public TileCrafter() {
@@ -116,6 +115,14 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 			return false;
 		int result = getStackInSlot(0).stackSize + itemstack.stackSize;
 		return result <= getInventoryStackLimit() && result <= getStackInSlot(0).getMaxStackSize();
+	}
+
+	public boolean canInsert() {
+		for (int i = 0; i < 10; i++) {
+			if (getStackInSlot(i) != null)
+				return false;
+		}
+		return true;
 	}
 
 }

@@ -62,7 +62,7 @@ public class ContainerRemote extends Container {
 				ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
 				slot.putStack(stack);
 				detectAndSendChanges();
-				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(),tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
 				if (stack == null)
 					return null;
 				slot.onPickupFromSlot(playerIn, itemstack1);
@@ -79,7 +79,7 @@ public class ContainerRemote extends Container {
 		if (tile == null || !(tile instanceof TileMaster))
 			return false;
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 50 == 0)
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(ItemRemote.getTile(playerIn.getHeldItem()).getStacks(),tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(ItemRemote.getTile(playerIn.getHeldItem()).getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
 		return playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.remote;
 	}
 

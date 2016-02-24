@@ -24,7 +24,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;

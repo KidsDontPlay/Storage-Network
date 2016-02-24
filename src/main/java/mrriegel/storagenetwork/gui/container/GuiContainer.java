@@ -5,7 +5,6 @@ import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
