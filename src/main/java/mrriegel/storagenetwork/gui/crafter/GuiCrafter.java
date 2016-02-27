@@ -25,7 +25,7 @@ public class GuiCrafter extends GuiContainer {
 		this.mc.getTextureManager().bindTexture(furnaceGuiTextures);
 		TileCrafter tile = ((ContainerCrafter) inventorySlots).crafter;
 		int ii = tile.getProgress();
-		int jj = TileCrafter.DURATION;
+		int jj = tile.getDuration();
 		int l = jj != 0 && ii != 0 ? ii * 24 / jj : 0;
 		this.drawTexturedModalRect(i + 89, j + 35, 176, 14, l + 1, 16);
 	}

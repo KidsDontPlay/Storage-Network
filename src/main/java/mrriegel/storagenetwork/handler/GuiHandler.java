@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 	public static final int CABLE = 0;
+	public static final int FCABLE = 0;
 	public static final int REQUEST = 3;
 	public static final int REMOTE = 4;
 	public static final int TEMPLATE = 5;

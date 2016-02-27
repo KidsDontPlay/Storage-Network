@@ -310,7 +310,8 @@ public class GuiCable extends GuiContainer {
 				RenderHelper.enableGUIStandardItemLighting();
 				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
 				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+				if (tile.getKind() == Kind.exKabel && tile.elements(ItemUpgrade.STOCK) > 0)
+					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
 
 			}
 			if (this.isMouseOverSlot(mx, my)) {

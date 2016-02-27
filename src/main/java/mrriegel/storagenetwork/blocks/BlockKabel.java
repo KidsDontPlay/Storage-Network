@@ -4,6 +4,7 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
+import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -104,7 +105,7 @@ public class BlockKabel extends BlockContainer {
 			switch (playerIn.getHeldItem().getItemDamage()) {
 			case ItemUpgrade.SPEED:
 				if (tile.elements(ItemUpgrade.SPEED) < 4) {
-					tile.getDeque().push(0);
+					tile.getDeque().push(ItemUpgrade.SPEED);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
@@ -112,7 +113,7 @@ public class BlockKabel extends BlockContainer {
 				break;
 			case ItemUpgrade.OP:
 				if (tile.elements(ItemUpgrade.OP) < 1) {
-					tile.getDeque().push(1);
+					tile.getDeque().push(ItemUpgrade.OP);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
@@ -120,7 +121,7 @@ public class BlockKabel extends BlockContainer {
 				break;
 			case ItemUpgrade.STACK:
 				if (tile.elements(ItemUpgrade.STACK) < 4) {
-					tile.getDeque().push(2);
+					tile.getDeque().push(ItemUpgrade.STACK);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
@@ -128,7 +129,7 @@ public class BlockKabel extends BlockContainer {
 				break;
 			case ItemUpgrade.STOCK:
 				if (tile.elements(ItemUpgrade.STOCK) < 1 && tile.getKind() == Kind.exKabel) {
-					tile.getDeque().push(3);
+					tile.getDeque().push(ItemUpgrade.STOCK);
 					playerIn.getHeldItem().stackSize--;
 					if (playerIn.getHeldItem().stackSize <= 0)
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
@@ -155,12 +156,10 @@ public class BlockKabel extends BlockContainer {
 			case storageKabel:
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 				return true;
-			case craftKabel:
-				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
-				return true;
 			default:
 				break;
 			}
+		playerIn.openContainer.detectAndSendChanges();
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
 	}
 
@@ -177,7 +176,7 @@ public class BlockKabel extends BlockContainer {
 		onNeighborBlockChange(worldIn, pos, state, null);
 	}
 
-	public static void setConnections(World worldIn, BlockPos pos, IBlockState bState) {
+	public void setConnections(World worldIn, BlockPos pos, IBlockState bState) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
@@ -204,7 +203,7 @@ public class BlockKabel extends BlockContainer {
 		tile.setInventoryFace(face);
 		tile.setConnectedInventory(con);
 		if (tile.getMaster() == null) {
-			for (BlockPos p : TileMaster.getSides(pos)) {
+			for (BlockPos p : Util.getSides(pos)) {
 				if (worldIn.getTileEntity(p) instanceof TileMaster) {
 					tile.setMaster(p);
 				}
@@ -223,7 +222,7 @@ public class BlockKabel extends BlockContainer {
 
 	public static void setAllMastersNull(World world, BlockPos pos) {
 		((IConnectable) world.getTileEntity(pos)).setMaster(null);
-		for (BlockPos bl : TileMaster.getSides(pos)) {
+		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
 				world.markBlockForUpdate(bl);
@@ -234,7 +233,7 @@ public class BlockKabel extends BlockContainer {
 
 	boolean isConnectedToInventory(IBlockAccess world, BlockPos orig, BlockPos pos) {
 		IBlockState s = world.getBlockState(orig);
-		for (BlockPos p : TileMaster.getSides(orig)) {
+		for (BlockPos p : Util.getSides(orig)) {
 			if (p.equals(pos))
 				continue;
 			if (world.getTileEntity(p) instanceof TileContainer)
@@ -323,6 +322,16 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		try {
+			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+			if (ConfigHandler.untouchable && tile != null && tile.getCover() != null) {
+				if (tile.getCover() == Blocks.glass) {
+					return AxisAlignedBB.fromBounds(0, 0, 0, 0, 0, 0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		setBlockBoundsBasedOnState(worldIn, pos);
 		return super.getCollisionBoundingBox(worldIn, pos, state);
 	}
@@ -339,7 +348,7 @@ public class BlockKabel extends BlockContainer {
 		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVER, ((TileKabel) world.getTileEntity(pos)).getCover());
 	}
 
-	private Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
+	protected Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
 		Block ori = worldIn.getBlockState(orig).getBlock();
 		if (worldIn.getTileEntity(pos) instanceof IConnectable || worldIn.getTileEntity(pos) instanceof TileMaster)

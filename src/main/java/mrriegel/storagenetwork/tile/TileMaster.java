@@ -205,15 +205,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	}
 
-	public int canCraft(FilterItem fil, int num) {
-		int max = 0;
-		for (ItemStack s : getTemplates(fil, false))
-			max = Math.max(max, canCraft(getStacks(), fil, num, true));
-		return max;
-	}
-
-	public List<ItemStack> so = Lists.newArrayList();
-
 	public int canCraft(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww) {
 		int result = 0;
 		for (int ii = 0; ii < getTemplates(fil, false).size(); ii++) {
@@ -230,13 +221,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (!oneCraft)
 						break;
 					while (true) {
-						// System.out.println(f.getStack());
 						boolean found = consume(stacks, f, 1) == 1;
 						if (!found) {
 							int t = canCraft(stacks, f, 1, false);
 							if (t != 0) {
 								addToList(stacks, f.getStack(), t);
-								so.add(f.getStack());
 
 							} else {
 								oneCraft = false;
@@ -246,8 +235,47 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 							break;
 						}
 					}
-					// System.out.println("break");
-					// break;
+				}
+				if (oneCraft)
+					result += s.stackSize;
+			}
+
+		}
+		return result;
+	}
+
+	public int getMissing(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww, List<FilterItem> missing) {
+		int result = 0;
+		for (int ii = 0; ii < getTemplates(fil, false).size(); ii++) {
+			ItemStack s = getTemplates(fil, false).get(ii);
+			if (neww)
+				stacks = getStacks();
+			boolean done = true;
+			int con = num / s.stackSize;
+			if (num % s.stackSize != 0)
+				con++;
+			for (int i = 0; i < con; i++) {
+				boolean oneCraft = true;
+				for (FilterItem f : getIngredients(s)) {
+//					if (!oneCraft)
+//						break;
+					while (true) {
+						boolean found = consume(stacks, f, 1) == 1;
+						System.out.println("found: "+found+", "+f);
+						if (!found) {
+							int t = getMissing(stacks, f, 1, false, missing);
+							if (t != 0) {
+								addToList(stacks, f.getStack(), t);
+
+							} else {
+								oneCraft = false;
+								missing.add(f);
+								break;
+							}
+						} else {
+							break;
+						}
+					}
 				}
 				if (oneCraft)
 					result += s.stackSize;
@@ -375,7 +403,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	private void addCables(BlockPos pos, int num) {
 		if (connectables == null)
 			connectables = new ArrayList<BlockPos>();
-		for (BlockPos bl : getSides(pos)) {
+		for (BlockPos bl : Util.getSides(pos)) {
 			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
@@ -412,17 +440,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					storageInventorys.add(cable.offset(face));
 			}
 		}
-	}
-
-	public static List<BlockPos> getSides(BlockPos pos) {
-		List<BlockPos> lis = new ArrayList<BlockPos>();
-		lis.add(pos.up());
-		lis.add(pos.down());
-		lis.add(pos.east());
-		lis.add(pos.west());
-		lis.add(pos.north());
-		lis.add(pos.south());
-		return lis;
 	}
 
 	public void refreshNetwork() {
@@ -750,6 +767,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return Inv.copyStack(res, result);
 	}
 
+	public void craft() {
+
+	}
+
 	@Override
 	public void update() {
 		if (connectables != null)
@@ -761,6 +782,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		vacuum();
 		impor();
 		export();
+		craft();
 
 	}
 

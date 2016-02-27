@@ -39,7 +39,7 @@ public class BlockContainer extends net.minecraft.block.BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		for (BlockPos p : TileMaster.getSides(pos)) {
+		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
 					((IConnectable) worldIn.getTileEntity(pos)).setMaster(((IConnectable) worldIn.getTileEntity(p)).getMaster());
@@ -59,7 +59,7 @@ public class BlockContainer extends net.minecraft.block.BlockContainer {
 	public static void setConnections(World worldIn, BlockPos pos) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
 		if (tile.getMaster() == null) {
-			for (BlockPos p : TileMaster.getSides(pos)) {
+			for (BlockPos p : Util.getSides(pos)) {
 				if (worldIn.getTileEntity(p) instanceof TileMaster) {
 					tile.setMaster(p);
 				}

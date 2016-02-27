@@ -20,7 +20,7 @@ public class ModItems {
 		GameRegistry.registerItem(upgrade, "upgrade");
 		GameRegistry.registerItem(remote, "remote");
 		GameRegistry.registerItem(coverstick, "coverstick");
-		// GameRegistry.registerItem(template, "template");
+		GameRegistry.registerItem(template, "template");
 	}
 
 }

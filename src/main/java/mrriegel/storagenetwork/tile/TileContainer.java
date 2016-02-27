@@ -8,26 +8,38 @@ import mrriegel.storagenetwork.api.ITemplateContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 public class TileContainer extends CrunchTEInventory implements IConnectable, ITemplateContainer {
 	private BlockPos master;
+	private EnumFacing input, output;
 
 	public TileContainer() {
 		super(9);
+		input = EnumFacing.UP;
+		output = EnumFacing.DOWN;
 	}
 
 	@Override
 	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
 		master = new Gson().fromJson(tag.getString("master"), new TypeToken<BlockPos>() {
 		}.getType());
+		input = EnumFacing.byName(tag.getString("input"));
+		input = input != null ? input : EnumFacing.UP;
+		output = EnumFacing.byName(tag.getString("output"));
+		output = output != null ? output : EnumFacing.DOWN;
 	}
 
 	@Override
 	protected void writeSyncableDataToNBT(NBTTagCompound tag) {
 		tag.setString("master", new Gson().toJson(master));
+		if (input != null)
+			tag.setString("input", input.toString());
+		if (output != null)
+			tag.setString("output", output.toString());
 	}
 
 	@Override
@@ -43,6 +55,22 @@ public class TileContainer extends CrunchTEInventory implements IConnectable, IT
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
+	}
+
+	public EnumFacing getInput() {
+		return input;
+	}
+
+	public void setInput(EnumFacing input) {
+		this.input = input;
+	}
+
+	public EnumFacing getOutput() {
+		return output;
+	}
+
+	public void setOutput(EnumFacing output) {
+		this.output = output;
 	}
 
 	@Override

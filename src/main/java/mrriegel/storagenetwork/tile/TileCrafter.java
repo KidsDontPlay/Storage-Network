@@ -1,5 +1,8 @@
 package mrriegel.storagenetwork.tile;
 
+import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.init.ModBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
@@ -7,25 +10,34 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
 public class TileCrafter extends CrunchTEInventory implements ISidedInventory, ITickable {
-	public static final int DURATION = 20;
-	int progress;
+	int progress, duration;
+	BlockPos master;
 
 	public TileCrafter() {
 		super(10);
+		duration = 150;
 	}
 
 	@Override
 	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
 		progress = tag.getInteger("progress");
+		duration = tag.getInteger("duration");
+		master = tag.getLong("master") == Long.MAX_VALUE ? null : BlockPos.fromLong(tag.getLong("master"));
 	}
 
 	@Override
 	protected void writeSyncableDataToNBT(NBTTagCompound tag) {
 		tag.setInteger("progress", progress);
+		tag.setInteger("duration", duration);
+		if (master != null)
+			tag.setLong("master", master.toLong());
+		else
+			tag.setLong("master", Long.MAX_VALUE);
 	}
 
 	public int getProgress() {
@@ -34,6 +46,14 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 
 	public void setProgress(int progress) {
 		this.progress = progress;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 	@Override
@@ -68,14 +88,28 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 		if (worldObj.isRemote) {
 			return;
 		}
+		boolean m = false;
+		for (BlockPos p : Util.getSides(pos))
+			if (worldObj.getBlockState(p).getBlock() == ModBlocks.container && ((IConnectable) worldObj.getTileEntity(p)).getMaster() != null) {
+				master = ((IConnectable) worldObj.getTileEntity(p)).getMaster();
+				break;
+			}
+		if (master == null)
+			duration = 150;
+		else
+			duration = 20;
 		ItemStack result = CraftingManager.getInstance().findMatchingRecipe(getMatrix(), this.worldObj);
 		if (result == null) {
 			progress = 0;
+			worldObj.markBlockForUpdate(pos);
 			return;
 		}
 		if (canProcess()) {
+			if (master != null && worldObj.getTileEntity(master) instanceof TileMaster)
+				if (!((TileMaster) worldObj.getTileEntity(master)).consumeRF(1, false))
+					return;
 			progress++;
-			if (progress >= DURATION) {
+			if (progress >= duration) {
 				processItem();
 				progress = 0;
 			}

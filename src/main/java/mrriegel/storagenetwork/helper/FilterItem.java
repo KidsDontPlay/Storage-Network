@@ -57,7 +57,7 @@ public class FilterItem {
 		this.ore = ore;
 	}
 
-	public static FilterItem loadStackWrapperFromNBT(NBTTagCompound nbt) {
+	public static FilterItem loadFilterItemFromNBT(NBTTagCompound nbt) {
 		FilterItem fil = new FilterItem(null, false, false);
 		fil.readFromNBT(nbt);
 		return fil.getStack() != null && fil.getStack().getItem() != null ? fil : null;

@@ -4,9 +4,12 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.blocks.BlockContainer;
 import mrriegel.storagenetwork.blocks.BlockCover;
 import mrriegel.storagenetwork.blocks.BlockCrafter;
+import mrriegel.storagenetwork.blocks.BlockFKabel;
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
+import mrriegel.storagenetwork.tile.TileContainer;
+import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -23,7 +26,9 @@ public class ModBlocks {
 	public static final Block exKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
 	public static final Block imKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":imKabel");
 	public static final Block vacuumKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":vacuumKabel");
-	public static final Block craftKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":craftKabel");
+	public static final Block fstorageKabel = new BlockFKabel().setUnlocalizedName(StorageNetwork.MODID + ":fstorageKabel");
+	public static final Block fexKabel = new BlockFKabel().setUnlocalizedName(StorageNetwork.MODID + ":fexKabel");
+	public static final Block fimKabel = new BlockFKabel().setUnlocalizedName(StorageNetwork.MODID + ":fimKabel");
 	public static final Block cover = new BlockCover();
 	public static final Block container = new BlockContainer();
 	public static final Block crafter = new BlockCrafter();
@@ -36,17 +41,18 @@ public class ModBlocks {
 		GameRegistry.registerBlock(exKabel, "exKabel");
 		GameRegistry.registerBlock(imKabel, "imKabel");
 		GameRegistry.registerBlock(vacuumKabel, "vacuumKabel");
-		// GameRegistry.registerBlock(craftKabel, "craftKabel");
+		GameRegistry.registerBlock(fstorageKabel, "fstorageKabel");
+		GameRegistry.registerBlock(fexKabel, "fexKabel");
+		GameRegistry.registerBlock(fimKabel, "fimKabel");
 		GameRegistry.registerBlock(cover, "cover");
-		// GameRegistry.registerBlock(container, "container");
-		// GameRegistry.registerBlock(crafter, "crafter");
+		GameRegistry.registerBlock(container, "container");
+		GameRegistry.registerBlock(crafter, "crafter");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
 		GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
-		// GameRegistry.registerTileEntity(TileContainer.class,
-		// "tileContainer");
-		// GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
+		GameRegistry.registerTileEntity(TileContainer.class, "tileContainer");
+		GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
 	}
 
 }

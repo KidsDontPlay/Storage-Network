@@ -24,6 +24,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -45,9 +47,10 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private int coverMeta;
 
 	ItemStack stack = null;
+	Fluid fluid = null;
 
 	public enum Kind {
-		kabel, exKabel, imKabel, storageKabel, vacuumKabel, craftKabel;
+		kabel, exKabel, imKabel, storageKabel, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
 	}
 
 	public TileKabel() {
@@ -80,8 +83,12 @@ public class TileKabel extends TileEntity implements IConnectable {
 			return Kind.storageKabel;
 		if (b == ModBlocks.vacuumKabel)
 			return Kind.vacuumKabel;
-		if (b == ModBlocks.craftKabel)
-			return Kind.craftKabel;
+		if (b == ModBlocks.fexKabel)
+			return Kind.fexKabel;
+		if (b == ModBlocks.fimKabel)
+			return Kind.fimKabel;
+		if (b == ModBlocks.fstorageKabel)
+			return Kind.fstorageKabel;
 		return null;
 	}
 
@@ -155,6 +162,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
+		fluid = FluidRegistry.getFluid(compound.getString("fluid"));
 
 		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
 		filter = new HashMap<Integer, StackWrapper>();
@@ -219,7 +227,8 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setInteger("limit", limit);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
-
+		if (fluid != null)
+			compound.setString("fluid", FluidRegistry.getDefaultFluidName(fluid));
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (filter.get(i) != null) {
@@ -382,6 +391,14 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public void setStack(ItemStack stack) {
 		this.stack = stack;
+	}
+
+	public Fluid getFluid() {
+		return fluid;
+	}
+
+	public void setFluid(Fluid fluid) {
+		this.fluid = fluid;
 	}
 
 	public Block getCover() {

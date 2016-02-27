@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.helper;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
@@ -93,6 +95,17 @@ public class Util {
 			entityitem.motionZ = RANDOM.nextGaussian() * f3;
 			worldIn.spawnEntityInWorld(entityitem);
 		}
+	}
+
+	public static List<BlockPos> getSides(BlockPos pos) {
+		List<BlockPos> lis = new ArrayList<BlockPos>();
+		lis.add(pos.up());
+		lis.add(pos.down());
+		lis.add(pos.east());
+		lis.add(pos.west());
+		lis.add(pos.north());
+		lis.add(pos.south());
+		return lis;
 	}
 
 }

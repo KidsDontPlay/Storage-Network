@@ -17,7 +17,7 @@ public class ContainerContainer extends Container {
 		this.playerInv = playerInv;
 		this.tile = tile;
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new Slot(tile, i, 8 + i * 18, 20) {
+			this.addSlotToContainer(new Slot(tile, i, 8 + i * 18, 26) {
 				@Override
 				public boolean isItemValid(ItemStack stack) {
 					return stack != null && stack.isItemEqual(new ItemStack(ModItems.template)) && stack.getTagCompound().getTag("res") != null;

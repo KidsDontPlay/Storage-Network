@@ -1,10 +1,14 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.List;
+
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -12,6 +16,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import com.google.common.collect.Lists;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 	int id, x, y, z;
@@ -51,12 +57,10 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					// FilterItem x = new FilterItem(new
-					// ItemStack(Blocks.stone_brick_stairs), true, false);
-					// tile.so = Lists.newArrayList();
-					// System.out.println("can: " +
-					// tile.canCraft(tile.getStacks(), x, 40, true));
-					// System.out.println(tile.so);
+					FilterItem x = new FilterItem(new ItemStack(Blocks.bookshelf), true, false);
+					List<FilterItem> missing=Lists.newArrayList();
+					System.out.println("can: " + tile.getMissing(tile.getStacks(), x, 5, true,missing));
+					System.out.println(missing);
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
 				}
