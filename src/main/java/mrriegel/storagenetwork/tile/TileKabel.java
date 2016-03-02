@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -72,6 +73,10 @@ public class TileKabel extends TileEntity implements IConnectable {
 		return res;
 	}
 
+	public boolean isFluid() {
+		return kind == Kind.fexKabel || kind == Kind.fimKabel || kind == Kind.fstorageKabel;
+	}
+
 	public static Kind getKind(World world, Block b) {
 		if (b == ModBlocks.kabel)
 			return Kind.kabel;
@@ -126,17 +131,63 @@ public class TileKabel extends TileEntity implements IConnectable {
 		}
 	}
 
-	public boolean status() {
-		if (elements(ItemUpgrade.OP) < 1)
-			return true;
-		TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
-		if (getStack() == null)
-			return true;
-		int amount = m.getAmount(new FilterItem(getStack(), true, false));
-		if (isMode()) {
-			return amount > getLimit();
+	public boolean canTransfer(Fluid fluid) {
+		if (isWhite()) {
+			boolean tmp = false;
+			for (int i = 0; i < 9; i++) {
+				if (getFilter().get(i) == null)
+					continue;
+				ItemStack s = getFilter().get(i).getStack();
+				if (s == null)
+					continue;
+				if (Block.getBlockFromItem(s.getItem()) == fluid.getBlock()) {
+					tmp = true;
+					break;
+				}
+			}
+			return tmp;
 		} else {
-			return amount <= getLimit();
+			boolean tmp = true;
+			for (int i = 0; i < 9; i++) {
+				if (getFilter().get(i) == null)
+					continue;
+				ItemStack s = getFilter().get(i).getStack();
+				if (s == null)
+					continue;
+				if (Block.getBlockFromItem(s.getItem()) == fluid.getBlock()) {
+					tmp = false;
+					break;
+				}
+			}
+			return tmp;
+		}
+	}
+
+	public boolean status() {
+		if (!isFluid()) {
+			if (elements(ItemUpgrade.OP) < 1)
+				return true;
+			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
+			if (getStack() == null)
+				return true;
+			int amount = m.getAmount(new FilterItem(getStack(), true, false));
+			if (isMode()) {
+				return amount > getLimit();
+			} else {
+				return amount <= getLimit();
+			}
+		} else {
+			if (elements(ItemUpgrade.OP) < 1)
+				return true;
+			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
+			if (getFluid() == null)
+				return true;
+			int amount = m.getAmount(getFluid());
+			if (isMode()) {
+				return amount > getLimit();
+			} else {
+				return amount <= getLimit();
+			}
 		}
 	}
 

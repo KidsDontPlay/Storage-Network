@@ -9,6 +9,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class Inv {
 	public static int addToInventoriesWithLeftover(ItemStack stack, List<IInventory> inventorys, boolean simulate) {
@@ -33,9 +37,7 @@ public class Inv {
 
 	}
 
-	public static boolean isInventorySame(IInventory a, IInventory b) {
-		if (!(a instanceof TileEntity) || !(b instanceof TileEntity))
-			return false;
+	public static boolean isInventorySame(TileEntity a, TileEntity b) {
 		TileEntity aa = (TileEntity) a;
 		TileEntity bb = (TileEntity) b;
 		return aa.getPos().equals(bb.getPos());
@@ -83,6 +85,15 @@ public class Inv {
 	public static boolean contains(ISidedInventory inv, ItemStack stack, EnumFacing face) {
 		for (int i : inv.getSlotsForFace(face)) {
 			if (inv.getStackInSlot(i) != null && inv.getStackInSlot(i).isItemEqual(stack) && ItemStack.areItemStackTagsEqual(stack, inv.getStackInSlot(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean contains(IFluidHandler inv, Fluid fluid, EnumFacing face) {
+		for (FluidTankInfo i : inv.getTankInfo(face)) {
+			if (i.fluid != null && i.fluid.getFluid() == fluid) {
 				return true;
 			}
 		}
@@ -257,6 +268,24 @@ public class Inv {
 					if (slot.isItemEqual(fil) && ItemStack.areItemStackTagsEqual(fil, slot)) {
 						space += max - slot.stackSize;
 					}
+				}
+			}
+		}
+		return space;
+	}
+
+	public static int getSpace(Fluid fil, IFluidHandler inv, EnumFacing face) {
+		int space = 0;
+		for (FluidTankInfo i : inv.getTankInfo(face)) {
+			if (!inv.canFill(face, fil))
+				continue;
+			FluidStack slot = i.fluid;
+			int max = i.capacity;
+			if (slot == null) {
+				space += max;
+			} else {
+				if (slot.getFluid()==fil) {
+					space += max - slot.amount;
 				}
 			}
 		}

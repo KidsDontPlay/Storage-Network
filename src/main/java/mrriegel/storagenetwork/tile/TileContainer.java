@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.api.ITemplateContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -13,7 +12,7 @@ import net.minecraft.util.EnumFacing;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileContainer extends CrunchTEInventory implements IConnectable, ITemplateContainer {
+public class TileContainer extends CrunchTEInventory implements IConnectable {
 	private BlockPos master;
 	private EnumFacing input, output;
 
@@ -73,7 +72,6 @@ public class TileContainer extends CrunchTEInventory implements IConnectable, IT
 		this.output = output;
 	}
 
-	@Override
 	public List<ItemStack> getTemplates() {
 		List<ItemStack> lis = new ArrayList<ItemStack>();
 		for (int i = 0; i < INVSIZE; i++)

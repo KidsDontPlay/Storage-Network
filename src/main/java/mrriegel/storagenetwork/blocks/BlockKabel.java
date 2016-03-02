@@ -357,6 +357,7 @@ public class BlockKabel extends BlockContainer {
 			return Connect.NULL;
 		boolean inventory = worldIn.getTileEntity(pos) instanceof IInventory && !(worldIn.getTileEntity(pos) instanceof ISidedInventory);
 		EnumFacing face = get(orig, pos);
+		
 		boolean sided = worldIn.getTileEntity(pos) instanceof ISidedInventory && (((ISidedInventory) worldIn.getTileEntity(pos)).getSlotsForFace(face).length != 0);
 		if (!inventory && !sided)
 			return Connect.NULL;
