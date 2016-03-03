@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,9 +40,22 @@ public class ItemCoverStick extends Item {
 					tile.setCoverMeta(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItemDamage());
 					worldIn.markBlockForUpdate(pos);
 					return true;
+				} else if (!playerIn.isSneaking() && b == null && tile.getCover() != null) {
+					tile.setCoverMeta(next(tile.getCoverMeta()));
+					int count = 0;
+					while (tile.getCover().getStateFromMeta(tile.getCoverMeta()).equals(tile.getCover().getStateFromMeta(next(tile.getCoverMeta())))) {
+						tile.setCoverMeta(next(tile.getCoverMeta()));
+						count++;
+						if (count > 15) {
+							tile.setCoverMeta(0);
+							break;
+						}
+					}
+					return true;
 				} else if (playerIn.isSneaking()) {
 					if (tile.getCover() != null) {
 						tile.setCover(null);
+						tile.setCoverMeta(0);
 						if (!worldIn.isRemote && !playerIn.capabilities.isCreativeMode)
 							worldIn.spawnEntityInWorld(new EntityItem(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ, new ItemStack(ModBlocks.cover)));
 						worldIn.markBlockForUpdate(pos);
@@ -57,4 +71,10 @@ public class ItemCoverStick extends Item {
 		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
 	}
 
+	private int next(int a) {
+		if (a >= 15)
+			return 0;
+		else
+			return a + 1;
+	}
 }
