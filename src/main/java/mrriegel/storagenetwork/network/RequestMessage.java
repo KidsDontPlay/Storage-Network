@@ -59,8 +59,8 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 					}
 					FilterItem x = new FilterItem(new ItemStack(Blocks.bookshelf), true, false);
 					List<FilterItem> missing=Lists.newArrayList();
-					System.out.println("can: " + tile.getMissing(tile.getStacks(), x, 5, true,missing));
-					System.out.println(missing);
+//					System.out.println("can: " + tile.getMissing(tile.getStacks(), x, 5, true,missing));
+//					System.out.println(missing);
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
 				}

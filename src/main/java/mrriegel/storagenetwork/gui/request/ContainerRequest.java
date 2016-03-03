@@ -17,7 +17,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,10 +30,13 @@ public class ContainerRequest extends Container {
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
 	public InventoryRequest back;
 	String inv = "";
+	SlotCrafting x;
+	long lastTime;
 
 	public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
 		this.tile = tile;
 		this.playerInv = playerInv;
+		lastTime = System.currentTimeMillis();
 		back = new InventoryRequest(tile);
 		result = new InventoryCraftResult();
 		NBTTagCompound nbt = new NBTTagCompound();
@@ -48,11 +50,10 @@ public class ContainerRequest extends Container {
 		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 		if (!tile.getWorld().isRemote)
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
-		this.addSlotToContainer(new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
+		x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
 			@Override
 			public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
 				if (playerIn.worldObj.isRemote) {
-					super.onPickupFromSlot(playerIn, stack);
 					return;
 				}
 				List<ItemStack> lis = new ArrayList<ItemStack>();
@@ -69,8 +70,8 @@ public class ContainerRequest extends Container {
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);
 				detectAndSendChanges();
 			}
-
-		});
+		};
+		this.addSlotToContainer(x);
 		int index = 0;
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
@@ -118,6 +119,12 @@ public class ContainerRequest extends Container {
 		slotChanged();
 	}
 
+	@Override
+	public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
+		lastTime = System.currentTimeMillis();
+		return super.slotClick(slotId, clickedButton, mode, playerIn);
+	}
+
 	public void slotChanged() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
@@ -152,18 +159,26 @@ public class ContainerRequest extends Container {
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
 		ItemStack itemstack = null;
 		Slot slot = this.inventorySlots.get(slotIndex);
-
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (slotIndex <= 15) {
-				if (!this.mergeItemStack(itemstack1, 15, 15 + 37, true))
+			if (slot.getSlotIndex() == x.getSlotIndex())
+				if (x.crafted + itemstack.stackSize > itemstack.getMaxStackSize()) {
+					x.crafted = 0;
 					return null;
+				}
+			if (slotIndex <= 15) {
+				if (!this.mergeItemStack(itemstack1, 15, 15 + 37, true)) {
+					x.crafted = 0;
+					return null;
+				}
 				slot.onSlotChange(itemstack1, itemstack);
 			} else {
-				if (!this.mergeItemStack(itemstack1, 10, 16, false))
+				if (!this.mergeItemStack(itemstack1, 10, 16, false)) {
+					x.crafted = 0;
 					return null;
+				}
 			}
 			if (itemstack1.stackSize == 0) {
 				slot.putStack((ItemStack) null);
@@ -172,10 +187,15 @@ public class ContainerRequest extends Container {
 			}
 
 			if (itemstack1.stackSize == itemstack.stackSize) {
+				x.crafted = 0;
 				return null;
 			}
 			slot.onPickupFromSlot(playerIn, itemstack1);
-		}
+			if (slot.getSlotIndex() == x.getSlotIndex()) {
+				x.crafted += itemstack.stackSize;
+			}
+		} else
+			x.crafted = 0;
 
 		return itemstack;
 	}
@@ -191,6 +211,10 @@ public class ContainerRequest extends Container {
 		if (!inv.equals(get())) {
 			slotChanged();
 			inv = get();
+		}
+
+		if (Math.abs(System.currentTimeMillis() - lastTime) > 500 && x.crafted != 0) {
+			x.crafted = 0;
 		}
 		return true;
 	}
