@@ -26,14 +26,12 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 	@Override
 	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
 		progress = tag.getInteger("progress");
-		duration = tag.getInteger("duration");
 		master = tag.getLong("master") == Long.MAX_VALUE ? null : BlockPos.fromLong(tag.getLong("master"));
 	}
 
 	@Override
 	protected void writeSyncableDataToNBT(NBTTagCompound tag) {
 		tag.setInteger("progress", progress);
-		tag.setInteger("duration", duration);
 		if (master != null)
 			tag.setLong("master", master.toLong());
 		else
@@ -50,10 +48,6 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 
 	public int getDuration() {
 		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
 	}
 
 	@Override

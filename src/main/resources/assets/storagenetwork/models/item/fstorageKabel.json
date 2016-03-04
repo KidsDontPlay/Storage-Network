@@ -1,0 +1,19 @@
+{
+    "parent" : "storagenetwork:block/fstorageKabelN", 
+    "display" : {
+        "thirdperson" : {
+            "rotation" : [10, -45, 170], 
+            "translation" : [0, 1.5, -2.75], 
+            "scale" : [0.175, 0.175, 0.175]
+        }, 
+        "gui" : {
+            "scale" : [0.575, 0.575, 0.575]
+        }, 
+        "firstperson" : {
+            "scale" : [0.575, 0.575, 0.575]
+        }, 
+        "ground" : {
+            "scale" : [0.575, 0.575, 0.575]
+        }
+    }
+}

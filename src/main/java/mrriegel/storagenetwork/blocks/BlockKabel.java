@@ -160,7 +160,7 @@ public class BlockKabel extends BlockContainer {
 				break;
 			}
 		playerIn.openContainer.detectAndSendChanges();
-		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
+		return false;
 	}
 
 	@Override

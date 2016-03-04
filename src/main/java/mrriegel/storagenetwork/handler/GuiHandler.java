@@ -1,7 +1,9 @@
 package mrriegel.storagenetwork.handler;
 
 import mrriegel.storagenetwork.gui.cable.ContainerCable;
+import mrriegel.storagenetwork.gui.cable.ContainerFCable;
 import mrriegel.storagenetwork.gui.cable.GuiCable;
+import mrriegel.storagenetwork.gui.cable.GuiFCable;
 import mrriegel.storagenetwork.gui.container.ContainerContainer;
 import mrriegel.storagenetwork.gui.container.GuiContainer;
 import mrriegel.storagenetwork.gui.crafter.ContainerCrafter;
@@ -23,7 +25,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 	public static final int CABLE = 0;
-	public static final int FCABLE = 0;
+	public static final int FCABLE = 1;
 	public static final int REQUEST = 3;
 	public static final int REMOTE = 4;
 	public static final int TEMPLATE = 5;
@@ -34,6 +36,9 @@ public class GuiHandler implements IGuiHandler {
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (ID == CABLE) {
 			return new ContainerCable((TileKabel) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+		}
+		if (ID == FCABLE) {
+			return new ContainerFCable((TileKabel) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}
 		if (ID == REQUEST) {
 			return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
@@ -56,6 +61,10 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == CABLE) {
 			TileKabel tile = (TileKabel) world.getTileEntity(new BlockPos(x, y, z));
 			return new GuiCable(new ContainerCable(tile, player.inventory));
+		}
+		if (ID == FCABLE) {
+			TileKabel tile = (TileKabel) world.getTileEntity(new BlockPos(x, y, z));
+			return new GuiFCable(new ContainerFCable(tile, player.inventory));
 		}
 		if (ID == REQUEST) {
 			return new GuiRequest(new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));

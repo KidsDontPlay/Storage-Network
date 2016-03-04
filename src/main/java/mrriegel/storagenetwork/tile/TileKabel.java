@@ -38,6 +38,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
 	private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
 	private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
+	private Map<Integer, String> fluids = new HashMap<Integer, String>();
 	private boolean white;
 	private int priority;
 	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
@@ -237,11 +238,18 @@ public class TileKabel extends TileEntity implements IConnectable {
 		metas = new HashMap<Integer, Boolean>();
 		for (int i = 0; i < 9; i++)
 			metas.put(i, true);
-
 		for (int i = 0; i < metaList.tagCount(); i++) {
 			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			metas.put(slot, stackTag.getBoolean("Meta"));
+		}
+		
+		NBTTagList fluidList = compound.getTagList("fluids", Constants.NBT.TAG_COMPOUND);
+		fluids = new HashMap<Integer, String>();
+		for (int i = 0; i < fluidList.tagCount(); i++) {
+			NBTTagCompound stackTag = fluidList.getCompoundTagAt(i);
+			int slot = stackTag.getByte("Slot");
+			fluids.put(slot, stackTag.getString("Fluid"));
 		}
 		try {
 			north = Connect.valueOf(compound.getString("north"));
@@ -312,6 +320,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 			}
 		}
 		compound.setTag("metas", metaList);
+
+		NBTTagList fluidList = new NBTTagList();
+		for (int i = 0; i < 9; i++) {
+			if (fluids.get(i) != null) {
+				NBTTagCompound stackTag = new NBTTagCompound();
+				stackTag.setByte("Slot", (byte) i);
+				stackTag.setString("Fluid", fluids.get(i));
+				fluidList.appendTag(stackTag);
+			}
+		}
+		compound.setTag("fluids", fluidList);
 		try {
 
 			compound.setString("north", north.toString());
@@ -394,6 +413,14 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public void setMetas(Map<Integer, Boolean> metas) {
 		this.metas = metas;
+	}
+
+	public Map<Integer, String> getFluids() {
+		return fluids;
+	}
+
+	public void setFluids(Map<Integer, String> fluids) {
+		this.fluids = fluids;
 	}
 
 	public boolean isWhite() {

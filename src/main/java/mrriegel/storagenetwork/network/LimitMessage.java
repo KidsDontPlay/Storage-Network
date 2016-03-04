@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -14,17 +16,19 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMessage> {
 	int limit, x, y, z;
 	ItemStack stack;
+	Fluid fluid;
 
 	public LimitMessage() {
 	}
 
-	public LimitMessage(int limit, int x, int y, int z, ItemStack stack) {
+	public LimitMessage(int limit, int x, int y, int z, ItemStack stack, Fluid fluid) {
 		super();
 		this.limit = limit;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.stack = stack;
+		this.fluid = fluid;
 	}
 
 	@Override
@@ -36,6 +40,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
 				tile.setLimit(message.limit);
 				tile.setStack(message.stack);
+				tile.setFluid(message.fluid);
 			}
 		});
 		return null;
@@ -48,6 +53,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 		this.z = buf.readInt();
 		this.limit = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
+		this.fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf));
 	}
 
 	@Override
@@ -57,6 +63,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 		buf.writeInt(this.z);
 		buf.writeInt(this.limit);
 		ByteBufUtils.writeItemStack(buf, this.stack);
+		ByteBufUtils.writeUTF8String(buf, FluidRegistry.getDefaultFluidName(this.fluid));
 	}
 
 }

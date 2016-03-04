@@ -28,6 +28,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
@@ -40,6 +41,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 
@@ -472,6 +474,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		storageInventorys = new ArrayList<BlockPos>();
 		imInventorys = new ArrayList<BlockPos>();
 		exInventorys = new ArrayList<BlockPos>();
+		fstorageInventorys = new ArrayList<BlockPos>();
+		fimInventorys = new ArrayList<BlockPos>();
+		fexInventorys = new ArrayList<BlockPos>();
 		for (BlockPos cable : connectables) {
 			if (!(worldObj.getTileEntity(cable) instanceof TileKabel))
 				continue;
@@ -763,14 +768,16 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!t.status())
 					continue;
+				if (!inv.canDrain(t.getInventoryFace().getOpposite(), s.getFluid()))
+					continue;
 				int num = s.amount;
-				int insert = Math.min(s.amount, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
+				int insert = Math.min(s.amount, 200 + t.elements(ItemUpgrade.STACK) * 200);
 				if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
 					continue;
-				int rest = insertFluid(s, inv);
+				int rest = insertFluid(new FluidStack(s, insert), inv);
 				if (insert == rest)
 					continue;
-				i.fluid.amount = rest > 0 ? (num - insert) + rest : num - insert;
+				inv.drain(t.getInventoryFace().getOpposite(), new FluidStack(s.getFluid(), insert - rest), true);
 				break;
 
 			}
@@ -864,6 +871,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (fstorageInventorys.contains(t.getPos()))
 					continue;
+				if (!inv.canFill(t.getInventoryFace().getOpposite(), f))
+					continue;
 				int amount = 0;
 				for (FluidTankInfo inf : inv.getTankInfo(t.getInventoryFace().getOpposite()))
 					if (inf.fluid != null && inf.fluid.getFluid() == f)
@@ -873,15 +882,14 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!t.status())
 					continue;
-				int num = Math.min(Math.min(g.getMaxStackSize(), inv.getInventoryStackLimit()), Math.min(space, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2)));
+				int num = Math.min(space, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
 				if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
 					continue;
-				FluidStack rec = request(g, num, true, false, false, false);
+				FluidStack rec = frequest(f, num, false);
 				if (rec == null)
 					continue;
-				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
-
-				TileEntityHopper.putStackInInventoryAllSlots(inv, rec, t.getInventoryFace().getOpposite());
+				consumeRF(rec.amount + t.elements(ItemUpgrade.SPEED), false);
+				inv.fill(t.getInventoryFace().getOpposite(), rec, true);
 				break;
 			}
 		}
@@ -982,7 +990,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return Inv.copyStack(res, result);
 	}
 
-	public FluidStack frequest(Fluid fluid, final int size, boolean meta, boolean simulate) {
+	public FluidStack frequest(Fluid fluid, final int size, boolean simulate) {
 		if (size == 0 || fluid == null)
 			return null;
 		if (fstorageInventorys == null)
@@ -1004,17 +1012,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		int result = 0;
 		for (TileKabel t : invs) {
 			IFluidHandler inv = (IFluidHandler) worldObj.getTileEntity(t.getConnectedInventory());
-			for (FluidTankInfo i:inv.getTankInfo(t.getInventoryFace().getOpposite())) {
+			for (FluidTankInfo i : inv.getTankInfo(t.getInventoryFace().getOpposite())) {
 				FluidStack s = i.fluid;
 				if (s == null)
 					continue;
-				if (res != null && s.getFluid()!=res.getFluid())
+				if (res != null && s.getFluid() != res.getFluid())
 					continue;
-				if(s.getFluid()!=fluid)
+				if (s.getFluid() != fluid)
 					continue;
 				if (!t.canTransfer(fluid))
 					continue;
-				if(!inv.canDrain(t.getInventoryFace().getOpposite(), fluid))
+				if (!inv.canDrain(t.getInventoryFace().getOpposite(), fluid))
 					continue;
 				int miss = size - result;
 				result += Math.min(s.amount, miss);
@@ -1049,17 +1057,20 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		vacuum();
 		impor();
 		export();
-		craft();
+		// craft();
+		fimpor();
+		fexport();
 
 	}
 
 	boolean consumeRF(int num, boolean simulate) {
 		if (!ConfigHandler.energyNeeded)
 			return true;
-		if (en.getEnergyStored() < num * ConfigHandler.energyMultiplier)
+		int value = num * ConfigHandler.energyMultiplier + connectables.size();
+		if (en.getEnergyStored() < value)
 			return false;
 		if (!simulate) {
-			en.modifyEnergyStored(-num * ConfigHandler.energyMultiplier);
+			en.modifyEnergyStored(-value);
 		}
 		return true;
 	}

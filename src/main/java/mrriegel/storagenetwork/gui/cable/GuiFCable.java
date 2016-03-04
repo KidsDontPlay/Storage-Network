@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.gui.cable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,33 +24,37 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class GuiCable extends GuiContainer {
+public class GuiFCable extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
 	Button pPlus, pMinus, meta, white, acti;
 	TileKabel tile;
 	private GuiTextField searchBar;
-	ItemStack stack;
-	ArrayList<Slot> list = new ArrayList<GuiCable.Slot>();
+	Fluid fluid;
+	ArrayList<Slot> list = new ArrayList<GuiFCable.Slot>();
 
-	public GuiCable(Container inventorySlotsIn) {
+	public GuiFCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
-		this.tile = ((ContainerCable) inventorySlots).tile;
+		this.tile = ((ContainerFCable) inventorySlots).tile;
 		this.ySize = 137;
 		this.kind = tile.getKind();
-		stack = tile.getStack();
+		fluid = tile.getFluid();
 
 	}
 
@@ -69,10 +74,11 @@ public class GuiCable extends GuiContainer {
 		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			searchBar.drawTextBox();
 			RenderHelper.enableGUIStandardItemLighting();
-			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
+			if (fluid != null)
+				mc.getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(fluid.getBlock()), guiLeft + 8, guiTop - 18);
 			RenderHelper.disableStandardItemLighting();
 		}
-		list = new ArrayList<GuiCable.Slot>();
+		list = new ArrayList<GuiFCable.Slot>();
 		for (int ii = 0; ii < 9; ii++) {
 			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
@@ -98,22 +104,6 @@ public class GuiCable extends GuiContainer {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		for (int i = 0; i < 9; i++) {
-			Slot e = list.get(i);
-			ContainerCable con = (ContainerCable) inventorySlots;
-			if (e.stack != null) {
-				RenderHelper.disableStandardItemLighting();
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				GlStateManager.disableBlend();
-				if (con.getOres().get(i) != null && con.getOres().get(i))
-					mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
-				if (con.getMetas().get(i) == null || !con.getMetas().get(i))
-					mc.fontRendererObj.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-			}
-		}
 		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
 		int my = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10 && my < guiTop + 20) {
@@ -171,10 +161,10 @@ public class GuiCable extends GuiContainer {
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
-			stack = mc.thePlayer.inventory.getItemStack();
-			tile.setStack(stack);
+			fluid = getFluid(mc.thePlayer.inventory.getItemStack());
+			tile.setFluid(fluid);
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack, null));
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), null, fluid));
 		} else
 			super.mouseReleased(mouseX, mouseY, state);
 	}
@@ -185,31 +175,14 @@ public class GuiCable extends GuiContainer {
 		for (int i = 0; i < 9; i++) {
 			Slot e = list.get(i);
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
-				ContainerCable con = (ContainerCable) inventorySlots;
+				ContainerFCable con = (ContainerFCable) inventorySlots;
 				StackWrapper x = con.getFilter().get(i);
-				if (mc.thePlayer.inventory.getItemStack() != null) {
-					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
-						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
-						con.getOres().put(i, false);
-						con.getMetas().put(i, true);
+				if (mc.thePlayer.inventory.getItemStack() != null && getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
+					if (!con.in(new StackWrapper(new ItemStack(getFluid(mc.thePlayer.inventory.getItemStack()).getBlock()), 1))) {
+						con.getFilter().put(i, new StackWrapper(new ItemStack(getFluid(mc.thePlayer.inventory.getItemStack()).getBlock()), 1));
 					}
 				} else {
-					if (x != null) {
-						if (mouseButton == 0)
-							x.setSize(x.getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
-						else if (mouseButton == 1)
-							x.setSize(x.getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
-						else if (mouseButton == 2) {
-							con.getFilter().put(i, null);
-							con.getOres().put(i, false);
-							con.getMetas().put(i, true);
-						}
-						if (x != null && x.getSize() <= 0) {
-							con.getFilter().put(i, null);
-							con.getOres().put(i, false);
-							con.getMetas().put(i, true);
-						}
-					}
+					con.getFilter().put(i, null);
 				}
 				con.slotChanged();
 				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
@@ -240,23 +213,6 @@ public class GuiCable extends GuiContainer {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (typedChar == 'o' || typedChar == 'm') {
-			for (int i = 0; i < 9; i++) {
-				Slot e = list.get(i);
-				int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
-				int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-				ContainerCable con = (ContainerCable) inventorySlots;
-				if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null) {
-					if (typedChar == 'o' && OreDictionary.getOreIDs(e.stack).length > 0)
-						con.getOres().put(i, !con.getOres().get(i));
-					else if (typedChar == 'm')
-						con.getMetas().put(i, !con.getMetas().get(i));
-					con.slotChanged();
-					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
-					break;
-				}
-			}
-		}
 		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);
 			String s = "";
@@ -273,7 +229,7 @@ public class GuiCable extends GuiContainer {
 					searchBar.setText("0");
 				}
 				tile.setLimit(num);
-				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack, null));
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), null, fluid));
 			} else {
 				super.keyTyped(typedChar, keyCode);
 			}
@@ -287,26 +243,28 @@ public class GuiCable extends GuiContainer {
 	}
 
 	class Slot {
-		ItemStack stack;
-		int x, y, size, guiLeft, guiTop;
+		Fluid fluid;
+		int x, y, guiLeft, guiTop;
 		Minecraft mc = Minecraft.getMinecraft();
 
-		public Slot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop) {
-			this.stack = stack;
+		public Slot(Fluid fluid, int x, int y, int guiLeft, int guiTop) {
+			this.fluid = fluid;
 			this.x = x;
 			this.y = y;
-			this.size = size;
 			this.guiLeft = guiLeft;
 			this.guiTop = guiTop;
 		}
 
 		void drawSlot(int mx, int my) {
-			if (stack != null) {
-				RenderHelper.enableGUIStandardItemLighting();
-				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-				if (tile.getKind() == Kind.exKabel && tile.elements(ItemUpgrade.STOCK) > 0)
-					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+			
+			if (fluid != null) {
+				
+				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+		        if(fluidIcon == null)
+		            return;
+
+		        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+
 
 			}
 			if (this.isMouseOverSlot(mx, my)) {
@@ -323,10 +281,10 @@ public class GuiCable extends GuiContainer {
 		}
 
 		void drawTooltip(int mx, int my) {
-			if (stack != null && this.isMouseOverSlot(mx, my)) {
+			if (fluid != null && this.isMouseOverSlot(mx, my)) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				renderToolTip(stack, mx, my);
+				drawHoveringText(Arrays.asList(fluid.getName()), mx, my, fontRendererObj);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}
@@ -407,4 +365,11 @@ public class GuiCable extends GuiContainer {
 		}
 	}
 
+	private Fluid getFluid(ItemStack stack) {
+		FluidStack s = FluidContainerRegistry.getFluidForFilledItem(stack);
+		if (s == null)
+			return null;
+		else
+			return s.getFluid();
+	}
 }

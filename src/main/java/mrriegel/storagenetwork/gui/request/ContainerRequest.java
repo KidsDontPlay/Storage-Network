@@ -213,7 +213,7 @@ public class ContainerRequest extends Container {
 			inv = get();
 		}
 
-		if (Math.abs(System.currentTimeMillis() - lastTime) > 500 && x.crafted != 0) {
+		if (x.crafted != 0 && Math.abs(System.currentTimeMillis() - lastTime) > 500) {
 			x.crafted = 0;
 		}
 		return true;

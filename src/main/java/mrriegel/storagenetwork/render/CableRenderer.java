@@ -31,7 +31,6 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	private final ResourceLocation im = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/im.png");
 	private final ResourceLocation storage = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/storage.png");
 	private final ResourceLocation vacuum = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/vacuum.png");
-	private final ResourceLocation craft = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/craft.png");
 	private final ResourceLocation fex = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/fex.png");
 	private final ResourceLocation fim = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/fim.png");
 	private final ResourceLocation fstorage = new ResourceLocation(StorageNetwork.MODID + ":textures/tile/fstorage.png");
