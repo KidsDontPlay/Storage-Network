@@ -38,10 +38,10 @@ public class Inv {
 	}
 
 	public static boolean isInventorySame(TileEntity a, TileEntity b) {
-		if(a==null||b==null)
+		if (a == null || b == null)
 			return false;
-		TileEntity aa = (TileEntity) a;
-		TileEntity bb = (TileEntity) b;
+		TileEntity aa = a;
+		TileEntity bb = b;
 		return aa.getPos().equals(bb.getPos());
 	}
 
@@ -286,7 +286,7 @@ public class Inv {
 			if (slot == null) {
 				space += max;
 			} else {
-				if (slot.getFluid()==fil) {
+				if (slot.getFluid() == fil) {
 					space += max - slot.amount;
 				}
 			}

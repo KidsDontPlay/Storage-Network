@@ -83,7 +83,6 @@ public class BlockContainer extends net.minecraft.block.BlockContainer {
 		worldIn.markBlockForUpdate(pos);
 		if (/* !worldIn.isRemote && */tile.getMaster() != null) {
 			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
-			worldIn.markBlockForUpdate(pos);
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}

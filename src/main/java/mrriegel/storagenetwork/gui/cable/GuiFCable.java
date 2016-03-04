@@ -23,7 +23,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.Container;
@@ -31,8 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -42,10 +39,10 @@ import org.lwjgl.opengl.GL11;
 public class GuiFCable extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
-	Button pPlus, pMinus, meta, white, acti;
+	Button pPlus, pMinus, white, acti;
 	TileKabel tile;
 	private GuiTextField searchBar;
-	Fluid fluid;
+	ItemStack stack;
 	ArrayList<Slot> list = new ArrayList<GuiFCable.Slot>();
 
 	public GuiFCable(Container inventorySlotsIn) {
@@ -54,7 +51,7 @@ public class GuiFCable extends GuiContainer {
 		this.tile = ((ContainerFCable) inventorySlots).tile;
 		this.ySize = 137;
 		this.kind = tile.getKind();
-		fluid = tile.getFluid();
+		stack = tile.getStack();
 
 	}
 
@@ -66,23 +63,30 @@ public class GuiFCable extends GuiContainer {
 		int j = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 		for (int ii = 0; ii < 9; ii++) {
-			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
+			if (tile.getKind() != Kind.fstorageKabel || ii == 4)
+				this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
 		if (tile.elements(ItemUpgrade.OP) >= 1)
 			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
 		this.drawTexturedModalRect(i + 150, j + 6, 176, 110, 16, 16);
 		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			searchBar.drawTextBox();
-			RenderHelper.enableGUIStandardItemLighting();
-			if (fluid != null)
-				mc.getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(fluid.getBlock()), guiLeft + 8, guiTop - 18);
-			RenderHelper.disableStandardItemLighting();
+			if (stack != null) {
+				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(tile.getFluid(stack).getStill().toString());
+				System.out.println(fluidIcon);
+				if (fluidIcon != null) {
+					this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+					drawTexturedModalRect(guiLeft + 8, guiTop - 18, fluidIcon, 16, 16);
+				}
+			}
 		}
 		list = new ArrayList<GuiFCable.Slot>();
 		for (int ii = 0; ii < 9; ii++) {
-			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
-			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop));
+			if (tile.getKind() != Kind.fstorageKabel || ii == 4) {
+				ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
+				int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
+				list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, guiLeft, guiTop));
+			}
 		}
 		for (Slot s : list)
 			s.drawSlot(mouseX, mouseY);
@@ -139,7 +143,7 @@ public class GuiFCable extends GuiContainer {
 		buttonList.add(pMinus);
 		pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
 		buttonList.add(pPlus);
-		if (kind == Kind.imKabel || kind == Kind.storageKabel) {
+		if (kind == Kind.fimKabel || kind == Kind.fstorageKabel) {
 			white = new Button(3, guiLeft + 110, guiTop + 5, "");
 			buttonList.add(white);
 		}
@@ -160,11 +164,11 @@ public class GuiFCable extends GuiContainer {
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
-			fluid = getFluid(mc.thePlayer.inventory.getItemStack());
-			tile.setFluid(fluid);
+		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1 && (tile.getFluid(mc.thePlayer.inventory.getItemStack()) != null || mc.thePlayer.inventory.getItemStack() == null)) {
+			stack = mc.thePlayer.inventory.getItemStack();
+			tile.setStack(stack);
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), null, fluid));
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 		} else
 			super.mouseReleased(mouseX, mouseY, state);
 	}
@@ -173,14 +177,17 @@ public class GuiFCable extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		for (int i = 0; i < 9; i++) {
-			Slot e = list.get(i);
+			Slot e = list.get(tile.getKind() == Kind.fstorageKabel ? 0 : i);
+			if (tile.getKind() == Kind.fstorageKabel)
+				i = 4;
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerFCable con = (ContainerFCable) inventorySlots;
 				StackWrapper x = con.getFilter().get(i);
-				if (mc.thePlayer.inventory.getItemStack() != null && getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
-					if (!con.in(new StackWrapper(new ItemStack(getFluid(mc.thePlayer.inventory.getItemStack()).getBlock()), 1))) {
-						con.getFilter().put(i, new StackWrapper(new ItemStack(getFluid(mc.thePlayer.inventory.getItemStack()).getBlock()), 1));
-					}
+				if (mc.thePlayer.inventory.getItemStack() != null && tile.getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
+					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
+						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1));
+					} else
+						con.getFilter().put(i, null);
 				} else {
 					con.getFilter().put(i, null);
 				}
@@ -188,6 +195,8 @@ public class GuiFCable extends GuiContainer {
 				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
 				break;
 			}
+			if (tile.getKind() == Kind.fstorageKabel)
+				break;
 		}
 	}
 
@@ -229,7 +238,7 @@ public class GuiFCable extends GuiContainer {
 					searchBar.setText("0");
 				}
 				tile.setLimit(num);
-				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), null, fluid));
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 			} else {
 				super.keyTyped(typedChar, keyCode);
 			}
@@ -243,31 +252,37 @@ public class GuiFCable extends GuiContainer {
 	}
 
 	class Slot {
-		Fluid fluid;
+		ItemStack stack;
 		int x, y, guiLeft, guiTop;
 		Minecraft mc = Minecraft.getMinecraft();
+		Fluid fluid;
 
-		public Slot(Fluid fluid, int x, int y, int guiLeft, int guiTop) {
-			this.fluid = fluid;
+		public Slot(ItemStack stack, int x, int y, int guiLeft, int guiTop) {
+			this.stack = stack;
 			this.x = x;
 			this.y = y;
 			this.guiLeft = guiLeft;
 			this.guiTop = guiTop;
+			this.fluid = tile.getFluid(stack);
 		}
 
 		void drawSlot(int mx, int my) {
-			
-			if (fluid != null) {
-				
+
+			if (stack != null) {
 				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
-		        if(fluidIcon == null)
-		            return;
+				if (fluidIcon == null)
+					return;
 
-		        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-
+				this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+				GlStateManager.disableLighting();
+				GlStateManager.disableDepth();
+				drawTexturedModalRect(x, y, fluidIcon, 16, 16);
+				GlStateManager.enableLighting();
+				GlStateManager.enableDepth();
 
 			}
 			if (this.isMouseOverSlot(mx, my)) {
+				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				int j1 = x;
@@ -277,6 +292,7 @@ public class GuiFCable extends GuiContainer {
 				GlStateManager.colorMask(true, true, true, true);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
+				GlStateManager.popMatrix();
 			}
 		}
 
@@ -313,13 +329,6 @@ public class GuiFCable extends GuiContainer {
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 160 + 16 * k, 52, 16, 16);
-				// if (id == 2) {
-				// this.drawTexturedModalRect(this.xPosition + 4, this.yPosition
-				// + 4, 180, 70, 8, 9);
-				// if (!tile.isMeta())
-				// this.drawTexturedModalRect(this.xPosition + 2, this.yPosition
-				// + 2, 195, 70, 12, 12);
-				// }
 				if (id == 3) {
 					if (tile.isWhite())
 						this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 176, 83, 13, 10);
@@ -344,32 +353,27 @@ public class GuiFCable extends GuiContainer {
 				} else if (this.hovered) {
 					l = 16777120;
 				}
-				List<String> lis = new ArrayList<String>();
-				String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit(), tile.getStack() != null ? tile.getStack().getDisplayName() : "Items");
-				List<String> matchList = new ArrayList<String>();
-				Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
-				Matcher regexMatcher = regex.matcher(s);
-				while (regexMatcher.find()) {
-					matchList.add(regexMatcher.group());
-				}
-				lis = new ArrayList<String>(matchList);
-				if (this.hovered && id == 4 && tile.getStack() != null) {
-					GlStateManager.pushMatrix();
-					GlStateManager.disableLighting();
-					drawHoveringText(lis, p_146112_2_, p_146112_3_, fontRendererObj);
-					GlStateManager.enableLighting();
-					GlStateManager.popMatrix();
+				if (tile.getStack() != null) {
+					List<String> lis = new ArrayList<String>();
+					String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit() + " mB", tile.getFluid(tile.getStack()).getName());
+					List<String> matchList = new ArrayList<String>();
+					Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
+					Matcher regexMatcher = regex.matcher(s);
+					while (regexMatcher.find()) {
+						matchList.add(regexMatcher.group());
+					}
+					lis = new ArrayList<String>(matchList);
+					if (this.hovered && id == 4) {
+						GlStateManager.pushMatrix();
+						GlStateManager.disableLighting();
+						drawHoveringText(lis, p_146112_2_, p_146112_3_, fontRendererObj);
+						GlStateManager.enableLighting();
+						GlStateManager.popMatrix();
+					}
 				}
 				this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, l);
 			}
 		}
 	}
 
-	private Fluid getFluid(ItemStack stack) {
-		FluidStack s = FluidContainerRegistry.getFluidForFilledItem(stack);
-		if (s == null)
-			return null;
-		else
-			return s.getFluid();
-	}
 }

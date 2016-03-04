@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.container.GuiContainer;
 import mrriegel.storagenetwork.tile.TileContainer;
-import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;

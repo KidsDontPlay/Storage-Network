@@ -1,8 +1,9 @@
 package mrriegel.storagenetwork.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.List;
 
-import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.FilterItem;

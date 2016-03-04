@@ -12,7 +12,6 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -26,7 +25,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -38,7 +38,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
 	private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
 	private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
-	private Map<Integer, String> fluids = new HashMap<Integer, String>();
 	private boolean white;
 	private int priority;
 	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
@@ -49,7 +48,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private int coverMeta;
 
 	ItemStack stack = null;
-	Fluid fluid = null;
 
 	public enum Kind {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
@@ -141,7 +139,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 				ItemStack s = getFilter().get(i).getStack();
 				if (s == null)
 					continue;
-				if (Block.getBlockFromItem(s.getItem()) == fluid.getBlock()) {
+				if (FluidContainerRegistry.getFluidForFilledItem(s).getFluid() == fluid) {
 					tmp = true;
 					break;
 				}
@@ -155,7 +153,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 				ItemStack s = getFilter().get(i).getStack();
 				if (s == null)
 					continue;
-				if (Block.getBlockFromItem(s.getItem()) == fluid.getBlock()) {
+				if (FluidContainerRegistry.getFluidForFilledItem(s).getFluid() == fluid) {
 					tmp = false;
 					break;
 				}
@@ -181,9 +179,9 @@ public class TileKabel extends TileEntity implements IConnectable {
 			if (elements(ItemUpgrade.OP) < 1)
 				return true;
 			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
-			if (getFluid() == null)
+			if (getFluid(getStack()) == null)
 				return true;
-			int amount = m.getAmount(getFluid());
+			int amount = m.getAmount(getFluid(getStack()));
 			if (isMode()) {
 				return amount > getLimit();
 			} else {
@@ -214,7 +212,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
-		fluid = FluidRegistry.getFluid(compound.getString("fluid"));
 
 		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
 		filter = new HashMap<Integer, StackWrapper>();
@@ -243,14 +240,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 			int slot = stackTag.getByte("Slot");
 			metas.put(slot, stackTag.getBoolean("Meta"));
 		}
-		
-		NBTTagList fluidList = compound.getTagList("fluids", Constants.NBT.TAG_COMPOUND);
-		fluids = new HashMap<Integer, String>();
-		for (int i = 0; i < fluidList.tagCount(); i++) {
-			NBTTagCompound stackTag = fluidList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			fluids.put(slot, stackTag.getString("Fluid"));
-		}
+
 		try {
 			north = Connect.valueOf(compound.getString("north"));
 			south = Connect.valueOf(compound.getString("south"));
@@ -286,8 +276,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setInteger("limit", limit);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
-		if (fluid != null)
-			compound.setString("fluid", FluidRegistry.getDefaultFluidName(fluid));
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (filter.get(i) != null) {
@@ -321,16 +309,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		}
 		compound.setTag("metas", metaList);
 
-		NBTTagList fluidList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (fluids.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				stackTag.setString("Fluid", fluids.get(i));
-				fluidList.appendTag(stackTag);
-			}
-		}
-		compound.setTag("fluids", fluidList);
 		try {
 
 			compound.setString("north", north.toString());
@@ -415,14 +393,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.metas = metas;
 	}
 
-	public Map<Integer, String> getFluids() {
-		return fluids;
-	}
-
-	public void setFluids(Map<Integer, String> fluids) {
-		this.fluids = fluids;
-	}
-
 	public boolean isWhite() {
 		return white;
 	}
@@ -471,14 +441,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.stack = stack;
 	}
 
-	public Fluid getFluid() {
-		return fluid;
-	}
-
-	public void setFluid(Fluid fluid) {
-		this.fluid = fluid;
-	}
-
 	public Block getCover() {
 		return cover;
 	}
@@ -505,5 +467,13 @@ public class TileKabel extends TileEntity implements IConnectable {
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
+	}
+
+	public Fluid getFluid(ItemStack stack) {
+		FluidStack s = FluidContainerRegistry.getFluidForFilledItem(stack);
+		if (s == null)
+			return null;
+		else
+			return s.getFluid();
 	}
 }

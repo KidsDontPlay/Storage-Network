@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.cable.ContainerCable;
+import mrriegel.storagenetwork.gui.cable.ContainerFCable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
@@ -38,7 +39,10 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 					con.getOres().put(message.index, message.ore);
 					con.getMetas().put(message.index, message.meta);
 					con.slotChanged();
-					ctx.getServerHandler().playerEntity.worldObj.markBlockForUpdate(con.tile.getPos());
+				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFCable) {
+					ContainerFCable con = (ContainerFCable) ctx.getServerHandler().playerEntity.openContainer;
+					con.getFilter().put(message.index, message.wrap);
+					con.slotChanged();
 				}
 			}
 		});

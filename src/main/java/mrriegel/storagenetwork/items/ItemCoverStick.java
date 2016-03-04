@@ -65,7 +65,7 @@ public class ItemCoverStick extends Item {
 				e.printStackTrace();
 				return false;
 			}
-			return true;
+			return false;
 		}
 		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
 	}

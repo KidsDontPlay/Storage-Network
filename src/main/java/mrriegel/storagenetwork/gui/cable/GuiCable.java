@@ -37,7 +37,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiCable extends GuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
-	Button pPlus, pMinus, meta, white, acti;
+	Button pPlus, pMinus, white, acti;
 	TileKabel tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
@@ -174,7 +174,7 @@ public class GuiCable extends GuiContainer {
 			stack = mc.thePlayer.inventory.getItemStack();
 			tile.setStack(stack);
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack, null));
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 		} else
 			super.mouseReleased(mouseX, mouseY, state);
 	}
@@ -273,7 +273,7 @@ public class GuiCable extends GuiContainer {
 					searchBar.setText("0");
 				}
 				tile.setLimit(num);
-				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack, null));
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
 			} else {
 				super.keyTyped(typedChar, keyCode);
 			}

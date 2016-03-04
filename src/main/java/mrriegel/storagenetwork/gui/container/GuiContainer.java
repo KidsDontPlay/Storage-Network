@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FaceMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileContainer;
