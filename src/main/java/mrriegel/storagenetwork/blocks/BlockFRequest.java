@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
@@ -19,18 +20,18 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class BlockRequest extends BlockContainer {
+public class BlockFRequest extends BlockContainer {
 
-	public BlockRequest() {
+	public BlockFRequest() {
 		super(Material.iron);
 		this.setHardness(3.5F);
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":request");
+		this.setUnlocalizedName(StorageNetwork.MODID + ":frequest");
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileRequest();
+		return new TileFRequest();
 	}
 
 	@Override
@@ -88,7 +89,7 @@ public class BlockRequest extends BlockContainer {
 		if (tile.getMaster() != null) {
 			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
 			worldIn.markBlockForUpdate(pos);
-			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(StorageNetwork.instance, GuiHandler.FREQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
@@ -98,8 +99,8 @@ public class BlockRequest extends BlockContainer {
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 
-		if (tileentity instanceof TileRequest) {
-			TileRequest tile = (TileRequest) tileentity;
+		if (tileentity instanceof TileFRequest) {
+			TileFRequest tile = (TileFRequest) tileentity;
 			for (int i = 0; i < 9; i++) {
 				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.back.get(i));
 				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));

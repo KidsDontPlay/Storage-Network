@@ -48,7 +48,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 			return;
 		for (int i = 0; i < 6; i++) {
 			ItemStack s = back.get(i);
-			if (s != null) {
+			if (s != null && master != null) {
 				TileMaster tile = (TileMaster) worldObj.getTileEntity(master);
 				int num = s.stackSize;
 				int rest = tile.insertStack(s.copy(), null);
