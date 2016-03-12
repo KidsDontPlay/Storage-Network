@@ -9,6 +9,7 @@ tile.storagenetwork:fimKabel.name=Fluid Import Cable
 
 tile.storagenetwork:master.name=Cable Master
 tile.storagenetwork:request.name=Request Table
+tile.storagenetwork:frequest.name=Fluid Request Table
 tile.storagenetwork:cover.name=Cable Cover
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade

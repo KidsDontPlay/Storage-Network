@@ -115,8 +115,8 @@ public class ContainerRequest extends Container {
 
 	@Override
 	public void onContainerClosed(EntityPlayer playerIn) {
-		super.onContainerClosed(playerIn);
 		slotChanged();
+		super.onContainerClosed(playerIn);
 	}
 
 	@Override

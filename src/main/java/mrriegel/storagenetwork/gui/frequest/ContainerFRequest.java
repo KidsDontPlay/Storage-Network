@@ -1,17 +1,11 @@
 package mrriegel.storagenetwork.gui.frequest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mrriegel.storagenetwork.gui.CrunchItemInventory;
-import mrriegel.storagenetwork.gui.request.SlotCrafting;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
-import mrriegel.storagenetwork.network.StacksMessage;
-import mrriegel.storagenetwork.network.SyncMessage;
 import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileMaster;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -20,9 +14,9 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
 public class ContainerFRequest extends Container {
 	public InventoryPlayer playerInv;
@@ -32,17 +26,17 @@ public class ContainerFRequest extends Container {
 	public ContainerFRequest(final TileFRequest tile, final InventoryPlayer playerInv) {
 		this.tile = tile;
 		this.playerInv = playerInv;
-		inv = new CrunchItemInventory(2, new ItemStack(Items.fire_charge));
-		 NBTTagCompound nbt = new NBTTagCompound();
-		 tile.writeToNBT(nbt);
-		 inv.setInventorySlotContents(0,
-		 ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("fill")));
-		 inv.setInventorySlotContents(1,
-		 ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("drain")));
-		// inv.setInventorySlotContents(0, tile.fill);
-		// inv.setInventorySlotContents(1, tile.drain);
-		this.addSlotToContainer(new Slot(inv, 0, 20, 100));
-		this.addSlotToContainer(new Slot(inv, 1, 40, 110));
+		inv = new CrunchItemInventory(2, 1, new ItemStack(Items.fire_charge));
+		// NBTTagCompound nbt = new NBTTagCompound();
+		// tile.writeToNBT(nbt);
+		// inv.setInventorySlotContents(0,
+		// ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("fill")));
+		// inv.setInventorySlotContents(1,
+		// ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("drain")));
+		inv.setInventorySlotContents(0, tile.fill);
+		inv.setInventorySlotContents(1, tile.drain);
+		this.addSlotToContainer(new Slot(inv, 0, 8, 138));
+		this.addSlotToContainer(new Slot(inv, 1, 44, 138));
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
@@ -63,13 +57,15 @@ public class ContainerFRequest extends Container {
 
 	@Override
 	public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
+		ItemStack k = super.slotClick(slotId, clickedButton, mode, playerIn);
 		slotChanged();
-		return super.slotClick(slotId, clickedButton, mode, playerIn);
+		return k;
 	}
 
 	public void slotChanged() {
-		tile.fill=inv.getStackInSlot(0);
-		tile.drain=inv.getStackInSlot(1);
+		tile.fill = inv.getStackInSlot(0);
+		tile.drain = inv.getStackInSlot(1);
+		tile.getWorld().markBlockForUpdate(tile.getPos());
 	}
 
 	@Override
@@ -120,9 +116,33 @@ public class ContainerFRequest extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
+		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 20 == 0) {
+			ItemStack drain = tile.drain;
+			TileMaster mas = (TileMaster) playerIn.worldObj.getTileEntity(tile.getMaster());
+			if (drain != null && FluidContainerRegistry.isFilledContainer(drain)) {
+				int rest = mas.insertFluid(FluidContainerRegistry.getFluidForFilledItem(drain), null);
+				if (rest > 0) {
+					mas.frequest(FluidContainerRegistry.getFluidForFilledItem(drain).getFluid(), FluidContainerRegistry.getFluidForFilledItem(drain).amount - rest, false);
+				} else {
+					ItemStack drained = FluidContainerRegistry.drainFluidContainer(drain);
+					if (drained != null) {
+						inv.setInventorySlotContents(1, drained);
+						slotChanged();
+					}
+				}
+			} else if (drain != null && drain.getItem() instanceof IFluidContainerItem) {
+				IFluidContainerItem flui = (IFluidContainerItem) drain.getItem();
+				if (flui.getFluid(drain) != null) {
+					int rest = mas.insertFluid(flui.getFluid(drain), null);
+					FluidStack drained = flui.drain(drain, flui.getFluid(drain).amount - rest, true);
+					inv.setInventorySlotContents(1, drain);
+					slotChanged();
+				}
+			}
+			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREQUEST), (EntityPlayerMP) playerIn);
+		}
 		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
 			return false;
 		return true;
 	}
-
 }

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.ButtonMessage;
@@ -72,8 +73,7 @@ public class GuiFCable extends GuiContainer {
 		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			searchBar.drawTextBox();
 			if (stack != null) {
-				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(tile.getFluid(stack).getStill().toString());
-				System.out.println(fluidIcon);
+				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(Util.getFluid(stack).getFluid().getStill().toString());
 				if (fluidIcon != null) {
 					this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 					drawTexturedModalRect(guiLeft + 8, guiTop - 18, fluidIcon, 16, 16);
@@ -164,7 +164,7 @@ public class GuiFCable extends GuiContainer {
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1 && (tile.getFluid(mc.thePlayer.inventory.getItemStack()) != null || mc.thePlayer.inventory.getItemStack() == null)) {
+		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1 && (Util.getFluid(mc.thePlayer.inventory.getItemStack()) != null || mc.thePlayer.inventory.getItemStack() == null)) {
 			stack = mc.thePlayer.inventory.getItemStack();
 			tile.setStack(stack);
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
@@ -183,7 +183,7 @@ public class GuiFCable extends GuiContainer {
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerFCable con = (ContainerFCable) inventorySlots;
 				StackWrapper x = con.getFilter().get(i);
-				if (mc.thePlayer.inventory.getItemStack() != null && tile.getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
+				if (mc.thePlayer.inventory.getItemStack() != null && Util.getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
 					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
 						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1));
 					} else
@@ -263,7 +263,10 @@ public class GuiFCable extends GuiContainer {
 			this.y = y;
 			this.guiLeft = guiLeft;
 			this.guiTop = guiTop;
-			this.fluid = tile.getFluid(stack);
+			if (Util.getFluid(stack) == null)
+				this.fluid = null;
+			else
+				this.fluid = Util.getFluid(stack).getFluid();
 		}
 
 		void drawSlot(int mx, int my) {
@@ -355,7 +358,7 @@ public class GuiFCable extends GuiContainer {
 				}
 				if (tile.getStack() != null) {
 					List<String> lis = new ArrayList<String>();
-					String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit() + " mB", tile.getFluid(tile.getStack()).getName());
+					String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (tile.isMode() ? "more" : "less")), tile.getLimit() + " mB", Util.getFluid(tile.getStack()).getFluid().getName());
 					List<String> matchList = new ArrayList<String>();
 					Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 					Matcher regexMatcher = regex.matcher(s);

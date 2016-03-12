@@ -369,5 +369,4 @@ public class GuiRemote extends GuiContainer {
 			}
 		}
 	}
-
 }

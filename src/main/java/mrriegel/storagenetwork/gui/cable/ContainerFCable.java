@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -15,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class ContainerFCable extends Container {
@@ -71,7 +71,7 @@ public class ContainerFCable extends Container {
 		Slot slot = this.inventorySlots.get(slotIndex);
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
-			if (itemstack1 == null || FluidContainerRegistry.getFluidForFilledItem(itemstack1) == null)
+			if (itemstack1 == null || Util.getFluid(itemstack1) == null)
 				return null;
 			for (int i = 0; i < 9; i++) {
 				if (tile.getKind() == Kind.fstorageKabel)
@@ -90,15 +90,16 @@ public class ContainerFCable extends Container {
 
 	boolean in(StackWrapper stack) {
 		for (int i = 0; i < 9; i++) {
-			if (filter.get(i) != null && (filter.get(i).getStack().isItemEqual(stack.getStack()) || sameFluid(filter.get(i).getStack(), stack.getStack())))
+			if (filter.get(i) != null && sameFluid(filter.get(i).getStack(), stack.getStack()))
 				return true;
 		}
 		return false;
 	}
 
 	private boolean sameFluid(ItemStack s1, ItemStack s2) {
-		FluidStack f1 = FluidContainerRegistry.getFluidForFilledItem(s1);
-		FluidStack f2 = FluidContainerRegistry.getFluidForFilledItem(s2);
+		FluidStack f1 = Util.getFluid(s1);
+		FluidStack f2 = Util.getFluid(s2);
+		// System.out.println(f1.getFluid() +" "+ f2.getFluid());
 		return f1.getFluid() == f2.getFluid();
 	}
 

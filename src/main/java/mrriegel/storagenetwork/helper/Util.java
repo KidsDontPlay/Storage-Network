@@ -20,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -76,6 +78,18 @@ public class Util {
 			if (c.compare(a, e) == 0)
 				return true;
 		return false;
+	}
+
+	public static FluidStack getFluid(ItemStack s) {
+		if (s == null || s.getItem() == null)
+			return null;
+		FluidStack a = null;
+		a = FluidContainerRegistry.getFluidForFilledItem(s);
+		if (a != null)
+			return a;
+		if (s.getItem() instanceof IFluidContainerItem)
+			a = ((IFluidContainerItem) s.getItem()).getFluid(s);
+		return a;
 	}
 
 	public static void spawnItemStack(World worldIn, double x, double y, double z, ItemStack stack) {

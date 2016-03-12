@@ -1,31 +1,17 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.helper.Inv;
-import mrriegel.storagenetwork.network.PacketHandler;
-import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.common.util.Constants;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 public class TileFRequest extends TileEntity implements IConnectable {
 	private BlockPos master;
@@ -40,12 +26,14 @@ public class TileFRequest extends TileEntity implements IConnectable {
 		}.getType());
 		downwards = compound.getBoolean("dir");
 		sort = Sort.valueOf(compound.getString("sort"));
-		ItemStack f = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("fill"));
-		if (f != null && f.getItem() == null)
-			f = null;
-		ItemStack d = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("drain"));
-		if (d != null && d.getItem() == null)
-			d = null;
+		if (compound.hasKey("fill", 10))
+			fill = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("fill")));
+		else
+			fill = null;
+		if (compound.hasKey("drain", 10))
+			drain = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("drain")));
+		else
+			drain = null;
 	}
 
 	@Override
@@ -54,18 +42,10 @@ public class TileFRequest extends TileEntity implements IConnectable {
 		compound.setString("master", new Gson().toJson(master));
 		compound.setBoolean("dir", downwards);
 		compound.setString("sort", sort.toString());
-		NBTTagCompound f = new NBTTagCompound();
-		if (fill == null)
-			new ItemStack((Block) null).writeToNBT(f);
-		else
-			fill.writeToNBT(f);
-		compound.setTag("fill", f);
-		NBTTagCompound d = new NBTTagCompound();
-		if (drain == null)
-			new ItemStack((Block) null).writeToNBT(d);
-		else
-			drain.writeToNBT(d);
-		compound.setTag("drain", d);
+		if (fill != null)
+			compound.setTag("fill", fill.writeToNBT(new NBTTagCompound()));
+		if (drain != null)
+			compound.setTag("drain", drain.writeToNBT(new NBTTagCompound()));
 	}
 
 	@Override

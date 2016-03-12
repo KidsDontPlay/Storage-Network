@@ -11,6 +11,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -19,18 +20,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessage, IMessage> {
 	int id, x, y, z;
 	Fluid fluid;
-	boolean shift;
 
 	public FRequestMessage() {
 	}
 
-	public FRequestMessage(int id, int x, int y, int z, Fluid fluid, boolean shift) {
+	public FRequestMessage(int id, int x, int y, int z, Fluid fluid) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.fluid = fluid;
-		this.shift = shift;
 	}
 
 	@Override
@@ -43,14 +42,29 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
 					ContainerFRequest con = ((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer);
 					ItemStack fill = con.tile.fill;
-					System.out.println("filL: " + fill);
-					if (message.fluid != null && fill != null && FluidContainerRegistry.isContainer(fill) && (FluidContainerRegistry.containsFluid(fill, new FluidStack(message.fluid, 1)) || FluidContainerRegistry.isEmptyContainer(fill))) {
-						int space = FluidContainerRegistry.getContainerCapacity(fill) - (FluidContainerRegistry.isEmptyContainer(fill) ? 0 : FluidContainerRegistry.getFluidForFilledItem(fill).amount);
+					if (message.id < 2 && message.fluid != null && fill != null && FluidContainerRegistry.isEmptyContainer(fill)) {
+						int space = FluidContainerRegistry.getContainerCapacity(new FluidStack(message.fluid, 1), fill);
 						boolean canFill = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, space), fill.copy()) != null;
-						System.out.println("space: " + space + " " + canFill);
 						if (space > 0 && canFill) {
-							FluidStack fluid = tile.frequest(message.fluid, space, false);
-							System.out.println(fill = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, space), fill));
+							FluidStack fluid = tile.frequest(message.fluid, space, true);
+							ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, fluid.amount), fill);
+							if (filled != null) {
+								tile.frequest(message.fluid, fluid.amount, false);
+								con.inv.setInventorySlotContents(0, filled);
+								con.slotChanged();
+							}
+						}
+					} else if (message.id < 2 && message.fluid != null && fill != null && fill.getItem() instanceof IFluidContainerItem) {
+						IFluidContainerItem flui = (IFluidContainerItem) fill.getItem();
+						if (flui.getFluid(fill) == null || flui.getFluid(fill).getFluid() == message.fluid) {
+							int space = flui.getFluid(fill) == null ? flui.getCapacity(fill) : flui.getCapacity(fill) - flui.getFluid(fill).amount;
+							space = Math.min(space, message.id == 0 ? 1000 : message.id == 1 ? 100 : 0);
+							if (space > 0) {
+								FluidStack fluid = tile.frequest(message.fluid, space, false);
+								flui.fill(fill, fluid, true);
+								con.inv.setInventorySlotContents(0, fill);
+								con.slotChanged();
+							}
 						}
 					}
 					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids(), GuiHandler.FREQUEST), ctx.getServerHandler().playerEntity);
@@ -68,7 +82,6 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 		this.x = buf.readInt();
 		this.y = buf.readInt();
 		this.z = buf.readInt();
-		this.shift = buf.readBoolean();
 		this.fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf));
 	}
 
@@ -78,7 +91,6 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 		buf.writeInt(this.x);
 		buf.writeInt(this.y);
 		buf.writeInt(this.z);
-		buf.writeBoolean(this.shift);
 		if (fluid != null)
 			ByteBufUtils.writeUTF8String(buf, this.fluid.getName());
 		else

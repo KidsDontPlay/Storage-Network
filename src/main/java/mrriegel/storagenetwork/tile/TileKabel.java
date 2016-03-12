@@ -26,7 +26,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -179,9 +178,9 @@ public class TileKabel extends TileEntity implements IConnectable {
 			if (elements(ItemUpgrade.OP) < 1)
 				return true;
 			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
-			if (getFluid(getStack()) == null)
+			if (Util.getFluid(getStack()) == null)
 				return true;
-			int amount = m.getAmount(getFluid(getStack()));
+			int amount = m.getAmount(Util.getFluid(getStack()).getFluid());
 			if (isMode()) {
 				return amount > getLimit();
 			} else {
@@ -467,13 +466,5 @@ public class TileKabel extends TileEntity implements IConnectable {
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
-	}
-
-	public Fluid getFluid(ItemStack stack) {
-		FluidStack s = FluidContainerRegistry.getFluidForFilledItem(stack);
-		if (s == null)
-			return null;
-		else
-			return s.getFluid();
 	}
 }

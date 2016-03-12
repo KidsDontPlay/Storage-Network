@@ -65,7 +65,7 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 		return index == 0;
 	}
 
-	private InventoryCrafting getMatrix() {
+	public InventoryCrafting getMatrix() {
 		InventoryCrafting craftMatrix = new InventoryCrafting(new Container() {
 			@Override
 			public boolean canInteractWith(EntityPlayer playerIn) {

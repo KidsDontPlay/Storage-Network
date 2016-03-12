@@ -90,7 +90,7 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == CRAFTER) {
 			return new GuiCrafter(new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z))));
 		}
-		if(ID==FREQUEST){
+		if (ID == FREQUEST) {
 			return new GuiFRequest(new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
 		}
 		return null;

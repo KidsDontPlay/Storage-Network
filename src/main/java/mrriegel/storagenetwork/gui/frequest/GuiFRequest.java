@@ -54,27 +54,27 @@ public class GuiFRequest extends GuiContainer {
 		this.fluids = new ArrayList<FluidStack>();
 		tile = ((ContainerFRequest) inventorySlots).tile;
 		master = tile.getMaster();
-		PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, master.getX(), master.getY(), master.getZ(), null, false));
+		PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, master.getX(), master.getY(), master.getZ(), null));
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96, 85, fontRendererObj.FONT_HEIGHT);
+		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96 + 64, 85, fontRendererObj.FONT_HEIGHT);
 		searchBar.setMaxStringLength(30);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
 		searchBar.setCanLoseFocus(false);
 		searchBar.setFocused(true);
-		direction = new Button(0, guiLeft + 7, guiTop + 93, "");
+		direction = new Button(0, guiLeft + 7, guiTop + 93 + 64, "");
 		buttonList.add(direction);
-		sort = new Button(1, guiLeft + 21, guiTop + 93, "");
+		sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
 		buttonList.add(sort);
-		left = new Button(2, guiLeft + 44, guiTop + 93, "<");
+		left = new Button(2, guiLeft + 44, guiTop + 93 + 64, "<");
 		buttonList.add(left);
-		right = new Button(3, guiLeft + 58, guiTop + 93, ">");
+		right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
 		buttonList.add(right);
 	}
 
@@ -132,6 +132,7 @@ public class GuiFRequest extends GuiContainer {
 			right.visible = true;
 			right.enabled = true;
 		}
+		searchBar.drawTextBox();
 		int index = (page - 1) * 32;
 		for (int jj = 0; jj < 4; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
@@ -152,7 +153,6 @@ public class GuiFRequest extends GuiContainer {
 				index++;
 			}
 		}
-		searchBar.drawTextBox();
 
 	}
 
@@ -184,7 +184,7 @@ public class GuiFRequest extends GuiContainer {
 		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103) && mouseButton == 1) {
 			searchBar.setText("");
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
-			PacketHandler.INSTANCE.sendToServer(new FRequestMessage(mouseButton, master.getX(), master.getY(), master.getZ(), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)));
+			PacketHandler.INSTANCE.sendToServer(new FRequestMessage(mouseButton, master.getX(), master.getY(), master.getZ(), over));
 		}
 	}
 
@@ -193,7 +193,7 @@ public class GuiFRequest extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, master.getX(), master.getY(), master.getZ(), null, false));
+				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, master.getX(), master.getY(), master.getZ(), null));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -233,6 +233,7 @@ public class GuiFRequest extends GuiContainer {
 		Minecraft mc = Minecraft.getMinecraft();
 
 		void drawSlot(int mx, int my) {
+			GlStateManager.pushMatrix();
 			TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
 			if (fluidIcon == null)
 				return;
@@ -243,7 +244,9 @@ public class GuiFRequest extends GuiContainer {
 			drawTexturedModalRect(x, y, fluidIcon, 16, 16);
 			GlStateManager.enableLighting();
 			GlStateManager.enableDepth();
-			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+			GlStateManager.popMatrix();
+			String amount = "" + (size < 1000 ? size : size < 1000000 ? size / 1000 : size < 1000000000 ? size / 1000000 : size / 1000000000);
+			amount += size < 1000 ? "mB" : size < 1000000 ? "B" : size < 1000000000 ? "KB" : "MB";
 			if (ConfigHandler.smallFont) {
 				GlStateManager.pushMatrix();
 				GlStateManager.scale(.5f, .5f, .5f);
@@ -270,7 +273,7 @@ public class GuiFRequest extends GuiContainer {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
 				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), x, y, fontRendererObj);
+					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx, my, fontRendererObj);
 				} else
 					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx, my);
 				GlStateManager.popMatrix();

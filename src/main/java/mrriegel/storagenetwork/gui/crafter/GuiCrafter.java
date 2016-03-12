@@ -5,12 +5,10 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiCrafter extends GuiContainer {
 	private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");
@@ -39,17 +37,17 @@ public class GuiCrafter extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		this.fontRendererObj.drawString(((ContainerCrafter) inventorySlots).crafter.getName(), 8, 6, 4210752);
 		this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, this.ySize - 96 + 2, 4210752);
-
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
-		int j1 = 4;
-		int k1 = 70;
+		int j1 = 150;
+		int k1 = 35;
 		GlStateManager.colorMask(true, true, true, false);
 		RenderHelper.enableGUIStandardItemLighting();
-		mc.getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(Blocks.tnt), 4, 79);
+		GlStateManager.color(1f, 1f, 1f, 1f);
+		ItemStack result = CraftingManager.getInstance().findMatchingRecipe(((ContainerCrafter) inventorySlots).crafter.getMatrix(), mc.theWorld);
+		mc.getRenderItem().renderItemAndEffectIntoGUI(result, j1, k1);
 		RenderHelper.disableStandardItemLighting();
-		drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
 		GlStateManager.colorMask(true, true, true, true);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();

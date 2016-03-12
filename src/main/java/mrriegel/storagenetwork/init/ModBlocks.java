@@ -49,8 +49,8 @@ public class ModBlocks {
 		GameRegistry.registerBlock(fexKabel, "fexKabel");
 		GameRegistry.registerBlock(fimKabel, "fimKabel");
 		GameRegistry.registerBlock(cover, "cover");
-		GameRegistry.registerBlock(container, "container");
-		GameRegistry.registerBlock(crafter, "crafter");
+		// GameRegistry.registerBlock(container, "container");
+		// GameRegistry.registerBlock(crafter, "crafter");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");

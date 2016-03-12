@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileMaster;
-import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
