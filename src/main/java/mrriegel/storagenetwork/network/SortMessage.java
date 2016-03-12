@@ -3,9 +3,11 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.helper.NBTHelper;
+import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -41,10 +43,18 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 					NBTHelper.setBoolean(s, "down", message.direction);
 					NBTHelper.setString(s, "sort", message.sort.toString());
 					return;
+
 				}
-				TileRequest tile = (TileRequest) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
-				tile.sort = message.sort;
-				tile.downwards = message.direction;
+				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
+				if (t instanceof TileRequest) {
+					TileRequest tile = (TileRequest) t;
+					tile.sort = message.sort;
+					tile.downwards = message.direction;
+				} else if (t instanceof TileFRequest) {
+					TileFRequest tile = (TileFRequest) t;
+					tile.sort = message.sort;
+					tile.downwards = message.direction;
+				}
 			}
 		});
 		return null;

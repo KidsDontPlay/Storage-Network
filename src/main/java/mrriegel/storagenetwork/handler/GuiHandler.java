@@ -8,6 +8,8 @@ import mrriegel.storagenetwork.gui.container.ContainerContainer;
 import mrriegel.storagenetwork.gui.container.GuiContainer;
 import mrriegel.storagenetwork.gui.crafter.ContainerCrafter;
 import mrriegel.storagenetwork.gui.crafter.GuiCrafter;
+import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
+import mrriegel.storagenetwork.gui.frequest.GuiFRequest;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.remote.GuiRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
@@ -16,6 +18,7 @@ import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.gui.template.GuiTemplate;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
+import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,10 +53,15 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == TEMPLATE) {
 			return new ContainerTemplate(player.inventory);
 		}
-		if (ID == CONTAINER)
+		if (ID == CONTAINER) {
 			return new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
-		if (ID == CRAFTER)
+		}
+		if (ID == CRAFTER) {
 			return new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z)));
+		}
+		if (ID == FREQUEST) {
+			return new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+		}
 		return null;
 	}
 
@@ -79,8 +87,12 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == CONTAINER) {
 			return new GuiContainer(new ContainerContainer((TileContainer) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
 		}
-		if (ID == CRAFTER)
+		if (ID == CRAFTER) {
 			return new GuiCrafter(new ContainerCrafter(player.inventory, (TileCrafter) world.getTileEntity(new BlockPos(x, y, z))));
+		}
+		if(ID==FREQUEST){
+			return new GuiFRequest(new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
+		}
 		return null;
 	}
 }

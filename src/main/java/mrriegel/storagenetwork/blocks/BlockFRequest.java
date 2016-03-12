@@ -101,10 +101,8 @@ public class BlockFRequest extends BlockContainer {
 
 		if (tileentity instanceof TileFRequest) {
 			TileFRequest tile = (TileFRequest) tileentity;
-			for (int i = 0; i < 9; i++) {
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.back.get(i));
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
-			}
+			Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.drain);
+			Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.fill);
 		}
 
 		super.breakBlock(worldIn, pos, state);

@@ -3,9 +3,14 @@ package mrriegel.storagenetwork.gui.crafter;
 import mrriegel.storagenetwork.tile.TileCrafter;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
 
 public class GuiCrafter extends GuiContainer {
 	private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");
@@ -34,17 +39,21 @@ public class GuiCrafter extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		this.fontRendererObj.drawString(((ContainerCrafter) inventorySlots).crafter.getName(), 8, 6, 4210752);
 		this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, this.ySize - 96 + 2, 4210752);
-		// GlStateManager.pushMatrix();
-		// RenderHelper.enableGUIStandardItemLighting();
-		// GL11.glEnable(GL11.GL_BLEND);
-		// GL11.glDepthMask(false);
-		// GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		// GlStateManager.color(1, 1, 1, .5F);
-		// GL11.glDisable(GL11.GL_LIGHTING);
-		// mc.getRenderItem().renderItemAndEffectIntoGUI(new
-		// ItemStack(Blocks.tnt), 4, 79);
-		// RenderHelper.disableStandardItemLighting();
-		// GlStateManager.popMatrix();
+
+		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		int j1 = 4;
+		int k1 = 70;
+		GlStateManager.colorMask(true, true, true, false);
+		RenderHelper.enableGUIStandardItemLighting();
+		mc.getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(Blocks.tnt), 4, 79);
+		RenderHelper.disableStandardItemLighting();
+		drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+		GlStateManager.colorMask(true, true, true, true);
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.popMatrix();
 	}
 
 }

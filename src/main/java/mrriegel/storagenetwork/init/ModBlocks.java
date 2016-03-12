@@ -5,11 +5,13 @@ import mrriegel.storagenetwork.blocks.BlockContainer;
 import mrriegel.storagenetwork.blocks.BlockCover;
 import mrriegel.storagenetwork.blocks.BlockCrafter;
 import mrriegel.storagenetwork.blocks.BlockFKabel;
+import mrriegel.storagenetwork.blocks.BlockFRequest;
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
+import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class ModBlocks {
 	public static final Block master = new BlockMaster();
 	public static final Block request = new BlockRequest();
+	public static final Block frequest = new BlockFRequest();
 	public static final Block kabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":kabel");
 	public static final Block storageKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":storageKabel");
 	public static final Block exKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
@@ -36,6 +39,7 @@ public class ModBlocks {
 	public static void init() {
 		GameRegistry.registerBlock(master, "master");
 		GameRegistry.registerBlock(request, "request");
+		GameRegistry.registerBlock(frequest, "frequest");
 		GameRegistry.registerBlock(kabel, "kabel");
 		GameRegistry.registerBlock(storageKabel, "storageKabel");
 		GameRegistry.registerBlock(exKabel, "exKabel");
@@ -51,6 +55,7 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
 		GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
+		GameRegistry.registerTileEntity(TileFRequest.class, "tileFRequest");
 		GameRegistry.registerTileEntity(TileContainer.class, "tileContainer");
 		GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
 	}

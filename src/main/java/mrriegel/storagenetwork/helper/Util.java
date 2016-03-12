@@ -17,6 +17,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -48,6 +51,14 @@ public class Util {
 		}
 
 		return modName;
+	}
+
+	public static String getModNameForFluid(Fluid fluid) {
+		for (FluidContainerData d : FluidContainerRegistry.getRegisteredFluidContainerData()) {
+			if (fluid == d.fluid.getFluid())
+				return getModNameForItem(d.filledContainer.getItem());
+		}
+		return "Unknown";
 	}
 
 	public static boolean equalOreDict(ItemStack a, ItemStack b) {
