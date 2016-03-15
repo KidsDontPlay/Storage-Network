@@ -138,7 +138,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 				ItemStack s = getFilter().get(i).getStack();
 				if (s == null)
 					continue;
-				if (FluidContainerRegistry.getFluidForFilledItem(s).getFluid() == fluid) {
+				if (Util.getFluid(s) != null && Util.getFluid(s).getFluid() == fluid) {
 					tmp = true;
 					break;
 				}
@@ -152,7 +152,7 @@ public class TileKabel extends TileEntity implements IConnectable {
 				ItemStack s = getFilter().get(i).getStack();
 				if (s == null)
 					continue;
-				if (FluidContainerRegistry.getFluidForFilledItem(s).getFluid() == fluid) {
+				if (Util.getFluid(s) != null && Util.getFluid(s).getFluid() == fluid) {
 					tmp = false;
 					break;
 				}
@@ -466,5 +466,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
+			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 }

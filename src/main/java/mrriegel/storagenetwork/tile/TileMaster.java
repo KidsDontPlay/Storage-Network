@@ -49,7 +49,7 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
 public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver {
 	public List<BlockPos> connectables, storageInventorys, imInventorys, exInventorys, fstorageInventorys, fimInventorys, fexInventorys;
-	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, 120, 0);
+	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, 400, 0);
 	public List<CraftingTask> tasks = new ArrayList<CraftingTask>();
 
 	public List<FluidStack> getFluids() {
@@ -875,10 +875,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!inv.canFill(t.getInventoryFace().getOpposite(), f))
 					continue;
-				int amount = 0;
-				for (FluidTankInfo inf : inv.getTankInfo(t.getInventoryFace().getOpposite()))
-					if (inf.fluid != null && inf.fluid.getFluid() == f)
-						amount += inf.fluid.amount;
+				// int amount = 0;
+				// for (FluidTankInfo inf :
+				// inv.getTankInfo(t.getInventoryFace().getOpposite()))
+				// if (inf.fluid != null && inf.fluid.getFluid() == f)
+				// amount += inf.fluid.amount;
 				if (!t.status())
 					continue;
 				int num = 200 + t.elements(ItemUpgrade.STACK) * 200;
@@ -913,7 +914,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				refreshNetwork();
 				continue;
 			}
-			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null) {
+			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
 		}
@@ -1008,7 +1009,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				refreshNetwork();
 				continue;
 			}
-			if (tile.getKind() == Kind.fstorageKabel && tile.getConnectedInventory() != null) {
+			if (tile.getKind() == Kind.fstorageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IFluidHandler) {
 				invs.add(tile);
 			}
 		}
@@ -1058,6 +1059,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					refreshNetwork();
 					break;
 				}
+		if (worldObj.getTotalWorldTime() % 200 == 0)
+			refreshNetwork();
 		vacuum();
 		impor();
 		export();

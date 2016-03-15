@@ -43,7 +43,7 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 					ContainerFRequest con = ((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer);
 					ItemStack fill = con.tile.fill;
 					if (message.id < 2 && message.fluid != null && fill != null && FluidContainerRegistry.isEmptyContainer(fill)) {
-						int space = FluidContainerRegistry.getContainerCapacity(new FluidStack(message.fluid, 1), fill);
+						int space = FluidContainerRegistry.isBucket(fill) ? FluidContainerRegistry.BUCKET_VOLUME : FluidContainerRegistry.getContainerCapacity(new FluidStack(message.fluid, 1), fill);
 						boolean canFill = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, space), fill.copy()) != null;
 						if (space > 0 && canFill) {
 							FluidStack fluid = tile.frequest(message.fluid, space, true);

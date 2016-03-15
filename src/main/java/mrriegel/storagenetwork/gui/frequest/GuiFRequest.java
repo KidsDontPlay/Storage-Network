@@ -93,6 +93,10 @@ public class GuiFRequest extends GuiContainer {
 				if (s.getLocalizedName().toLowerCase().contains(search.toLowerCase()))
 					tmp.add(s);
 		}
+		if (tile.fill == null)
+			this.drawTexturedModalRect(i + 10, j + 139, 176, 22, 12, 14);
+		if (tile.drain == null)
+			this.drawTexturedModalRect(i + 46, j + 139, 176 + 12, 22, 12, 14);
 		Collections.sort(tmp, new Comparator<FluidStack>() {
 			int mul = tile.downwards ? -1 : 1;
 
@@ -109,8 +113,8 @@ public class GuiFRequest extends GuiContainer {
 				return 0;
 			}
 		});
-		maxPage = tmp.size() / 32;
-		if (tmp.size() % 32 != 0)
+		maxPage = tmp.size() / 48;
+		if (tmp.size() % 48 != 0)
 			maxPage++;
 		if (maxPage < 1)
 			maxPage = 1;
@@ -134,7 +138,7 @@ public class GuiFRequest extends GuiContainer {
 		}
 		searchBar.drawTextBox();
 		int index = (page - 1) * 32;
-		for (int jj = 0; jj < 4; jj++) {
+		for (int jj = 0; jj < 6; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
@@ -144,7 +148,7 @@ public class GuiFRequest extends GuiContainer {
 			}
 		}
 		index = (page - 1) * 32;
-		for (int jj = 0; jj < 4; jj++) {
+		for (int jj = 0; jj < 6; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
@@ -237,7 +241,12 @@ public class GuiFRequest extends GuiContainer {
 			TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
 			if (fluidIcon == null)
 				return;
-
+			int color = fluid.getColor(new FluidStack(fluid, 1));
+			float a = (float) ((color >> 24) & 0xFF) / 255.0F;
+			float r = (float) ((color >> 16) & 0xFF) / 255.0F;
+			float g = (float) ((color >> 8) & 0xFF) / 255.0F;
+			float b = (float) ((color >> 0) & 0xFF) / 255.0F;
+			GlStateManager.color(r, g, b, a);
 			this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 			GlStateManager.disableLighting();
 			GlStateManager.disableDepth();
