@@ -143,7 +143,7 @@ public class BlockFKabel extends BlockKabel {
 		for (BlockPos p : Util.getSides(orig)) {
 			if (p.equals(pos))
 				continue;
-			if (world.getTileEntity(p) instanceof IFluidHandler && (((IFluidHandler) world.getTileEntity(p)).getTankInfo(get(orig, p)).length != 0))
+			if (world.getTileEntity(p) instanceof IFluidHandler && (((IFluidHandler) world.getTileEntity(p)).getTankInfo(get(orig, p)) != null) && (((IFluidHandler) world.getTileEntity(p)).getTankInfo(get(orig, p)).length != 0))
 				return true;
 		}
 		return false;

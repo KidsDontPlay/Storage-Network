@@ -8,33 +8,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.gui.cable.ContainerCable;
-import mrriegel.storagenetwork.gui.cable.GuiCable;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
-import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileIndicator;
-import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.oredict.OreDictionary;
 
-import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -54,9 +43,10 @@ public class GuiIndicator extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {String s=tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
-	this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
-	
+	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		String s = tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
+		this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
+
 	}
 
 	@Override
@@ -174,10 +164,10 @@ public class GuiIndicator extends GuiContainer {
 			if (stack != null && this.isMouseOverSlot(mx, my)) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-				renderToolTip(stack, mx, my);
+				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+					renderToolTip(stack, mx, my);
 				else
-					drawHoveringText(Arrays.asList(size+""), mx, my);
+					drawHoveringText(Arrays.asList(size + ""), mx, my);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}

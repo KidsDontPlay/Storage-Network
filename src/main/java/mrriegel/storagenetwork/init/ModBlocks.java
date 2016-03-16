@@ -52,7 +52,7 @@ public class ModBlocks {
 		GameRegistry.registerBlock(fexKabel, "fexKabel");
 		GameRegistry.registerBlock(fimKabel, "fimKabel");
 		GameRegistry.registerBlock(cover, "cover");
-		GameRegistry.registerBlock(indicator,"indicator");
+		GameRegistry.registerBlock(indicator, "indicator");
 		// GameRegistry.registerBlock(container, "container");
 		// GameRegistry.registerBlock(crafter, "crafter");
 

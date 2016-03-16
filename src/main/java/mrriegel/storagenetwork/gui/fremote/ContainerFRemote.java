@@ -4,7 +4,6 @@ import mrriegel.storagenetwork.gui.CrunchItemInventory;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemFRemote;
-import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -13,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -53,28 +51,52 @@ public class ContainerFRemote extends Container {
 		}
 
 	}
-	public void onContainerClosed(EntityPlayer playerIn)
-    {
-        super.onContainerClosed(playerIn);
 
-        if (!playerIn.worldObj.isRemote)
-        {
-            for (int i = 0; i < 2; ++i)
-            {
-                ItemStack itemstack = this.inv.removeStackFromSlot(i);
+	@Override
+	public void onContainerClosed(EntityPlayer playerIn) {
+		super.onContainerClosed(playerIn);
 
-                if (itemstack != null)
-                {
-                    playerIn.dropPlayerItemWithRandomChoice(itemstack, false);
-                }
-            }
-        }
-    }
+		if (!playerIn.worldObj.isRemote) {
+			for (int i = 0; i < 2; ++i) {
+				ItemStack itemstack = this.inv.removeStackFromSlot(i);
+
+				if (itemstack != null) {
+					playerIn.dropPlayerItemWithRandomChoice(itemstack, false);
+				}
+			}
+		}
+	}
+
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-		if (playerIn.worldObj.isRemote)
-			return null;
 		ItemStack itemstack = null;
+		Slot slot = this.inventorySlots.get(slotIndex);
+		if (slot != null && slot.getHasStack()) {
+			ItemStack itemstack1 = slot.getStack();
+			itemstack = itemstack1.copy();
+			if (itemstack.stackSize != 1 || !(FluidContainerRegistry.isContainer(itemstack) || itemstack.getItem() instanceof IFluidContainerItem))
+				return null;
+			if (slotIndex < 2) {
+				if (!this.mergeItemStack(itemstack1, 2, inventorySlots.size(), true)) {
+					return null;
+				}
+				slot.onSlotChange(itemstack1, itemstack);
+			} else {
+				if (!this.mergeItemStack(itemstack1, 0, 2, false)) {
+					return null;
+				}
+			}
+			if (itemstack1.stackSize == 0) {
+				slot.putStack((ItemStack) null);
+			} else {
+				slot.onSlotChanged();
+			}
+
+			if (itemstack1.stackSize == itemstack.stackSize) {
+				return null;
+			}
+			slot.onPickupFromSlot(playerIn, itemstack1);
+		}
 
 		return itemstack;
 	}

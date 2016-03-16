@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.gui.indicator;
 
-import mrriegel.storagenetwork.blocks.BlockIndicator;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileMaster;

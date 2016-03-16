@@ -155,7 +155,7 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();

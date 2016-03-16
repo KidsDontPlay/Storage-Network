@@ -27,7 +27,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -195,7 +194,7 @@ public class GuiFRequest extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0,null));
+				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, null));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -240,10 +239,10 @@ public class GuiFRequest extends GuiContainer {
 			if (fluidIcon == null)
 				return;
 			int color = fluid.getColor(new FluidStack(fluid, 1));
-			float a = (float) ((color >> 24) & 0xFF) / 255.0F;
-			float r = (float) ((color >> 16) & 0xFF) / 255.0F;
-			float g = (float) ((color >> 8) & 0xFF) / 255.0F;
-			float b = (float) ((color >> 0) & 0xFF) / 255.0F;
+			float a = ((color >> 24) & 0xFF) / 255.0F;
+			float r = ((color >> 16) & 0xFF) / 255.0F;
+			float g = ((color >> 8) & 0xFF) / 255.0F;
+			float b = ((color >> 0) & 0xFF) / 255.0F;
 			GlStateManager.color(r, g, b, a);
 			this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 			GlStateManager.disableLighting();

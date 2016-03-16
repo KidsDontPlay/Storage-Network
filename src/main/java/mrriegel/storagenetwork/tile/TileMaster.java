@@ -67,6 +67,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			IFluidHandler inv = (IFluidHandler) worldObj.getTileEntity(t.getConnectedInventory());
 			if (inv == null)
 				continue;
+			if (inv.getTankInfo(t.getInventoryFace().getOpposite()) == null)
+				continue;
 			for (FluidTankInfo i : inv.getTankInfo(t.getInventoryFace().getOpposite())) {
 				if (i != null && i.fluid != null && t.canTransfer(i.fluid.getFluid()))
 					addToList(stacks, i.fluid.getFluid(), i.fluid.amount);
@@ -759,6 +761,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			IFluidHandler inv = (IFluidHandler) worldObj.getTileEntity(t.getConnectedInventory());
 			if ((worldObj.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 				continue;
+			if (inv.getTankInfo(t.getInventoryFace().getOpposite()) == null)
+				continue;
+//			System.out.println("inv: " + inv);
+//			System.out.println("inv info: " + inv.getTankInfo(t.getInventoryFace().getOpposite()));
 			for (FluidTankInfo i : inv.getTankInfo(t.getInventoryFace().getOpposite())) {
 				FluidStack s = i.fluid;
 				if (s == null)
@@ -1017,6 +1023,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		int result = 0;
 		for (TileKabel t : invs) {
 			IFluidHandler inv = (IFluidHandler) worldObj.getTileEntity(t.getConnectedInventory());
+			if (inv.getTankInfo(t.getInventoryFace().getOpposite()) == null)
+				continue;
 			for (FluidTankInfo i : inv.getTankInfo(t.getInventoryFace().getOpposite())) {
 				FluidStack s = i.fluid;
 				if (s == null)

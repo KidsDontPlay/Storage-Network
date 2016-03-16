@@ -77,10 +77,10 @@ public class GuiFCable extends GuiContainer {
 				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(Util.getFluid(stack).getFluid().getStill().toString());
 				if (fluidIcon != null) {
 					int color = Util.getFluid(stack).getFluid().getColor(Util.getFluid(stack));
-					float a = (float) ((color >> 24) & 0xFF) / 255.0F;
-					float r = (float) ((color >> 16) & 0xFF) / 255.0F;
-					float g = (float) ((color >> 8) & 0xFF) / 255.0F;
-					float b = (float) ((color >> 0) & 0xFF) / 255.0F;
+					float a = ((color >> 24) & 0xFF) / 255.0F;
+					float r = ((color >> 16) & 0xFF) / 255.0F;
+					float g = ((color >> 8) & 0xFF) / 255.0F;
+					float b = ((color >> 0) & 0xFF) / 255.0F;
 					GlStateManager.color(r, g, b, a);
 					this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 					drawTexturedModalRect(guiLeft + 8, guiTop - 18, fluidIcon, 16, 16);
@@ -283,10 +283,10 @@ public class GuiFCable extends GuiContainer {
 				if (fluidIcon == null)
 					return;
 				int color = fluid.getColor(new FluidStack(fluid, 1));
-				float a = (float) ((color >> 24) & 0xFF) / 255.0F;
-				float r = (float) ((color >> 16) & 0xFF) / 255.0F;
-				float g = (float) ((color >> 8) & 0xFF) / 255.0F;
-				float b = (float) ((color >> 0) & 0xFF) / 255.0F;
+				float a = ((color >> 24) & 0xFF) / 255.0F;
+				float r = ((color >> 16) & 0xFF) / 255.0F;
+				float g = ((color >> 8) & 0xFF) / 255.0F;
+				float b = ((color >> 0) & 0xFF) / 255.0F;
 				GlStateManager.color(r, g, b, a);
 				this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 				GlStateManager.disableLighting();

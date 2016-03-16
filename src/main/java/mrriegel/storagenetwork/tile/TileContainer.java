@@ -79,7 +79,7 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 				lis.add(getStackInSlot(i).copy());
 		return lis;
 	}
-	
+
 	@Override
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)

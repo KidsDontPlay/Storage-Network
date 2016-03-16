@@ -1,33 +1,21 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.BlockIndicator;
-import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 public class TileIndicator extends TileEntity implements IConnectable, ITickable {
 

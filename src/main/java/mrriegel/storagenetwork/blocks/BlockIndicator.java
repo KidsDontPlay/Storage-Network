@@ -3,11 +3,8 @@ package mrriegel.storagenetwork.blocks;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockLever;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -18,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -78,7 +74,8 @@ public class BlockIndicator extends BlockContainer {
 		}
 		world.markBlockForUpdate(pos);
 		world.notifyNeighborsOfStateChange(pos, this);
-//		world.markBlockRangeForRenderUpdate(pos.add(new Vec3i(1, 1, 1)), pos.subtract(new Vec3i(1, 1, 1)));
+		// world.markBlockRangeForRenderUpdate(pos.add(new Vec3i(1, 1, 1)),
+		// pos.subtract(new Vec3i(1, 1, 1)));
 
 	}
 

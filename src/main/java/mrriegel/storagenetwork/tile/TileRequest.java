@@ -153,7 +153,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	public void setMaster(BlockPos master) {
 		this.master = master;
 	}
-	
+
 	@Override
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
