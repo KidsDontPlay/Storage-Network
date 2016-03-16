@@ -12,6 +12,8 @@ import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
 import mrriegel.storagenetwork.gui.fremote.GuiFRemote;
 import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.gui.frequest.GuiFRequest;
+import mrriegel.storagenetwork.gui.indicator.ContainerIndicator;
+import mrriegel.storagenetwork.gui.indicator.GuiIndicator;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.remote.GuiRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
@@ -21,6 +23,7 @@ import mrriegel.storagenetwork.gui.template.GuiTemplate;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileFRequest;
+import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,6 +41,7 @@ public class GuiHandler implements IGuiHandler {
 	public static final int CRAFTER = 7;
 	public static final int FREQUEST = 8;
 	public static final int FREMOTE = 9;
+	public static final int INDICATOR = 10;
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -67,6 +71,9 @@ public class GuiHandler implements IGuiHandler {
 		}
 		if (ID == FREMOTE) {
 			return new ContainerFRemote(player.inventory);
+		}
+		if (ID == INDICATOR) {
+			return new ContainerIndicator((TileIndicator) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}
 		return null;
 	}
@@ -101,6 +108,9 @@ public class GuiHandler implements IGuiHandler {
 		}
 		if (ID == FREMOTE) {
 			return new GuiFRemote(new ContainerFRemote(player.inventory));
+		}
+		if (ID == INDICATOR) {
+			return new GuiIndicator(new ContainerIndicator((TileIndicator) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
 		}
 		return null;
 	}

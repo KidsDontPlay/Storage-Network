@@ -19,11 +19,12 @@ public class StackWrapper {
 		size = compound.getInteger("size");
 	}
 
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		NBTTagCompound c = new NBTTagCompound();
 		stack.writeToNBT(c);
 		compound.setTag("stack", c);
 		compound.setInteger("size", size);
+		return compound;
 	}
 
 	@Override

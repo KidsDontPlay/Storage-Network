@@ -67,6 +67,7 @@ public class ClientProxy extends CommonProxy {
 			ModelBakery.registerItemVariants(ModItems.template, new ResourceLocation(StorageNetwork.MODID + ":template_" + i));
 			mesher.register(ModItems.template, i, new ModelResourceLocation(StorageNetwork.MODID + ":template_" + i, "inventory"));
 		}
+		mesher.register(Item.getItemFromBlock(ModBlocks.indicator), 0, new ModelResourceLocation(StorageNetwork.MODID + ":indicator", "inventory"));
 	}
 
 	public void registerRenderers() {

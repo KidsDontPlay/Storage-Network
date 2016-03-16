@@ -1,0 +1,10 @@
+{
+    "variants" : {
+        "state=false" : {
+            "model" : "storagenetwork:indicator_off"
+        },
+        "state=true" : {
+            "model" : "storagenetwork:indicator_on"
+        }
+    }
+}

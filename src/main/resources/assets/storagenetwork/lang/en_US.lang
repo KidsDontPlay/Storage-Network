@@ -11,6 +11,7 @@ tile.storagenetwork:master.name=Cable Master
 tile.storagenetwork:request.name=Request Table
 tile.storagenetwork:frequest.name=Fluid Request Table
 tile.storagenetwork:cover.name=Cable Cover
+tile.storagenetwork:indicator.name=Indicator
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade
@@ -27,3 +28,5 @@ item.storagenetwork:coverstick.name=Cover Stick
 gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the network.
 gui.storagenetwork.operate.tooltip.more=more
 gui.storagenetwork.operate.tooltip.less=less
+
+gui.storagenetwork.indi.tooltip=%s gives a redstone signal if %s than %d %s are in the network.
