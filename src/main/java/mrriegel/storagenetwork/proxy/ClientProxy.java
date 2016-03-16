@@ -57,6 +57,10 @@ public class ClientProxy extends CommonProxy {
 			ModelBakery.registerItemVariants(ModItems.remote, new ResourceLocation(StorageNetwork.MODID + ":remote_" + i));
 			mesher.register(ModItems.remote, i, new ModelResourceLocation(StorageNetwork.MODID + ":remote_" + i, "inventory"));
 		}
+		for (int i = 0; i < 2; i++) {
+			ModelBakery.registerItemVariants(ModItems.fremote, new ResourceLocation(StorageNetwork.MODID + ":fremote_" + i));
+			mesher.register(ModItems.fremote, i, new ModelResourceLocation(StorageNetwork.MODID + ":fremote_" + i, "inventory"));
+		}
 		mesher.register(ModItems.coverstick, 0, new ModelResourceLocation(StorageNetwork.MODID + ":coverstick", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.cover), 0, new ModelResourceLocation(StorageNetwork.MODID + ":cover", "inventory"));
 		for (int i = 0; i < 2; i++) {

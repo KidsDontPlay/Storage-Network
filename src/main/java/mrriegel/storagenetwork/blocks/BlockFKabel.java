@@ -48,14 +48,16 @@ public class BlockFKabel extends BlockKabel {
 						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
 				}
 				break;
-//			case ItemUpgrade.STOCK:
-//				if (tile.elements(ItemUpgrade.STOCK) < 1 && tile.getKind() == Kind.fexKabel) {
-//					tile.getDeque().push(ItemUpgrade.STOCK);
-//					playerIn.getHeldItem().stackSize--;
-//					if (playerIn.getHeldItem().stackSize <= 0)
-//						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-//				}
-//				break;
+			// case ItemUpgrade.STOCK:
+			// if (tile.elements(ItemUpgrade.STOCK) < 1 && tile.getKind() ==
+			// Kind.fexKabel) {
+			// tile.getDeque().push(ItemUpgrade.STOCK);
+			// playerIn.getHeldItem().stackSize--;
+			// if (playerIn.getHeldItem().stackSize <= 0)
+			// playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem,
+			// null);
+			// }
+			// break;
 			case ItemUpgrade.STACK:
 				if (tile.elements(ItemUpgrade.STACK) < 4) {
 					tile.getDeque().push(ItemUpgrade.STACK);

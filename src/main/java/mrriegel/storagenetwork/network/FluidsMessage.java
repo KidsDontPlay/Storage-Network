@@ -5,8 +5,8 @@ import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.List;
 
+import mrriegel.storagenetwork.gui.fremote.GuiFRemote;
 import mrriegel.storagenetwork.gui.frequest.GuiFRequest;
-import mrriegel.storagenetwork.gui.remote.GuiRemote;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,9 +37,9 @@ public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, I
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (message.id == GuiHandler.REMOTE && Minecraft.getMinecraft().currentScreen instanceof GuiRemote) {
-					GuiRemote gui = (GuiRemote) Minecraft.getMinecraft().currentScreen;
-					// gui.stacks = message.stacks;
+				if (message.id == GuiHandler.FREMOTE && Minecraft.getMinecraft().currentScreen instanceof GuiFRemote) {
+					GuiFRemote gui = (GuiFRemote) Minecraft.getMinecraft().currentScreen;
+					gui.fluids = message.stacks;
 				} else if (message.id == GuiHandler.FREQUEST && Minecraft.getMinecraft().currentScreen instanceof GuiFRequest) {
 					GuiFRequest gui = (GuiFRequest) Minecraft.getMinecraft().currentScreen;
 					gui.fluids = message.stacks;

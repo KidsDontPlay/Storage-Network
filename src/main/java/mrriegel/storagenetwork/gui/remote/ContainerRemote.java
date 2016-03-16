@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerRemote extends Container {
 	public InventoryPlayer playerInv;
-	String inv = "";
 
 	public ContainerRemote(final InventoryPlayer playerInv) {
 		this.playerInv = playerInv;

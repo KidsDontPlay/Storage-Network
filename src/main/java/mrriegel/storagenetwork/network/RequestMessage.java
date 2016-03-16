@@ -21,18 +21,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import com.google.common.collect.Lists;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
-	int id, x, y, z;
+	int id;
 	ItemStack stack;
 	boolean shift, ctrl;
 
 	public RequestMessage() {
 	}
 
-	public RequestMessage(int id, int x, int y, int z, ItemStack stack, boolean shift, boolean ctrl) {
+	public RequestMessage(int id, ItemStack stack, boolean shift, boolean ctrl) {
 		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.z = z;
 		this.stack = stack;
 		this.shift = shift;
 		this.ctrl = ctrl;
@@ -75,9 +72,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.id = buf.readInt();
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
 		this.shift = buf.readBoolean();
 		this.ctrl = buf.readBoolean();
@@ -86,9 +80,6 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.id);
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
 		ByteBufUtils.writeItemStack(buf, this.stack);
 		buf.writeBoolean(this.shift);
 		buf.writeBoolean(this.ctrl);

@@ -19,7 +19,7 @@ public class ConfigHandler {
 		untouchable = config.get(Configuration.CATEGORY_GENERAL, "invisible=untouchable", true).getBoolean();
 		energyNeeded = config.get(Configuration.CATEGORY_GENERAL, "energyNeeded", true).getBoolean();
 		energyCapacity = config.get(Configuration.CATEGORY_GENERAL, "energyCapacity", 32000).getInt();
-		energyMultiplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultiplier", 20).getInt();
+		energyMultiplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultiplier", 15).getInt();
 		rangeWirelessAccessor = config.get(Configuration.CATEGORY_GENERAL, "rangeWirelessAccessor", 32).getInt();
 
 		if (config.hasChanged()) {

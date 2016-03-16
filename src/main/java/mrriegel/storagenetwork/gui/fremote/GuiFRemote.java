@@ -1,4 +1,4 @@
-package mrriegel.storagenetwork.gui.request;
+package mrriegel.storagenetwork.gui.fremote;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,13 +9,12 @@ import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.network.ClearMessage;
+import mrriegel.storagenetwork.network.FRequestMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
-import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.tile.TileRequest;
+import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -23,60 +22,56 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.base.Joiner;
-import com.mojang.realmsclient.gui.ChatFormatting;
-
-public class GuiRequest extends GuiContainer {
-	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/request.png");
+public class GuiFRemote extends GuiContainer {
+	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/frequest.png");
 	int page = 1, maxPage = 1;
-	public List<StackWrapper> stacks, craftableStacks;
-	ItemStack over;
+	public List<FluidStack> fluids;
+	Fluid over;
 	private GuiTextField searchBar;
 	private Button direction, sort, left, right;
-	TileRequest tile;
 
-	public GuiRequest(Container inventorySlotsIn) {
+	public GuiFRemote(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.ySize = 256;
-		this.stacks = new ArrayList<StackWrapper>();
-		tile = ((ContainerRequest) inventorySlots).tile;
-		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
+		this.fluids = new ArrayList<FluidStack>();
+		PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, null));
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96, 85, fontRendererObj.FONT_HEIGHT);
+		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 81, guiTop + 96 + 64, 85, fontRendererObj.FONT_HEIGHT);
 		searchBar.setMaxStringLength(30);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
 		searchBar.setCanLoseFocus(false);
 		searchBar.setFocused(true);
-		direction = new Button(0, guiLeft + 7, guiTop + 93, "");
+		direction = new Button(0, guiLeft + 7, guiTop + 93 + 64, "");
 		buttonList.add(direction);
-		sort = new Button(1, guiLeft + 21, guiTop + 93, "");
+		sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
 		buttonList.add(sort);
-		left = new Button(2, guiLeft + 44, guiTop + 93, "<");
+		left = new Button(2, guiLeft + 44, guiTop + 93 + 64, "<");
 		buttonList.add(left);
-		right = new Button(3, guiLeft + 58, guiTop + 93, ">");
+		right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
 		buttonList.add(right);
 	}
 
@@ -89,74 +84,35 @@ public class GuiRequest extends GuiContainer {
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 		over = null;
 		String search = searchBar.getText();
-		List<StackWrapper> tmp = search.equals("") ? new ArrayList<StackWrapper>(stacks) : new ArrayList<StackWrapper>();
+		List<FluidStack> tmp = search.equals("") ? new ArrayList<FluidStack>(fluids) : new ArrayList<FluidStack>();
 		if (!search.equals("")) {
-			for (StackWrapper s : stacks)
-				if (search.startsWith("@")) {
-					String name = Util.getModNameForItem(s.getStack().getItem());
-					if (name.toLowerCase().contains(search.toLowerCase().substring(1)))
-						tmp.add(s);
-				} else if (search.startsWith("#")) {
-					String tooltipString;
-					try {
-						List<String> tooltip = s.getStack().getTooltip(mc.thePlayer, false);
-						tooltipString = Joiner.on(' ').join(tooltip).toLowerCase();
-						tooltipString = ChatFormatting.stripFormatting(tooltipString);
-						String modId = GameData.getItemRegistry().getNameForObject(s.getStack().getItem()).getResourceDomain();
-						tooltipString = tooltipString.replace(modId, "");
-						ModContainer mod = Loader.instance().getIndexedModList().get(modId);
-						String modName = mod == null ? "Minecraft" : mod.getName();
-						tooltipString = tooltipString.replace(modName, "");
-						tooltipString = tooltipString.replace(s.getStack().getDisplayName(), "");
-					} catch (RuntimeException ignored) {
-						tooltipString = "";
-					}
-					if (tooltipString.toLowerCase().contains(search.toLowerCase().substring(1)))
-						tmp.add(s);
-				} else if (search.startsWith("$")) {
-					StringBuilder oreDictStringBuilder = new StringBuilder();
-					for (int oreId : OreDictionary.getOreIDs(s.getStack())) {
-						String oreName = OreDictionary.getOreName(oreId);
-						oreDictStringBuilder.append(oreName).append(' ');
-					}
-					if (oreDictStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
-						tmp.add(s);
-				} else if (search.startsWith("%")) {
-					StringBuilder creativeTabStringBuilder = new StringBuilder();
-					for (CreativeTabs creativeTab : s.getStack().getItem().getCreativeTabs()) {
-						if (creativeTab != null) {
-							String creativeTabName = creativeTab.getTranslatedTabLabel();
-							creativeTabStringBuilder.append(creativeTabName).append(' ');
-						}
-					}
-					if (creativeTabStringBuilder.toString().toLowerCase().contains(search.toLowerCase().substring(1)))
-						tmp.add(s);
-				} else {
-					if (s.getStack().getDisplayName().toLowerCase().contains(search.toLowerCase()))
-						tmp.add(s);
-				}
+			for (FluidStack s : fluids)
+				if (s.getLocalizedName().toLowerCase().contains(search.toLowerCase()))
+					tmp.add(s);
 		}
-		if (craftableStacks != null)
-			for (StackWrapper s : craftableStacks)
-				tmp.add(s);
-		Collections.sort(tmp, new Comparator<StackWrapper>() {
-			int mul = tile.downwards ? -1 : 1;
+		ContainerFRemote con = (ContainerFRemote) inventorySlots;
+		if (con.inv.getStackInSlot(0) == null)
+			this.drawTexturedModalRect(i + 10, j + 139, 176, 22, 12, 14);
+		if (con.inv.getStackInSlot(1) == null)
+			this.drawTexturedModalRect(i + 46, j + 139, 176 + 12, 22, 12, 14);
+		Collections.sort(tmp, new Comparator<FluidStack>() {
+			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? -1 : 1;
 
 			@Override
-			public int compare(StackWrapper o2, StackWrapper o1) {
-				switch (tile.sort) {
+			public int compare(FluidStack o2, FluidStack o1) {
+				switch (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))) {
 				case AMOUNT:
-					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
+					return Integer.compare(o1.amount, o2.amount) * mul;
 				case NAME:
-					return o2.getStack().getDisplayName().compareToIgnoreCase(o1.getStack().getDisplayName()) * mul;
+					return o2.getLocalizedName().compareToIgnoreCase(o1.getLocalizedName()) * mul;
 				case MOD:
-					return Util.getModNameForItem(o2.getStack().getItem()).compareToIgnoreCase(Util.getModNameForItem(o1.getStack().getItem())) * mul;
+					return Util.getModNameForFluid(o2.getFluid()).compareToIgnoreCase(Util.getModNameForFluid(o1.getFluid())) * mul;
 				}
 				return 0;
 			}
 		});
-		maxPage = tmp.size() / 32;
-		if (tmp.size() % 32 != 0)
+		maxPage = tmp.size() / 48;
+		if (tmp.size() % 48 != 0)
 			maxPage++;
 		if (maxPage < 1)
 			maxPage = 1;
@@ -178,32 +134,28 @@ public class GuiRequest extends GuiContainer {
 			right.visible = true;
 			right.enabled = true;
 		}
+		searchBar.drawTextBox();
 		int index = (page - 1) * 32;
-		for (int jj = 0; jj < 4; jj++) {
+		for (int jj = 0; jj < 6; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop).drawSlot(mouseX, mouseY);
+				new Slot(tmp.get(in).getFluid(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).amount, guiLeft, guiTop).drawSlot(mouseX, mouseY);
 				index++;
 			}
 		}
 		index = (page - 1) * 32;
-		for (int jj = 0; jj < 4; jj++) {
+		for (int jj = 0; jj < 6; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop).drawTooltip(mouseX, mouseY);
+				new Slot(tmp.get(in).getFluid(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).amount, guiLeft, guiTop).drawTooltip(mouseX, mouseY);
 				index++;
 			}
 		}
-		searchBar.drawTextBox();
 
-	}
-
-	boolean mouseOverX(int mx, int my) {
-		return isPointInRegion(63 - guiLeft, 110 - guiTop, 7, 7, mx, my);
 	}
 
 	@Override
@@ -220,10 +172,10 @@ public class GuiRequest extends GuiContainer {
 		if (button.id == 3 && page < maxPage)
 			page++;
 		if (button.id == 0)
-			tile.downwards = !tile.downwards;
+			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
 		else if (button.id == 1)
-			tile.sort = tile.sort.next();
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), tile.downwards, tile.sort));
+			NBTHelper.setString(mc.thePlayer.getHeldItem(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")).next().toString());
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
 	}
 
 	@Override
@@ -233,11 +185,8 @@ public class GuiRequest extends GuiContainer {
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103) && mouseButton == 1) {
 			searchBar.setText("");
-		} else if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
-			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0,  null, false, false));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+			PacketHandler.INSTANCE.sendToServer(new FRequestMessage(mouseButton, over));
 		}
 	}
 
@@ -246,7 +195,7 @@ public class GuiRequest extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
+				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, null));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}
@@ -271,11 +220,11 @@ public class GuiRequest extends GuiContainer {
 	}
 
 	class Slot {
-		ItemStack stack;
+		Fluid fluid;
 		int x, y, size, guiLeft, guiTop;
 
-		public Slot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop) {
-			this.stack = stack;
+		public Slot(Fluid fluid, int x, int y, int size, int guiLeft, int guiTop) {
+			this.fluid = fluid;
 			this.x = x;
 			this.y = y;
 			this.size = size;
@@ -286,16 +235,32 @@ public class GuiRequest extends GuiContainer {
 		Minecraft mc = Minecraft.getMinecraft();
 
 		void drawSlot(int mx, int my) {
-			RenderHelper.enableGUIStandardItemLighting();
-			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+			GlStateManager.pushMatrix();
+			TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+			if (fluidIcon == null)
+				return;
+			int color = fluid.getColor(new FluidStack(fluid, 1));
+			float a = (float) ((color >> 24) & 0xFF) / 255.0F;
+			float r = (float) ((color >> 16) & 0xFF) / 255.0F;
+			float g = (float) ((color >> 8) & 0xFF) / 255.0F;
+			float b = (float) ((color >> 0) & 0xFF) / 255.0F;
+			GlStateManager.color(r, g, b, a);
+			this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+			GlStateManager.disableLighting();
+			GlStateManager.disableDepth();
+			drawTexturedModalRect(x, y, fluidIcon, 16, 16);
+			GlStateManager.enableLighting();
+			GlStateManager.enableDepth();
+			GlStateManager.popMatrix();
+			String amount = "" + (size < 1000 ? size : size < 1000000 ? size / 1000 : size < 1000000000 ? size / 1000000 : size / 1000000000);
+			amount += size < 1000 ? "mB" : size < 1000000 ? "B" : size < 1000000000 ? "KB" : "MB";
 			if (ConfigHandler.smallFont) {
 				GlStateManager.pushMatrix();
 				GlStateManager.scale(.5f, .5f, .5f);
-				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
+				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.command_block_minecart), x * 2 + 16, y * 2 + 16, amount);
 				GlStateManager.popMatrix();
 			} else
-				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, amount);
+				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Blocks.fire), x, y, amount);
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
@@ -306,7 +271,7 @@ public class GuiRequest extends GuiContainer {
 				GlStateManager.colorMask(true, true, true, true);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
-				over = stack;
+				over = fluid;
 			}
 		}
 
@@ -314,10 +279,10 @@ public class GuiRequest extends GuiContainer {
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-					renderToolTip(stack, mx, my);
-				else
-					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx, my);
+				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx, my, fontRendererObj);
+				} else
+					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx, my);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}
@@ -347,10 +312,10 @@ public class GuiRequest extends GuiContainer {
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, 14, 14);
 				if (id == 0) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (tile.downwards ? 6 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (tile.sort == Sort.AMOUNT ? 6 : tile.sort == Sort.MOD ? 12 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.AMOUNT ? 6 : Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.MOD ? 12 : 0), 14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);

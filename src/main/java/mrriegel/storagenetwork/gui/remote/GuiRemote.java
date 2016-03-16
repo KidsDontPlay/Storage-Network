@@ -53,7 +53,7 @@ public class GuiRemote extends GuiContainer {
 		this.xSize = 176;
 		this.ySize = 256;
 		stacks = new ArrayList<StackWrapper>();
-		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "id"), null, false, false));
+		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "dim"), null, false, false));
 	}
 
 	@Override
@@ -182,6 +182,7 @@ public class GuiRemote extends GuiContainer {
 			right.visible = true;
 			right.enabled = true;
 		}
+		searchBar.drawTextBox();
 		int index = (page - 1) * 56;
 		for (int jj = 0; jj < 7; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
@@ -202,7 +203,6 @@ public class GuiRemote extends GuiContainer {
 				index++;
 			}
 		}
-		searchBar.drawTextBox();
 
 	}
 
@@ -230,7 +230,7 @@ public class GuiRemote extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (over != null && mc.thePlayer.inventory.getItemStack() == null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "id"), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "dim"), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
@@ -238,7 +238,7 @@ public class GuiRemote extends GuiContainer {
 			searchBar.setText("");
 		}
 		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "id"), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "dim"), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 
@@ -247,7 +247,7 @@ public class GuiRemote extends GuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "id"), null, false, false));
+				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "dim"), null, false, false));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}

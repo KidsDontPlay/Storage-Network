@@ -8,6 +8,8 @@ import mrriegel.storagenetwork.gui.container.ContainerContainer;
 import mrriegel.storagenetwork.gui.container.GuiContainer;
 import mrriegel.storagenetwork.gui.crafter.ContainerCrafter;
 import mrriegel.storagenetwork.gui.crafter.GuiCrafter;
+import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
+import mrriegel.storagenetwork.gui.fremote.GuiFRemote;
 import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.gui.frequest.GuiFRequest;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
@@ -63,6 +65,9 @@ public class GuiHandler implements IGuiHandler {
 		if (ID == FREQUEST) {
 			return new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}
+		if (ID == FREMOTE) {
+			return new ContainerFRemote(player.inventory);
+		}
 		return null;
 	}
 
@@ -93,6 +98,9 @@ public class GuiHandler implements IGuiHandler {
 		}
 		if (ID == FREQUEST) {
 			return new GuiFRequest(new ContainerFRequest((TileFRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory));
+		}
+		if (ID == FREMOTE) {
+			return new GuiFRemote(new ContainerFRemote(player.inventory));
 		}
 		return null;
 	}

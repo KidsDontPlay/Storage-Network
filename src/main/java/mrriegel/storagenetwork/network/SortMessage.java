@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileFRequest;
@@ -38,7 +39,7 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
+				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote || ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote) {
 					ItemStack s = ctx.getServerHandler().playerEntity.getHeldItem();
 					NBTHelper.setBoolean(s, "down", message.direction);
 					NBTHelper.setString(s, "sort", message.sort.toString());
