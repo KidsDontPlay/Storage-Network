@@ -49,7 +49,7 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
 public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver {
 	public List<BlockPos> connectables, storageInventorys, imInventorys, exInventorys, fstorageInventorys, fimInventorys, fexInventorys;
-	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, 400, 0);
+	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
 	public List<CraftingTask> tasks = new ArrayList<CraftingTask>();
 
 	public List<FluidStack> getFluids() {

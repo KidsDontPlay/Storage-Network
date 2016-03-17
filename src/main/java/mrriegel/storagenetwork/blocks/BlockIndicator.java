@@ -23,7 +23,7 @@ public class BlockIndicator extends BlockContainer {
 
 	public BlockIndicator() {
 		super(Material.iron);
-		this.setHardness(1.1F);
+		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(STATE, false));
 		this.setUnlocalizedName(StorageNetwork.MODID + ":indicator");

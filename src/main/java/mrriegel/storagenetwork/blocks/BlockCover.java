@@ -8,8 +8,8 @@ import net.minecraft.block.material.Material;
 public class BlockCover extends Block {
 
 	public BlockCover() {
-		super(Material.clay);
-		this.setHardness(1.1F);
+		super(Material.rock);
+		this.setHardness(1.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":cover");
 	}

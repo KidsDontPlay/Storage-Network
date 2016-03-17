@@ -23,7 +23,7 @@ public class BlockFRequest extends BlockContainer {
 
 	public BlockFRequest() {
 		super(Material.iron);
-		this.setHardness(3.5F);
+		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":frequest");
 	}

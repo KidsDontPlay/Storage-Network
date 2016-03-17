@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import mrriegel.storagenetwork.items.ItemRemote;
+import net.minecraft.block.BlockHardenedClay;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -38,7 +40,6 @@ public class CraftingRecipes {
 			public Foo(ItemStack output, List<ItemStack> inputList) {
 				super(output, inputList);
 			}
-
 			@Override
 			public ItemStack getCraftingResult(InventoryCrafting inv) {
 				ItemStack rem = null;
@@ -64,6 +65,7 @@ public class CraftingRecipes {
 		GameRegistry.addRecipe(b);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.coverstick), " rg", " sb", "s  ", 's', "stickWood", 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cover, 24), "dcd", "c c", "dcd", 'c', Blocks.hardened_clay, 'd', new ItemStack(Items.dye, 1, OreDictionary.WILDCARD_VALUE)));
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.indicator), " i ", "ioi", " i ", 'i', Items.iron_ingot, 'o', new ItemStack(ModItems.upgrade, 1, 1));
 	}
 
 }
