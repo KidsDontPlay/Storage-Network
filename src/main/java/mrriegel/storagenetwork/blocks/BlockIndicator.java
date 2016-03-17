@@ -74,8 +74,6 @@ public class BlockIndicator extends BlockContainer {
 		}
 		world.markBlockForUpdate(pos);
 		world.notifyNeighborsOfStateChange(pos, this);
-		// world.markBlockRangeForRenderUpdate(pos.add(new Vec3i(1, 1, 1)),
-		// pos.subtract(new Vec3i(1, 1, 1)));
 
 	}
 

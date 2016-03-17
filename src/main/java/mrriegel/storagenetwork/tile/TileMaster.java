@@ -773,6 +773,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!t.status())
 					continue;
+//				for(EnumFacing f:EnumFacing.values())
+//					System.out.println(f+" "+inv.canDrain(f, s.getFluid()));
 				if (!inv.canDrain(t.getInventoryFace().getOpposite(), s.getFluid()))
 					continue;
 				int num = s.amount;
