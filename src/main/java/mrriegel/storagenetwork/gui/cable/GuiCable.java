@@ -98,7 +98,7 @@ public class GuiCable extends GuiContainer {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < list.size(); i++) {
 			Slot e = list.get(i);
 			ContainerCable con = (ContainerCable) inventorySlots;
 			if (e.stack != null) {
@@ -182,7 +182,7 @@ public class GuiCable extends GuiContainer {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < list.size(); i++) {
 			Slot e = list.get(i);
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerCable con = (ContainerCable) inventorySlots;
@@ -241,7 +241,7 @@ public class GuiCable extends GuiContainer {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (typedChar == 'o' || typedChar == 'm') {
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < list.size(); i++) {
 				Slot e = list.get(i);
 				int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
 				int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
