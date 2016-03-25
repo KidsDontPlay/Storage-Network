@@ -18,7 +18,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class BlockContainer extends net.minecraft.block.BlockContainer {
+public class BlockContainer extends BlockConnectable {
 
 	public BlockContainer() {
 		super(Material.iron);
@@ -38,51 +38,10 @@ public class BlockContainer extends net.minecraft.block.BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		for (BlockPos p : Util.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof IConnectable) {
-				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
-					((IConnectable) worldIn.getTileEntity(pos)).setMaster(((IConnectable) worldIn.getTileEntity(p)).getMaster());
-			}
-			if (worldIn.getTileEntity(p) instanceof TileMaster) {
-				((IConnectable) worldIn.getTileEntity(pos)).setMaster(p);
-			}
-		}
-		setConnections(worldIn, pos);
-	}
-
-	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		onNeighborBlockChange(worldIn, pos, state, null);
-	}
-
-	public static void setConnections(World worldIn, BlockPos pos) {
-		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
-		if (tile.getMaster() == null) {
-			for (BlockPos p : Util.getSides(pos)) {
-				if (worldIn.getTileEntity(p) instanceof TileMaster) {
-					tile.setMaster(p);
-				}
-			}
-		}
-		if (tile.getMaster() != null) {
-			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
-
-			tile.setMaster(null);
-			worldIn.markBlockForUpdate(pos);
-			BlockKabel.setAllMastersNull(worldIn, pos);
-			if (mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork();
-			}
-		}
-	}
-
-	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
 		if (/* !worldIn.isRemote && */tile.getMaster() != null) {
-			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}

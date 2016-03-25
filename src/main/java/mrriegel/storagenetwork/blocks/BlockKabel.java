@@ -98,7 +98,6 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-		onNeighborBlockChange(worldIn, pos, state, null);
 		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
 			return false;
 		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
@@ -215,7 +214,7 @@ public class BlockKabel extends BlockContainer {
 			worldIn.markBlockForUpdate(pos);
 			setAllMastersNull(worldIn, pos);
 			if (mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork();
+				((TileMaster) mas).refreshNetwork(true);
 			}
 		}
 	}

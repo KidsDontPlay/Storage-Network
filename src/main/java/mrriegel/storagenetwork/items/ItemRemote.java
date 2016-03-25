@@ -63,10 +63,9 @@ public class ItemRemote extends Item {
 		if (NBTHelper.getBoolean(itemStackIn, "bound") && world.getTileEntity(new BlockPos(x, y, z)) instanceof TileMaster) {
 			if ((itemStackIn.getItemDamage() == 0 && NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimensionId() && playerIn.getDistance(x, y, z) <= ConfigHandler.rangeWirelessAccessor) || itemStackIn.getItemDamage() == 1) {
 				if (world.getChunkFromBlockCoords(new BlockPos(x, y, z)).isLoaded()) {
-					((TileMaster) world.getTileEntity(new BlockPos(x, y, z))).refreshNetwork();
 					if (NBTHelper.getString(itemStackIn, "sort") == null)
 						NBTHelper.setString(playerIn.getHeldItem(), "sort", Sort.NAME.toString());
-					playerIn.openGui(StorageNetwork.instance, GuiHandler.REMOTE, world, x, y, z);
+					playerIn.openGui(StorageNetwork.instance, getGui(), world, x, y, z);
 				} else
 					playerIn.addChatMessage(new ChatComponentText("Cable Master not loaded."));
 			} else if (itemStackIn.getItemDamage() == 0 && (NBTHelper.getInteger(itemStackIn, "dim") == worldIn.provider.getDimensionId() || playerIn.getDistance(x, y, z) > 32))
@@ -88,6 +87,10 @@ public class ItemRemote extends Item {
 			return true;
 		}
 		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
+	}
+
+	protected int getGui() {
+		return GuiHandler.REMOTE;
 	}
 
 	public static TileMaster getTile(ItemStack stack) {

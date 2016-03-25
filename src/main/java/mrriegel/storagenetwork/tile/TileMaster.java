@@ -3,9 +3,11 @@ package mrriegel.storagenetwork.tile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -19,6 +21,7 @@ import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -41,7 +44,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
@@ -426,6 +431,12 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}.getType());
 		exInventorys = new Gson().fromJson(compound.getString("exInventorys"), new TypeToken<List<BlockPos>>() {
 		}.getType());
+		fstorageInventorys = new Gson().fromJson(compound.getString("fstorageInventorys"), new TypeToken<List<BlockPos>>() {
+		}.getType());
+		fimInventorys = new Gson().fromJson(compound.getString("fimInventorys"), new TypeToken<List<BlockPos>>() {
+		}.getType());
+		fexInventorys = new Gson().fromJson(compound.getString("fexInventorys"), new TypeToken<List<BlockPos>>() {
+		}.getType());
 		en.readFromNBT(compound);
 		NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
 		tasks = new ArrayList<CraftingTask>();
@@ -444,6 +455,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		compound.setString("storageInventorys", new Gson().toJson(storageInventorys));
 		compound.setString("imInventorys", new Gson().toJson(imInventorys));
 		compound.setString("exInventorys", new Gson().toJson(exInventorys));
+		compound.setString("fstorageInventorys", new Gson().toJson(fstorageInventorys));
+		compound.setString("fimInventorys", new Gson().toJson(fimInventorys));
+		compound.setString("fexInventorys", new Gson().toJson(fexInventorys));
 		en.writeToNBT(compound);
 		NBTTagList tasksList = new NBTTagList();
 		for (CraftingTask t : tasks) {
@@ -454,19 +468,39 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		compound.setTag("tasks", tasksList);
 	}
 
-	private void addCables(BlockPos pos, int num) {
-		if (connectables == null)
-			connectables = new ArrayList<BlockPos>();
-		for (BlockPos bl : Util.getSides(pos)) {
-			if (worldObj.getBlockState(bl).getBlock() == ModBlocks.master && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
-				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
-				worldObj.setBlockToAir(bl);
+	private List<BlockPos> getCons(BlockPos pos) {
+		List<BlockPos> lis = new ArrayList<BlockPos>();
+		if (worldObj.getTileEntity(pos.up()) instanceof IConnectable || worldObj.getTileEntity(pos.up()) instanceof TileMaster)
+			lis.add(pos.up());
+		if (worldObj.getTileEntity(pos.down()) instanceof IConnectable || worldObj.getTileEntity(pos.down()) instanceof TileMaster)
+			lis.add(pos.down());
+		if (worldObj.getTileEntity(pos.east()) instanceof IConnectable || worldObj.getTileEntity(pos.east()) instanceof TileMaster)
+			lis.add(pos.east());
+		if (worldObj.getTileEntity(pos.west()) instanceof IConnectable || worldObj.getTileEntity(pos.west()) instanceof TileMaster)
+			lis.add(pos.west());
+		if (worldObj.getTileEntity(pos.north()) instanceof IConnectable || worldObj.getTileEntity(pos.north()) instanceof TileMaster)
+			lis.add(pos.north());
+		if (worldObj.getTileEntity(pos.south()) instanceof IConnectable || worldObj.getTileEntity(pos.south()) instanceof TileMaster)
+			lis.add(pos.south());
+		return lis;
+	}
+
+	private void addCables(BlockPos pos) {
+		for (BlockPos bl : getCons(pos)) {
+			if (connectables.contains(bl)) {
+				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
+				worldObj.setBlockToAir(bl);
+				worldObj.removeTileEntity(bl);
+				continue;
+			}
+			if (worldObj.getTileEntity(bl) instanceof IConnectable && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
-				addCables(bl, num++);
+				addCables(bl);
 			}
 		}
 	}
@@ -510,10 +544,30 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public void refreshNetwork() {
-		connectables = null;
-		addCables(pos, 0);
-		Collections.sort(connectables, new Comparator<BlockPos>() {
+	public void addIConnectable(BlockPos pos) {
+		if (connectables == null)
+			connectables = Lists.newArrayList();
+		if (pos != null && !connectables.contains(pos))
+			connectables.add(pos);
+		removeFalse();
+	}
+
+	public void removeIConnectable(BlockPos pos) {
+		if (connectables == null)
+			connectables = Lists.newArrayList();
+		if (pos != null && !connectables.contains(pos))
+			connectables.remove(pos);
+		removeFalse();
+	}
+
+	public void refreshNetwork(boolean force) {
+		if (worldObj.isRemote)
+			return;
+		System.out.println("refresh");
+		if (connectables == null)
+			connectables = Lists.newArrayList();
+		addCables(pos);
+		connectables.sort(new Comparator<BlockPos>() {
 			@Override
 			public int compare(BlockPos o1, BlockPos o2) {
 				double dis1 = o1.distanceSq(pos);
@@ -521,14 +575,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				return Double.compare(dis1, dis2);
 			}
 		});
+		removeFalse();
 		addInventorys();
 	}
 
 	public void vacuum() {
 		if ((worldObj.getTotalWorldTime() + 0) % 30 != 0)
 			return;
-		if (connectables == null)
-			refreshNetwork();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) != null && worldObj.getTileEntity(p) instanceof TileKabel && ((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
 				int range = 2;
@@ -670,8 +723,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void impor() {
-		if (imInventorys == null || storageInventorys == null)
-			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
@@ -740,8 +791,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void fimpor() {
-		if (fimInventorys == null || fstorageInventorys == null)
-			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
@@ -763,8 +812,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (inv.getTankInfo(t.getInventoryFace().getOpposite()) == null)
 				continue;
-//			System.out.println("inv: " + inv);
-//			System.out.println("inv info: " + inv.getTankInfo(t.getInventoryFace().getOpposite()));
+			// System.out.println("inv: " + inv);
+			// System.out.println("inv info: " +
+			// inv.getTankInfo(t.getInventoryFace().getOpposite()));
 			for (FluidTankInfo i : inv.getTankInfo(t.getInventoryFace().getOpposite())) {
 				FluidStack s = i.fluid;
 				if (s == null)
@@ -773,8 +823,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!t.status())
 					continue;
-//				for(EnumFacing f:EnumFacing.values())
-//					System.out.println(f+" "+inv.canDrain(f, s.getFluid()));
+				// for(EnumFacing f:EnumFacing.values())
+				// System.out.println(f+" "+inv.canDrain(f, s.getFluid()));
 				if (!inv.canDrain(t.getInventoryFace().getOpposite(), s.getFluid()))
 					continue;
 				int num = s.amount;
@@ -792,8 +842,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void export() {
-		if (exInventorys == null || storageInventorys == null)
-			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
@@ -846,8 +894,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void fexport() {
-		if (fexInventorys == null || fstorageInventorys == null)
-			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
@@ -911,17 +957,12 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public ItemStack request(ItemStack stack, final int size, boolean meta, boolean tag, boolean ore, boolean simulate) {
 		if (size == 0 || stack == null)
 			return null;
-		if (storageInventorys == null)
-			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile == null) {
-				refreshNetwork();
-				continue;
-			}
+
 			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
 				invs.add(tile);
 			}
@@ -1006,17 +1047,12 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public FluidStack frequest(Fluid fluid, final int size, boolean simulate) {
 		if (size == 0 || fluid == null)
 			return null;
-		if (fstorageInventorys == null)
-			refreshNetwork();
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
 			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
-			if (tile == null) {
-				refreshNetwork();
-				continue;
-			}
+
 			if (tile.getKind() == Kind.fstorageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IFluidHandler) {
 				invs.add(tile);
 			}
@@ -1063,22 +1099,32 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	@Override
 	public void update() {
-		if (connectables != null)
-			for (BlockPos p : connectables)
-				if (!(worldObj.getTileEntity(p) instanceof IConnectable)) {
-					refreshNetwork();
-					break;
-				}
-		if (worldObj.getTotalWorldTime() % 200 == 0)
-			refreshNetwork();
+		if (worldObj.isRemote)
+			return;
+		// if(1==1)
+		// return;
+		if (connectables == null)
+			connectables = Lists.newArrayList();
+		if (worldObj.getTotalWorldTime() % (200) == 0) {
+			refreshNetwork(false);
+		}
 		vacuum();
 		impor();
 		export();
 		// craft();
-		if (!worldObj.isRemote) {
-			fimpor();
-			fexport();
+		fimpor();
+		fexport();
+	}
+
+	public void removeFalse() {
+		if (connectables != null) {
+			Iterator<BlockPos> it = connectables.iterator();
+			while (it.hasNext())
+				if (!(worldObj.getTileEntity(it.next()) instanceof IConnectable))
+					it.remove();
 		}
+		addInventorys();
+
 	}
 
 	boolean consumeRF(int num, boolean simulate) {

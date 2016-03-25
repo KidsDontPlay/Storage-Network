@@ -57,7 +57,8 @@ public class BlockMaster extends BlockContainer {
 			Block.spawnAsEntity(worldIn, pos, Inv.copyStack(stack, 1));
 		} else {
 			if (worldIn.getTileEntity(pos) != null)
-				((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
+				((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork(true);
+
 		}
 	}
 
@@ -69,7 +70,6 @@ public class BlockMaster extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
-		tile.refreshNetwork();
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
 				playerIn.addChatMessage(new ChatComponentText("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));

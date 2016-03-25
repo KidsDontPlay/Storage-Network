@@ -92,7 +92,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	@Override
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
-			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
+			((TileMaster) worldObj.getTileEntity(master)).removeFalse();
 	}
 
 	@Override

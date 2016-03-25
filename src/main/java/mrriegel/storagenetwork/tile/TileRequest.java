@@ -157,6 +157,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	@Override
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
-			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
+			((TileMaster) worldObj.getTileEntity(master)).removeFalse();
 	}
 }

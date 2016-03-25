@@ -18,7 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockIndicator extends BlockContainer {
+public class BlockIndicator extends BlockConnectable {
 	public static final PropertyBool STATE = PropertyBool.create("state");
 
 	public BlockIndicator() {
@@ -46,7 +46,6 @@ public class BlockIndicator extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		System.out.println("new TE");
 		return new TileIndicator();
 	}
 
