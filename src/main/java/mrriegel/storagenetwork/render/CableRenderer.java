@@ -49,7 +49,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			World world = te.getWorld();
 			BlockPos blockpos = te.getPos();
-			IBlockState iblockstate = show ? ModBlocks.cover.getDefaultState() : te.getCover().getStateFromMeta(te.getCoverMeta());
+			IBlockState iblockstate = te.getCover().getStateFromMeta(te.getCoverMeta());
 
 			GlStateManager.pushMatrix();
 			RenderHelper.disableStandardItemLighting();
@@ -58,12 +58,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			Tessellator tessellator = Tessellator.getInstance();
 			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 			worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			// worldrenderer.color(1F, 1F, 1F, .5F);
-			// GlStateManager.enableBlend();
-			// OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			// GlStateManager.blendFunc(GL11.GL_SRC_ALPHA,
-			// GL11.GL_ONE_MINUS_SRC_ALPHA);
-			// GlStateManager.color(1F, 1F, 1F, .5F);
+
 			int i = blockpos.getX();
 			int j = blockpos.getY();
 			int k = blockpos.getZ();

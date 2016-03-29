@@ -63,12 +63,4 @@ public abstract class BlockConnectable extends BlockContainer {
 			}
 		}
 	}
-
-	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
-		if (tile.getMaster() != null)
-			((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork(true);
-		super.breakBlock(worldIn, pos, state);
-	}
 }

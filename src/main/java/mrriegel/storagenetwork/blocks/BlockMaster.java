@@ -42,6 +42,11 @@ public class BlockMaster extends BlockContainer {
 		return new TileMaster();
 	}
 
+//	@Override
+//	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+//		onBlockPlacedBy(worldIn, pos, state, null, null);
+//	}
+
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);

@@ -1,11 +1,14 @@
 package mrriegel.storagenetwork;
 
+import com.google.gson.GsonBuilder;
+
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;

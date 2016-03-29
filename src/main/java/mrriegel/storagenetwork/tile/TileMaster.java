@@ -35,7 +35,9 @@ import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -49,6 +51,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
@@ -485,12 +488,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return lis;
 	}
 
-	private void addCables(BlockPos pos) {
+	private void addCables(final BlockPos pos) {
 		for (BlockPos bl : getCons(pos)) {
-			if (connectables.contains(bl)) {
-				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
-				continue;
-			}
+//			if (connectables.contains(bl)) {
+//				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
+//				addCables(bl);
+//				continue;
+//			}
 			if (worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
@@ -503,6 +507,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				addCables(bl);
 			}
 		}
+
 	}
 
 	private void addInventorys() {
@@ -555,7 +560,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void removeIConnectable(BlockPos pos) {
 		if (connectables == null)
 			connectables = Lists.newArrayList();
-		if (pos != null && !connectables.contains(pos))
+		if (pos != null)
 			connectables.remove(pos);
 		removeFalse();
 	}
@@ -563,8 +568,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void refreshNetwork(boolean force) {
 		if (worldObj.isRemote)
 			return;
-		System.out.println("refresh");
-		if (connectables == null)
+//		if (connectables == null)
 			connectables = Lists.newArrayList();
 		addCables(pos);
 		connectables.sort(new Comparator<BlockPos>() {
@@ -1119,9 +1123,12 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void removeFalse() {
 		if (connectables != null) {
 			Iterator<BlockPos> it = connectables.iterator();
-			while (it.hasNext())
-				if (!(worldObj.getTileEntity(it.next()) instanceof IConnectable))
+			while (it.hasNext()) {
+				TileEntity t = worldObj.getTileEntity(it.next());
+				 System.out.println(t);
+				if (!(t instanceof IConnectable) || ((IConnectable) t).getMaster() == null)
 					it.remove();
+			}
 		}
 		addInventorys();
 
