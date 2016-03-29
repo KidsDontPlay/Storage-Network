@@ -39,7 +39,6 @@ minecraft {
 
 dependencies {
     deobfCompile "mezz.jei:jei_1.8.9:2.26.0.154"
-   // deobfCompile "MCMultiPart:MCMultiPart:1.0.7:universal"
 }
 
 processResources
@@ -65,7 +64,6 @@ repositories {
   maven {
     url "http://dvs1.progwml6.com/files/maven"
   }
- // maven { url "http://maven.amadornes.com/" }
 }
 
 minecraft {

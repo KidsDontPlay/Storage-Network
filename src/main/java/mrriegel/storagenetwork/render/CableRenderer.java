@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.render;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.blocks.BlockKabel;
-import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

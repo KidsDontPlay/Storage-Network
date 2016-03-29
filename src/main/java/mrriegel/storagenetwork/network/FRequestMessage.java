@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
 import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.items.ItemFRemote;
+import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
@@ -69,7 +70,7 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids(), GuiHandler.FREQUEST), ctx.getServerHandler().playerEntity);
 
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote) {
-					TileMaster tile = ItemFRemote.getTile(ctx.getServerHandler().playerEntity.getHeldItem());
+					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.getHeldItem());
 					ContainerFRemote con = ((ContainerFRemote) ctx.getServerHandler().playerEntity.openContainer);
 					ItemStack fill = con.inv.getStackInSlot(0);
 					if (tile != null && message.id < 2 && message.fluid != null && fill != null && FluidContainerRegistry.isEmptyContainer(fill)) {

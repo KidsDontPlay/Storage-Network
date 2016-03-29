@@ -2,13 +2,13 @@ package mrriegel.storagenetwork.gui.frequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.FRequestMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -19,24 +19,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class GuiFRequest extends GuiContainer {
+import com.google.common.collect.Lists;
+
+public class GuiFRequest extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/frequest.png");
 	int page = 1, maxPage = 1;
 	public List<FluidStack> fluids;
@@ -44,6 +39,7 @@ public class GuiFRequest extends GuiContainer {
 	private GuiTextField searchBar;
 	private Button direction, sort, left, right;
 	TileFRequest tile;
+	private List<FluidSlot> slots;
 
 	public GuiFRequest(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -134,24 +130,27 @@ public class GuiFRequest extends GuiContainer {
 			right.enabled = true;
 		}
 		searchBar.drawTextBox();
-		int index = (page - 1) * 32;
-		for (int jj = 0; jj < 6; jj++) {
+		slots = Lists.newArrayList();
+		int index = (page - 1) * 56;
+		for (int jj = 0; jj < 7; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getFluid(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).amount, guiLeft, guiTop).drawSlot(mouseX, mouseY);
+				slots.add(new FluidSlot(tmp.get(in).getFluid(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).amount, guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
 				index++;
 			}
 		}
-		index = (page - 1) * 32;
-		for (int jj = 0; jj < 6; jj++) {
-			for (int ii = 0; ii < 8; ii++) {
-				int in = index;
-				if (in >= tmp.size())
-					break;
-				new Slot(tmp.get(in).getFluid(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).amount, guiLeft, guiTop).drawTooltip(mouseX, mouseY);
-				index++;
+		for (FluidSlot s : slots) {
+			s.drawSlot(mouseX, mouseY);
+		}
+		for (FluidSlot s : slots) {
+			s.drawTooltip(mouseX, mouseY);
+		}
+		for (FluidSlot s : slots) {
+			if (s.isMouseOverSlot(mouseX, mouseY)) {
+				over = s.fluid;
+				break;
 			}
 		}
 
@@ -216,80 +215,6 @@ public class GuiFRequest extends GuiContainer {
 				page++;
 		}
 
-	}
-
-	class Slot {
-		Fluid fluid;
-		int x, y, size, guiLeft, guiTop;
-
-		public Slot(Fluid fluid, int x, int y, int size, int guiLeft, int guiTop) {
-			this.fluid = fluid;
-			this.x = x;
-			this.y = y;
-			this.size = size;
-			this.guiLeft = guiLeft;
-			this.guiTop = guiTop;
-		}
-
-		Minecraft mc = Minecraft.getMinecraft();
-
-		void drawSlot(int mx, int my) {
-			GlStateManager.pushMatrix();
-			TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
-			if (fluidIcon == null)
-				return;
-			int color = fluid.getColor(new FluidStack(fluid, 1));
-			float a = ((color >> 24) & 0xFF) / 255.0F;
-			float r = ((color >> 16) & 0xFF) / 255.0F;
-			float g = ((color >> 8) & 0xFF) / 255.0F;
-			float b = ((color >> 0) & 0xFF) / 255.0F;
-			GlStateManager.color(r, g, b, a);
-			this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-			GlStateManager.disableLighting();
-			GlStateManager.disableDepth();
-			drawTexturedModalRect(x, y, fluidIcon, 16, 16);
-			GlStateManager.enableLighting();
-			GlStateManager.enableDepth();
-			GlStateManager.popMatrix();
-			String amount = "" + (size < 1000 ? size : size < 1000000 ? size / 1000 : size < 1000000000 ? size / 1000000 : size / 1000000000);
-			amount += size < 1000 ? "mB" : size < 1000000 ? "B" : size < 1000000000 ? "KB" : "MB";
-			if (ConfigHandler.smallFont) {
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(.5f, .5f, .5f);
-				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.command_block_minecart), x * 2 + 16, y * 2 + 16, amount);
-				GlStateManager.popMatrix();
-			} else
-				mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Blocks.fire), x, y, amount);
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				int j1 = x;
-				int k1 = y;
-				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-				GlStateManager.colorMask(true, true, true, true);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-				over = fluid;
-			}
-		}
-
-		void drawTooltip(int mx, int my) {
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx, my, fontRendererObj);
-				} else
-					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx, my);
-				GlStateManager.popMatrix();
-				GlStateManager.enableLighting();
-			}
-		}
-
-		private boolean isMouseOverSlot(int mouseX, int mouseY) {
-			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
-		}
 	}
 
 	class Button extends GuiButton {

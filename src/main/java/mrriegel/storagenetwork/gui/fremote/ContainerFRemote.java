@@ -4,6 +4,7 @@ import mrriegel.storagenetwork.gui.CrunchItemInventory;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemFRemote;
+import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -103,7 +104,7 @@ public class ContainerFRemote extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		TileMaster mas = ItemFRemote.getTile(playerIn.getHeldItem());
+		TileMaster mas = ItemRemote.getTile(playerIn.getHeldItem());
 		if (mas == null || !(mas instanceof TileMaster))
 			return false;
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 20 == 0) {
@@ -129,7 +130,7 @@ public class ContainerFRemote extends Container {
 			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
 		}
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 50 == 0)
-			PacketHandler.INSTANCE.sendTo(new FluidsMessage(ItemFRemote.getTile(playerIn.getHeldItem()).getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
+			PacketHandler.INSTANCE.sendTo(new FluidsMessage(ItemRemote.getTile(playerIn.getHeldItem()).getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
 		return playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.fremote;
 	}
 

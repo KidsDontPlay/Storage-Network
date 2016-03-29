@@ -2,13 +2,13 @@ package mrriegel.storagenetwork.gui.remote;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
+import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -21,9 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -38,15 +36,17 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-public class GuiRemote extends GuiContainer {
+public class GuiRemote extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/remote.png");
 	int page = 1, maxPage = 1;
 	public List<StackWrapper> stacks;
 	ItemStack over;
 	private GuiTextField searchBar;
 	private Button direction, sort, left, right;
+	private List<ItemSlot> slots;
 
 	public GuiRemote(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -183,24 +183,27 @@ public class GuiRemote extends GuiContainer {
 			right.enabled = true;
 		}
 		searchBar.drawTextBox();
+		slots = Lists.newArrayList();
 		int index = (page - 1) * 56;
 		for (int jj = 0; jj < 7; jj++) {
 			for (int ii = 0; ii < 8; ii++) {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop).drawSlot(mouseX, mouseY);
+				slots.add(new ItemSlot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
 				index++;
 			}
 		}
-		index = (page - 1) * 56;
-		for (int jj = 0; jj < 7; jj++) {
-			for (int ii = 0; ii < 8; ii++) {
-				int in = index;
-				if (in >= tmp.size())
-					break;
-				new Slot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop).drawTooltip(mouseX, mouseY);
-				index++;
+		for (ItemSlot s : slots) {
+			s.drawSlot(mouseX, mouseY);
+		}
+		for (ItemSlot s : slots) {
+			s.drawTooltip(mouseX, mouseY);
+		}
+		for (ItemSlot s : slots) {
+			if (s.isMouseOverSlot(mouseX, mouseY)) {
+				over = s.stack;
+				break;
 			}
 		}
 
@@ -269,64 +272,6 @@ public class GuiRemote extends GuiContainer {
 				page++;
 		}
 
-	}
-
-	class Slot {
-		ItemStack stack;
-		int x, y, size, guiLeft, guiTop;
-
-		public Slot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop) {
-			this.stack = stack;
-			this.x = x;
-			this.y = y;
-			this.size = size;
-			this.guiLeft = guiLeft;
-			this.guiTop = guiTop;
-		}
-
-		Minecraft mc = Minecraft.getMinecraft();
-
-		void drawSlot(int mx, int my) {
-			RenderHelper.enableGUIStandardItemLighting();
-			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-			if (ConfigHandler.smallFont) {
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(.5f, .5f, .5f);
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
-				GlStateManager.popMatrix();
-			} else
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				int j1 = x;
-				int k1 = y;
-				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-				GlStateManager.colorMask(true, true, true, true);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-				over = stack;
-			}
-		}
-
-		void drawTooltip(int mx, int my) {
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-					renderToolTip(stack, mx, my);
-				else
-					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx, my);
-				GlStateManager.popMatrix();
-				GlStateManager.enableLighting();
-			}
-		}
-
-		private boolean isMouseOverSlot(int mouseX, int mouseY) {
-			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
-		}
 	}
 
 	class Button extends GuiButton {

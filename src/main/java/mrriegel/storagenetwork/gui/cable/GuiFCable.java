@@ -2,12 +2,12 @@ package mrriegel.storagenetwork.gui.cable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModItems;
@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -30,22 +29,20 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class GuiFCable extends GuiContainer {
+public class GuiFCable extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
 	Button pPlus, pMinus, white, acti;
 	TileKabel tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
-	ArrayList<Slot> list = new ArrayList<GuiFCable.Slot>();
+	ArrayList<FluidSlot> list = new ArrayList<FluidSlot>();
 
 	public GuiFCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -87,15 +84,15 @@ public class GuiFCable extends GuiContainer {
 				}
 			}
 		}
-		list = new ArrayList<GuiFCable.Slot>();
+		list = new ArrayList<GuiFCable.FluidSlot>();
 		for (int ii = 0; ii < 9; ii++) {
 			if (tile.getKind() != Kind.fstorageKabel || ii == 4) {
 				ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 				int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-				list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, guiLeft, guiTop));
+				list.add(new FluidSlot(Util.getFluid(s).getFluid(), guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, false, true, false, true));
 			}
 		}
-		for (Slot s : list)
+		for (FluidSlot s : list)
 			s.drawSlot(mouseX, mouseY);
 		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
 			GlStateManager.disableLighting();
@@ -127,7 +124,7 @@ public class GuiFCable extends GuiContainer {
 			GlStateManager.enableLighting();
 		}
 
-		for (Slot s : list)
+		for (FluidSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
 		int i = mouseX;
 		int j = mouseY;
@@ -184,7 +181,7 @@ public class GuiFCable extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		for (int i = 0; i < 9; i++) {
-			Slot e = list.get(tile.getKind() == Kind.fstorageKabel ? 0 : i);
+			FluidSlot e = list.get(tile.getKind() == Kind.fstorageKabel ? 0 : i);
 			if (tile.getKind() == Kind.fstorageKabel)
 				i = 4;
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
@@ -256,74 +253,6 @@ public class GuiFCable extends GuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
-	}
-
-	class Slot {
-		ItemStack stack;
-		int x, y, guiLeft, guiTop;
-		Minecraft mc = Minecraft.getMinecraft();
-		Fluid fluid;
-
-		public Slot(ItemStack stack, int x, int y, int guiLeft, int guiTop) {
-			this.stack = stack;
-			this.x = x;
-			this.y = y;
-			this.guiLeft = guiLeft;
-			this.guiTop = guiTop;
-			if (Util.getFluid(stack) == null)
-				this.fluid = null;
-			else
-				this.fluid = Util.getFluid(stack).getFluid();
-		}
-
-		void drawSlot(int mx, int my) {
-
-			if (stack != null) {
-				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
-				if (fluidIcon == null)
-					return;
-				int color = fluid.getColor(new FluidStack(fluid, 1));
-				float a = ((color >> 24) & 0xFF) / 255.0F;
-				float r = ((color >> 16) & 0xFF) / 255.0F;
-				float g = ((color >> 8) & 0xFF) / 255.0F;
-				float b = ((color >> 0) & 0xFF) / 255.0F;
-				GlStateManager.color(r, g, b, a);
-				this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				drawTexturedModalRect(x, y, fluidIcon, 16, 16);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-
-			}
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				int j1 = x;
-				int k1 = y;
-				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-				GlStateManager.colorMask(true, true, true, true);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-				GlStateManager.popMatrix();
-			}
-		}
-
-		void drawTooltip(int mx, int my) {
-			if (fluid != null && this.isMouseOverSlot(mx, my)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
-				drawHoveringText(Arrays.asList(fluid.getName()), mx, my, fontRendererObj);
-				GlStateManager.popMatrix();
-				GlStateManager.enableLighting();
-			}
-		}
-
-		boolean isMouseOverSlot(int mouseX, int mouseY) {
-			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
-		}
 	}
 
 	class Button extends GuiButton {

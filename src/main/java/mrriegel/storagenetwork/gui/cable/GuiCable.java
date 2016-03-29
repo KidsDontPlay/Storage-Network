@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -20,7 +21,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
@@ -34,14 +34,14 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class GuiCable extends GuiContainer {
+public class GuiCable extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
 	Button pPlus, pMinus, white, acti;
 	TileKabel tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
-	ArrayList<Slot> list = new ArrayList<GuiCable.Slot>();
+	ArrayList<ItemSlot> list = new ArrayList<ItemSlot>();
 
 	public GuiCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -72,14 +72,15 @@ public class GuiCable extends GuiContainer {
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, guiLeft + 8, guiTop - 18);
 			RenderHelper.disableStandardItemLighting();
 		}
-		list = new ArrayList<GuiCable.Slot>();
+		list = new ArrayList<ItemSlot>();
 		for (int ii = 0; ii < 9; ii++) {
 			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-			list.add(new Slot(s, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop));
+			list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, true, true, false, true));
 		}
-		for (Slot s : list)
+		for (ItemSlot s : list)
 			s.drawSlot(mouseX, mouseY);
+
 		if (tile.elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
 			GlStateManager.disableLighting();
 			GlStateManager.disableDepth();
@@ -99,7 +100,7 @@ public class GuiCable extends GuiContainer {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		for (int i = 0; i < list.size(); i++) {
-			Slot e = list.get(i);
+			ItemSlot e = list.get(i);
 			ContainerCable con = (ContainerCable) inventorySlots;
 			if (e.stack != null) {
 				RenderHelper.disableStandardItemLighting();
@@ -126,7 +127,7 @@ public class GuiCable extends GuiContainer {
 			GlStateManager.enableLighting();
 		}
 
-		for (Slot s : list)
+		for (ItemSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
 		int i = mouseX;
 		int j = mouseY;
@@ -183,7 +184,7 @@ public class GuiCable extends GuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		for (int i = 0; i < list.size(); i++) {
-			Slot e = list.get(i);
+			ItemSlot e = list.get(i);
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerCable con = (ContainerCable) inventorySlots;
 				StackWrapper x = con.getFilter().get(i);
@@ -242,7 +243,7 @@ public class GuiCable extends GuiContainer {
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (typedChar == 'o' || typedChar == 'm') {
 			for (int i = 0; i < list.size(); i++) {
-				Slot e = list.get(i);
+				ItemSlot e = list.get(i);
 				int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
 				int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 				ContainerCable con = (ContainerCable) inventorySlots;
@@ -284,57 +285,6 @@ public class GuiCable extends GuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
-	}
-
-	class Slot {
-		ItemStack stack;
-		int x, y, size, guiLeft, guiTop;
-		Minecraft mc = Minecraft.getMinecraft();
-
-		public Slot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop) {
-			this.stack = stack;
-			this.x = x;
-			this.y = y;
-			this.size = size;
-			this.guiLeft = guiLeft;
-			this.guiTop = guiTop;
-		}
-
-		void drawSlot(int mx, int my) {
-			if (stack != null) {
-				RenderHelper.enableGUIStandardItemLighting();
-				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-				if (tile.getKind() == Kind.exKabel && tile.elements(ItemUpgrade.STOCK) > 0)
-					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
-
-			}
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				int j1 = x;
-				int k1 = y;
-				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-				GlStateManager.colorMask(true, true, true, true);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-			}
-		}
-
-		void drawTooltip(int mx, int my) {
-			if (stack != null && this.isMouseOverSlot(mx, my)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
-				renderToolTip(stack, mx, my);
-				GlStateManager.popMatrix();
-				GlStateManager.enableLighting();
-			}
-		}
-
-		boolean isMouseOverSlot(int mouseX, int mouseY) {
-			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
-		}
 	}
 
 	class Button extends GuiButton {

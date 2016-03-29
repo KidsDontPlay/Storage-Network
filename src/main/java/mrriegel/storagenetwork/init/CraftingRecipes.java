@@ -4,13 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import mrriegel.storagenetwork.items.ItemRemote;
-import net.minecraft.block.BlockHardenedClay;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -40,6 +38,7 @@ public class CraftingRecipes {
 			public Foo(ItemStack output, List<ItemStack> inputList) {
 				super(output, inputList);
 			}
+
 			@Override
 			public ItemStack getCraftingResult(InventoryCrafting inv) {
 				ItemStack rem = null;
