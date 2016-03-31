@@ -37,11 +37,11 @@ public class BlockContainer extends BlockConnectable {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
 		worldIn.markBlockForUpdate(pos);
-		if (/* !worldIn.isRemote && */tile.getMaster() != null) {
+		if (!worldIn.isRemote && tile.getMaster() != null) {
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.CONTAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}
-		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
+		return true;
 	}
 
 	@Override

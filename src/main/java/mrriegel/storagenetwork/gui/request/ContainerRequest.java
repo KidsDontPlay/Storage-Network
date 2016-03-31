@@ -47,9 +47,11 @@ public class ContainerRequest extends Container {
 			int slot = stackTag.getByte("Slot");
 			craftMatrix.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
-		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
-		if (!tile.getWorld().isRemote)
+
+		if (!tile.getWorld().isRemote) {
+			TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
+		}
 		x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
 			@Override
 			public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {

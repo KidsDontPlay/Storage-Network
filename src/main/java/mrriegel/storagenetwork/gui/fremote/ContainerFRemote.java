@@ -34,6 +34,11 @@ public class ContainerFRemote extends Container {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
 			}
 		}
+		if (!playerInv.player.worldObj.isRemote) {
+			TileMaster mas = ItemRemote.getTile(playerInv.player.getHeldItem());
+			if (mas != null && mas instanceof TileMaster)
+				PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerInv.player);
+		}
 		for (int i = 0; i < 9; ++i) {
 			if (i == playerInv.currentItem)
 				this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232) {
@@ -129,8 +134,6 @@ public class ContainerFRemote extends Container {
 			}
 			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
 		}
-		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 50 == 0)
-			PacketHandler.INSTANCE.sendTo(new FluidsMessage(ItemRemote.getTile(playerIn.getHeldItem()).getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
 		return playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.fremote;
 	}
 

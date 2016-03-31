@@ -41,7 +41,12 @@ public class ContainerRemote extends Container {
 			else
 				this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
 		}
-
+		if (!playerInv.player.worldObj.isRemote) {
+			TileMaster tile = ItemRemote.getTile(playerInv.player.getHeldItem());
+			if (tile == null || !(tile instanceof TileMaster))
+				return;
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerInv.player);
+		}
 	}
 
 	@Override

@@ -168,4 +168,12 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 		readFromNBT(pkt.getNbtCompound());
 	}
 
+	public BlockPos getMaster() {
+		return master;
+	}
+
+	public void setMaster(BlockPos master) {
+		this.master = master;
+	}
+
 }

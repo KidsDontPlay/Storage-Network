@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -50,7 +49,6 @@ public abstract class MyGuiContainer extends GuiContainer {
 	}
 
 	public class ItemSlot extends AbstractSlot {
-
 		public ItemStack stack;
 
 		public ItemSlot(ItemStack stack, int x, int y, int size, int guiLeft, int guiTop, boolean number, boolean square, boolean smallFont, boolean toolTip) {
@@ -106,33 +104,35 @@ public abstract class MyGuiContainer extends GuiContainer {
 		}
 
 		public void drawSlot(int mx, int my) {
-			GlStateManager.pushMatrix();
-			TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
-			if (fluidIcon == null)
-				return;
-			int color = fluid.getColor(new FluidStack(fluid, 1));
-			float a = ((color >> 24) & 0xFF) / 255.0F;
-			float r = ((color >> 16) & 0xFF) / 255.0F;
-			float g = ((color >> 8) & 0xFF) / 255.0F;
-			float b = ((color >> 0) & 0xFF) / 255.0F;
-			GlStateManager.color(r, g, b, a);
-			this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-			GlStateManager.disableLighting();
-			GlStateManager.disableDepth();
-			drawTexturedModalRect(x, y, fluidIcon, 16, 16);
-			GlStateManager.enableLighting();
-			GlStateManager.enableDepth();
-			GlStateManager.popMatrix();
-			if (number) {
-				String amount = "" + (size < 1000 ? size : size < 1000000 ? size / 1000 : size < 1000000000 ? size / 1000000 : size / 1000000000);
-				amount += size < 1000 ? "mB" : size < 1000000 ? "B" : size < 1000000000 ? "KB" : "MB";
-				if (smallFont) {
-					GlStateManager.pushMatrix();
-					GlStateManager.scale(.5f, .5f, .5f);
-					mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.command_block_minecart), x * 2 + 16, y * 2 + 16, amount);
-					GlStateManager.popMatrix();
-				} else
-					mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Blocks.fire), x, y, amount);
+			if (fluid != null) {
+				GlStateManager.pushMatrix();
+				TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+				if (fluidIcon == null)
+					return;
+				int color = fluid.getColor(new FluidStack(fluid, 1));
+				float a = ((color >> 24) & 0xFF) / 255.0F;
+				float r = ((color >> 16) & 0xFF) / 255.0F;
+				float g = ((color >> 8) & 0xFF) / 255.0F;
+				float b = ((color >> 0) & 0xFF) / 255.0F;
+				GlStateManager.color(r, g, b, a);
+				this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+				GlStateManager.disableLighting();
+				GlStateManager.disableDepth();
+				drawTexturedModalRect(x, y, fluidIcon, 16, 16);
+				GlStateManager.enableLighting();
+				GlStateManager.enableDepth();
+				GlStateManager.popMatrix();
+				if (number) {
+					String amount = "" + (size < 1000 ? size : size < 1000000 ? size / 1000 : size < 1000000000 ? size / 1000000 : size / 1000000000);
+					amount += size < 1000 ? "mB" : size < 1000000 ? "B" : size < 1000000000 ? "KB" : "MB";
+					if (smallFont) {
+						GlStateManager.pushMatrix();
+						GlStateManager.scale(.5f, .5f, .5f);
+						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.chainmail_boots), x * 2 + 16, y * 2 + 16, amount);
+						GlStateManager.popMatrix();
+					} else
+						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.chainmail_boots), x, y, amount);
+				}
 			}
 			if (this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
@@ -151,7 +151,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 			if (this.isMouseOverSlot(mx, my) && fluid != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || !number) {
 					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx, my, fontRendererObj);
 				} else
 					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx, my);

@@ -470,6 +470,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 	@Override
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
-			((TileMaster) worldObj.getTileEntity(master)).removeFalse();
+			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 }

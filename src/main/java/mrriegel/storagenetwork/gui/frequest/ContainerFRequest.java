@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.gui.frequest;
 
 import mrriegel.storagenetwork.gui.CrunchItemInventory;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileFRequest;
@@ -27,12 +28,6 @@ public class ContainerFRequest extends Container {
 		this.tile = tile;
 		this.playerInv = playerInv;
 		inv = new CrunchItemInventory(2, 1, new ItemStack(Items.fire_charge));
-		// NBTTagCompound nbt = new NBTTagCompound();
-		// tile.writeToNBT(nbt);
-		// inv.setInventorySlotContents(0,
-		// ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("fill")));
-		// inv.setInventorySlotContents(1,
-		// ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("drain")));
 		inv.setInventorySlotContents(0, tile.fill);
 		inv.setInventorySlotContents(1, tile.drain);
 		this.addSlotToContainer(new Slot(inv, 0, 8, 138));
@@ -44,6 +39,11 @@ public class ContainerFRequest extends Container {
 		}
 		for (int i = 0; i < 9; ++i) {
 			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
+		}
+		if (!tile.getWorld().isRemote) {
+			TileMaster mas = ItemRemote.getTile(playerInv.player.getHeldItem());
+			if (mas != null && mas instanceof TileMaster)
+				PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREQUEST), (EntityPlayerMP) playerInv.player);
 		}
 
 	}

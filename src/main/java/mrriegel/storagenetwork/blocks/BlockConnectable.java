@@ -7,9 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -34,12 +31,6 @@ public abstract class BlockConnectable extends BlockContainer {
 		setConnections(worldIn, pos);
 	}
 
-	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		onNeighborBlockChange(worldIn, pos, state, Blocks.air);
-
-	}
-
 	private void setConnections(World worldIn, BlockPos pos) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
 
@@ -48,17 +39,17 @@ public abstract class BlockConnectable extends BlockContainer {
 			tile.setMaster(null);
 			removeAllMasters(worldIn, pos);
 			if (mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork(true);
+				((TileMaster) mas).refreshNetwork();
 			}
 		}
 	}
 
-	public void removeAllMasters(World world, BlockPos pos) {
+	private void removeAllMasters(World world, BlockPos pos) {
 		((IConnectable) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
-				((TileMaster) world.getTileEntity(((IConnectable) world.getTileEntity(bl)).getMaster())).removeIConnectable(bl);
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
+				world.markBlockForUpdate(bl);
 				removeAllMasters(world, bl);
 			}
 		}

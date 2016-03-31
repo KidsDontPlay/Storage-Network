@@ -29,17 +29,18 @@ public class ItemCoverStick extends Item {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			if (playerIn.inventory.currentItem >= 8)
 				return false;
-			boolean valid = true;
-			if (playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1] == null)
-				valid = false;
-			Block b = !valid ? null : Block.getBlockFromItem(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItem());
+			ItemStack right = playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1];
+			Block b = right == null ? null : Block.getBlockFromItem(right.getItem());
 			if (!playerIn.isSneaking() && b != null && (b.isBlockNormalCube() || b == Blocks.glass) && !(b instanceof ITileEntityProvider) && (playerIn.capabilities.isCreativeMode || tile.getCover() != null || playerIn.inventory.consumeInventoryItem(Item.getItemFromBlock(ModBlocks.cover)))) {
 				tile.setCover(b);
-				tile.setCoverMeta(playerIn.inventory.mainInventory[playerIn.inventory.currentItem + 1].getItemDamage());
+				tile.setCoverMeta(right.getItemDamage());
 				worldIn.markBlockForUpdate(pos);
+				playerIn.openContainer.detectAndSendChanges();
 				return true;
 			} else if (!playerIn.isSneaking() && b == null && tile.getCover() != null) {
 				tile.setCoverMeta(nextMeta(tile.getCover(), tile.getCoverMeta()));
+				worldIn.markBlockForUpdate(pos);
+				playerIn.openContainer.detectAndSendChanges();
 				return true;
 			} else if (playerIn.isSneaking()) {
 				if (tile.getCover() != null) {
@@ -48,12 +49,12 @@ public class ItemCoverStick extends Item {
 					if (!worldIn.isRemote && !playerIn.capabilities.isCreativeMode)
 						worldIn.spawnEntityInWorld(new EntityItem(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ, new ItemStack(ModBlocks.cover)));
 					worldIn.markBlockForUpdate(pos);
+					playerIn.openContainer.detectAndSendChanges();
 					return true;
 				}
 			}
-			return false;
 		}
-		return super.onItemUse(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
+		return false;
 	}
 
 	private int nextMeta(Block block, int meta) {
@@ -75,4 +76,5 @@ public class ItemCoverStick extends Item {
 			}
 		}
 	}
+
 }

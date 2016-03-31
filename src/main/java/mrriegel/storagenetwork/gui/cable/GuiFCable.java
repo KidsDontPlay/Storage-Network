@@ -29,6 +29,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.fluids.Fluid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -89,7 +90,8 @@ public class GuiFCable extends MyGuiContainer {
 			if (tile.getKind() != Kind.fstorageKabel || ii == 4) {
 				ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 				int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-				list.add(new FluidSlot(Util.getFluid(s).getFluid(), guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, false, true, false, true));
+				Fluid f = Util.getFluid(s) == null ? null : Util.getFluid(s).getFluid();
+				list.add(new FluidSlot(f, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, false, true, false, true));
 			}
 		}
 		for (FluidSlot s : list)

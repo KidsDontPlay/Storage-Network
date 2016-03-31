@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
 import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.items.ItemFRemote;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;

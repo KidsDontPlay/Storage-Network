@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -33,6 +34,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -43,13 +45,15 @@ import cofh.api.energy.IEnergyReceiver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
 public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver {
-	public List<BlockPos> connectables, storageInventorys, imInventorys, exInventorys, fstorageInventorys, fimInventorys, fexInventorys;
+	public Set<BlockPos> connectables;
+	public List<BlockPos> storageInventorys, imInventorys, exInventorys, fstorageInventorys, fimInventorys, fexInventorys;
 	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
 	public List<CraftingTask> tasks = new ArrayList<CraftingTask>();
 
@@ -419,7 +423,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		connectables = new Gson().fromJson(compound.getString("cables"), new TypeToken<List<BlockPos>>() {
+		connectables = new Gson().fromJson(compound.getString("cables"), new TypeToken<Set<BlockPos>>() {
 		}.getType());
 		storageInventorys = new Gson().fromJson(compound.getString("storageInventorys"), new TypeToken<List<BlockPos>>() {
 		}.getType());
@@ -464,25 +468,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		compound.setTag("tasks", tasksList);
 	}
 
-	private List<BlockPos> getCons(BlockPos pos) {
-		List<BlockPos> lis = new ArrayList<BlockPos>();
-		if (worldObj.getTileEntity(pos.up()) instanceof IConnectable || worldObj.getTileEntity(pos.up()) instanceof TileMaster)
-			lis.add(pos.up());
-		if (worldObj.getTileEntity(pos.down()) instanceof IConnectable || worldObj.getTileEntity(pos.down()) instanceof TileMaster)
-			lis.add(pos.down());
-		if (worldObj.getTileEntity(pos.east()) instanceof IConnectable || worldObj.getTileEntity(pos.east()) instanceof TileMaster)
-			lis.add(pos.east());
-		if (worldObj.getTileEntity(pos.west()) instanceof IConnectable || worldObj.getTileEntity(pos.west()) instanceof TileMaster)
-			lis.add(pos.west());
-		if (worldObj.getTileEntity(pos.north()) instanceof IConnectable || worldObj.getTileEntity(pos.north()) instanceof TileMaster)
-			lis.add(pos.north());
-		if (worldObj.getTileEntity(pos.south()) instanceof IConnectable || worldObj.getTileEntity(pos.south()) instanceof TileMaster)
-			lis.add(pos.south());
-		return lis;
-	}
-
 	private void addCables(final BlockPos pos) {
-		for (BlockPos bl : getCons(pos)) {
+		for (BlockPos bl : Util.getSides(pos)) {
 			if (worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
@@ -539,7 +526,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public void addIConnectable(BlockPos pos) {
 		if (connectables == null)
-			connectables = Lists.newArrayList();
+			connectables = Sets.newConcurrentHashSet();
 		if (pos != null && !connectables.contains(pos))
 			connectables.add(pos);
 		removeFalse();
@@ -547,19 +534,30 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public void removeIConnectable(BlockPos pos) {
 		if (connectables == null)
-			connectables = Lists.newArrayList();
+			connectables = Sets.newConcurrentHashSet();
 		if (pos != null)
 			connectables.remove(pos);
 		removeFalse();
 	}
 
-	public void refreshNetwork(boolean force) {
+	public void refreshNetwork() {
 		if (worldObj.isRemote)
 			return;
-		// if (connectables == null)
-		connectables = Lists.newArrayList();
-		addCables(pos);
-		connectables.sort(new Comparator<BlockPos>() {
+		((WorldServer) worldObj).addScheduledTask(new Runnable() {
+			@Override
+			public void run() {
+				connectables = Sets.newConcurrentHashSet();
+				addCables(pos);
+				addInventorys();
+				System.out.println("ref");
+			}
+		});
+
+	}
+
+	private List<BlockPos> getConnectablesList() {
+		List<BlockPos> lis = Lists.newArrayList(connectables);
+		lis.sort(new Comparator<BlockPos>() {
 			@Override
 			public int compare(BlockPos o1, BlockPos o2) {
 				double dis1 = o1.distanceSq(pos);
@@ -567,8 +565,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				return Double.compare(dis1, dis2);
 			}
 		});
-		removeFalse();
-		addInventorys();
+		return lis;
 	}
 
 	public void vacuum() {
@@ -587,16 +584,14 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().stackSize, false))
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
-					if (!worldObj.isRemote) {
-						int rest = insertStack(stack, null);
-						ItemStack r = stack.copy();
-						r.stackSize = rest;
-						if (rest <= 0)
-							item.setDead();
-						else
-							item.setEntityItemStack(r);
-						break;
-					}
+					int rest = insertStack(stack, null);
+					ItemStack r = stack.copy();
+					r.stackSize = rest;
+					if (rest <= 0)
+						item.setDead();
+					else
+						item.setEntityItemStack(r);
+					break;
 				}
 			}
 		}
@@ -1096,9 +1091,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		// if(1==1)
 		// return;
 		if (connectables == null)
-			connectables = Lists.newArrayList();
+			connectables = Sets.newConcurrentHashSet();
 		if (worldObj.getTotalWorldTime() % (200) == 0) {
-			refreshNetwork(false);
+			refreshNetwork();
 		}
 		vacuum();
 		impor();
@@ -1113,13 +1108,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			Iterator<BlockPos> it = connectables.iterator();
 			while (it.hasNext()) {
 				TileEntity t = worldObj.getTileEntity(it.next());
-				System.out.println(t);
 				if (!(t instanceof IConnectable) || ((IConnectable) t).getMaster() == null)
 					it.remove();
 			}
 		}
 		addInventorys();
-
 	}
 
 	boolean consumeRF(int num, boolean simulate) {

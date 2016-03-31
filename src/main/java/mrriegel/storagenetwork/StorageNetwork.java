@@ -2,7 +2,10 @@ package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -11,6 +14,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, guiFactory = "mrriegel.storagenetwork.config.GuiFactory")
 public class StorageNetwork {
@@ -37,11 +41,18 @@ public class StorageNetwork {
 		tagCompound.setBoolean("PhantomItems", false);
 		tagCompound.setString("AlignToGrid", "left");
 		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
+		// MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+	}
+
+	@SubscribeEvent
+	public void l(LivingUpdateEvent e) {
+		if (e.entity.worldObj.isRemote && e.entityLiving instanceof EntityPlayer)
+			System.out.println(Minecraft.getMinecraft().currentScreen);
 	}
 
 }

@@ -6,6 +6,7 @@ import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileRequest;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,14 +34,16 @@ public class BlockRequest extends BlockConnectable {
 		return 3;
 	}
 
+	BlockFurnace f;
+
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
-		if (tile.getMaster() != null) {
+		if (!worldIn.isRemote && tile.getMaster() != null) {
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.REQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}
-		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
+		return true;
 	}
 
 	@Override

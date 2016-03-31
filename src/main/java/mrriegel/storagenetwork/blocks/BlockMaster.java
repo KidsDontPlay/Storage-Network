@@ -42,28 +42,36 @@ public class BlockMaster extends BlockContainer {
 		return new TileMaster();
 	}
 
-	// @Override
-	// public void onNeighborBlockChange(World worldIn, BlockPos pos,
-	// IBlockState state, Block neighborBlock) {
-	// onBlockPlacedBy(worldIn, pos, state, null, null);
-	// }
+	@Override
+	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+		onBlockPlacedBy(worldIn, pos, state, null, null);
+		updateNeighbors(worldIn, pos);
+	}
+
+	private void updateNeighbors(World worldIn, BlockPos pos) {
+		for (BlockPos p : Util.getSides(pos)) {
+			if (worldIn.getTileEntity(p) instanceof IConnectable)
+				worldIn.markBlockForUpdate(p);
+		}
+	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-		boolean hasMaster = false;
+		BlockPos mas = null;
 		for (BlockPos p : Util.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null) {
-				hasMaster = true;
+			if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null && !((IConnectable) worldIn.getTileEntity(p)).getMaster().equals(pos)) {
+				mas = ((IConnectable) worldIn.getTileEntity(p)).getMaster();
 				break;
 			}
 		}
-		if (hasMaster) {
+		if (mas != null) {
 			worldIn.setBlockToAir(pos);
 			Block.spawnAsEntity(worldIn, pos, Inv.copyStack(stack, 1));
+			((TileMaster) worldIn.getTileEntity(mas)).refreshNetwork();
 		} else {
 			if (worldIn.getTileEntity(pos) != null)
-				((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork(true);
+				((TileMaster) worldIn.getTileEntity(pos)).refreshNetwork();
 
 		}
 	}

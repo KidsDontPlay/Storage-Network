@@ -98,6 +98,9 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+		if (worldIn.isRemote)
+			return true;
+		worldIn.markBlockForUpdate(pos);
 		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
 			return false;
 		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
@@ -168,11 +171,14 @@ public class BlockKabel extends BlockContainer {
 		setConnections(worldIn, pos, state);
 		updateTE(worldIn, pos, (IExtendedBlockState) state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
+
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		onNeighborBlockChange(worldIn, pos, state, null);
+		state = getExtendedState(state, worldIn, pos);
+		updateTE(worldIn, pos, (IExtendedBlockState) state);
+		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}
 
 	public void setConnections(World worldIn, BlockPos pos, IBlockState bState) {
@@ -214,7 +220,7 @@ public class BlockKabel extends BlockContainer {
 			worldIn.markBlockForUpdate(pos);
 			setAllMastersNull(worldIn, pos);
 			if (mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork(true);
+				((TileMaster) mas).refreshNetwork();
 			}
 		}
 	}
@@ -245,21 +251,21 @@ public class BlockKabel extends BlockContainer {
 		return false;
 	}
 
-	PropertyConnection face2prop(EnumFacing face) {
-		if (face == EnumFacing.DOWN)
-			return DOWN;
-		if (face == EnumFacing.UP)
-			return UP;
-		if (face == EnumFacing.NORTH)
-			return NORTH;
-		if (face == EnumFacing.SOUTH)
-			return SOUTH;
-		if (face == EnumFacing.EAST)
-			return EAST;
-		if (face == EnumFacing.WEST)
-			return WEST;
-		return null;
-	}
+	// PropertyConnection face2prop(EnumFacing face) {
+	// if (face == EnumFacing.DOWN)
+	// return DOWN;
+	// if (face == EnumFacing.UP)
+	// return UP;
+	// if (face == EnumFacing.NORTH)
+	// return NORTH;
+	// if (face == EnumFacing.SOUTH)
+	// return SOUTH;
+	// if (face == EnumFacing.EAST)
+	// return EAST;
+	// if (face == EnumFacing.WEST)
+	// return WEST;
+	// return null;
+	// }
 
 	public static EnumFacing get(BlockPos a, BlockPos b) {
 		if (a.up().equals(b))
