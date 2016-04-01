@@ -5,8 +5,10 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -19,6 +21,8 @@ public abstract class BlockConnectable extends BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+		if (!(neighborBlock == Blocks.air || neighborBlock instanceof ITileEntityProvider))
+			return;
 		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)

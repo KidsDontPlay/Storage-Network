@@ -32,52 +32,7 @@ public class BlockFKabel extends BlockKabel {
 		worldIn.markBlockForUpdate(pos);
 		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
 			return false;
-		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.fimKabel || tile.getKind() == Kind.fexKabel) && tile.getDeque() != null) {
-			switch (playerIn.getHeldItem().getItemDamage()) {
-			case ItemUpgrade.SPEED:
-				if (tile.elements(ItemUpgrade.SPEED) < 4) {
-					tile.getDeque().push(ItemUpgrade.SPEED);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			case ItemUpgrade.OP:
-				if (tile.elements(ItemUpgrade.OP) < 1) {
-					tile.getDeque().push(ItemUpgrade.OP);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			// case ItemUpgrade.STOCK:
-			// if (tile.elements(ItemUpgrade.STOCK) < 1 && tile.getKind() ==
-			// Kind.fexKabel) {
-			// tile.getDeque().push(ItemUpgrade.STOCK);
-			// playerIn.getHeldItem().stackSize--;
-			// if (playerIn.getHeldItem().stackSize <= 0)
-			// playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem,
-			// null);
-			// }
-			// break;
-			case ItemUpgrade.STACK:
-				if (tile.elements(ItemUpgrade.STACK) < 4) {
-					tile.getDeque().push(ItemUpgrade.STACK);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			default:
-				break;
-			}
-		} else if (playerIn.getHeldItem() == null && playerIn.isSneaking() && (tile.getKind() == Kind.fimKabel || tile.getKind() == Kind.fexKabel) && tile.getDeque() != null) {
-			if (!tile.getDeque().isEmpty()) {
-				if (playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.upgrade, 1, tile.getDeque().peekFirst()))) {
-					tile.getDeque().pollFirst();
-				}
-			}
-		} else
+		else
 			switch (tile.getKind()) {
 			case fexKabel:
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.FCABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());

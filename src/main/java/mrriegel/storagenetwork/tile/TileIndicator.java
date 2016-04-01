@@ -9,10 +9,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.S22PacketMultiBlockChange.BlockUpdateData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -22,6 +26,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	private boolean more;
 	private StackWrapper stack;
 	private BlockPos master;
+	private boolean disabled;
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -33,6 +38,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 			stack = (StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
+		disabled=compound.getBoolean("disabled");
 
 	}
 
@@ -43,6 +49,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 		compound.setBoolean("more", more);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
+		compound.setBoolean("disabled", disabled);
 	}
 
 	@Override
@@ -75,7 +82,13 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	public void setMaster(BlockPos master) {
 		this.master = master;
 	}
+	public boolean isDisabled() {
+		return disabled;
+	}
 
+	public void setDisabled(boolean enabled) {
+		this.disabled = enabled;
+	}
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
@@ -98,8 +111,18 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	@Override
 	public void update() {
 		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 40 == 0) {
+			// for(int y=pos.getY();y>0;y--){
+			// BlockPos p=new BlockPos(pos.getX(), y, pos.getZ());
+			// IFluidBlock ff;
+			// Fluid
+			// f=FluidRegistry.lookupFluidForBlock(worldObj.getBlockState(p).getBlock());
+			// if(f!=null){
+			// System.out.println(f.getUnlocalizedName());
+			// worldObj.setBlockToAir(p);
+			// }
+			// }
 			boolean x = false;
-			if (stack != null) {
+			if (stack != null && master != null) {
 				TileMaster mas = ((TileMaster) worldObj.getTileEntity(master));
 				int num = mas.getAmount(new FilterItem(stack.getStack(), true, false));
 				if (more) {
@@ -114,8 +137,10 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 						x = false;
 				}
 			}
-			((BlockIndicator) worldObj.getBlockState(pos).getBlock()).setState(worldObj, pos, worldObj.getBlockState(pos), x);
-			worldObj.markBlockForUpdate(pos);
+			if (worldObj.getBlockState(pos).getValue(BlockIndicator.STATE) != x) {
+				((BlockIndicator) worldObj.getBlockState(pos).getBlock()).setState(worldObj, pos, worldObj.getBlockState(pos), x);
+				worldObj.markBlockForUpdate(pos);
+			}
 		}
 	}
 }

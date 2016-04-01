@@ -476,7 +476,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				worldObj.removeTileEntity(bl);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getTileEntity(bl) instanceof IConnectable && !((IConnectable) worldObj.getTileEntity(bl)).isDisabled() && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
 				addCables(bl);
@@ -526,7 +526,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public void addIConnectable(BlockPos pos) {
 		if (connectables == null)
-			connectables = Sets.newConcurrentHashSet();
+			connectables = Sets.newHashSet();
 		if (pos != null && !connectables.contains(pos))
 			connectables.add(pos);
 		removeFalse();
@@ -534,7 +534,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public void removeIConnectable(BlockPos pos) {
 		if (connectables == null)
-			connectables = Sets.newConcurrentHashSet();
+			connectables = Sets.newHashSet();
 		if (pos != null)
 			connectables.remove(pos);
 		removeFalse();
@@ -543,15 +543,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void refreshNetwork() {
 		if (worldObj.isRemote)
 			return;
-		((WorldServer) worldObj).addScheduledTask(new Runnable() {
-			@Override
-			public void run() {
-				connectables = Sets.newConcurrentHashSet();
-				addCables(pos);
-				addInventorys();
-				System.out.println("ref");
-			}
-		});
+		connectables = Sets.newHashSet();
+		addCables(pos);
+		addInventorys();
+//		System.out.println("ref");
 
 	}
 
@@ -1080,10 +1075,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return new FluidStack(res.getFluid(), result);
 	}
 
-	public void craft() {
-
-	}
-
 	@Override
 	public void update() {
 		if (worldObj.isRemote)
@@ -1091,8 +1082,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		// if(1==1)
 		// return;
 		if (connectables == null)
-			connectables = Sets.newConcurrentHashSet();
+			connectables = Sets.newHashSet();
 		if (worldObj.getTotalWorldTime() % (200) == 0) {
+//			System.out.println("SSref");
 			refreshNetwork();
 		}
 		vacuum();

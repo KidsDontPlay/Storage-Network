@@ -16,6 +16,7 @@ import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
@@ -46,7 +47,6 @@ public class BlockKabel extends BlockContainer {
 	public static final PropertyConnection EAST = new PropertyConnection("east");
 	public static final PropertyConnection UP = new PropertyConnection("up");
 	public static final PropertyConnection DOWN = new PropertyConnection("down");
-	public static final PropertyBlock COVER = new PropertyBlock("cover");
 
 	public BlockKabel() {
 		super(Material.iron);
@@ -103,51 +103,7 @@ public class BlockKabel extends BlockContainer {
 		worldIn.markBlockForUpdate(pos);
 		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
 			return false;
-		if (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.upgrade && !playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
-			switch (playerIn.getHeldItem().getItemDamage()) {
-			case ItemUpgrade.SPEED:
-				if (tile.elements(ItemUpgrade.SPEED) < 4) {
-					tile.getDeque().push(ItemUpgrade.SPEED);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			case ItemUpgrade.OP:
-				if (tile.elements(ItemUpgrade.OP) < 1) {
-					tile.getDeque().push(ItemUpgrade.OP);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			case ItemUpgrade.STACK:
-				if (tile.elements(ItemUpgrade.STACK) < 4) {
-					tile.getDeque().push(ItemUpgrade.STACK);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			case ItemUpgrade.STOCK:
-				if (tile.elements(ItemUpgrade.STOCK) < 1 && tile.getKind() == Kind.exKabel) {
-					tile.getDeque().push(ItemUpgrade.STOCK);
-					playerIn.getHeldItem().stackSize--;
-					if (playerIn.getHeldItem().stackSize <= 0)
-						playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, null);
-				}
-				break;
-			default:
-				break;
-			}
-		} else if (playerIn.getHeldItem() == null && playerIn.isSneaking() && (tile.getKind() == Kind.imKabel || tile.getKind() == Kind.exKabel) && tile.getDeque() != null) {
-			if (!tile.getDeque().isEmpty()) {
-				if (playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.upgrade, 1, tile.getDeque().peekFirst()))) {
-					tile.getDeque().pollFirst();
-				}
-
-			}
-		} else
+		else
 			switch (tile.getKind()) {
 			case exKabel:
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.CABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -167,6 +123,8 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+		if (!(neighborBlock == Blocks.air || neighborBlock instanceof ITileEntityProvider))
+			return;
 		state = getExtendedState(state, worldIn, pos);
 		setConnections(worldIn, pos, state);
 		updateTE(worldIn, pos, (IExtendedBlockState) state);
@@ -350,7 +308,7 @@ public class BlockKabel extends BlockContainer {
 		Connect east = getConnect(world, pos, pos.east());
 		Connect up = getConnect(world, pos, pos.up());
 		Connect down = getConnect(world, pos, pos.down());
-		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down).withProperty(COVER, ((TileKabel) world.getTileEntity(pos)).getCover());
+		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
 	}
 
 	protected Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
@@ -376,8 +334,8 @@ public class BlockKabel extends BlockContainer {
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		if (tileentity instanceof TileKabel) {
 			TileKabel tile = (TileKabel) tileentity;
-			while (tile.getDeque() != null && !tile.getDeque().isEmpty()) {
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModItems.upgrade, 1, tile.getDeque().pollFirst()));
+			for (int i = 0; i < tile.getUpgrades().size(); i++) {
+				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getUpgrades().get(i));
 			}
 		}
 
@@ -387,7 +345,7 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	protected BlockState createBlockState() {
 		IProperty[] listedProperties = new IProperty[] {};
-		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN, COVER };
+		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN };
 		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
 	}
 

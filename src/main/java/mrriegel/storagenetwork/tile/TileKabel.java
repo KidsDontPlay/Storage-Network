@@ -1,7 +1,9 @@
 package mrriegel.storagenetwork.tile;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
@@ -19,6 +21,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -26,6 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -38,12 +42,13 @@ public class TileKabel extends TileEntity implements IConnectable {
 	private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
 	private boolean white;
 	private int priority;
-	private ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
+	private List<ItemStack> upgrades = Arrays.asList(null, null, null, null);
 	private boolean mode = true;
 	private int limit = 0;
 	public Connect north, south, east, west, up, down;
 	private Block cover;
 	private int coverMeta;
+	private boolean disabled;
 
 	ItemStack stack = null;
 
@@ -62,10 +67,11 @@ public class TileKabel extends TileEntity implements IConnectable {
 
 	public int elements(int num) {
 		int res = 0;
-		ArrayDeque<Integer> d = new ArrayDeque<Integer>(deque);
-		while (!d.isEmpty()) {
-			if (d.pollFirst() == num)
-				res++;
+		for (ItemStack s : upgrades) {
+			if (s != null && s.getItemDamage() == num) {
+				res += s.stackSize;
+				break;
+			}
 		}
 		return res;
 	}
@@ -200,10 +206,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
 		coverMeta = compound.getInteger("coverMeta");
-		deque = new Gson().fromJson(compound.getString("deque"), new TypeToken<ArrayDeque<Integer>>() {
-		}.getType());
-		if (deque == null)
-			deque = new ArrayDeque<Integer>();
 		mode = compound.getBoolean("mode");
 		limit = compound.getInteger("limit");
 		if (compound.hasKey("stack", 10))
@@ -254,6 +256,17 @@ public class TileKabel extends TileEntity implements IConnectable {
 		} else {
 			cover = Block.getBlockFromName(fs);
 		}
+		disabled = compound.getBoolean("disabled");
+
+		NBTTagList nbttaglist = compound.getTagList("Items", 10);
+		upgrades = Arrays.asList(null, null, null, null);
+		for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+			int j = nbttagcompound.getByte("Slot") & 255;
+			if (j >= 0 && j < 4) {
+				upgrades.set(j, ItemStack.loadItemStackFromNBT(nbttagcompound));
+			}
+		}
 	}
 
 	@Override
@@ -269,7 +282,6 @@ public class TileKabel extends TileEntity implements IConnectable {
 		compound.setBoolean("white", white);
 		compound.setInteger("prio", priority);
 		compound.setInteger("coverMeta", coverMeta);
-		compound.setString("deque", new Gson().toJson(deque));
 		compound.setBoolean("mode", mode);
 		compound.setInteger("limit", limit);
 		if (stack != null)
@@ -322,6 +334,21 @@ public class TileKabel extends TileEntity implements IConnectable {
 		} else {
 			compound.setString("cover", "null");
 		}
+		compound.setBoolean("disabled", disabled);
+
+		NBTTagList nbttaglist = new NBTTagList();
+
+		for (int i = 0; i < upgrades.size(); ++i) {
+			if (upgrades.get(i) != null) {
+				NBTTagCompound nbttagcompound = new NBTTagCompound();
+				nbttagcompound.setByte("Slot", (byte) i);
+				upgrades.get(i).writeToNBT(nbttagcompound);
+				nbttaglist.appendTag(nbttagcompound);
+			}
+		}
+
+		compound.setTag("Items", nbttaglist);
+
 	}
 
 	@Override
@@ -339,6 +366,14 @@ public class TileKabel extends TileEntity implements IConnectable {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
+	}
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean enabled) {
+		this.disabled = enabled;
 	}
 
 	public Kind getKind() {
@@ -407,12 +442,12 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.priority = priority;
 	}
 
-	public ArrayDeque<Integer> getDeque() {
-		return deque;
+	public List<ItemStack> getUpgrades() {
+		return upgrades;
 	}
 
-	public void setDeque(ArrayDeque<Integer> deque) {
-		this.deque = deque;
+	public void setUpgrades(List<ItemStack> upgrades) {
+		this.upgrades = upgrades;
 	}
 
 	public boolean isMode() {

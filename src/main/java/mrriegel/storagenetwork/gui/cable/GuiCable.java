@@ -63,9 +63,11 @@ public class GuiCable extends MyGuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
+		for (int ii = 0; ii < 4; ii++) {
+			this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
+		}
 		if (tile.elements(ItemUpgrade.OP) >= 1)
 			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
-		this.drawTexturedModalRect(i + 150, j + 6, 176, 110, 16, 16);
 		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			searchBar.drawTextBox();
 			RenderHelper.enableGUIStandardItemLighting();
@@ -129,18 +131,6 @@ public class GuiCable extends MyGuiContainer {
 
 		for (ItemSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
-		int i = mouseX;
-		int j = mouseY;
-		if (i > guiLeft + 150 && i < guiLeft + 166 && j > guiTop + 6 && j < guiTop + 22) {
-			List<String> list = new ArrayList<String>();
-			for (int ii = 0; ii < ItemUpgrade.NUM; ii++)
-				list.add(tile.elements(ii) + "x " + new ItemStack(ModItems.upgrade, 1, ii).getDisplayName());
-			GlStateManager.pushMatrix();
-			GlStateManager.disableLighting();
-			this.drawHoveringText(list, i, j, fontRendererObj);
-			GlStateManager.enableLighting();
-			GlStateManager.popMatrix();
-		}
 	}
 
 	@Override
@@ -151,7 +141,7 @@ public class GuiCable extends MyGuiContainer {
 		pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
 		buttonList.add(pPlus);
 		if (kind == Kind.imKabel || kind == Kind.storageKabel) {
-			white = new Button(3, guiLeft + 110, guiTop + 5, "");
+			white = new Button(3, guiLeft + 70, guiTop + 5, "");
 			buttonList.add(white);
 		}
 		if (tile.elements(ItemUpgrade.OP) >= 1) {

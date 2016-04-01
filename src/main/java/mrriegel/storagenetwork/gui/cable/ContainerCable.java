@@ -1,14 +1,20 @@
 package mrriegel.storagenetwork.gui.cable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +27,7 @@ public class ContainerCable extends Container {
 	private Map<Integer, StackWrapper> filter;
 	private Map<Integer, Boolean> ores;
 	private Map<Integer, Boolean> metas;
+	IInventory upgrades;
 
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
@@ -47,6 +54,38 @@ public class ContainerCable extends Container {
 			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			metas.put(slot, stackTag.getBoolean("Meta"));
+		}
+		upgrades = new InventoryBasic("upgrades", false, 4) {
+			@Override
+			public int getInventoryStackLimit() {
+				return 4;
+			}
+		};
+		for (int i = 0; i < tile.getUpgrades().size(); i++) {
+			upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
+		}
+		for (int ii = 0; ii < 4; ii++) {
+			this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
+				@Override
+				public boolean isItemValid(ItemStack stack) {
+					return stack.getItem() == ModItems.upgrade && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
+				}
+
+				@Override
+				public void onSlotChanged() {
+					slotChanged();
+					super.onSlotChanged();
+				}
+
+				private boolean in(int meta) {
+					for (int i = 0; i < upgrades.getSizeInventory(); i++) {
+						if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
+							return true;
+					}
+					return false;
+				}
+
+			});
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -97,6 +136,9 @@ public class ContainerCable extends Container {
 		}
 		nbt.setTag("metas", metaList);
 		tile.readFromNBT(nbt);
+		tile.setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
+		for (int i = 0; i < upgrades.getSizeInventory(); i++)
+			tile.getUpgrades().set(i, upgrades.getStackInSlot(i));
 	}
 
 	@Override
