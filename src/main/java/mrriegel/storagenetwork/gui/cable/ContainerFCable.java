@@ -1,16 +1,22 @@
 package mrriegel.storagenetwork.gui.cable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +28,7 @@ public class ContainerFCable extends Container {
 	InventoryPlayer playerInv;
 	public TileKabel tile;
 	private Map<Integer, StackWrapper> filter;
+	IInventory upgrades;
 
 	public ContainerFCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
@@ -34,6 +41,40 @@ public class ContainerFCable extends Container {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
 			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
+		}
+		upgrades = new InventoryBasic("upgrades", false, 4) {
+			@Override
+			public int getInventoryStackLimit() {
+				return 4;
+			}
+		};
+		if (tile.isUpgradeable()) {
+			for (int i = 0; i < tile.getUpgrades().size(); i++) {
+				upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
+			}
+			for (int ii = 0; ii < 4; ii++) {
+				this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
+					@Override
+					public boolean isItemValid(ItemStack stack) {
+						return stack.getItem() == ModItems.upgrade && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
+					}
+
+					@Override
+					public void onSlotChanged() {
+						slotChanged();
+						super.onSlotChanged();
+					}
+
+					private boolean in(int meta) {
+						for (int i = 0; i < upgrades.getSizeInventory(); i++) {
+							if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
+								return true;
+						}
+						return false;
+					}
+
+				});
+			}
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -64,6 +105,9 @@ public class ContainerFCable extends Container {
 		}
 		nbt.setTag("crunchTE", invList);
 		tile.readFromNBT(nbt);
+		tile.setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
+		for (int i = 0; i < upgrades.getSizeInventory(); i++)
+			tile.getUpgrades().set(i, upgrades.getStackInSlot(i));
 	}
 
 	@Override

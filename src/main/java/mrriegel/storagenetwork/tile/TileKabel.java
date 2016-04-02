@@ -80,6 +80,10 @@ public class TileKabel extends TileEntity implements IConnectable {
 		return kind == Kind.fexKabel || kind == Kind.fimKabel || kind == Kind.fstorageKabel;
 	}
 
+	public boolean isUpgradeable() {
+		return kind == Kind.exKabel || kind == Kind.imKabel || kind == Kind.fexKabel || kind == Kind.fimKabel;
+	}
+
 	public static Kind getKind(World world, Block b) {
 		if (b == ModBlocks.kabel)
 			return Kind.kabel;

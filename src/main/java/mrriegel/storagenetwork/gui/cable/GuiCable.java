@@ -23,6 +23,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -50,7 +51,6 @@ public class GuiCable extends MyGuiContainer {
 		this.ySize = 137;
 		this.kind = tile.getKind();
 		stack = tile.getStack();
-
 	}
 
 	@Override
@@ -63,11 +63,18 @@ public class GuiCable extends MyGuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
 		}
-		for (int ii = 0; ii < 4; ii++) {
-			this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
-		}
-		if (tile.elements(ItemUpgrade.OP) >= 1)
+		if (tile.isUpgradeable())
+			for (int ii = 0; ii < 4; ii++) {
+				this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
+			}
+		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
+			acti.enabled = true;
+			acti.visible = true;
+		} else {
+			acti.enabled = false;
+			acti.visible = false;
+		}
 		if (tile.elements(ItemUpgrade.OP) >= 1) {
 			searchBar.drawTextBox();
 			RenderHelper.enableGUIStandardItemLighting();
@@ -144,19 +151,17 @@ public class GuiCable extends MyGuiContainer {
 			white = new Button(3, guiLeft + 70, guiTop + 5, "");
 			buttonList.add(white);
 		}
-		if (tile.elements(ItemUpgrade.OP) >= 1) {
-			Keyboard.enableRepeatEvents(true);
-			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36, guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
-			searchBar.setMaxStringLength(30);
-			searchBar.setEnableBackgroundDrawing(false);
-			searchBar.setVisible(true);
-			searchBar.setTextColor(16777215);
-			searchBar.setCanLoseFocus(false);
-			searchBar.setFocused(true);
-			searchBar.setText(tile.getLimit() + "");
-			acti = new Button(4, guiLeft + 127, guiTop - 18, "");
-			buttonList.add(acti);
-		}
+		Keyboard.enableRepeatEvents(true);
+		searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36, guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
+		searchBar.setMaxStringLength(30);
+		searchBar.setEnableBackgroundDrawing(false);
+		searchBar.setVisible(true);
+		searchBar.setTextColor(16777215);
+		searchBar.setCanLoseFocus(false);
+		searchBar.setFocused(true);
+		searchBar.setText(tile.getLimit() + "");
+		acti = new Button(4, guiLeft + 127, guiTop - 18, "");
+		buttonList.add(acti);
 	}
 
 	@Override

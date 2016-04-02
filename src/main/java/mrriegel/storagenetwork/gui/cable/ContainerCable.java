@@ -61,31 +61,33 @@ public class ContainerCable extends Container {
 				return 4;
 			}
 		};
-		for (int i = 0; i < tile.getUpgrades().size(); i++) {
-			upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
-		}
-		for (int ii = 0; ii < 4; ii++) {
-			this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
-				@Override
-				public boolean isItemValid(ItemStack stack) {
-					return stack.getItem() == ModItems.upgrade && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
-				}
-
-				@Override
-				public void onSlotChanged() {
-					slotChanged();
-					super.onSlotChanged();
-				}
-
-				private boolean in(int meta) {
-					for (int i = 0; i < upgrades.getSizeInventory(); i++) {
-						if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
-							return true;
+		if (tile.isUpgradeable()) {
+			for (int i = 0; i < tile.getUpgrades().size(); i++) {
+				upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
+			}
+			for (int ii = 0; ii < 4; ii++) {
+				this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
+					@Override
+					public boolean isItemValid(ItemStack stack) {
+						return stack.getItem() == ModItems.upgrade && ((getStack() != null && getStack().getItemDamage() == stack.getItemDamage()) || !in(stack.getItemDamage()));
 					}
-					return false;
-				}
 
-			});
+					@Override
+					public void onSlotChanged() {
+						slotChanged();
+						super.onSlotChanged();
+					}
+
+					private boolean in(int meta) {
+						for (int i = 0; i < upgrades.getSizeInventory(); i++) {
+							if (upgrades.getStackInSlot(i) != null && upgrades.getStackInSlot(i).getItemDamage() == meta)
+								return true;
+						}
+						return false;
+					}
+
+				});
+			}
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
