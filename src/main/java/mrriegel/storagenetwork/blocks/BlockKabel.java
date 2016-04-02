@@ -9,10 +9,8 @@ import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -101,7 +99,7 @@ public class BlockKabel extends BlockContainer {
 		if (worldIn.isRemote)
 			return true;
 		worldIn.markBlockForUpdate(pos);
-		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && (playerIn.getHeldItem().getItem() == ModItems.coverstick||playerIn.getHeldItem().getItem() == ModItems.toggler)))
+		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && (playerIn.getHeldItem().getItem() == ModItems.coverstick || playerIn.getHeldItem().getItem() == ModItems.toggler)))
 			return false;
 		else
 			switch (tile.getKind()) {

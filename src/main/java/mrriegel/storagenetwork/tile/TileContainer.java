@@ -75,10 +75,12 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 		this.output = output;
 	}
 
+	@Override
 	public boolean isDisabled() {
 		return disabled;
 	}
 
+	@Override
 	public void setDisabled(boolean enabled) {
 		this.disabled = enabled;
 	}

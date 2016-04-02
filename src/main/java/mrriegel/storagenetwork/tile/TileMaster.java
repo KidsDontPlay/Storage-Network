@@ -34,7 +34,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -546,7 +545,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		connectables = Sets.newHashSet();
 		addCables(pos);
 		addInventorys();
-//		System.out.println("ref");
+		// System.out.println("ref");
 
 	}
 
@@ -1084,7 +1083,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (connectables == null)
 			connectables = Sets.newHashSet();
 		if (worldObj.getTotalWorldTime() % (200) == 0) {
-//			System.out.println("SSref");
+			// System.out.println("SSref");
 			refreshNetwork();
 		}
 		vacuum();

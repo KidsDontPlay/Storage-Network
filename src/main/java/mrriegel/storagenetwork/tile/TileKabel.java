@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +20,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -29,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 
-import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -372,10 +369,12 @@ public class TileKabel extends TileEntity implements IConnectable {
 		this.master = master;
 	}
 
+	@Override
 	public boolean isDisabled() {
 		return disabled;
 	}
 
+	@Override
 	public void setDisabled(boolean enabled) {
 		this.disabled = enabled;
 	}

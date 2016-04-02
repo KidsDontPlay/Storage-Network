@@ -11,7 +11,7 @@ tile.storagenetwork:master.name=Cable Master
 tile.storagenetwork:request.name=Request Table
 tile.storagenetwork:frequest.name=Fluid Request Table
 tile.storagenetwork:cover.name=Cable Cover
-tile.storagenetwork:indicator.name=Indicator
+tile.storagenetwork:indicator.name=Item Indicator
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade
@@ -23,7 +23,8 @@ item.storagenetwork:remote_1.name=Advanced Wireless Accessor
 item.storagenetwork:fremote_0.name=Fluid Wireless Accessor
 item.storagenetwork:fremote_1.name=Fluid Advanced Wireless Accessor
 
-item.storagenetwork:coverstick.name=Cover Stick
+item.storagenetwork:coverstick.name=Cover Staff
+item.storagenetwork:toggler.name=Toggle Staff
 
 gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the network.
 gui.storagenetwork.operate.tooltip.more=more

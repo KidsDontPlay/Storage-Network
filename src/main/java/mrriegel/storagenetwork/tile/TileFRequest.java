@@ -73,10 +73,12 @@ public class TileFRequest extends TileEntity implements IConnectable {
 		this.master = master;
 	}
 
+	@Override
 	public boolean isDisabled() {
 		return disabled;
 	}
 
+	@Override
 	public void setDisabled(boolean enabled) {
 		this.disabled = enabled;
 	}

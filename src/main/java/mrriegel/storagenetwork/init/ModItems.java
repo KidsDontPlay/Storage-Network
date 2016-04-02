@@ -18,7 +18,7 @@ public class ModItems {
 	public static final Item coverstick = new ItemCoverStick();
 	public static final Item template = new ItemTemplate();
 	public static final Item fremote = new ItemFRemote();
-	public static final Item toggler=new ItemToggler();
+	public static final Item toggler = new ItemToggler();
 
 	public static void init() {
 		GameRegistry.registerItem(upgrade, "upgrade");
@@ -26,7 +26,7 @@ public class ModItems {
 		GameRegistry.registerItem(coverstick, "coverstick");
 		// GameRegistry.registerItem(template, "template");
 		GameRegistry.registerItem(fremote, "fremote");
-		GameRegistry.registerItem(toggler,"toggler");
+		GameRegistry.registerItem(toggler, "toggler");
 	}
 
 }

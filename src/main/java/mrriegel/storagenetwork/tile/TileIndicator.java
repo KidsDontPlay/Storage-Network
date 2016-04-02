@@ -9,14 +9,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.network.play.server.S22PacketMultiBlockChange.BlockUpdateData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.IFluidBlock;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -38,7 +34,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 			stack = (StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
-		disabled=compound.getBoolean("disabled");
+		disabled = compound.getBoolean("disabled");
 
 	}
 
@@ -82,13 +78,17 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	public void setMaster(BlockPos master) {
 		this.master = master;
 	}
+
+	@Override
 	public boolean isDisabled() {
 		return disabled;
 	}
 
+	@Override
 	public void setDisabled(boolean enabled) {
 		this.disabled = enabled;
 	}
+
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound syncData = new NBTTagCompound();

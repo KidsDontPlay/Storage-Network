@@ -23,7 +23,7 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.vacuumKabel, 4), " k ", "kpk", " k ", 'k', new ItemStack(ModBlocks.kabel), 'p', new ItemStack(Items.ender_pearl));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fexKabel, 4), " k ", "kpk", " k ", 'p', new ItemStack(Items.bucket), 'k', new ItemStack(ModBlocks.exKabel));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fimKabel, 4), " k ", "kpk", " k ", 'p', new ItemStack(Items.bucket), 'k', new ItemStack(ModBlocks.imKabel));
-		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fstorageKabel, 4), " k ", "kpk", " p ", 'p', new ItemStack(Items.bucket), 'k', new ItemStack(ModBlocks.storageKabel));
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fstorageKabel, 4), " k ", "kpk", " k ", 'p', new ItemStack(Items.bucket), 'k', new ItemStack(ModBlocks.storageKabel));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.request), "dkd", "kck", "dkd", 'd', Items.gold_ingot, 'k', ModBlocks.kabel, 'c', Blocks.crafting_table);
 		GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.frequest), new ItemStack(ModBlocks.request), new ItemStack(Items.bucket));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.master), "dkd", "kck", "dkd", 'd', Blocks.quartz_block, 'k', ModBlocks.kabel, 'c', Items.diamond);
@@ -65,6 +65,7 @@ public class CraftingRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.coverstick), " rg", " sb", "s  ", 's', "stickWood", 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cover, 24), "dcd", "c c", "dcd", 'c', Blocks.hardened_clay, 'd', new ItemStack(Items.dye, 1, OreDictionary.WILDCARD_VALUE)));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.indicator), " i ", "ioi", " i ", 'i', Items.iron_ingot, 'o', new ItemStack(ModItems.upgrade, 1, 1));
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.toggler), "  t", " s ", "i  ", 'i', Items.iron_ingot, 't', Blocks.redstone_torch, 's', Items.stick);
 	}
 
 }

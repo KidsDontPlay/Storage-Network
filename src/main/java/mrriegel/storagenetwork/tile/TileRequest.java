@@ -103,7 +103,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 			int slot = stackTag.getByte("Slot");
 			matrix.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
-		disabled=compound.getBoolean("disabled");
+		disabled = compound.getBoolean("disabled");
 	}
 
 	@Override
@@ -156,13 +156,17 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	public void setMaster(BlockPos master) {
 		this.master = master;
 	}
+
+	@Override
 	public boolean isDisabled() {
 		return disabled;
 	}
 
+	@Override
 	public void setDisabled(boolean enabled) {
 		this.disabled = enabled;
 	}
+
 	@Override
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)

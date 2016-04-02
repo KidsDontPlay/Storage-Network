@@ -6,6 +6,8 @@ import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.client.Minecraft;
@@ -15,7 +17,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -38,12 +39,19 @@ public class ItemToggler extends Item {
 	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-			if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster) {
-				tile.setDisabled(!tile.isDisabled());
+			tile.setDisabled(!tile.isDisabled());
+			if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster)
 				((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
-				worldIn.markBlockForUpdate(pos);
-				return true;
+			else {
+				for (BlockPos p : Util.getSides(pos)) {
+					if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null) {
+						((TileMaster) worldIn.getTileEntity(((IConnectable) worldIn.getTileEntity(p)).getMaster())).refreshNetwork();
+						break;
+					}
+				}
 			}
+			worldIn.markBlockForUpdate(pos);
+			return true;
 		}
 		return false;
 	}
@@ -78,7 +86,8 @@ public class ItemToggler extends Item {
 		GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
 		// code
 		long c = (System.currentTimeMillis() / 15l) % 360l;
-		Color color = Color.getHSBColor(c / 360f, 1f, 1f);
+		// Color color = Color.getHSBColor(c / 360f, 1f, 1f);
+		Color color = Color.RED;
 
 		for (BlockPos p : lis) {
 			float x = p.getX(), y = p.getY(), z = p.getZ();
