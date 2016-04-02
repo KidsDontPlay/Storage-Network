@@ -1,10 +1,12 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -41,7 +43,7 @@ public class StorageNetwork {
 		tagCompound.setBoolean("PhantomItems", false);
 		tagCompound.setString("AlignToGrid", "left");
 		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
-		// MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(ModItems.toggler);
 	}
 
 	@EventHandler

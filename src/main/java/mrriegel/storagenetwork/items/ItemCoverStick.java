@@ -25,6 +25,7 @@ public class ItemCoverStick extends Item {
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+	System.out.println("one");
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			if (playerIn.inventory.currentItem >= 8)

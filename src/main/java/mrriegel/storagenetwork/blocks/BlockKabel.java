@@ -101,7 +101,7 @@ public class BlockKabel extends BlockContainer {
 		if (worldIn.isRemote)
 			return true;
 		worldIn.markBlockForUpdate(pos);
-		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.coverstick))
+		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && (playerIn.getHeldItem().getItem() == ModItems.coverstick||playerIn.getHeldItem().getItem() == ModItems.toggler)))
 			return false;
 		else
 			switch (tile.getKind()) {
