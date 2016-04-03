@@ -27,6 +27,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Lists;
+
 public class ItemToggler extends Item {
 
 	public ItemToggler() {
@@ -56,25 +58,28 @@ public class ItemToggler extends Item {
 		return false;
 	}
 
+	List<BlockPos> lis = Lists.newArrayList();
+
 	@SubscribeEvent
 	public void render(RenderWorldLastEvent event) {
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		if (player.getHeldItem() == null || player.getHeldItem().getItem() != this)
 			return;
-		List<BlockPos> lis = new ArrayList<BlockPos>();
-		int range = 16;
-		for (int i = -range; i <= range; i++)
-			for (int j = -range; j <= range; j++)
-				for (int k = -range; k <= range; k++) {
-					BlockPos pos = new BlockPos(i + player.posX, j + player.posY, k + player.posZ);
-					if (!player.worldObj.isAirBlock(pos) && player.worldObj.getTileEntity(pos) instanceof TileKabel) {
-						TileKabel tile = (TileKabel) player.worldObj.getTileEntity(pos);
-						if (tile.isDisabled()) {
-							lis.add(pos);
+		if (player.worldObj.getTotalWorldTime() % 12 == 0) {
+			lis = Lists.newArrayList();
+			int range = 16;
+			for (int i = -range; i <= range; i++)
+				for (int j = -range; j <= range; j++)
+					for (int k = -range; k <= range; k++) {
+						BlockPos pos = new BlockPos(i + player.posX, j + player.posY, k + player.posZ);
+						if (!player.worldObj.isAirBlock(pos) && player.worldObj.getTileEntity(pos) instanceof TileKabel) {
+							TileKabel tile = (TileKabel) player.worldObj.getTileEntity(pos);
+							if (tile.isDisabled()) {
+								lis.add(pos);
+							}
 						}
 					}
-				}
-
+		}
 		double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.partialTicks;
 		double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks;
 		double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks;

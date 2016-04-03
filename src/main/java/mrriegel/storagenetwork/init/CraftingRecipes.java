@@ -16,7 +16,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 public class CraftingRecipes {
 
 	public static void init() {
-		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.kabel, 8), "sss", "ili", "sss", 's', new ItemStack(Blocks.stone_slab), 'i', Items.iron_ingot, 'l', new ItemStack(Items.dye, 1, 4));
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.kabel, 8), "sss", "i i", "sss", 's', new ItemStack(Blocks.stone_slab), 'i', Items.iron_ingot);
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.exKabel, 4), " k ", "kpk", " k ", 'k', new ItemStack(ModBlocks.kabel), 'p', new ItemStack(Blocks.piston));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.imKabel, 4), " k ", "kpk", " k ", 'k', new ItemStack(ModBlocks.kabel), 'p', new ItemStack(Blocks.hopper));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.storageKabel, 4), " k ", "kpk", " k ", 'k', new ItemStack(ModBlocks.kabel), 'p', new ItemStack(Blocks.chest));

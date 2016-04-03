@@ -1,0 +1,7 @@
+{
+    "parent" : "storagenetwork:model/top", 
+    "textures" : {
+        "top" : "storagenetwork:blocks/annexer_break", 
+        "rest" : "storagenetwork:blocks/annexer_rest"
+    }
+}

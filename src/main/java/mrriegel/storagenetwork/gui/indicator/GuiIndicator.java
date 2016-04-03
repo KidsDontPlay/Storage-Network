@@ -2,12 +2,12 @@ package mrriegel.storagenetwork.gui.indicator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
@@ -16,11 +16,9 @@ import mrriegel.storagenetwork.tile.TileIndicator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
@@ -28,11 +26,11 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class GuiIndicator extends GuiContainer {
+public class GuiIndicator extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Button acti;
 	TileIndicator tile;
-	Slot slot;
+	ItemSlot slot;
 
 	public GuiIndicator(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -81,7 +79,8 @@ public class GuiIndicator extends GuiContainer {
 		super.initGui();
 		acti = new Button(4, guiLeft + 127, guiTop + 26, "");
 		buttonList.add(acti);
-		slot = new Slot(tile.getStack(), guiLeft + 8 + 4 * 18, guiTop + 26, guiLeft, guiTop);
+		boolean valid = tile.getStack() != null;
+		slot = new ItemSlot(valid ? tile.getStack().getStack() : null, guiLeft + 8 + 4 * 18, guiTop + 26, valid ? tile.getStack().getSize() : 0, guiLeft, guiTop, true, true, false, true);
 	}
 
 	@Override
@@ -107,7 +106,8 @@ public class GuiIndicator extends GuiContainer {
 				}
 			}
 			con.slotChanged();
-			slot = new Slot(tile.getStack(), guiLeft + 8 + 4 * 18, guiTop + 26, guiLeft, guiTop);
+			boolean valid = tile.getStack() != null;
+			slot = new ItemSlot(valid ? tile.getStack().getStack() : null, guiLeft + 8 + 4 * 18, guiTop + 26, valid ? tile.getStack().getSize() : 0, guiLeft, guiTop, true, true, false, true);
 			PacketHandler.INSTANCE.sendToServer(new FilterMessage(0, con.getFilter(), false, false));
 		}
 
@@ -124,58 +124,6 @@ public class GuiIndicator extends GuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
-	}
-
-	class Slot {
-		ItemStack stack;
-		int x, y, size, guiLeft, guiTop;
-		Minecraft mc = Minecraft.getMinecraft();
-
-		public Slot(StackWrapper stack, int x, int y, int guiLeft, int guiTop) {
-			this.stack = stack == null ? null : stack.getStack();
-			this.x = x;
-			this.y = y;
-			this.size = stack == null ? 0 : stack.getSize();
-			this.guiLeft = guiLeft;
-			this.guiTop = guiTop;
-		}
-
-		void drawSlot(int mx, int my) {
-			if (stack != null) {
-				RenderHelper.enableGUIStandardItemLighting();
-				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
-			}
-			if (this.isMouseOverSlot(mx, my)) {
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				int j1 = x;
-				int k1 = y;
-				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-				GlStateManager.colorMask(true, true, true, true);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-			}
-		}
-
-		void drawTooltip(int mx, int my) {
-			if (stack != null && this.isMouseOverSlot(mx, my)) {
-				GlStateManager.pushMatrix();
-				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-					renderToolTip(stack, mx, my);
-				else
-					drawHoveringText(Arrays.asList(size + ""), mx, my);
-				GlStateManager.popMatrix();
-				GlStateManager.enableLighting();
-			}
-		}
-
-		boolean isMouseOverSlot(int mouseX, int mouseY) {
-			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
-		}
 	}
 
 	class Button extends GuiButton {

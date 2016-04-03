@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.items;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.Block;
@@ -10,6 +11,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemShears;
+import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -25,7 +28,6 @@ public class ItemCoverStick extends Item {
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-		System.out.println("one");
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			if (playerIn.inventory.currentItem >= 8)
@@ -59,18 +61,21 @@ public class ItemCoverStick extends Item {
 	}
 
 	private int nextMeta(Block block, int meta) {
-		if (!Item.getItemFromBlock(block).getHasSubtypes())
-			return 0;
 		if (meta >= 15)
 			return 0;
 		else {
 			try {
 				int res = meta + 1;
-				while (block.getStateFromMeta(meta).equals(block.getStateFromMeta(res)))
+				int count = 0;
+				while (block.getStateFromMeta(meta).equals(block.getStateFromMeta(res))) {
 					if (res < 15)
 						res++;
 					else
 						res = 0;
+					count++;
+					if (count > 15)
+						return 0;
+				}
 				return res;
 			} catch (ArrayIndexOutOfBoundsException e) {
 				return 0;

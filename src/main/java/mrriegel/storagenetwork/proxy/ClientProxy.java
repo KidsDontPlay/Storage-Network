@@ -5,13 +5,20 @@ import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.render.CableRenderer;
+import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -71,10 +78,46 @@ public class ClientProxy extends CommonProxy {
 		}
 		mesher.register(Item.getItemFromBlock(ModBlocks.indicator), 0, new ModelResourceLocation(StorageNetwork.MODID + ":indicator", "inventory"));
 		mesher.register(ModItems.toggler, 0, new ModelResourceLocation(StorageNetwork.MODID + ":toggler", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.annexer), 0, new ModelResourceLocation(StorageNetwork.MODID + ":annexer", "inventory"));
 	}
 
 	public void registerRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileKabel.class, new CableRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileIndicator.class, new T());
+	}
+
+	static class T extends TileEntitySpecialRenderer<TileIndicator> {
+
+		@Override
+		public void renderTileEntityAt(TileIndicator te, double x, double y, double z, float partialTicks, int destroyStage) {
+
+			// GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F,
+			// (float) z + 0.5F);
+			// GlStateManager.pushMatrix();
+			// GlStateManager.rotate(180F, 0.0F, 1.0F, 1.0F);
+			// Minecraft mc = Minecraft.getMinecraft();
+			// mc.getRenderItem().renderItemIntoGUI(new
+			// ItemStack(Items.emerald), 0, 0);
+			// mc.getRenderItem().renderItem(new ItemStack(Items.wheat),
+			// TransformType.FIXED);
+			// FontRenderer f=getFontRenderer();
+			// f.drawString("splitscrren", 0 , 0, 546193);
+			// GlStateManager.popMatrix();
+			
+			// int ambientLight = (int)
+			// te.getWorld().getLightBrightness(te.getPos());
+			// int var6 = ambientLight % 65536;
+			// int var7 = ambientLight / 65536;
+			// float var8 = 1.0F;
+			// OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
+			// var6 * var8, var7 * var8);
+			// GlStateManager.pushMatrix();
+			// ForgeHooksClient.renderTileItem(Items.emerald, 0);
+			// Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(new
+			// ItemStack(Items.emerald), 0, 0);
+			// GlStateManager.popMatrix();
+		}
+
 	}
 
 }

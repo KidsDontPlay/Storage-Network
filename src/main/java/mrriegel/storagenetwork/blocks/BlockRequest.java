@@ -34,8 +34,6 @@ public class BlockRequest extends BlockConnectable {
 		return 3;
 	}
 
-	BlockFurnace f;
-
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
