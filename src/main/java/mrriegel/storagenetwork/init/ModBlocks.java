@@ -7,6 +7,7 @@ import mrriegel.storagenetwork.blocks.BlockCover;
 import mrriegel.storagenetwork.blocks.BlockCrafter;
 import mrriegel.storagenetwork.blocks.BlockFKabel;
 import mrriegel.storagenetwork.blocks.BlockFRequest;
+import mrriegel.storagenetwork.blocks.BlockFannexer;
 import mrriegel.storagenetwork.blocks.BlockIndicator;
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
@@ -15,6 +16,7 @@ import mrriegel.storagenetwork.tile.TileAnnexer;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileFRequest;
+import mrriegel.storagenetwork.tile.TileFannexer;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -41,6 +43,7 @@ public class ModBlocks {
 	public static final Block crafter = new BlockCrafter();
 	public static final Block indicator = new BlockIndicator();
 	public static final Block annexer = new BlockAnnexer();
+	public static final Block fannexer = new BlockFannexer();
 
 	public static void init() {
 		GameRegistry.registerBlock(master, "master");
@@ -59,6 +62,7 @@ public class ModBlocks {
 		// GameRegistry.registerBlock(container, "container");
 		// GameRegistry.registerBlock(crafter, "crafter");
 		GameRegistry.registerBlock(annexer, "annexer");
+		GameRegistry.registerBlock(fannexer, "fannexer");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
@@ -68,6 +72,7 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
 		GameRegistry.registerTileEntity(TileIndicator.class, "tileIndicator");
 		GameRegistry.registerTileEntity(TileAnnexer.class, "tileAnnexer");
+		GameRegistry.registerTileEntity(TileFannexer.class, "tileFannexer");
 
 	}
 

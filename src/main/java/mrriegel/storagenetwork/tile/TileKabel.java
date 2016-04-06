@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.api.IItemStorage;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
@@ -13,6 +14,7 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -30,7 +32,7 @@ import net.minecraftforge.fluids.Fluid;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileKabel extends TileEntity implements IConnectable {
+public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 	private Kind kind;
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
@@ -509,5 +511,10 @@ public class TileKabel extends TileEntity implements IConnectable {
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
 			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
+	}
+
+	@Override
+	public IInventory getStorage() {
+		return null;
 	}
 }

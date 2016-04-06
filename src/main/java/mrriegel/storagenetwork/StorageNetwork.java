@@ -2,7 +2,11 @@ package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import net.minecraft.block.BlockFurnace;
+import net.minecraft.client.renderer.EnumFaceDirection;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;

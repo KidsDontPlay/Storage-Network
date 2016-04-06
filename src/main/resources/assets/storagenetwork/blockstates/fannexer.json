@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=north": { "model": "storagenetwork:fannexer", "x":90, "y": 180},
+        "facing=south": { "model": "storagenetwork:fannexer", "x": 90 },
+        "facing=west":  { "model": "storagenetwork:fannexer", "x":90, "y": 90 },
+        "facing=east":  { "model": "storagenetwork:fannexer", "x":90, "y": 270 },
+        "facing=down":  { "model": "storagenetwork:fannexer" },
+        "facing=up":  { "model": "storagenetwork:fannexer", "x": 180 }
+    }
+}

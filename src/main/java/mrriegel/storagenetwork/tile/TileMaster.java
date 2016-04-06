@@ -940,18 +940,21 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			return null;
 		List<TileKabel> invs = new ArrayList<TileKabel>();
 		for (BlockPos p : connectables) {
-			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
-				continue;
-			TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (worldObj.getTileEntity(p) instanceof TileKabel) {
+				TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
 
-			if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
-				invs.add(tile);
-			}
+				if (tile.getKind() == Kind.storageKabel && tile.getConnectedInventory() != null && worldObj.getTileEntity(tile.getConnectedInventory()) instanceof IInventory) {
+					invs.add(tile);
+				}
+			} 
+//			else if (worldObj.getTileEntity(p) instanceof TileItemBox) {
+//				invs.add(worldObj.getTileEntity(p));
+//			}
 		}
 		ItemStack res = null;
 		int result = 0;
 		for (TileKabel t : invs) {
-			IInventory inv = (IInventory) worldObj.getTileEntity(t.getConnectedInventory());
+			IInventory inv = t instanceof TileKabel ? (IInventory) worldObj.getTileEntity(((TileKabel) t).getConnectedInventory()) : null;
 			if (!(inv instanceof ISidedInventory)) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					ItemStack s = inv.getStackInSlot(i);
@@ -1092,7 +1095,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		// craft();
 		fimpor();
 		fexport();
-		
+
 	}
 
 	public void removeFalse() {

@@ -57,6 +57,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 		}
 
 		public void drawSlot(int mx, int my) {
+			GlStateManager.pushMatrix();
 			RenderHelper.enableGUIStandardItemLighting();
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
 			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
@@ -78,6 +79,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
 			}
+			GlStateManager.popMatrix();
 		}
 
 		public void drawTooltip(int mx, int my) {

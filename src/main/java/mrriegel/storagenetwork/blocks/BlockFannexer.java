@@ -2,28 +2,22 @@ package mrriegel.storagenetwork.blocks;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.tile.TileAnnexer;
-import mrriegel.storagenetwork.tile.TileIndicator;
-import net.minecraft.block.BlockFurnace;
+import mrriegel.storagenetwork.tile.TileFannexer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockAnnexer extends BlockConnectable {
+public class BlockFannexer extends BlockConnectable {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
-	public BlockAnnexer() {
+	public BlockFannexer() {
 		super(Material.iron);
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
@@ -38,7 +32,7 @@ public class BlockAnnexer extends BlockConnectable {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileAnnexer();
+		return new TileFannexer();
 	}
 
 	public IBlockState getStateFromMeta(int meta) {

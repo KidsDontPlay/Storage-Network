@@ -79,6 +79,7 @@ public class ClientProxy extends CommonProxy {
 		mesher.register(Item.getItemFromBlock(ModBlocks.indicator), 0, new ModelResourceLocation(StorageNetwork.MODID + ":indicator", "inventory"));
 		mesher.register(ModItems.toggler, 0, new ModelResourceLocation(StorageNetwork.MODID + ":toggler", "inventory"));
 		mesher.register(Item.getItemFromBlock(ModBlocks.annexer), 0, new ModelResourceLocation(StorageNetwork.MODID + ":annexer", "inventory"));
+		mesher.register(Item.getItemFromBlock(ModBlocks.fannexer), 0, new ModelResourceLocation(StorageNetwork.MODID + ":fannexer", "inventory"));
 	}
 
 	public void registerRenderers() {
