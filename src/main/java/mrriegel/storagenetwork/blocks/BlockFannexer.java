@@ -22,7 +22,7 @@ public class BlockFannexer extends BlockConnectable {
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		this.setUnlocalizedName(StorageNetwork.MODID + ":annexer");
+		this.setUnlocalizedName(StorageNetwork.MODID + ":fannexer");
 	}
 
 	@Override
@@ -35,6 +35,7 @@ public class BlockFannexer extends BlockConnectable {
 		return new TileFannexer();
 	}
 
+	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing enumfacing = EnumFacing.getFront(meta);
 		if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
@@ -44,14 +45,17 @@ public class BlockFannexer extends BlockConnectable {
 		return this.getDefaultState().withProperty(FACING, enumfacing);
 	}
 
+	@Override
 	public int getMetaFromState(IBlockState state) {
-		return ((EnumFacing) state.getValue(FACING)).getIndex();
+		return state.getValue(FACING).getIndex();
 	}
 
+	@Override
 	protected BlockState createBlockState() {
 		return new BlockState(this, new IProperty[] { FACING });
 	}
 
+	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
 		return s;

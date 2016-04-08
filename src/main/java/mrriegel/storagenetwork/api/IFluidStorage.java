@@ -1,7 +1,5 @@
 package mrriegel.storagenetwork.api;
 
-import net.minecraftforge.fluids.IFluidHandler;
+public class IFluidStorage {
 
-public interface IFluidStorage {
-	public IFluidHandler getStorage();
 }

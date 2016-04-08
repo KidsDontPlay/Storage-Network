@@ -1,15 +1,10 @@
 package mrriegel.storagenetwork.tile;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.api.IItemStorage;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -21,26 +16,18 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
+public class TileKabel extends AbstractFilterTile {
 	private Kind kind;
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
-	private Map<Integer, StackWrapper> filter = new HashMap<Integer, StackWrapper>();
-	private Map<Integer, Boolean> ores = new HashMap<Integer, Boolean>();
-	private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
-	private boolean white;
-	private int priority;
 	private List<ItemStack> upgrades = Arrays.asList(null, null, null, null);
 	private boolean mode = true;
 	private int limit = 0;
@@ -59,9 +46,9 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 		super();
 	}
 
-	public TileKabel(World w, Block b) {
+	public TileKabel(Block b) {
 		super();
-		kind = getKind(w, b);
+		kind = getKind(b);
 	}
 
 	public int elements(int num) {
@@ -83,7 +70,7 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 		return kind == Kind.exKabel || kind == Kind.imKabel || kind == Kind.fexKabel || kind == Kind.fimKabel;
 	}
 
-	public static Kind getKind(World world, Block b) {
+	public static Kind getKind(Block b) {
 		if (b == ModBlocks.kabel)
 			return Kind.kabel;
 		if (b == ModBlocks.exKabel)
@@ -103,88 +90,20 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 		return null;
 	}
 
-	public boolean canTransfer(ItemStack stack) {
-		if (isWhite()) {
-			boolean tmp = false;
-			for (int i = 0; i < 9; i++) {
-				if (getFilter().get(i) == null)
-					continue;
-				ItemStack s = getFilter().get(i).getStack();
-				if (s == null)
-					continue;
-				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				if (ore ? Util.equalOreDict(stack, s) : getMetas().get(i) ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
-					tmp = true;
-					break;
-				}
-			}
-			return tmp;
-		} else {
-			boolean tmp = true;
-			for (int i = 0; i < 9; i++) {
-				if (getFilter().get(i) == null)
-					continue;
-				ItemStack s = getFilter().get(i).getStack();
-				if (s == null)
-					continue;
-				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				if (ore ? Util.equalOreDict(stack, s) : getMetas().get(i) ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
-					tmp = false;
-					break;
-				}
-			}
-			return tmp;
-		}
-	}
-
-	public boolean canTransfer(Fluid fluid) {
-		if (isWhite()) {
-			boolean tmp = false;
-			for (int i = 0; i < 9; i++) {
-				if (getFilter().get(i) == null)
-					continue;
-				ItemStack s = getFilter().get(i).getStack();
-				if (s == null)
-					continue;
-				if (Util.getFluid(s) != null && Util.getFluid(s).getFluid() == fluid) {
-					tmp = true;
-					break;
-				}
-			}
-			return tmp;
-		} else {
-			boolean tmp = true;
-			for (int i = 0; i < 9; i++) {
-				if (getFilter().get(i) == null)
-					continue;
-				ItemStack s = getFilter().get(i).getStack();
-				if (s == null)
-					continue;
-				if (Util.getFluid(s) != null && Util.getFluid(s).getFluid() == fluid) {
-					tmp = false;
-					break;
-				}
-			}
-			return tmp;
-		}
-	}
-
 	public boolean status() {
+		if (elements(ItemUpgrade.OP) < 1)
+			return true;
 		if (!isFluid()) {
-			if (elements(ItemUpgrade.OP) < 1)
-				return true;
 			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
 			if (getStack() == null)
 				return true;
-			int amount = m.getAmount(new FilterItem(getStack(), true, false));
+			int amount = m.getAmount(new FilterItem(getStack(), true, false, false));
 			if (isMode()) {
 				return amount > getLimit();
 			} else {
 				return amount <= getLimit();
 			}
 		} else {
-			if (elements(ItemUpgrade.OP) < 1)
-				return true;
 			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
 			if (Util.getFluid(getStack()) == null)
 				return true;
@@ -206,8 +125,7 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 		connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {
 		}.getType());
 		inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
-		white = compound.getBoolean("white");
-		priority = compound.getInteger("prio");
+
 		coverMeta = compound.getInteger("coverMeta");
 		mode = compound.getBoolean("mode");
 		limit = compound.getInteger("limit");
@@ -215,34 +133,6 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
-
-		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
-		filter = new HashMap<Integer, StackWrapper>();
-		for (int i = 0; i < invList.tagCount(); i++) {
-			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
-		}
-
-		NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
-		ores = new HashMap<Integer, Boolean>();
-		for (int i = 0; i < 9; i++)
-			ores.put(i, false);
-		for (int i = 0; i < oreList.tagCount(); i++) {
-			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			ores.put(slot, stackTag.getBoolean("Ore"));
-		}
-
-		NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
-		metas = new HashMap<Integer, Boolean>();
-		for (int i = 0; i < 9; i++)
-			metas.put(i, true);
-		for (int i = 0; i < metaList.tagCount(); i++) {
-			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			metas.put(slot, stackTag.getBoolean("Meta"));
-		}
 
 		try {
 			north = Connect.valueOf(compound.getString("north"));
@@ -276,51 +166,17 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		if (kind == null)
-			kind = getKind(worldObj, worldObj.getBlockState(pos).getBlock());
+			kind = getKind(worldObj.getBlockState(pos).getBlock());
 		compound.setString("kind", kind.toString());
 		compound.setString("master", new Gson().toJson(master));
 		compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
 		if (inventoryFace != null)
 			compound.setString("inventoryFace", inventoryFace.toString());
-		compound.setBoolean("white", white);
-		compound.setInteger("prio", priority);
 		compound.setInteger("coverMeta", coverMeta);
 		compound.setBoolean("mode", mode);
 		compound.setInteger("limit", limit);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
-		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (filter.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				filter.get(i).writeToNBT(stackTag);
-				invList.appendTag(stackTag);
-			}
-		}
-		compound.setTag("crunchTE", invList);
-
-		NBTTagList oreList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (ores.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				stackTag.setBoolean("Ore", ores.get(i));
-				oreList.appendTag(stackTag);
-			}
-		}
-		compound.setTag("ores", oreList);
-
-		NBTTagList metaList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (metas.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				stackTag.setBoolean("Meta", metas.get(i));
-				metaList.appendTag(stackTag);
-			}
-		}
-		compound.setTag("metas", metaList);
 
 		try {
 
@@ -340,7 +196,6 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 		compound.setBoolean("disabled", disabled);
 
 		NBTTagList nbttaglist = new NBTTagList();
-
 		for (int i = 0; i < upgrades.size(); ++i) {
 			if (upgrades.get(i) != null) {
 				NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -349,7 +204,6 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 				nbttaglist.appendTag(nbttagcompound);
 			}
 		}
-
 		compound.setTag("Items", nbttaglist);
 
 	}
@@ -383,7 +237,7 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 
 	public Kind getKind() {
 		if (kind == null)
-			kind = getKind(worldObj, worldObj.getBlockState(pos).getBlock());
+			kind = getKind(worldObj.getBlockState(pos).getBlock());
 		return kind;
 	}
 
@@ -405,46 +259,6 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 
 	public void setInventoryFace(EnumFacing inventoryFace) {
 		this.inventoryFace = inventoryFace;
-	}
-
-	public Map<Integer, StackWrapper> getFilter() {
-		return filter;
-	}
-
-	public void setFilter(Map<Integer, StackWrapper> filter) {
-		this.filter = filter;
-	}
-
-	public Map<Integer, Boolean> getOres() {
-		return ores;
-	}
-
-	public void setOres(Map<Integer, Boolean> ores) {
-		this.ores = ores;
-	}
-
-	public Map<Integer, Boolean> getMetas() {
-		return metas;
-	}
-
-	public void setMetas(Map<Integer, Boolean> metas) {
-		this.metas = metas;
-	}
-
-	public boolean isWhite() {
-		return white;
-	}
-
-	public void setWhite(boolean white) {
-		this.white = white;
-	}
-
-	public int getPriority() {
-		return priority;
-	}
-
-	public void setPriority(int priority) {
-		this.priority = priority;
 	}
 
 	public List<ItemStack> getUpgrades() {
@@ -513,8 +327,15 @@ public class TileKabel extends TileEntity implements IConnectable,IItemStorage {
 			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 
-	@Override
-	public IInventory getStorage() {
+	public IFluidHandler getFluidHandler() {
+		if (getKind() == Kind.fstorageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IFluidHandler)
+			return (IFluidHandler) worldObj.getTileEntity(getConnectedInventory());
+		return null;
+	}
+
+	public IInventory getInventory() {
+		if (getKind() == Kind.storageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IInventory)
+			return (IInventory) worldObj.getTileEntity(getConnectedInventory());
 		return null;
 	}
 }

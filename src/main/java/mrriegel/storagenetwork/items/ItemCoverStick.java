@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.items;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.Block;
@@ -11,8 +10,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemShears;
-import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;

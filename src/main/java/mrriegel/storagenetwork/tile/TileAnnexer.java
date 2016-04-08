@@ -102,7 +102,7 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 				worldObj.removeTileEntity(p);
 			block.dropXpOnBlockBreak(worldObj, p, block.getExpDrop(worldObj, p, 0));
 			for (ItemStack s : lis) {
-				int rest = mas.insertStack(s, null);
+				int rest = mas.insertStack(s, null, false);
 				if (rest > 0) {
 					ItemStack spawn = s.copy();
 					spawn.stackSize = rest;

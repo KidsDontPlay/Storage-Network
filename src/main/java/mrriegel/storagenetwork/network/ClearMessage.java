@@ -29,7 +29,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 						if (s == null)
 							continue;
 						int num = s.stackSize;
-						int rest = ((TileMaster) w.getTileEntity(c.tile.getMaster())).insertStack(s.copy(), null);
+						int rest = ((TileMaster) w.getTileEntity(c.tile.getMaster())).insertStack(s.copy(), null, false);
 						if (num == rest)
 							continue;
 						if (rest == 0)

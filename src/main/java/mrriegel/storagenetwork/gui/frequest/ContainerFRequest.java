@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.gui.frequest;
 
-import mrriegel.storagenetwork.gui.CrunchItemInventory;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.FluidsMessage;
@@ -10,9 +9,9 @@ import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -27,7 +26,12 @@ public class ContainerFRequest extends Container {
 	public ContainerFRequest(final TileFRequest tile, final InventoryPlayer playerInv) {
 		this.tile = tile;
 		this.playerInv = playerInv;
-		inv = new CrunchItemInventory(2, 1, new ItemStack(Items.fire_charge));
+		inv = new InventoryBasic(null, false, 2) {
+			@Override
+			public int getInventoryStackLimit() {
+				return 1;
+			}
+		};
 		inv.setInventorySlotContents(0, tile.fill);
 		inv.setInventorySlotContents(1, tile.drain);
 		this.addSlotToContainer(new Slot(inv, 0, 8, 138));
@@ -108,7 +112,7 @@ public class ContainerFRequest extends Container {
 			ItemStack drain = tile.drain;
 			TileMaster mas = (TileMaster) playerIn.worldObj.getTileEntity(tile.getMaster());
 			if (drain != null && FluidContainerRegistry.isFilledContainer(drain)) {
-				int rest = mas.insertFluid(FluidContainerRegistry.getFluidForFilledItem(drain), null);
+				int rest = mas.insertFluid(FluidContainerRegistry.getFluidForFilledItem(drain), null, false);
 				if (rest > 0) {
 					mas.frequest(FluidContainerRegistry.getFluidForFilledItem(drain).getFluid(), FluidContainerRegistry.getFluidForFilledItem(drain).amount - rest, false);
 				} else {
@@ -121,7 +125,7 @@ public class ContainerFRequest extends Container {
 			} else if (drain != null && drain.getItem() instanceof IFluidContainerItem) {
 				IFluidContainerItem flui = (IFluidContainerItem) drain.getItem();
 				if (flui.getFluid(drain) != null) {
-					int rest = mas.insertFluid(flui.getFluid(drain), null);
+					int rest = mas.insertFluid(flui.getFluid(drain), null, false);
 					FluidStack drained = flui.drain(drain, flui.getFluid(drain).amount - rest, true);
 					inv.setInventorySlotContents(1, drain);
 					slotChanged();

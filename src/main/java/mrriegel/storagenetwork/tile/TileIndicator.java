@@ -113,7 +113,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 			boolean x = false;
 			if (stack != null && master != null) {
 				TileMaster mas = ((TileMaster) worldObj.getTileEntity(master));
-				int num = mas.getAmount(new FilterItem(stack.getStack(), true, false));
+				int num = mas.getAmount(new FilterItem(stack.getStack(), true, false, false));
 				if (more) {
 					if (num > stack.getSize())
 						x = true;

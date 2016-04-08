@@ -62,7 +62,7 @@ public class ContainerRemote extends Container {
 
 			TileMaster tile = ItemRemote.getTile(playerIn.getHeldItem());
 			if (tile != null) {
-				int rest = tile.insertStack(itemstack1, null);
+				int rest = tile.insertStack(itemstack1, null, false);
 				ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
 				slot.putStack(stack);
 				detectAndSendChanges();

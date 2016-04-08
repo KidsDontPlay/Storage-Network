@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.network.SyncMessage;
@@ -66,7 +67,7 @@ public class ContainerRequest extends Container {
 				detectAndSendChanges();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					if (craftMatrix.getStackInSlot(i) == null) {
-						ItemStack req = t.request(lis.get(i), 1, true, true, false, false);
+						ItemStack req = t.request(new FilterItem(lis.get(i), true, true, false), 1, false);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);

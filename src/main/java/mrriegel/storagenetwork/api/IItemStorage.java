@@ -1,8 +1,5 @@
 package mrriegel.storagenetwork.api;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraftforge.fluids.IFluidHandler;
+public class IItemStorage {
 
-public interface IItemStorage {
-	public IInventory getStorage();
 }

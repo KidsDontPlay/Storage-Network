@@ -2,11 +2,12 @@ package mrriegel.storagenetwork.blocks;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.tile.TileItemBox;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockItemBox extends BlockConnectable{
+public class BlockItemBox extends BlockConnectable {
 
 	public BlockItemBox() {
 		super(Material.iron);
@@ -17,7 +18,7 @@ public class BlockItemBox extends BlockConnectable{
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return null;
+		return new TileItemBox();
 	}
 
 }

@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,7 @@ public class RemoteMessage implements IMessage, IMessageHandler<RemoteMessage, I
 				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
 				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
 					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
-					ItemStack stack = message.stack == null ? null : tile.request(message.stack, message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), true, true, false, false);
+					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), false);
 					if (stack != null) {
 						if (message.shift) {
 							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);

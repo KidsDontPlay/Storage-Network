@@ -349,7 +349,7 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileKabel(worldIn, this);
+		return new TileKabel(this);
 	}
 
 	static class PropertyBlock implements IUnlistedProperty<Block> {

@@ -66,6 +66,8 @@ public class CraftingRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cover, 24), "dcd", "c c", "dcd", 'c', Blocks.hardened_clay, 'd', new ItemStack(Items.dye, 1, OreDictionary.WILDCARD_VALUE)));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.indicator), " i ", "ioi", " i ", 'i', Items.iron_ingot, 'o', new ItemStack(ModItems.upgrade, 1, 1));
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.toggler), "  t", " s ", "i  ", 'i', Items.iron_ingot, 't', Blocks.redstone_torch, 's', Items.stick);
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.annexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.iron_pickaxe), 'c', ModBlocks.kabel));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.fannexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.bucket), 'c', ModBlocks.kabel));
 	}
 
 }

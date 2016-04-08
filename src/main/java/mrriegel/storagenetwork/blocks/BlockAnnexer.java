@@ -2,22 +2,16 @@ package mrriegel.storagenetwork.blocks;
 
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.tile.TileAnnexer;
-import mrriegel.storagenetwork.tile.TileIndicator;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockAnnexer extends BlockConnectable {
@@ -41,6 +35,7 @@ public class BlockAnnexer extends BlockConnectable {
 		return new TileAnnexer();
 	}
 
+	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing enumfacing = EnumFacing.getFront(meta);
 		if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
@@ -50,14 +45,17 @@ public class BlockAnnexer extends BlockConnectable {
 		return this.getDefaultState().withProperty(FACING, enumfacing);
 	}
 
+	@Override
 	public int getMetaFromState(IBlockState state) {
-		return ((EnumFacing) state.getValue(FACING)).getIndex();
+		return state.getValue(FACING).getIndex();
 	}
 
+	@Override
 	protected BlockState createBlockState() {
 		return new BlockState(this, new IProperty[] { FACING });
 	}
 
+	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
 		return s;

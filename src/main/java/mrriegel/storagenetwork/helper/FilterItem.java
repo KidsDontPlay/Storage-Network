@@ -1,16 +1,21 @@
 package mrriegel.storagenetwork.helper;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FilterItem {
 	ItemStack stack;
-	boolean meta, ore;
+	boolean meta, ore, nbt;
 
-	public FilterItem(ItemStack stack, boolean meta, boolean ore) {
+	public FilterItem(ItemStack stack, boolean meta, boolean ore, boolean nbt) {
+		super();
+		if (stack == null)
+			throw new NullPointerException();
 		this.stack = stack;
 		this.meta = meta;
 		this.ore = ore;
+		this.nbt = nbt;
 	}
 
 	public void readFromNBT(NBTTagCompound compound) {
@@ -18,19 +23,22 @@ public class FilterItem {
 		stack = ItemStack.loadItemStackFromNBT(c);
 		meta = compound.getBoolean("meta");
 		ore = compound.getBoolean("ore");
+		nbt = compound.getBoolean("nbt");
 	}
 
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		NBTTagCompound c = new NBTTagCompound();
 		stack.writeToNBT(c);
 		compound.setTag("stack", c);
 		compound.setBoolean("meta", meta);
 		compound.setBoolean("ore", ore);
+		compound.setBoolean("nbt", nbt);
+		return c;
 	}
 
 	@Override
 	public String toString() {
-		return "FilterItem [stack=" + stack + ", meta=" + meta + ", ore=" + ore + "]";
+		return "FilterItem [stack=" + stack + ", meta=" + meta + ", ore=" + ore + ", nbt=" + nbt + "]";
 	}
 
 	public ItemStack getStack() {
@@ -38,6 +46,8 @@ public class FilterItem {
 	}
 
 	public void setStack(ItemStack stack) {
+		if (stack == null)
+			throw new NullPointerException();
 		this.stack = stack;
 	}
 
@@ -57,9 +67,29 @@ public class FilterItem {
 		this.ore = ore;
 	}
 
+	public boolean isNbt() {
+		return nbt;
+	}
+
+	public void setNbt(boolean nbt) {
+		this.nbt = nbt;
+	}
+
 	public static FilterItem loadFilterItemFromNBT(NBTTagCompound nbt) {
-		FilterItem fil = new FilterItem(null, false, false);
+		FilterItem fil = new FilterItem(new ItemStack(Blocks.fire), true, false, true);
 		fil.readFromNBT(nbt);
 		return fil.getStack() != null && fil.getStack().getItem() != null ? fil : null;
+	}
+
+	public boolean match(ItemStack s) {
+		if (s == null)
+			return false;
+		if (nbt && !ItemStack.areItemStackTagsEqual(stack, s))
+			return false;
+		if (meta && s.getItemDamage() != stack.getItemDamage())
+			return false;
+		if (ore && Util.equalOreDict(s, stack))
+			return true;
+		return s.getItem() == stack.getItem();
 	}
 }

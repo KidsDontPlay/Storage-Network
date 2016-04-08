@@ -1,13 +1,10 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.List;
-
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.BlockAnnexer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -97,10 +94,12 @@ public class TileFannexer extends TileEntity implements IConnectable, ITickable 
 			if (drainBlock(state, worldObj, p, false) == null)
 				return;
 			TileMaster mas = (TileMaster) worldObj.getTileEntity(master);
+			FluidStack fluid = drainBlock(state, worldObj, p, false);
+			if (mas.insertFluid(fluid, null, true) > 0)
+				return;
 			if (!mas.consumeRF(1000, false))
 				return;
-			FluidStack fluid = drainBlock(state, worldObj, p, false);
-			int rest = mas.insertFluid(fluid, null);
+			int rest = mas.insertFluid(fluid, null, false);
 			if (rest > 0)
 				mas.frequest(fluid.getFluid(), fluid.amount - rest, false);
 			else {
@@ -122,7 +121,7 @@ public class TileFannexer extends TileEntity implements IConnectable, ITickable 
 				}
 				return fluidBlock.drain(world, pos, doDrain);
 			} else {
-				int level = (Integer) state.getValue(BlockLiquid.LEVEL);
+				int level = state.getValue(BlockLiquid.LEVEL);
 				if (level != 0) {
 					return null;
 				}

@@ -52,7 +52,7 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 			if (s != null && master != null) {
 				TileMaster tile = (TileMaster) worldObj.getTileEntity(master);
 				int num = s.stackSize;
-				int rest = tile.insertStack(s.copy(), null);
+				int rest = tile.insertStack(s.copy(), null, false);
 				if (rest == 0) {
 					back.put(i, null);
 					markDirty();

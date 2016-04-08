@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileKabel;

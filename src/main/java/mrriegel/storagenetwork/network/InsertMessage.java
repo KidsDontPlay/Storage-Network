@@ -41,7 +41,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
 				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
 					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
-					int rest = tile.insertStack(message.stack, null);
+					int rest = tile.insertStack(message.stack, null, false);
 					if (rest != 0) {
 						ctx.getServerHandler().playerEntity.inventory.setItemStack(Inv.copyStack(message.stack, rest));
 						PacketHandler.INSTANCE.sendTo(new StackMessage(Inv.copyStack(message.stack, rest)), ctx.getServerHandler().playerEntity);

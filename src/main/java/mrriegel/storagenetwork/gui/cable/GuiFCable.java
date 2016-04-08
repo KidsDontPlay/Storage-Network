@@ -10,7 +10,6 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
-import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;

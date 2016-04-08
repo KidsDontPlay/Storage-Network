@@ -60,17 +60,11 @@ public class StacksMessage implements IMessage, IMessageHandler<StacksMessage, I
 		this.id = buf.readInt();
 		stacks = new ArrayList<StackWrapper>();
 		for (int i = 0; i < size; i++) {
-			NBTTagCompound compound = ByteBufUtils.readTag(buf);
-			StackWrapper w = new StackWrapper(null, 0);
-			w.readFromNBT(compound);
-			stacks.add(w);
+			stacks.add(StackWrapper.loadStackWrapperFromNBT(ByteBufUtils.readTag(buf)));
 		}
 		craftableStacks = new ArrayList<StackWrapper>();
 		for (int i = 0; i < csize; i++) {
-			NBTTagCompound compound = ByteBufUtils.readTag(buf);
-			StackWrapper w = new StackWrapper(null, 0);
-			w.readFromNBT(compound);
-			craftableStacks.add(w);
+			craftableStacks.add(StackWrapper.loadStackWrapperFromNBT(ByteBufUtils.readTag(buf)));
 		}
 	}
 

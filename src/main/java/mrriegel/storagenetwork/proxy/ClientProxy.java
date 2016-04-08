@@ -8,17 +8,12 @@ import mrriegel.storagenetwork.render.CableRenderer;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -104,7 +99,7 @@ public class ClientProxy extends CommonProxy {
 			// FontRenderer f=getFontRenderer();
 			// f.drawString("splitscrren", 0 , 0, 546193);
 			// GlStateManager.popMatrix();
-			
+
 			// int ambientLight = (int)
 			// te.getWorld().getLightBrightness(te.getPos());
 			// int var6 = ambientLight % 65536;

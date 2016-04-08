@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.helper;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -9,6 +10,8 @@ public class StackWrapper {
 
 	public StackWrapper(ItemStack stack, int size) {
 		super();
+		if (stack == null)
+			throw new NullPointerException();
 		this.stack = stack;
 		this.size = size;
 	}
@@ -45,6 +48,8 @@ public class StackWrapper {
 	}
 
 	public void setStack(ItemStack stack) {
+		if (stack == null)
+			throw new NullPointerException();
 		this.stack = stack;
 	}
 
@@ -61,7 +66,7 @@ public class StackWrapper {
 	}
 
 	public static StackWrapper loadStackWrapperFromNBT(NBTTagCompound nbt) {
-		StackWrapper wrap = new StackWrapper(null, 0);
+		StackWrapper wrap = new StackWrapper(new ItemStack(Blocks.fire), 0);
 		wrap.readFromNBT(nbt);
 		return wrap.getStack() != null && wrap.getStack().getItem() != null ? wrap : null;
 	}

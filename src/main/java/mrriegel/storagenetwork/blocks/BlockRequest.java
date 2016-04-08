@@ -6,7 +6,6 @@ import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileRequest;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

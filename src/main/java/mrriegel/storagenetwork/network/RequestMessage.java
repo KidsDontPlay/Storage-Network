@@ -43,7 +43,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
-					ItemStack stack = message.stack == null ? null : tile.request(message.stack, message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), true, true, false, false);
+					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), false);
 					if (stack != null) {
 						if (message.shift) {
 							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
@@ -55,7 +55,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					FilterItem x = new FilterItem(new ItemStack(Blocks.bookshelf), true, false);
+					FilterItem x = new FilterItem(new ItemStack(Blocks.bookshelf), true, false, false);
 					List<FilterItem> missing = Lists.newArrayList();
 					// System.out.println("can: " +
 					// tile.getMissing(tile.getStacks(), x, 5, true,missing));

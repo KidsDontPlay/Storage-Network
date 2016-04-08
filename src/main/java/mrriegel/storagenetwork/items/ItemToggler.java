@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.items;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
@@ -65,7 +64,7 @@ public class ItemToggler extends Item {
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		if (player.getHeldItem() == null || player.getHeldItem().getItem() != this)
 			return;
-		if (player.worldObj.getTotalWorldTime() % 12 == 0) {
+		if (player.worldObj.getTotalWorldTime() % 10 == 0) {
 			lis = Lists.newArrayList();
 			int range = 16;
 			for (int i = -range; i <= range; i++)

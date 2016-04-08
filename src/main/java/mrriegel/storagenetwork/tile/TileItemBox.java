@@ -1,10 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.blocks.BlockIndicator;
-import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.StackWrapper;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,16 +7,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ITickable;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileItemBox extends TileEntity implements IConnectable {
+public class TileItemBox extends AbstractFilterTile {
 
 	private BlockPos master;
 	private boolean disabled;
