@@ -38,6 +38,7 @@ public class CraftingRecipes {
 			public Foo(ItemStack output, List<ItemStack> inputList) {
 				super(output, inputList);
 			}
+
 			@Override
 			public ItemStack getCraftingResult(InventoryCrafting inv) {
 				ItemStack rem = null;
