@@ -225,12 +225,10 @@ public class TileKabel extends AbstractFilterTile {
 		this.master = master;
 	}
 
-	@Override
 	public boolean isDisabled() {
 		return disabled;
 	}
 
-	@Override
 	public void setDisabled(boolean enabled) {
 		this.disabled = enabled;
 	}

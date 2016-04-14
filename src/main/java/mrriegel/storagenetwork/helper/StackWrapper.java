@@ -16,6 +16,9 @@ public class StackWrapper {
 		this.size = size;
 	}
 
+	private StackWrapper() {
+	}
+
 	public void readFromNBT(NBTTagCompound compound) {
 		NBTTagCompound c = compound.getCompoundTag("stack");
 		stack = ItemStack.loadItemStackFromNBT(c);
@@ -66,7 +69,7 @@ public class StackWrapper {
 	}
 
 	public static StackWrapper loadStackWrapperFromNBT(NBTTagCompound nbt) {
-		StackWrapper wrap = new StackWrapper(new ItemStack(Blocks.fire), 0);
+		StackWrapper wrap = new StackWrapper();
 		wrap.readFromNBT(nbt);
 		return wrap.getStack() != null && wrap.getStack().getItem() != null ? wrap : null;
 	}

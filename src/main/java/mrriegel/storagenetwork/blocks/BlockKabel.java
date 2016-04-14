@@ -133,6 +133,7 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		state = getExtendedState(state, worldIn, pos);
+		setConnections(worldIn, pos, state);
 		updateTE(worldIn, pos, (IExtendedBlockState) state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}

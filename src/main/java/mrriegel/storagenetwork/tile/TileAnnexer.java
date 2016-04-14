@@ -24,14 +24,12 @@ import com.google.gson.Gson;
 public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 
 	private BlockPos master;
-	private boolean disabled;
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
 		}.getType());
-		disabled = compound.getBoolean("disabled");
 
 	}
 
@@ -39,7 +37,6 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
-		compound.setBoolean("disabled", disabled);
 	}
 
 	@Override
@@ -55,16 +52,6 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	@Override
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	@Override

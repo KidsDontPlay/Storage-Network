@@ -32,7 +32,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	public Map<Integer, ItemStack> matrix = new HashMap<Integer, ItemStack>();
 	public boolean downwards;
 	public Sort sort = Sort.NAME;
-	private boolean disabled;
 
 	public enum Sort {
 		AMOUNT, NAME, MOD;
@@ -103,7 +102,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 			int slot = stackTag.getByte("Slot");
 			matrix.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
-		disabled = compound.getBoolean("disabled");
 	}
 
 	@Override
@@ -132,7 +130,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 			}
 		}
 		compound.setTag("matrix", invList);
-		compound.setBoolean("disabled", disabled);
 	}
 
 	@Override
@@ -155,16 +152,6 @@ public class TileRequest extends TileEntity implements ITickable, IConnectable {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	@Override
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	@Override

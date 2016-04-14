@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 public class TileContainer extends CrunchTEInventory implements IConnectable {
 	private BlockPos master;
 	private EnumFacing input, output;
-	private boolean disabled;
 
 	public TileContainer() {
 		super(9);
@@ -31,7 +30,6 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 		input = input != null ? input : EnumFacing.UP;
 		output = EnumFacing.byName(tag.getString("output"));
 		output = output != null ? output : EnumFacing.DOWN;
-		disabled = tag.getBoolean("disabled");
 	}
 
 	@Override
@@ -41,7 +39,6 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 			tag.setString("input", input.toString());
 		if (output != null)
 			tag.setString("output", output.toString());
-		tag.setBoolean("disabled", disabled);
 	}
 
 	@Override
@@ -73,16 +70,6 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 
 	public void setOutput(EnumFacing output) {
 		this.output = output;
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	@Override
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	public List<ItemStack> getTemplates() {

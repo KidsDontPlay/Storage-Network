@@ -16,7 +16,6 @@ import com.google.gson.Gson;
 public class TileItemBox extends AbstractFilterTile {
 
 	private BlockPos master;
-	private boolean disabled;
 	private InventoryBasic inv = new InventoryBasic(null, false, 64);
 
 	@Override
@@ -24,7 +23,6 @@ public class TileItemBox extends AbstractFilterTile {
 		super.readFromNBT(compound);
 		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
 		}.getType());
-		disabled = compound.getBoolean("disabled");
 		NBTTagList invList = compound.getTagList("box", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
@@ -39,7 +37,6 @@ public class TileItemBox extends AbstractFilterTile {
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
-		compound.setBoolean("disabled", disabled);
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			if (inv.getStackInSlot(i) != null) {
@@ -60,16 +57,6 @@ public class TileItemBox extends AbstractFilterTile {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	@Override
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	public InventoryBasic getInv() {

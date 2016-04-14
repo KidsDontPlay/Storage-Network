@@ -35,6 +35,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -451,7 +452,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				worldObj.removeTileEntity(bl);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) instanceof IConnectable && !((IConnectable) worldObj.getTileEntity(bl)).isDisabled() && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getTileEntity(bl) instanceof IConnectable && (!(worldObj.getTileEntity(bl) instanceof TileKabel) || !((TileKabel) worldObj.getTileEntity(bl)).isDisabled()) && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
 				addConnectables(bl);
@@ -848,8 +849,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				ItemStack fil = t.getFilter().get(i).getStack();
 				if (fil == null)
 					continue;
-				// Fluid f =
-				// FluidRegistry.lookupFluidForBlock(Block.getBlockFromItem(fil.getItem()));
 				FluidStack fs = Util.getFluid(fil);
 				if (fs == null || fs.getFluid() == null)
 					continue;
@@ -858,11 +857,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!inv.canFill(t.getInventoryFace().getOpposite(), f))
 					continue;
-				// int amount = 0;
-				// for (FluidTankInfo inf :
-				// inv.getTankInfo(t.getInventoryFace().getOpposite()))
-				// if (inf.fluid != null && inf.fluid.getFluid() == f)
-				// amount += inf.fluid.amount;
 				if (!t.status())
 					continue;
 				int num = 200 + t.elements(ItemUpgrade.STACK) * 200;

@@ -18,7 +18,6 @@ public class TileFRequest extends TileEntity implements IConnectable {
 	public ItemStack fill, drain;
 	public boolean downwards;
 	public Sort sort = Sort.NAME;
-	private boolean disabled;
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -35,7 +34,6 @@ public class TileFRequest extends TileEntity implements IConnectable {
 			drain = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("drain")));
 		else
 			drain = null;
-		disabled = compound.getBoolean("disabled");
 	}
 
 	@Override
@@ -48,7 +46,6 @@ public class TileFRequest extends TileEntity implements IConnectable {
 			compound.setTag("fill", fill.writeToNBT(new NBTTagCompound()));
 		if (drain != null)
 			compound.setTag("drain", drain.writeToNBT(new NBTTagCompound()));
-		compound.setBoolean("disabled", disabled);
 	}
 
 	@Override
@@ -71,16 +68,6 @@ public class TileFRequest extends TileEntity implements IConnectable {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	@Override
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	@Override

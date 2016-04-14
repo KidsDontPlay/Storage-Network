@@ -9,13 +9,15 @@ public class FilterItem {
 	boolean meta, ore, nbt;
 
 	public FilterItem(ItemStack stack, boolean meta, boolean ore, boolean nbt) {
-		super();
 		if (stack == null)
 			throw new NullPointerException();
 		this.stack = stack;
 		this.meta = meta;
 		this.ore = ore;
 		this.nbt = nbt;
+	}
+
+	private FilterItem() {
 	}
 
 	public void readFromNBT(NBTTagCompound compound) {
@@ -76,7 +78,7 @@ public class FilterItem {
 	}
 
 	public static FilterItem loadFilterItemFromNBT(NBTTagCompound nbt) {
-		FilterItem fil = new FilterItem(new ItemStack(Blocks.fire), true, false, true);
+		FilterItem fil = new FilterItem();
 		fil.readFromNBT(nbt);
 		return fil.getStack() != null && fil.getStack().getItem() != null ? fil : null;
 	}

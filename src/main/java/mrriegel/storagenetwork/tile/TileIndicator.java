@@ -22,7 +22,6 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	private boolean more;
 	private StackWrapper stack;
 	private BlockPos master;
-	private boolean disabled;
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -34,7 +33,6 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 			stack = (StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
-		disabled = compound.getBoolean("disabled");
 
 	}
 
@@ -45,7 +43,6 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 		compound.setBoolean("more", more);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
-		compound.setBoolean("disabled", disabled);
 	}
 
 	@Override
@@ -77,16 +74,6 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	@Override
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	@Override

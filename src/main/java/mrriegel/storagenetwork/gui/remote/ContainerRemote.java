@@ -45,6 +45,7 @@ public class ContainerRemote extends Container {
 			TileMaster tile = ItemRemote.getTile(playerInv.player.getHeldItem());
 			if (tile == null || !(tile instanceof TileMaster))
 				return;
+			System.out.println("call");
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerInv.player);
 		}
 	}
