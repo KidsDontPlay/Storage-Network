@@ -83,7 +83,8 @@ public class GuiCable extends MyGuiContainer {
 		for (int ii = 0; ii < 9; ii++) {
 			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
-			list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, true, true, false, true));
+			boolean numShow = tile.elements(3) > 0;
+			list.add(new ItemSlot(s, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, numShow, true, false, true));
 		}
 		for (ItemSlot s : list)
 			s.drawSlot(mouseX, mouseY);

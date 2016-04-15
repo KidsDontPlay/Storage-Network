@@ -61,14 +61,15 @@ public abstract class MyGuiContainer extends GuiContainer {
 			RenderHelper.enableGUIStandardItemLighting();
 			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
 			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-			if (smallFont) {
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(.5f, .5f, .5f);
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
-				GlStateManager.popMatrix();
-			} else
-				mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
-			if (this.isMouseOverSlot(mx, my)) {
+			if (number)
+				if (smallFont) {
+					GlStateManager.pushMatrix();
+					GlStateManager.scale(.5f, .5f, .5f);
+					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
+					GlStateManager.popMatrix();
+				} else
+					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+			if (square && this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				int j1 = x;
@@ -83,7 +84,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 		}
 
 		public void drawTooltip(int mx, int my) {
-			if (this.isMouseOverSlot(mx, my) && stack != null) {
+			if (toolTip && this.isMouseOverSlot(mx, my) && stack != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
 				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
@@ -136,7 +137,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.chainmail_boots), x, y, amount);
 				}
 			}
-			if (this.isMouseOverSlot(mx, my)) {
+			if (square && this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				int j1 = x;
@@ -150,7 +151,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 		}
 
 		public void drawTooltip(int mx, int my) {
-			if (this.isMouseOverSlot(mx, my) && fluid != null) {
+			if (toolTip && this.isMouseOverSlot(mx, my) && fluid != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
 				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || !number) {

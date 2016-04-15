@@ -37,7 +37,6 @@ public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, I
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("set");
 				if (message.id == GuiHandler.FREMOTE && Minecraft.getMinecraft().currentScreen instanceof GuiFRemote) {
 					GuiFRemote gui = (GuiFRemote) Minecraft.getMinecraft().currentScreen;
 					gui.fluids = message.stacks;
