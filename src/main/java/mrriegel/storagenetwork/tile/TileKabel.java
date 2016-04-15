@@ -25,7 +25,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 public class TileKabel extends AbstractFilterTile {
-	private Kind kind;
 	private BlockPos master, connectedInventory;
 	private EnumFacing inventoryFace;
 	private List<ItemStack> upgrades = Arrays.asList(null, null, null, null);
@@ -42,15 +41,6 @@ public class TileKabel extends AbstractFilterTile {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
 	}
 
-	public TileKabel() {
-		super();
-	}
-
-	public TileKabel(Block b) {
-		super();
-		kind = getKind(b);
-	}
-
 	public int elements(int num) {
 		int res = 0;
 		for (ItemStack s : upgrades) {
@@ -63,10 +53,12 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	public boolean isFluid() {
+		Kind kind = getKind();
 		return kind == Kind.fexKabel || kind == Kind.fimKabel || kind == Kind.fstorageKabel;
 	}
 
 	public boolean isUpgradeable() {
+		Kind kind = getKind();
 		return kind == Kind.exKabel || kind == Kind.imKabel || kind == Kind.fexKabel || kind == Kind.fimKabel;
 	}
 
@@ -119,7 +111,6 @@ public class TileKabel extends AbstractFilterTile {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		kind = Kind.valueOf(compound.getString("kind"));
 		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
 		}.getType());
 		connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {
@@ -165,9 +156,6 @@ public class TileKabel extends AbstractFilterTile {
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
-		if (kind == null)
-			kind = getKind(worldObj.getBlockState(pos).getBlock());
-		compound.setString("kind", kind.toString());
 		compound.setString("master", new Gson().toJson(master));
 		compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
 		if (inventoryFace != null)
@@ -234,13 +222,7 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	public Kind getKind() {
-		if (kind == null)
-			kind = getKind(worldObj.getBlockState(pos).getBlock());
-		return kind;
-	}
-
-	public void setKind(Kind kind) {
-		this.kind = kind;
+		return getKind(worldObj.getBlockState(pos).getBlock());
 	}
 
 	public BlockPos getConnectedInventory() {

@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.blocks;
 
-import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
@@ -49,7 +48,7 @@ public class BlockKabel extends BlockContainer {
 	public BlockKabel() {
 		super(Material.iron);
 		this.setHardness(1.4F);
-		this.setCreativeTab(CreativeTab.tab1);
+		this.setCreativeTab(StorageNetwork.tab1);
 	}
 
 	@Override
@@ -124,7 +123,7 @@ public class BlockKabel extends BlockContainer {
 		if (!(neighborBlock == Blocks.air || neighborBlock instanceof ITileEntityProvider))
 			return;
 		state = getExtendedState(state, worldIn, pos);
-		setConnections(worldIn, pos, state);
+		setConnections(worldIn, pos, state, true);
 		updateTE(worldIn, pos, (IExtendedBlockState) state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 
@@ -133,12 +132,12 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		state = getExtendedState(state, worldIn, pos);
-		setConnections(worldIn, pos, state);
+		setConnections(worldIn, pos, state, false);
 		updateTE(worldIn, pos, (IExtendedBlockState) state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}
 
-	public void setConnections(World worldIn, BlockPos pos, IBlockState bState) {
+	public void setConnections(World worldIn, BlockPos pos, IBlockState bState, boolean refresh) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
@@ -176,7 +175,7 @@ public class BlockKabel extends BlockContainer {
 			tile.setMaster(null);
 			worldIn.markBlockForUpdate(pos);
 			setAllMastersNull(worldIn, pos);
-			if (mas instanceof TileMaster) {
+			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}
 		}

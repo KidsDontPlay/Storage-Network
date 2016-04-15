@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -33,7 +32,7 @@ public class BlockMaster extends BlockContainer {
 	public BlockMaster() {
 		super(Material.iron);
 		this.setHardness(3.0F);
-		this.setCreativeTab(CreativeTab.tab1);
+		this.setCreativeTab(StorageNetwork.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":master");
 	}
 

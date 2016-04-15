@@ -75,7 +75,7 @@ public class TileFannexer extends TileEntity implements IConnectable, ITickable 
 
 	@Override
 	public void update() {
-		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 20 == 0 && master != null && worldObj.getTileEntity(master) instanceof TileMaster) {
+		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 20 == 0 && master != null && worldObj.getTileEntity(master) instanceof TileMaster && !worldObj.isBlockPowered(pos)) {
 			BlockPos p = pos.offset(worldObj.getBlockState(pos).getValue(BlockAnnexer.FACING).getOpposite());
 			IBlockState state = worldObj.getBlockState(p);
 			if (drainBlock(state, worldObj, p, false) == null)

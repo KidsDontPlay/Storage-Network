@@ -44,11 +44,6 @@ public class ContainerFRequest extends Container {
 		for (int i = 0; i < 9; ++i) {
 			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
 		}
-		if (!tile.getWorld().isRemote) {
-			TileMaster mas = ItemRemote.getTile(playerInv.player.getHeldItem());
-			if (mas != null && mas instanceof TileMaster)
-				PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREQUEST), (EntityPlayerMP) playerInv.player);
-		}
 
 	}
 

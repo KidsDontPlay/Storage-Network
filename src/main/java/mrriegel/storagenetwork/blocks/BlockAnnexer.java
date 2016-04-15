@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.blocks;
 
-import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.tile.TileAnnexer;
 import net.minecraft.block.material.Material;
@@ -20,7 +19,7 @@ public class BlockAnnexer extends BlockConnectable {
 	public BlockAnnexer() {
 		super(Material.iron);
 		this.setHardness(3.0F);
-		this.setCreativeTab(CreativeTab.tab1);
+		this.setCreativeTab(StorageNetwork.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		this.setUnlocalizedName(StorageNetwork.MODID + ":annexer");
 	}

@@ -1,7 +1,10 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -18,7 +21,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, guiFactory = "mrriegel.storagenetwork.config.GuiFactory")
 public class StorageNetwork {
 	public static final String MODID = "storagenetwork";
-	public static final String VERSION = "1.9.0";
+	public static final String VERSION = "1.9.1";
 	public static final String MODNAME = "Storage Network";
 
 	@Instance(StorageNetwork.MODID)
@@ -26,6 +29,18 @@ public class StorageNetwork {
 
 	@SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
 	public static CommonProxy proxy;
+
+	public static CreativeTabs tab1 = new CreativeTabs(StorageNetwork.MODID) {
+		@Override
+		public Item getTabIconItem() {
+			return Item.getItemFromBlock(ModBlocks.kabel);
+		}
+
+		@Override
+		public String getTranslatedTabLabel() {
+			return StorageNetwork.MODNAME;
+		}
+	};
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -46,12 +61,6 @@ public class StorageNetwork {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
-		// System.out.println("zip");
-		// String q = "mausgrau{}_+#";
-		// String code = Base64.getEncoder().encodeToString(q.getBytes());
-		// System.out.println("code: " + code);
-		// String clear = new String(Base64.getDecoder().decode(code));
-		// System.out.println("clear: " + clear);
 	}
 
 	@SubscribeEvent

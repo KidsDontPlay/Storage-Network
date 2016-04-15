@@ -30,29 +30,9 @@ public class ContainerCable extends Container {
 	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
-		filter = new HashMap<Integer, StackWrapper>();
-		NBTTagCompound nbt = new NBTTagCompound();
-		tile.writeToNBT(nbt);
-		NBTTagList invList = nbt.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < invList.tagCount(); i++) {
-			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
-		}
-		ores = new HashMap<Integer, Boolean>();
-		NBTTagList oreList = nbt.getTagList("ores", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < oreList.tagCount(); i++) {
-			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			ores.put(slot, stackTag.getBoolean("Ore"));
-		}
-		metas = new HashMap<Integer, Boolean>();
-		NBTTagList metaList = nbt.getTagList("metas", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < metaList.tagCount(); i++) {
-			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			metas.put(slot, stackTag.getBoolean("Meta"));
-		}
+		filter = new HashMap<Integer, StackWrapper>(tile.getFilter());
+		ores = new HashMap<Integer, Boolean>(tile.getOres());
+		metas = new HashMap<Integer, Boolean>(tile.getMetas());
 		upgrades = new InventoryBasic("upgrades", false, 4) {
 			@Override
 			public int getInventoryStackLimit() {
@@ -103,39 +83,9 @@ public class ContainerCable extends Container {
 	}
 
 	public void slotChanged() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		tile.writeToNBT(nbt);
-		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (filter.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				filter.get(i).writeToNBT(stackTag);
-				invList.appendTag(stackTag);
-			}
-		}
-		nbt.setTag("crunchTE", invList);
-		NBTTagList oreList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (ores.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				stackTag.setBoolean("Ore", ores.get(i));
-				oreList.appendTag(stackTag);
-			}
-		}
-		nbt.setTag("ores", oreList);
-		NBTTagList metaList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (metas.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				stackTag.setBoolean("Meta", metas.get(i));
-				metaList.appendTag(stackTag);
-			}
-		}
-		nbt.setTag("metas", metaList);
-		tile.readFromNBT(nbt);
+		tile.setFilter(filter);
+		tile.setOres(ores);
+		tile.setMetas(metas);
 		tile.setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
 		for (int i = 0; i < upgrades.getSizeInventory(); i++)
 			tile.getUpgrades().set(i, upgrades.getStackInSlot(i));

@@ -12,6 +12,8 @@ tile.storagenetwork:request.name=Request Table
 tile.storagenetwork:frequest.name=Fluid Request Table
 tile.storagenetwork:cover.name=Cable Cover
 tile.storagenetwork:indicator.name=Item Indicator
+tile.storagenetwork:annexer.name=Block Liquidator
+tile.storagenetwork:fannexer.name=Fluid Liquidator
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade

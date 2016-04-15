@@ -48,7 +48,7 @@ public class BlockFKabel extends BlockKabel {
 	}
 
 	@Override
-	public void setConnections(World worldIn, BlockPos pos, IBlockState bState) {
+	public void setConnections(World worldIn, BlockPos pos, IBlockState bState, boolean refresh) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
@@ -86,7 +86,7 @@ public class BlockFKabel extends BlockKabel {
 			tile.setMaster(null);
 			worldIn.markBlockForUpdate(pos);
 			setAllMastersNull(worldIn, pos);
-			if (mas instanceof TileMaster) {
+			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}
 		}

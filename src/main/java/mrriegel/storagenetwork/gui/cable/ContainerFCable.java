@@ -31,15 +31,7 @@ public class ContainerFCable extends Container {
 	public ContainerFCable(TileKabel tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
-		filter = new HashMap<Integer, StackWrapper>();
-		NBTTagCompound nbt = new NBTTagCompound();
-		tile.writeToNBT(nbt);
-		NBTTagList invList = nbt.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < invList.tagCount(); i++) {
-			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			filter.put(slot, StackWrapper.loadStackWrapperFromNBT(stackTag));
-		}
+		filter = new HashMap<Integer, StackWrapper>(tile.getFilter());
 		upgrades = new InventoryBasic("upgrades", false, 4) {
 			@Override
 			public int getInventoryStackLimit() {
@@ -90,19 +82,7 @@ public class ContainerFCable extends Container {
 	}
 
 	public void slotChanged() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		tile.writeToNBT(nbt);
-		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
-			if (filter.get(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				filter.get(i).writeToNBT(stackTag);
-				invList.appendTag(stackTag);
-			}
-		}
-		nbt.setTag("crunchTE", invList);
-		tile.readFromNBT(nbt);
+		tile.setFilter(filter);
 		tile.setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
 		for (int i = 0; i < upgrades.getSizeInventory(); i++)
 			tile.getUpgrades().set(i, upgrades.getStackInSlot(i));
