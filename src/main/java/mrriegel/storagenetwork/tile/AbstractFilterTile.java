@@ -104,7 +104,8 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 				if (s == null)
 					continue;
 				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				if (ore ? Util.equalOreDict(stack, s) : getMetas().get(i) ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+				boolean meta = getMetas().get(i) == null ? true : getMetas().get(i);
+				if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = true;
 					break;
 				}
@@ -119,7 +120,8 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 				if (s == null)
 					continue;
 				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				if (ore ? Util.equalOreDict(stack, s) : getMetas().get(i) ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
+				boolean meta = getMetas().get(i) == null ? true : getMetas().get(i);
+				if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = false;
 					break;
 				}

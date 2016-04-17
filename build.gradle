@@ -25,7 +25,7 @@ group= "mrriegel.storagenetwork" // http://maven.apache.org/guides/mini/guide-na
 archivesBaseName = "StorageNetwork"
 
 minecraft {
-    version = "1.8.9-11.15.1.1764"
+    version = "1.8.9-11.15.1.1808"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -38,7 +38,7 @@ minecraft {
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.8.9:2.26.0.154"
+    deobfCompile "mezz.jei:jei_1.8.9:2.28.16.184"
 }
 
 processResources

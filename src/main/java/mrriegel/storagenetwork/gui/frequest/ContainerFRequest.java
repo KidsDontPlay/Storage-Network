@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.gui.frequest;
 
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileFRequest;
