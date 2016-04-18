@@ -41,6 +41,8 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
 		boolean show = Minecraft.getMinecraft().thePlayer.getHeldItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem()) instanceof BlockKabel;
+		if (te == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockKabel))
+			return;
 		if (te.getCover() != null && !show) {
 			if (te.getCover() == Blocks.glass)
 				return;
