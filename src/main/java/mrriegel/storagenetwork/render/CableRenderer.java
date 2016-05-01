@@ -41,7 +41,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
 		boolean show = Minecraft.getMinecraft().thePlayer.getHeldItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem()) instanceof BlockKabel;
-		if (te == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockKabel))
+		if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockKabel))
 			return;
 		if (te.getCover() != null && !show) {
 			if (te.getCover() == Blocks.glass)
@@ -107,11 +107,20 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			break;
 
 		}
+
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
+		model.render(te);
+		// GlStateManager.enableRescaleNormal();
+		// GlStateManager.scale(0.4F, 0.4F, 0.4F);
+		// GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
+		// GlStateManager.translate(0, 1.5F, 0);
 		// int r = (int) ((System.currentTimeMillis() / 4) % 360);
 		// GlStateManager.rotate(r, 0.0F, 1.0F, 0.0F);
-		model.render(te);
+		// bindTexture(TextureMap.locationBlocksTexture);
+		// Minecraft.getMinecraft().getRenderItem().renderItem(new
+		// ItemStack(Items.wheat), TransformType.GROUND);
+		// GlStateManager.disableRescaleNormal();
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
 	}
