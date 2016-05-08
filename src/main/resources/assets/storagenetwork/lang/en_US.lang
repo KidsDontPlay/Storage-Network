@@ -1,27 +1,29 @@
 tile.storagenetwork:kabel.name=Link Cable
-tile.storagenetwork:storageKabel.name=Storage Cable
-tile.storagenetwork:exKabel.name=Export Cable
-tile.storagenetwork:imKabel.name=Import Cable
-tile.storagenetwork:vacuumKabel.name=Vacuum Cable
+tile.storagenetwork:storageKabel.name=Item Storage Cable
+tile.storagenetwork:exKabel.name=Item Export Cable
+tile.storagenetwork:imKabel.name=Item Import Cable
+tile.storagenetwork:vacuumKabel.name=Item Vacuum Cable
 tile.storagenetwork:fstorageKabel.name=Fluid Storage Cable
 tile.storagenetwork:fexKabel.name=Fluid Export Cable
 tile.storagenetwork:fimKabel.name=Fluid Import Cable
 
 tile.storagenetwork:master.name=Cable Master
-tile.storagenetwork:request.name=Request Table
+tile.storagenetwork:request.name=Item Request Table
 tile.storagenetwork:frequest.name=Fluid Request Table
 tile.storagenetwork:cover.name=Cable Cover
 tile.storagenetwork:indicator.name=Item Indicator
 tile.storagenetwork:annexer.name=Block Liquidator
 tile.storagenetwork:fannexer.name=Fluid Liquidator
+tile.storagenetwork:itemBox.name=Item Box
+tile.storagenetwork:fluidBox.name=Fluid Box
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade
 item.storagenetwork:upgrade_2.name=Stack Upgrade
 item.storagenetwork:upgrade_3.name=Stock Upgrade
 
-item.storagenetwork:remote_0.name=Wireless Accessor
-item.storagenetwork:remote_1.name=Advanced Wireless Accessor
+item.storagenetwork:remote_0.name=Item Wireless Accessor
+item.storagenetwork:remote_1.name=Item Advanced Wireless Accessor
 item.storagenetwork:fremote_0.name=Fluid Wireless Accessor
 item.storagenetwork:fremote_1.name=Fluid Advanced Wireless Accessor
 

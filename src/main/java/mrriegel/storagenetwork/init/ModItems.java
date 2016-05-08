@@ -20,7 +20,7 @@ public class ModItems {
 	public static final Item coverstick = new ItemCoverStick();
 	public static final Item template = new ItemTemplate();
 	public static final Item toggler = new ItemToggler();
-	public static final Item ssdd=new ItemSSDD();
+	public static final Item ssdd = new ItemSSDD();
 
 	public static void init() {
 		GameRegistry.registerItem(upgrade, "upgrade");

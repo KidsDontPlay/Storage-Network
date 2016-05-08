@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.tileentity.TileEntity;
@@ -12,16 +13,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, IMessage> {
-	int id, x, y, z;
+	int id;
+	BlockPos pos;
 
 	public ButtonMessage() {
 	}
 
-	public ButtonMessage(int id, int x, int y, int z) {
+	public ButtonMessage(int id, BlockPos pos) {
 		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
 	}
 
 	@Override
@@ -30,9 +30,9 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
-				if (t instanceof TileKabel) {
-					TileKabel tile = (TileKabel) t;
+				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+				if (t instanceof AbstractFilterTile) {
+					AbstractFilterTile tile = (AbstractFilterTile) t;
 					switch (message.id) {
 					case 0:
 						tile.setPriority(tile.getPriority() - 1);
@@ -47,7 +47,8 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 						tile.setWhite(!tile.isWhite());
 						break;
 					case 4:
-						tile.setMode(!tile.isMode());
+						if (tile instanceof TileKabel)
+							((TileKabel) tile).setMode(!((TileKabel) tile).isMode());
 						break;
 					}
 				} else if (t instanceof TileIndicator) {
@@ -61,17 +62,13 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+		this.pos = BlockPos.fromLong(buf.readLong());
 		this.id = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+		buf.writeLong(this.pos.toLong());
 		buf.writeInt(this.id);
 	}
 

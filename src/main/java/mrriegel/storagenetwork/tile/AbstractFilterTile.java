@@ -6,12 +6,16 @@ import java.util.Map;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public abstract class AbstractFilterTile extends TileEntity implements IConnectable {
 
@@ -161,6 +165,16 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 			return tmp;
 		}
 	}
+
+	public abstract IFluidHandler getFluidHandler();
+
+	public abstract IInventory getInventory();
+
+	public abstract BlockPos getSource();
+
+	public abstract boolean isFluid();
+
+	public abstract EnumFacing getInventoryFace();
 
 	public Map<Integer, StackWrapper> getFilter() {
 		return filter;

@@ -167,7 +167,7 @@ public class GuiFCable extends MyGuiContainer {
 			stack = mc.thePlayer.inventory.getItemStack();
 			tile.setStack(stack);
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), stack));
 		} else
 			super.mouseReleased(mouseX, mouseY, state);
 	}
@@ -202,7 +202,7 @@ public class GuiFCable extends MyGuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ()));
+		PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos()));
 		switch (button.id) {
 		case 0:
 			tile.setPriority(tile.getPriority() - 1);
@@ -237,7 +237,7 @@ public class GuiFCable extends MyGuiContainer {
 					searchBar.setText("0");
 				}
 				tile.setLimit(num);
-				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), stack));
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), stack));
 			} else {
 				super.keyTyped(typedChar, keyCode);
 			}

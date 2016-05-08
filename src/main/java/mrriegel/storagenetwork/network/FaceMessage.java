@@ -11,16 +11,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMessage> {
-	int id, x, y, z;
+	int id;
+	BlockPos pos;
 
 	public FaceMessage() {
 	}
 
-	public FaceMessage(int id, int x, int y, int z) {
+	public FaceMessage(int id, BlockPos pos) {
 		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
 	}
 
 	@Override
@@ -29,7 +28,7 @@ public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMess
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileContainer tile = (TileContainer) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
+				TileContainer tile = (TileContainer) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
 				switch (message.id) {
 				case 0:
 					tile.setInput(GuiContainer.next(tile.getInput()));
@@ -46,17 +45,13 @@ public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMess
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+		this.pos = BlockPos.fromLong(buf.readLong());
 		this.id = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+		buf.writeLong(this.pos.toLong());
 		buf.writeInt(this.id);
 	}
 

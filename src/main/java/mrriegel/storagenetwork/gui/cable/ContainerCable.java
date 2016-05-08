@@ -6,6 +6,7 @@ import java.util.Map;
 
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModItems;
+import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,13 +19,13 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerCable extends Container {
 	InventoryPlayer playerInv;
-	public TileKabel tile;
+	public AbstractFilterTile tile;
 	private Map<Integer, StackWrapper> filter;
 	private Map<Integer, Boolean> ores;
 	private Map<Integer, Boolean> metas;
 	IInventory upgrades;
 
-	public ContainerCable(TileKabel tile, InventoryPlayer playerInv) {
+	public ContainerCable(AbstractFilterTile tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
 		filter = new HashMap<Integer, StackWrapper>(tile.getFilter());
@@ -36,9 +37,9 @@ public class ContainerCable extends Container {
 				return 4;
 			}
 		};
-		if (tile.isUpgradeable()) {
-			for (int i = 0; i < tile.getUpgrades().size(); i++) {
-				upgrades.setInventorySlotContents(i, tile.getUpgrades().get(i));
+		if (tile instanceof TileKabel && ((TileKabel) tile).isUpgradeable()) {
+			for (int i = 0; i < ((TileKabel) tile).getUpgrades().size(); i++) {
+				upgrades.setInventorySlotContents(i, ((TileKabel) tile).getUpgrades().get(i));
 			}
 			for (int ii = 0; ii < 4; ii++) {
 				this.addSlotToContainer(new Slot(upgrades, ii, 98 + ii * 18, 6) {
@@ -83,9 +84,11 @@ public class ContainerCable extends Container {
 		tile.setFilter(filter);
 		tile.setOres(ores);
 		tile.setMetas(metas);
-		tile.setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
-		for (int i = 0; i < upgrades.getSizeInventory(); i++)
-			tile.getUpgrades().set(i, upgrades.getStackInSlot(i));
+		if (tile instanceof TileKabel) {
+			((TileKabel) tile).setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
+			for (int i = 0; i < upgrades.getSizeInventory(); i++)
+				((TileKabel) tile).getUpgrades().set(i, upgrades.getStackInSlot(i));
+		}
 	}
 
 	@Override

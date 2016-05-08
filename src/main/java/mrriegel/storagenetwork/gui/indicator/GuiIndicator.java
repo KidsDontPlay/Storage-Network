@@ -115,7 +115,7 @@ public class GuiIndicator extends MyGuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ()));
+		PacketHandler.INSTANCE.sendToServer(new ButtonMessage(button.id, tile.getPos()));
 		tile.setMore(!tile.isMore());
 	}
 

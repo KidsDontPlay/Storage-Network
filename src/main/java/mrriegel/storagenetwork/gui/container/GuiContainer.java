@@ -94,7 +94,7 @@ public class GuiContainer extends net.minecraft.client.gui.inventory.GuiContaine
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		PacketHandler.INSTANCE.sendToServer(new FaceMessage(button.id, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ()));
+		PacketHandler.INSTANCE.sendToServer(new FaceMessage(button.id, tile.getPos()));
 		switch (button.id) {
 		case 0:
 			tile.setInput(next(tile.getInput()));

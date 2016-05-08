@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.items;
 
 import java.util.List;
 
+import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -12,7 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import mrriegel.storagenetwork.StorageNetwork;
 
 public class ItemSSDD extends Item {
 	public ItemSSDD() {
@@ -32,7 +32,12 @@ public class ItemSSDD extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-	tooltip.add("size: "+getSize(stack));
+		IInventory inv = getInventory(stack);
+		int b = 0;
+		for (int i = 0; i < inv.getSizeInventory(); i++)
+			if (inv.getStackInSlot(i) != null)
+				b++;
+		tooltip.add("size: " + b + "/" + inv.getSizeInventory());
 	}
 
 	@Override
@@ -52,17 +57,6 @@ public class ItemSSDD extends Item {
 		for (int i = 0; i < stack.getItemDamage(); i++)
 			num *= 8;
 		return num;
-		// switch (stack.getItemDamage()) {
-		// case 0:
-		// return 10;
-		// case 1:
-		// return 100;
-		// case 2:
-		// return 1000;
-		// case 3:
-		// return 10000;
-		// }
-		// return -1;
 	}
 
 	public static IInventory getInventory(ItemStack stack) {

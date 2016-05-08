@@ -42,6 +42,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
@@ -83,17 +84,17 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public List<StackWrapper> getStacks() {
-		List<StackWrapper> stacks = new ArrayList<StackWrapper>();
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<StackWrapper> stacks = Lists.newArrayList();
+		List<AbstractFilterTile> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
-			if (worldObj.getTileEntity(p) instanceof TileKabel) {
-				TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
+				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
 				if (tile.getInventory() != null) {
 					invs.add(tile);
 				}
 			}
 		}
-		for (TileKabel t : invs) {
+		for (AbstractFilterTile t : invs) {
 			IInventory inv = t.getInventory();
 			if (inv == null)
 				continue;
@@ -109,7 +110,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					}
 				}
 			} else if (inv instanceof ISidedInventory) {
-				TileKabel k = t;
+				TileKabel k = (TileKabel) t;
 				EnumFacing f = k.getInventoryFace().getOpposite();
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(f)) {
 					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i)) && ((ISidedInventory) inv).canExtractItem(i, inv.getStackInSlot(i), f)) {
@@ -537,31 +538,31 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public int insertStack(ItemStack stack, IInventory source, boolean simulate) {
+	public int insertStack(ItemStack stack, BlockPos source, boolean simulate) {
 		if (stack == null)
 			return 0;
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<AbstractFilterTile> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
-			if (worldObj.getTileEntity(p) instanceof TileKabel) {
-				TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
+				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
 				if (tile.getInventory() != null) {
 					invs.add(tile);
 				}
 			}
 		}
-		Collections.sort(invs, new Comparator<TileKabel>() {
+		Collections.sort(invs, new Comparator<AbstractFilterTile>() {
 			@Override
-			public int compare(TileKabel o1, TileKabel o2) {
-				return Integer.compare(((AbstractFilterTile) o2).getPriority(), ((AbstractFilterTile) o1).getPriority());
+			public int compare(AbstractFilterTile o1, AbstractFilterTile o2) {
+				return Integer.compare(o2.getPriority(), o1.getPriority());
 			}
 		});
 
 		return addToInventories(stack, invs, source, simulate);
 	}
 
-	int addToInventories(ItemStack stack, List<TileKabel> list, IInventory source, boolean simulate) {
+	int addToInventories(ItemStack stack, List<AbstractFilterTile> list, BlockPos source, boolean simulate) {
 		ItemStack in = stack.copy();
-		for (TileKabel t : list) {
+		for (AbstractFilterTile t : list) {
 			IInventory inv = t.getInventory();
 			if (inv instanceof ISidedInventory && !Inv.contains((ISidedInventory) inv, in, t.getInventoryFace().getOpposite()))
 				continue;
@@ -569,7 +570,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (!t.canTransfer(stack))
 				continue;
-			if (Inv.isInventorySame((TileEntity) inv, (TileEntity) source))
+			if (t.getSource().equals(source))
 				continue;
 			int remain = (inv instanceof ISidedInventory) ? Inv.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv, t.getInventoryFace().getOpposite(), simulate) : Inv.addToInventoryWithLeftover(in, inv, simulate);
 			if (remain == 0)
@@ -577,7 +578,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			in = Inv.copyStack(in, remain);
 			inv.markDirty();
 		}
-		for (TileKabel t : list) {
+		for (AbstractFilterTile t : list) {
 			IInventory inv = t.getInventory();
 			if (inv instanceof ISidedInventory && Inv.contains((ISidedInventory) inv, in, t.getInventoryFace().getOpposite()))
 				continue;
@@ -585,7 +586,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (!t.canTransfer(stack))
 				continue;
-			if (Inv.isInventorySame((TileEntity) inv, (TileEntity) source))
+			if (t.getSource().equals(source))
 				continue;
 			int remain = (inv instanceof ISidedInventory) ? Inv.addToSidedInventoryWithLeftover(in, (ISidedInventory) inv, t.getInventoryFace().getOpposite(), simulate) : Inv.addToInventoryWithLeftover(in, inv, simulate);
 			if (remain == 0)
@@ -684,7 +685,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
 					if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
 						continue;
-					int rest = insertStack(Inv.copyStack(s, insert), inv, false);
+					int rest = insertStack(Inv.copyStack(s, insert), t.getConnectedInventory(), false);
 					if (insert == rest)
 						continue;
 					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), (num - insert) + rest) : Inv.copyStack(s.copy(), num - insert));
@@ -707,7 +708,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					int insert = Math.min(s.stackSize, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
 					if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
 						continue;
-					int rest = insertStack(Inv.copyStack(s, insert), inv, false);
+					int rest = insertStack(Inv.copyStack(s, insert), t.getConnectedInventory(), false);
 					if (insert == rest)
 						continue;
 					inv.setInventorySlotContents(i, rest > 0 ? Inv.copyStack(s.copy(), (num - insert) + rest) : Inv.copyStack(s.copy(), num - insert));
@@ -879,10 +880,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public ItemStack request(FilterItem fil, final int size, boolean simulate) {
 		if (size == 0 || fil == null)
 			return null;
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<AbstractFilterTile> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
-			if (worldObj.getTileEntity(p) instanceof TileKabel) {
-				TileKabel tile = (TileKabel) worldObj.getTileEntity(p);
+			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
+				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
 				if (tile.getInventory() != null) {
 					invs.add(tile);
 				}
@@ -890,7 +891,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 		ItemStack res = null;
 		int result = 0;
-		for (TileKabel t : invs) {
+		for (AbstractFilterTile t : invs) {
 			IInventory inv = t.getInventory();
 			if (!(inv instanceof ISidedInventory)) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -916,7 +917,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					// break;
 				}
 			} else {
-				TileKabel k = t;
+				TileKabel k = (TileKabel) t;
 				EnumFacing f = k.getInventoryFace().getOpposite();
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(f)) {
 					ItemStack s = inv.getStackInSlot(i);

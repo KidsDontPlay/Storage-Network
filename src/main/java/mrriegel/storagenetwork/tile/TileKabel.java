@@ -52,6 +52,7 @@ public class TileKabel extends AbstractFilterTile {
 		return res;
 	}
 
+	@Override
 	public boolean isFluid() {
 		Kind kind = getKind();
 		return kind == Kind.fexKabel || kind == Kind.fimKabel || kind == Kind.fstorageKabel;
@@ -233,6 +234,7 @@ public class TileKabel extends AbstractFilterTile {
 		this.connectedInventory = connectedInventory;
 	}
 
+	@Override
 	public EnumFacing getInventoryFace() {
 		return inventoryFace;
 	}
@@ -307,15 +309,22 @@ public class TileKabel extends AbstractFilterTile {
 			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 
+	@Override
 	public IFluidHandler getFluidHandler() {
 		if (getKind() == Kind.fstorageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IFluidHandler)
 			return (IFluidHandler) worldObj.getTileEntity(getConnectedInventory());
 		return null;
 	}
 
+	@Override
 	public IInventory getInventory() {
 		if (getKind() == Kind.storageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IInventory)
 			return (IInventory) worldObj.getTileEntity(getConnectedInventory());
 		return null;
+	}
+
+	@Override
+	public BlockPos getSource() {
+		return getConnectedInventory();
 	}
 }

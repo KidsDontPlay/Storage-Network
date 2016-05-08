@@ -12,18 +12,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMessage> {
-	int limit, x, y, z;
+	int limit;
+	BlockPos pos;
 	ItemStack stack;
 
 	public LimitMessage() {
 	}
 
-	public LimitMessage(int limit, int x, int y, int z, ItemStack stack) {
+	public LimitMessage(int limit, BlockPos pos, ItemStack stack) {
 		super();
 		this.limit = limit;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
 		this.stack = stack;
 	}
 
@@ -33,7 +32,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
+				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
 				tile.setLimit(message.limit);
 				tile.setStack(message.stack);
 			}
@@ -43,18 +42,14 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+		this.pos = BlockPos.fromLong(buf.readLong());
 		this.limit = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+		buf.writeLong(this.pos.toLong());
 		buf.writeInt(this.limit);
 		ByteBufUtils.writeItemStack(buf, this.stack);
 	}

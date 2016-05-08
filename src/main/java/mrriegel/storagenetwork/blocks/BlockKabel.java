@@ -114,7 +114,6 @@ public class BlockKabel extends BlockContainer {
 			default:
 				break;
 			}
-		playerIn.openContainer.detectAndSendChanges();
 		return false;
 	}
 

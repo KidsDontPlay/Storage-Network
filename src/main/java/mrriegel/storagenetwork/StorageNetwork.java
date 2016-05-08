@@ -2,20 +2,13 @@ package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.init.ModBlocks;
-import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.items.ItemSSDD;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -70,18 +63,21 @@ public class StorageNetwork {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
-		ItemStack s = new ItemStack(ModItems.ssdd);
-		System.out.println("one: "+s.getTagCompound());
-		IInventory i=ItemSSDD.getInventory(s);
-		System.out.println("zip: "+i.getSizeInventory());
-		i.setInventorySlotContents(3, new ItemStack(Blocks.furnace));
-		ItemSSDD.setInventory(i, s);
-		System.out.println("two: "+s.getTagCompound());
+		// ItemStack s = new ItemStack(ModItems.ssdd);
+		// System.out.println("one: " + s.getTagCompound());
+		// IInventory i = ItemSSDD.getInventory(s);
+		// System.out.println("zip: " + i.getSizeInventory());
+		// i.setInventorySlotContents(3, new ItemStack(Blocks.furnace));
+		// ItemSSDD.setInventory(i, s);
+		// System.out.println("two: " + s.getTagCompound());
 	}
 
 	@SubscribeEvent
 	public void task(PlayerInteractEvent e) {
+		if (!e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK && e.world.getBlockState(e.pos).getBlock() == ModBlocks.itemBox) {
+			// System.out.println(e.world.getTileEntity(e.pos).serializeNBT());
+		}
 		// System.out.println(e.entityPlayer.getUniqueID());
 	}
-	
+
 }

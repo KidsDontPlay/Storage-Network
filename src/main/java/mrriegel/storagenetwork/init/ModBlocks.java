@@ -66,7 +66,7 @@ public class ModBlocks {
 		// GameRegistry.registerBlock(crafter, "crafter");
 		GameRegistry.registerBlock(annexer, "annexer");
 		GameRegistry.registerBlock(fannexer, "fannexer");
-		// GameRegistry.registerBlock(itemBox, "itemBox");
+		GameRegistry.registerBlock(itemBox, BlockItemBox.Item.class, "itemBox");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
