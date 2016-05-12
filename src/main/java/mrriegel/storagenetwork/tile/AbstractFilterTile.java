@@ -15,6 +15,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidHandler;
 
 public abstract class AbstractFilterTile extends TileEntity implements IConnectable {
@@ -107,8 +108,8 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 				ItemStack s = getFilter().get(i).getStack();
 				if (s == null)
 					continue;
-				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				boolean meta = getMetas().get(i) == null ? true : getMetas().get(i);
+				boolean ore = getOre(i);
+				boolean meta = getMeta(i);
 				if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = true;
 					break;
@@ -123,8 +124,8 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 				ItemStack s = getFilter().get(i).getStack();
 				if (s == null)
 					continue;
-				boolean ore = getOres().get(i) == null ? false : getOres().get(i);
-				boolean meta = getMetas().get(i) == null ? true : getMetas().get(i);
+				boolean ore = getOre(i);
+				boolean meta = getMeta(i);
 				if (ore ? Util.equalOreDict(stack, s) : meta ? stack.isItemEqual(s) : stack.getItem() == s.getItem()) {
 					tmp = false;
 					break;
@@ -166,7 +167,7 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 		}
 	}
 
-	public abstract IFluidHandler getFluidHandler();
+	public abstract IFluidHandler getFluidTank();
 
 	public abstract IInventory getInventory();
 
@@ -174,7 +175,13 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 
 	public abstract boolean isFluid();
 
-	public abstract EnumFacing getInventoryFace();
+	public boolean getOre(int i) {
+		return getOres().get(i) == null ? false : getOres().get(i);
+	}
+
+	public boolean getMeta(int i) {
+		return getMetas().get(i) == null ? true : getMetas().get(i);
+	}
 
 	public Map<Integer, StackWrapper> getFilter() {
 		return filter;

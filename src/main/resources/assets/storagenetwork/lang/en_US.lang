@@ -14,8 +14,8 @@ tile.storagenetwork:cover.name=Cable Cover
 tile.storagenetwork:indicator.name=Item Indicator
 tile.storagenetwork:annexer.name=Block Liquidator
 tile.storagenetwork:fannexer.name=Fluid Liquidator
-tile.storagenetwork:itemBox.name=Item Box
-tile.storagenetwork:fluidBox.name=Fluid Box
+tile.storagenetwork:itembox.name=Item Box
+tile.storagenetwork:fluidbox.name=Fluid Box
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade

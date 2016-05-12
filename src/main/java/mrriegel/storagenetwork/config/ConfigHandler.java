@@ -9,7 +9,7 @@ public class ConfigHandler {
 	public static Configuration config;
 
 	public static boolean smallFont, energyNeeded, untouchable;
-	public static int energyCapacity, energyMultiplier, rangeWirelessAccessor, itemBoxCapacity;
+	public static int energyCapacity, energyMultiplier, rangeWirelessAccessor, itemBoxCapacity, fluidBoxCapacity;
 
 	public static void refreshConfig(File file) {
 		config = new Configuration(file);
@@ -22,7 +22,8 @@ public class ConfigHandler {
 		energyMultiplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultiplier", 15).getInt();
 		rangeWirelessAccessor = config.get(Configuration.CATEGORY_GENERAL, "rangeWirelessAccessor", 32).getInt();
 		itemBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "itemBoxCapacity", 64).getInt();
-		System.out.println("zip");
+		fluidBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "fluidBoxCapacity", 64).getInt();
+
 		if (config.hasChanged()) {
 			config.save();
 		}

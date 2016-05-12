@@ -50,7 +50,7 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}
 		if (ID == FCABLE) {
-			return new ContainerFCable((TileKabel) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
+			return new ContainerFCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}
 		if (ID == REQUEST) {
 			return new ContainerRequest((TileRequest) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
@@ -86,7 +86,7 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiCable(new ContainerCable(tile, player.inventory));
 		}
 		if (ID == FCABLE) {
-			TileKabel tile = (TileKabel) world.getTileEntity(new BlockPos(x, y, z));
+			AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z));
 			return new GuiFCable(new ContainerFCable(tile, player.inventory));
 		}
 		if (ID == REQUEST) {

@@ -68,6 +68,8 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.toggler), "  t", " s ", "i  ", 'i', Items.iron_ingot, 't', Blocks.redstone_torch, 's', Items.stick);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.annexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.iron_pickaxe), 'c', ModBlocks.kabel));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.fannexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.bucket), 'c', ModBlocks.kabel));
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.itemBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.planks);
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fluidBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.glass);
 	}
 
 }

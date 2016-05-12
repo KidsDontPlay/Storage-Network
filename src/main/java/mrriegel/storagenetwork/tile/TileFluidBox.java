@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.tile;
 
 import mrriegel.storagenetwork.config.ConfigHandler;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,54 +11,42 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileItemBox extends AbstractFilterTile {
+public class TileFluidBox extends AbstractFilterTile {
 
 	private BlockPos master;
-	private InventoryBasic inv = new InventoryBasic(null, false, ConfigHandler.itemBoxCapacity);
+	private FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * ConfigHandler.fluidBoxCapacity);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
 		}.getType());
-		readInventory(compound);
+		readTank(compound);
 	}
 
-	public void readInventory(NBTTagCompound compound) {
-		NBTTagList invList = compound.getTagList("box", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < invList.tagCount(); i++) {
-			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			if (slot >= 0 && slot < inv.getSizeInventory()) {
-				inv.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
-			}
-		}
+	public void readTank(NBTTagCompound compound) {
+		tank.readFromNBT(compound);
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
-		writeInventory(compound);
+		writeTank(compound);
 	}
 
-	public void writeInventory(NBTTagCompound compound) {
-		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < inv.getSizeInventory(); i++) {
-			if (inv.getStackInSlot(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				inv.getStackInSlot(i).writeToNBT(stackTag);
-				invList.appendTag(stackTag);
-			}
-		}
-		compound.setTag("box", invList);
+	public void writeTank(NBTTagCompound compound) {
+		tank.writeToNBT(compound);
 	}
 
 	@Override
@@ -70,14 +57,6 @@ public class TileItemBox extends AbstractFilterTile {
 	@Override
 	public void setMaster(BlockPos master) {
 		this.master = master;
-	}
-
-	public InventoryBasic getInv() {
-		return inv;
-	}
-
-	public void setInv(InventoryBasic inv) {
-		this.inv = inv;
 	}
 
 	@Override
@@ -100,12 +79,53 @@ public class TileItemBox extends AbstractFilterTile {
 
 	@Override
 	public IFluidHandler getFluidTank() {
-		return null;
+		return new IFluidHandler() {
+			
+			@Override
+		    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
+		    {
+		        return tank.fill(resource, doFill);
+		    }
+
+		    @Override
+		    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
+		    {
+		        if (resource == null || !resource.isFluidEqual(tank.getFluid()))
+		        {
+		            return null;
+		        }
+		        return tank.drain(resource.amount, doDrain);
+		    }
+
+		    @Override
+		    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
+		    {
+		        return tank.drain(maxDrain, doDrain);
+		    }
+
+		    @Override
+		    public boolean canFill(EnumFacing from, Fluid fluid)
+		    {
+		        return true;
+		    }
+
+		    @Override
+		    public boolean canDrain(EnumFacing from, Fluid fluid)
+		    {
+		        return true;
+		    }
+
+		    @Override
+		    public FluidTankInfo[] getTankInfo(EnumFacing from)
+		    {
+		        return new FluidTankInfo[] { tank.getInfo() };
+		    }
+		};
 	}
 
 	@Override
 	public IInventory getInventory() {
-		return getInv();
+		return null;
 	}
 
 	@Override
@@ -115,7 +135,7 @@ public class TileItemBox extends AbstractFilterTile {
 
 	@Override
 	public boolean isFluid() {
-		return false;
+		return true;
 	}
 
 }

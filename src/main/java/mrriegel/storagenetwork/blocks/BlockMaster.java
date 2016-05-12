@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -86,6 +88,7 @@ public class BlockMaster extends BlockContainer {
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
 				playerIn.addChatMessage(new ChatComponentText("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
+			playerIn.addChatMessage(new ChatComponentText("(Potential) Empty Slots: "+tile.emptySlots()));
 			playerIn.addChatMessage(new ChatComponentText("Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			for (BlockPos p : tile.connectables) {

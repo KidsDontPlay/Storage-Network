@@ -15,6 +15,7 @@ import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
+import mrriegel.storagenetwork.tile.TileItemBox;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.client.Minecraft;
@@ -153,7 +154,7 @@ public class GuiCable extends MyGuiContainer {
 		pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
 		buttonList.add(pPlus);
 
-		if (!(tile instanceof TileKabel) || kind == Kind.imKabel || kind == Kind.storageKabel) {
+		if (tile instanceof TileItemBox || kind == Kind.imKabel || kind == Kind.storageKabel) {
 			white = new Button(3, guiLeft + 70, guiTop + 5, "");
 			buttonList.add(white);
 		}
@@ -216,7 +217,7 @@ public class GuiCable extends MyGuiContainer {
 					}
 				}
 				con.slotChanged();
-				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
+				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
 				break;
 			}
 		}
@@ -245,10 +246,6 @@ public class GuiCable extends MyGuiContainer {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (!(tile instanceof TileKabel)) {
-			super.keyTyped(typedChar, keyCode);
-			return;
-		}
 		if (typedChar == 'o' || typedChar == 'm') {
 			for (int i = 0; i < list.size(); i++) {
 				ItemSlot e = list.get(i);
@@ -261,10 +258,14 @@ public class GuiCable extends MyGuiContainer {
 					else if (typedChar == 'm')
 						con.getMetas().put(i, !con.getMetas().get(i));
 					con.slotChanged();
-					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOres().get(i), tile.getMetas().get(i)));
+					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
 					break;
 				}
 			}
+		}
+		if (!(tile instanceof TileKabel)) {
+			super.keyTyped(typedChar, keyCode);
+			return;
 		}
 		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);

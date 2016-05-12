@@ -234,7 +234,6 @@ public class TileKabel extends AbstractFilterTile {
 		this.connectedInventory = connectedInventory;
 	}
 
-	@Override
 	public EnumFacing getInventoryFace() {
 		return inventoryFace;
 	}
@@ -310,7 +309,7 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	@Override
-	public IFluidHandler getFluidHandler() {
+	public IFluidHandler getFluidTank() {
 		if (getKind() == Kind.fstorageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IFluidHandler)
 			return (IFluidHandler) worldObj.getTileEntity(getConnectedInventory());
 		return null;
@@ -327,4 +326,5 @@ public class TileKabel extends AbstractFilterTile {
 	public BlockPos getSource() {
 		return getConnectedInventory();
 	}
+
 }
