@@ -33,6 +33,7 @@ import com.google.common.collect.Lists;
 
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
+	private static List<ItemStack> stacks = Lists.newArrayList();
 
 	public static void init() {
 		Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -40,6 +41,10 @@ public class Util {
 			String lowercaseId = modEntry.getKey().toLowerCase(Locale.ENGLISH);
 			String modName = modEntry.getValue().getName();
 			modNamesForIds.put(lowercaseId, modName);
+		}
+		for (ResourceLocation r : Item.itemRegistry.getKeys()) {
+			Item b = Item.itemRegistry.getObject(r);
+			b.getSubItems(b, b.getCreativeTab(), stacks);
 		}
 	}
 
@@ -136,8 +141,10 @@ public class Util {
 	}
 
 	public static ItemStack randomItem() {
-		int a = new Random().nextInt(Item.itemRegistry.getKeys().size());
-		return new ItemStack(Item.itemRegistry.getObject(Lists.newArrayList(Item.itemRegistry.getKeys()).get(a)));
+		// int a = new Random().nextInt(Item.itemRegistry.getKeys().size());
+		// return new
+		// ItemStack(Item.itemRegistry.getObject(Lists.newArrayList(Item.itemRegistry.getKeys()).get(a)));
+		int a = new Random().nextInt(stacks.size());
+		return stacks.get(a);
 	}
-
 }

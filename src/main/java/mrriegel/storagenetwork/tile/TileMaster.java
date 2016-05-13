@@ -994,18 +994,19 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				}
 			}
 		}
-		FluidStack res = null;
+		Fluid res = null;
 		int result = 0;
 		for (AbstractFilterTile t : invs) {
 			IFluidHandler inv = t.getFluidTank();
 			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : null;
 			if (inv.getTankInfo(f) == null)
 				continue;
+
 			for (FluidTankInfo i : inv.getTankInfo(f)) {
 				FluidStack s = i.fluid;
 				if (s == null)
 					continue;
-				if (res != null && s.getFluid() != res.getFluid())
+				if (res != null && s.getFluid() != res)
 					continue;
 				if (s.getFluid() != fluid)
 					continue;
@@ -1019,16 +1020,16 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (!simulate)
 					inv.drain(f, new FluidStack(s.getFluid(), miss), true);
 				if (res == null)
-					res = s.copy();
+					res = s.getFluid();
 				if (result == size)
-					return new FluidStack(res.getFluid(), size);
+					return new FluidStack(res, size);
 				// break;
 
 			}
 		}
 		if (result == 0)
 			return null;
-		return new FluidStack(res.getFluid(), result);
+		return new FluidStack(res, result);
 	}
 
 	@Override

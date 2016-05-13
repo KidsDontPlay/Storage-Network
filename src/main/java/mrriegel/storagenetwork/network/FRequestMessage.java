@@ -46,11 +46,13 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 						boolean canFill = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, space), fill.copy()) != null;
 						if (space > 0 && canFill) {
 							FluidStack fluid = tile.frequest(message.fluid, space, true);
-							ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, fluid.amount), fill);
-							if (filled != null) {
-								tile.frequest(message.fluid, fluid.amount, false);
-								con.inv.setInventorySlotContents(0, filled);
-								con.slotChanged();
+							if (fluid != null) {
+								ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, fluid.amount), fill);
+								if (filled != null) {
+									tile.frequest(message.fluid, fluid.amount, false);
+									con.inv.setInventorySlotContents(0, filled);
+									con.slotChanged();
+								}
 							}
 						}
 					} else if (message.id < 2 && message.fluid != null && fill != null && fill.getItem() instanceof IFluidContainerItem) {
@@ -60,9 +62,11 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 							space = Math.min(space, message.id == 0 ? 1000 : message.id == 1 ? 100 : 0);
 							if (space > 0) {
 								FluidStack fluid = tile.frequest(message.fluid, space, false);
-								flui.fill(fill, fluid, true);
-								con.inv.setInventorySlotContents(0, fill);
-								con.slotChanged();
+								if (fluid != null) {
+									flui.fill(fill, fluid, true);
+									con.inv.setInventorySlotContents(0, fill);
+									con.slotChanged();
+								}
 							}
 						}
 					}
@@ -77,10 +81,14 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 						boolean canFill = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, space), fill.copy()) != null;
 						if (space > 0 && canFill) {
 							FluidStack fluid = tile.frequest(message.fluid, space, true);
-							ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, fluid.amount), fill);
-							if (filled != null) {
-								tile.frequest(message.fluid, fluid.amount, false);
-								con.inv.setInventorySlotContents(0, filled);
+							// System.out.println("zip: " + message.fluid);
+							// System.out.println("zap: " + fluid.amount);
+							if (fluid != null) {
+								ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, fluid.amount), fill);
+								if (filled != null) {
+									tile.frequest(message.fluid, fluid.amount, false);
+									con.inv.setInventorySlotContents(0, filled);
+								}
 							}
 						}
 					} else if (tile != null && message.id < 2 && message.fluid != null && fill != null && fill.getItem() instanceof IFluidContainerItem) {
@@ -90,8 +98,10 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 							space = Math.min(space, message.id == 0 ? 1000 : message.id == 1 ? 100 : 0);
 							if (space > 0) {
 								FluidStack fluid = tile.frequest(message.fluid, space, false);
-								flui.fill(fill, fluid, true);
-								con.inv.setInventorySlotContents(0, fill);
+								if (fluid != null) {
+									flui.fill(fill, fluid, true);
+									con.inv.setInventorySlotContents(0, fill);
+								}
 							}
 						}
 					}

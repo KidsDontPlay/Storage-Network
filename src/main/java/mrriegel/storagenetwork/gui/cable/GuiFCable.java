@@ -140,7 +140,15 @@ public class GuiFCable extends MyGuiContainer {
 			GlStateManager.popMatrix();
 			GlStateManager.enableLighting();
 		}
-
+		if (white.isMouseOver()) {
+			List<String> list = new ArrayList<String>();
+			list.add(tile.isWhite() ? "Whitelist" : "Blacklist");
+			GlStateManager.pushMatrix();
+			GlStateManager.disableLighting();
+			this.drawHoveringText(list, mx, my, fontRendererObj);
+			GlStateManager.popMatrix();
+			GlStateManager.enableLighting();
+		}
 		for (FluidSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
 	}

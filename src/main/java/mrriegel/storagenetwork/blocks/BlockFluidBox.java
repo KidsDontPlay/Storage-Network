@@ -99,7 +99,7 @@ public class BlockFluidBox extends BlockConnectable {
 				return;
 			FluidStack f = FluidStack.loadFluidStackFromNBT(stack.getTagCompound());
 			if (f != null)
-				tooltip.add("" + f.getLocalizedName() + " " + (f.amount / 1000) + "B/" + ConfigHandler.fluidBoxCapacity + "B");
+				tooltip.add("" + f.getLocalizedName() + ": " + (f.amount / 1000) + "B/" + ConfigHandler.fluidBoxCapacity + "B");
 		}
 	}
 

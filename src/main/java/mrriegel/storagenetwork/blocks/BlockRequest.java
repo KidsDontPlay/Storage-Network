@@ -55,7 +55,6 @@ public class BlockRequest extends BlockConnectable {
 		if (tileentity instanceof TileRequest) {
 			TileRequest tile = (TileRequest) tileentity;
 			for (int i = 0; i < 9; i++) {
-				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.back.get(i));
 				Util.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.matrix.get(i));
 			}
 		}

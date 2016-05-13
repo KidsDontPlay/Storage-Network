@@ -97,7 +97,7 @@ public class BlockItemBox extends BlockConnectable {
 			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
 			if (stack.getTagCompound() == null)
 				return;
-			tooltip.add("" + stack.getTagCompound().getTagList("box", Constants.NBT.TAG_COMPOUND).tagCount() + "/" + ConfigHandler.itemBoxCapacity);
+			tooltip.add("Slots: " + stack.getTagCompound().getTagList("box", Constants.NBT.TAG_COMPOUND).tagCount() + "/" + ConfigHandler.itemBoxCapacity);
 		}
 
 	}
