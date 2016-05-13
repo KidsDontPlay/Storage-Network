@@ -62,7 +62,7 @@ public class BlockRequest extends BlockConnectable {
 
 		super.breakBlock(worldIn, pos, state);
 	}
-	
+
 	public static class Item extends ItemBlock {
 
 		public Item(Block block) {

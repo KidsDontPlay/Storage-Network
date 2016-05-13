@@ -9,9 +9,11 @@ import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.MyGuiContainer;
+import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.ClearMessage;
+import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
@@ -25,6 +27,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -240,6 +243,9 @@ public class GuiRequest extends MyGuiContainer {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+		} else if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90)) {
+			TileEntity t = tile.getWorld().getTileEntity(tile.getMaster());
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(t.getPos().getX(), t.getPos().getY(), t.getPos().getZ(), tile.getWorld().provider.getDimensionId(), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 

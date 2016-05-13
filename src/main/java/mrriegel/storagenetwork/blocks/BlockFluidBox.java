@@ -29,7 +29,7 @@ public class BlockFluidBox extends BlockConnectable {
 
 	public BlockFluidBox() {
 		super(Material.iron);
-		this.setHardness(3.0F);
+		this.setHardness(2.0F);
 		this.setCreativeTab(StorageNetwork.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":fluidbox");
 	}

@@ -29,6 +29,8 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.google.common.collect.Lists;
+
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
 
@@ -131,6 +133,11 @@ public class Util {
 		lis.add(pos.north());
 		lis.add(pos.south());
 		return lis;
+	}
+
+	public static ItemStack randomItem() {
+		int a = new Random().nextInt(Item.itemRegistry.getKeys().size());
+		return new ItemStack(Item.itemRegistry.getObject(Lists.newArrayList(Item.itemRegistry.getKeys()).get(a)));
 	}
 
 }

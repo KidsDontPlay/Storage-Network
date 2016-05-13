@@ -87,7 +87,5 @@ public class ItemCoverStick extends Item {
 		super.addInformation(stack, playerIn, tooltip, advanced);
 		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.coverstaff"));
 	}
-	
-	
 
 }

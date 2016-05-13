@@ -74,8 +74,9 @@ public class StorageNetwork {
 
 	@SubscribeEvent
 	public void task(PlayerInteractEvent e) {
-		if (!e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK && e.world.getBlockState(e.pos).getBlock() == ModBlocks.itemBox) {
+		if (!e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK) {
 			// System.out.println(e.world.getTileEntity(e.pos).serializeNBT());
+			// e.entityPlayer.inventory.addItemStackToInventory(Util.randomItem());
 		}
 		// System.out.println(e.entityPlayer.getUniqueID());
 	}

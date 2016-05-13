@@ -46,8 +46,7 @@ public class ItemRemote extends Item {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-		super.addInformation(stack, playerIn, tooltip, advanced);
-		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.remote_"+stack.getItemDamage()));
+		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.remote_" + stack.getItemDamage()));
 		if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
 			tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
 		}

@@ -66,7 +66,7 @@ public class BlockFannexer extends BlockConnectable {
 		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
 		return s;
 	}
-	
+
 	public static class Item extends ItemBlock {
 
 		public Item(Block block) {

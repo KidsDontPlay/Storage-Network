@@ -97,7 +97,6 @@ public class BlockIndicator extends BlockConnectable {
 			return true;
 		}
 	}
-	
 
 	public static class Item extends ItemBlock {
 

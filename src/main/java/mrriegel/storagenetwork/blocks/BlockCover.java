@@ -18,7 +18,7 @@ public class BlockCover extends Block {
 		this.setCreativeTab(StorageNetwork.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":cover");
 	}
-	
+
 	public static class Item extends ItemBlock {
 
 		public Item(Block block) {

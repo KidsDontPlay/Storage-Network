@@ -77,7 +77,8 @@ public class ContainerCable extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return tile != null && tile.getMaster() != null && tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster;
+		return true;
+//		return tile != null && tile.getMaster() != null && tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster;
 	}
 
 	public void slotChanged() {

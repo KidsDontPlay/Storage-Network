@@ -5,9 +5,9 @@ import java.util.List;
 
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.FilterItem;
+import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
-import mrriegel.storagenetwork.network.SyncMessage;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +29,6 @@ public class ContainerRequest extends Container {
 	public TileRequest tile;
 	public InventoryCraftResult result;
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-	public InventoryRequest back;
 	String inv = "";
 	SlotCrafting x;
 	long lastTime;
@@ -38,7 +37,6 @@ public class ContainerRequest extends Container {
 		this.tile = tile;
 		this.playerInv = playerInv;
 		lastTime = System.currentTimeMillis();
-		back = new InventoryRequest(tile);
 		result = new InventoryCraftResult();
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
@@ -77,12 +75,6 @@ public class ContainerRequest extends Container {
 				this.addSlotToContainer(new Slot(craftMatrix, index++, 8 + j * 18, 110 + i * 18));
 			}
 		}
-		index = 0;
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 2; ++j) {
-				this.addSlotToContainer(new Slot(back, index++, 134 + j * 18, 110 + i * 18));
-			}
-		}
 
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -94,17 +86,6 @@ public class ContainerRequest extends Container {
 		}
 		this.onCraftMatrixChanged(this.craftMatrix);
 
-	}
-
-	String get() {
-		String s = "";
-		for (int i = 0; i < back.INVSIZE; i++)
-			if (back.getStackInSlot(i) != null)
-				s += back.getStackInSlot(i).toString();
-		for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
-			if (craftMatrix.getStackInSlot(i) != null)
-				s += craftMatrix.getStackInSlot(i).toString();
-		return s;
 	}
 
 	@Override
@@ -128,16 +109,6 @@ public class ContainerRequest extends Container {
 		NBTTagCompound nbt = new NBTTagCompound();
 		tile.writeToNBT(nbt);
 		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < 6; i++) {
-			if (back.getStackInSlot(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				back.getStackInSlot(i).writeToNBT(stackTag);
-				invList.appendTag(stackTag);
-			}
-		}
-		nbt.setTag("back", invList);
-		invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
 			if (craftMatrix.getStackInSlot(i) != null) {
 				NBTTagCompound stackTag = new NBTTagCompound();
@@ -148,9 +119,6 @@ public class ContainerRequest extends Container {
 		}
 		nbt.setTag("matrix", invList);
 		tile.readFromNBT(nbt);
-		// detectAndSendChanges();
-		if (!tile.getWorld().isRemote)
-			PacketHandler.INSTANCE.sendTo(new SyncMessage(back.getStackInSlot(0), back.getStackInSlot(1), back.getStackInSlot(2), back.getStackInSlot(3), back.getStackInSlot(4), back.getStackInSlot(5)), (EntityPlayerMP) playerInv.player);
 
 	}
 
@@ -167,15 +135,23 @@ public class ContainerRequest extends Container {
 					x.crafted = 0;
 					return null;
 				}
-			if (slotIndex <= 15) {
-				if (!this.mergeItemStack(itemstack1, 15, 15 + 37, true)) {
+			if (slotIndex <= 9) {
+				if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
 					x.crafted = 0;
 					return null;
 				}
 				slot.onSlotChange(itemstack1, itemstack);
 			} else {
-				if (!this.mergeItemStack(itemstack1, 10, 16, false)) {
-					x.crafted = 0;
+				TileMaster tile = (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster());
+				if (tile != null && !tile.getWorld().isRemote) {
+					int rest = tile.insertStack(itemstack1, null, false);
+					ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
+					slot.putStack(stack);
+					detectAndSendChanges();
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);
+					if (stack == null)
+						return null;
+					slot.onPickupFromSlot(playerIn, itemstack1);
 					return null;
 				}
 			}
@@ -206,10 +182,6 @@ public class ContainerRequest extends Container {
 		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 50 == 0) {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
-		}
-		if (!inv.equals(get())) {
-			slotChanged();
-			inv = get();
 		}
 
 		if (x.crafted != 0 && Math.abs(System.currentTimeMillis() - lastTime) > 500) {

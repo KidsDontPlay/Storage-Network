@@ -64,7 +64,7 @@ public class BlockCrafter extends BlockContainer {
 
 		super.breakBlock(worldIn, pos, state);
 	}
-	
+
 	public static class Item extends ItemBlock {
 
 		public Item(Block block) {

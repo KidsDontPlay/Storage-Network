@@ -37,10 +37,10 @@ public class ItemUpgrade extends Item {
 	public String getUnlocalizedName(ItemStack stack) {
 		return this.getUnlocalizedName() + "_" + stack.getItemDamage();
 	}
-	
+
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
-		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.upgrade_"+stack.getItemDamage()));
+		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.upgrade_" + stack.getItemDamage()));
 	}
 }

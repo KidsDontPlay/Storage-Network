@@ -152,7 +152,7 @@ public class ItemToggler extends Item {
 
 		GlStateManager.popMatrix();
 	}
-	
+
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);

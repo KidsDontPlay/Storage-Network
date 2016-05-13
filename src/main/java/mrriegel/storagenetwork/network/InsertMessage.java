@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -51,8 +52,12 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 					}
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
 						((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer).detectAndSendChanges();
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 					}
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
+					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
+						((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).detectAndSendChanges();
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+					}
 				}
 
 			}

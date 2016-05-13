@@ -32,7 +32,7 @@ public class BlockFKabel extends BlockKabel {
 		if (worldIn.isRemote)
 			return true;
 		worldIn.markBlockForUpdate(pos);
-		if (tile.getMaster() == null || (playerIn.getHeldItem() != null && (playerIn.getHeldItem().getItem() == ModItems.coverstick || playerIn.getHeldItem().getItem() == ModItems.toggler)))
+		if (/* tile.getMaster() == null || */(playerIn.getHeldItem() != null && (playerIn.getHeldItem().getItem() == ModItems.coverstick || playerIn.getHeldItem().getItem() == ModItems.toggler)))
 			return false;
 		else
 			switch (tile.getKind()) {
@@ -134,11 +134,11 @@ public class BlockFKabel extends BlockKabel {
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
-			if (stack.getItem() == Item.getItemFromBlock(ModBlocks.fexKabel))
+			if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.fexKabel))
 				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fkabel_E"));
-			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.fimKabel))
+			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.fimKabel))
 				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fkabel_I"));
-			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.fstorageKabel))
+			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.fstorageKabel))
 				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fkabel_S"));
 			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
 		}

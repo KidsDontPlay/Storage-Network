@@ -111,7 +111,7 @@ public class BlockMaster extends BlockContainer {
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
 	}
-	
+
 	public static class Item extends ItemBlock {
 
 		public Item(Block block) {
@@ -122,7 +122,8 @@ public class BlockMaster extends BlockContainer {
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
 			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.master"));
-			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.RFNeeded"));
+			if (ConfigHandler.energyNeeded)
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.RFNeeded"));
 		}
 
 	}

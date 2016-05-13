@@ -29,7 +29,7 @@ public class BlockItemBox extends BlockConnectable {
 
 	public BlockItemBox() {
 		super(Material.iron);
-		this.setHardness(3.0F);
+		this.setHardness(2.0F);
 		this.setCreativeTab(StorageNetwork.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":itembox");
 	}
