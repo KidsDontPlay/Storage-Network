@@ -4,8 +4,10 @@ import java.util.List;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,5 +36,11 @@ public class ItemUpgrade extends Item {
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
 		return this.getUnlocalizedName() + "_" + stack.getItemDamage();
+	}
+	
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+		super.addInformation(stack, playerIn, tooltip, advanced);
+		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.upgrade_"+stack.getItemDamage()));
 	}
 }

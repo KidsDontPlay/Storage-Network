@@ -29,7 +29,7 @@ public class ModItems {
 		GameRegistry.registerItem(coverstick, "coverstick");
 		// GameRegistry.registerItem(template, "template");
 		GameRegistry.registerItem(toggler, "toggler");
-		GameRegistry.registerItem(ssdd, "ssdd");
+//		GameRegistry.registerItem(ssdd, "ssdd");
 	}
 
 }

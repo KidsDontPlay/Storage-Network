@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.items;
 
+import java.util.List;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
@@ -12,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class ItemCoverStick extends Item {
@@ -78,5 +81,13 @@ public class ItemCoverStick extends Item {
 			}
 		}
 	}
+
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+		super.addInformation(stack, playerIn, tooltip, advanced);
+		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.coverstaff"));
+	}
+	
+	
 
 }

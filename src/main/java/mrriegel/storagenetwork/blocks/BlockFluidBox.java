@@ -18,9 +18,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.google.common.collect.Lists;
@@ -92,10 +92,14 @@ public class BlockFluidBox extends BlockConnectable {
 
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			super.addInformation(stack, playerIn, tooltip, advanced);
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fluidbox"));
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
 			if (stack.getTagCompound() == null)
 				return;
 			FluidStack f = FluidStack.loadFluidStackFromNBT(stack.getTagCompound());
-			tooltip.add("" + f.getLocalizedName() + " " + (f.amount / 1000) + "B/" + ConfigHandler.fluidBoxCapacity + "B");
+			if (f != null)
+				tooltip.add("" + f.getLocalizedName() + " " + (f.amount / 1000) + "B/" + ConfigHandler.fluidBoxCapacity + "B");
 		}
 	}
 

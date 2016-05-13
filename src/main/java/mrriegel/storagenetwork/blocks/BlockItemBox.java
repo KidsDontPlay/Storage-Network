@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -91,6 +92,9 @@ public class BlockItemBox extends BlockConnectable {
 
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			super.addInformation(stack, playerIn, tooltip, advanced);
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.itembox"));
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
 			if (stack.getTagCompound() == null)
 				return;
 			tooltip.add("" + stack.getTagCompound().getTagList("box", Constants.NBT.TAG_COMPOUND).tagCount() + "/" + ConfigHandler.itemBoxCapacity);

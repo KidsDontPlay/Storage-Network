@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,6 +47,7 @@ public class ItemRemote extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
+		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.remote_"+stack.getItemDamage()));
 		if (stack.hasTagCompound() && NBTHelper.getBoolean(stack, "bound")) {
 			tooltip.add("Dimension: " + NBTHelper.getInteger(stack, "dim") + ", x: " + NBTHelper.getInteger(stack, "x") + ", y: " + NBTHelper.getInteger(stack, "y") + ", z: " + NBTHelper.getInteger(stack, "z"));
 		}
@@ -108,4 +110,5 @@ public class ItemRemote extends Item {
 		NBTHelper.setInteger(to, "dim", NBTHelper.getInteger(from, "dim"));
 		NBTHelper.setString(to, "sort", NBTHelper.getString(from, "sort"));
 	}
+
 }

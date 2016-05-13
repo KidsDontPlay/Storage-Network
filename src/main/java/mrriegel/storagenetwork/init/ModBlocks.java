@@ -49,28 +49,28 @@ public class ModBlocks {
 	public static final Block annexer = new BlockAnnexer();
 	public static final Block fannexer = new BlockFannexer();
 	public static final Block itemBox = new BlockItemBox();
-	public static final Block fluidBox=new BlockFluidBox();
+	public static final Block fluidBox = new BlockFluidBox();
 
 	public static void init() {
-		GameRegistry.registerBlock(master, "master");
-		GameRegistry.registerBlock(request, "request");
-		GameRegistry.registerBlock(frequest, "frequest");
-		GameRegistry.registerBlock(kabel, "kabel");
-		GameRegistry.registerBlock(storageKabel, "storageKabel");
-		GameRegistry.registerBlock(exKabel, "exKabel");
-		GameRegistry.registerBlock(imKabel, "imKabel");
-		GameRegistry.registerBlock(vacuumKabel, "vacuumKabel");
-		GameRegistry.registerBlock(fstorageKabel, "fstorageKabel");
-		GameRegistry.registerBlock(fexKabel, "fexKabel");
-		GameRegistry.registerBlock(fimKabel, "fimKabel");
-		GameRegistry.registerBlock(cover, "cover");
-		GameRegistry.registerBlock(indicator, "indicator");
+		GameRegistry.registerBlock(master, BlockMaster.Item.class,"master");
+		GameRegistry.registerBlock(request,BlockRequest.Item.class, "request");
+		GameRegistry.registerBlock(frequest, BlockFRequest.Item.class,"frequest");
+		GameRegistry.registerBlock(kabel, BlockKabel.Item.class,"kabel");
+		GameRegistry.registerBlock(storageKabel, BlockKabel.Item.class,"storageKabel");
+		GameRegistry.registerBlock(exKabel,BlockKabel.Item.class, "exKabel");
+		GameRegistry.registerBlock(imKabel,BlockKabel.Item.class, "imKabel");
+		GameRegistry.registerBlock(vacuumKabel, BlockKabel.Item.class,"vacuumKabel");
+		GameRegistry.registerBlock(fstorageKabel, BlockFKabel.Item.class,"fstorageKabel");
+		GameRegistry.registerBlock(fexKabel, BlockFKabel.Item.class,"fexKabel");
+		GameRegistry.registerBlock(fimKabel, BlockFKabel.Item.class,"fimKabel");
+		GameRegistry.registerBlock(cover,BlockCover.Item.class, "cover");
+		GameRegistry.registerBlock(indicator, BlockIndicator.Item.class,"indicator");
 		// GameRegistry.registerBlock(container, "container");
 		// GameRegistry.registerBlock(crafter, "crafter");
-		GameRegistry.registerBlock(annexer, "annexer");
-		GameRegistry.registerBlock(fannexer, "fannexer");
+		GameRegistry.registerBlock(annexer, BlockAnnexer.Item.class, "annexer");
+		GameRegistry.registerBlock(fannexer, BlockFannexer.Item.class,"fannexer");
 		GameRegistry.registerBlock(itemBox, BlockItemBox.Item.class, "itemBox");
-		GameRegistry.registerBlock(fluidBox,BlockFluidBox.Item.class,"fluidBox");
+		GameRegistry.registerBlock(fluidBox, BlockFluidBox.Item.class, "fluidBox");
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");

@@ -1,7 +1,10 @@
 package mrriegel.storagenetwork.blocks;
 
+import java.util.List;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.blocks.BlockFKabel.Item;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
@@ -23,12 +26,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -377,6 +382,30 @@ public class BlockKabel extends BlockContainer {
 		@Override
 		public String valueToString(Block value) {
 			return value.toString();
+		}
+
+	}
+	
+	public static class Item extends ItemBlock {
+
+		public Item(Block block) {
+			super(block);
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			super.addInformation(stack, playerIn, tooltip, advanced);
+			if (stack.getItem() == Item.getItemFromBlock(ModBlocks.exKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_E"));
+			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.imKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_I"));
+			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.storageKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_S"));
+			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.vacuumKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_V"));
+			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.kabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_L"));
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
 		}
 
 	}

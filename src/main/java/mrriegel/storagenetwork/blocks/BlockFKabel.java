@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.blocks;
 
+import java.util.List;
+
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
@@ -12,9 +14,12 @@ import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -118,5 +123,25 @@ public class BlockFKabel extends BlockKabel {
 		if (isConnectedToFluidHandler(worldIn, orig, pos))
 			return Connect.NULL;
 		return Connect.STORAGE;
+	}
+
+	public static class Item extends ItemBlock {
+
+		public Item(Block block) {
+			super(block);
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			super.addInformation(stack, playerIn, tooltip, advanced);
+			if (stack.getItem() == Item.getItemFromBlock(ModBlocks.fexKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fkabel_E"));
+			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.fimKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fkabel_I"));
+			else if (stack.getItem() == Item.getItemFromBlock(ModBlocks.fstorageKabel))
+				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fkabel_S"));
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
+		}
+
 	}
 }

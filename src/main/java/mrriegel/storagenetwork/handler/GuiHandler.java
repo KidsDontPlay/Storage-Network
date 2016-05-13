@@ -25,7 +25,6 @@ import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileIndicator;
-import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;

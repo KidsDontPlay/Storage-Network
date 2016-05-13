@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -100,6 +101,7 @@ public class ItemToggler extends Item {
 			renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1f);
 			GL11.glLineWidth(2.5f);
+			GlStateManager.pushAttrib();
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 			float offset = 1f;
@@ -139,6 +141,7 @@ public class ItemToggler extends Item {
 			renderer.pos(x, y, z + offset).endVertex();
 			renderer.pos(x, y + offset, z + offset).endVertex();
 			tessellator.draw();
+			GlStateManager.popAttrib();
 			// RenderHelper.disableStandardItemLighting();
 
 		}
@@ -148,6 +151,12 @@ public class ItemToggler extends Item {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 
 		GlStateManager.popMatrix();
+	}
+	
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+		super.addInformation(stack, playerIn, tooltip, advanced);
+		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.toggler"));
 	}
 
 }

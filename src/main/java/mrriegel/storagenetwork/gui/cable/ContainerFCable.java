@@ -96,14 +96,14 @@ public class ContainerFCable extends Container {
 			if (itemstack1 == null || Util.getFluid(itemstack1) == null)
 				return null;
 			for (int i = 0; i < 9; i++) {
-				if (!(tile instanceof TileKabel)||((TileKabel) tile).getKind() == Kind.fstorageKabel)
+				if (!(tile instanceof TileKabel) || ((TileKabel) tile).getKind() == Kind.fstorageKabel)
 					i = 4;
 				if (filter.get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
 					filter.put(i, new StackWrapper(itemstack1.copy(), 1));
 					slotChanged();
 					break;
 				}
-				if (!(tile instanceof TileKabel)||((TileKabel) tile).getKind() == Kind.fstorageKabel)
+				if (!(tile instanceof TileKabel) || ((TileKabel) tile).getKind() == Kind.fstorageKabel)
 					break;
 			}
 		}

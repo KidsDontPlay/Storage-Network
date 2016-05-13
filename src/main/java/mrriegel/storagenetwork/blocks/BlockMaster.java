@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
@@ -22,11 +20,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class BlockMaster extends BlockContainer {
@@ -88,7 +88,7 @@ public class BlockMaster extends BlockContainer {
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
 				playerIn.addChatMessage(new ChatComponentText("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
-			playerIn.addChatMessage(new ChatComponentText("(Potential) Empty Slots: "+tile.emptySlots()));
+			playerIn.addChatMessage(new ChatComponentText("(Potential) Empty Slots: " + tile.emptySlots()));
 			playerIn.addChatMessage(new ChatComponentText("Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			for (BlockPos p : tile.connectables) {
@@ -110,6 +110,21 @@ public class BlockMaster extends BlockContainer {
 				playerIn.addChatMessage(new ChatComponentText("   " + e.getKey() + ": " + e.getValue()));
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
+	}
+	
+	public static class Item extends ItemBlock {
+
+		public Item(Block block) {
+			super(block);
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			super.addInformation(stack, playerIn, tooltip, advanced);
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.master"));
+			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.RFNeeded"));
+		}
+
 	}
 
 }

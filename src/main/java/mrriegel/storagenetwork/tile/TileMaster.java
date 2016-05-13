@@ -45,8 +45,6 @@ import cofh.api.energy.IEnergyReceiver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 
@@ -645,7 +643,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		Collections.sort(invs, new Comparator<AbstractFilterTile>() {
 			@Override
 			public int compare(AbstractFilterTile o1, AbstractFilterTile o2) {
-				return Integer.compare(o2.getPriority(),  o1.getPriority());
+				return Integer.compare(o2.getPriority(), o1.getPriority());
 			}
 		});
 
@@ -656,7 +654,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		FluidStack in = stack;
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
-			EnumFacing f = t instanceof TileKabel ? ((TileKabel)t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
+			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
 			if (!Inv.contains(inv, in.getFluid(), f))
 				continue;
 			if (!t.canTransfer(stack.getFluid()))
@@ -670,7 +668,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
-			EnumFacing f = t instanceof TileKabel ? ((TileKabel)t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
+			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
 			if (Inv.contains(inv, in.getFluid(), f))
 				continue;
 			if (!t.canTransfer(stack.getFluid()))
@@ -1000,7 +998,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		int result = 0;
 		for (AbstractFilterTile t : invs) {
 			IFluidHandler inv = t.getFluidTank();
-			EnumFacing f = t instanceof TileKabel ? ((TileKabel)t).getInventoryFace().getOpposite() : null;
+			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : null;
 			if (inv.getTankInfo(f) == null)
 				continue;
 			for (FluidTankInfo i : inv.getTankInfo(f)) {

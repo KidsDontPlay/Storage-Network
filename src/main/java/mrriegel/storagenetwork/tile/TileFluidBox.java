@@ -2,15 +2,12 @@ package mrriegel.storagenetwork.tile;
 
 import mrriegel.storagenetwork.config.ConfigHandler;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -80,46 +77,39 @@ public class TileFluidBox extends AbstractFilterTile {
 	@Override
 	public IFluidHandler getFluidTank() {
 		return new IFluidHandler() {
-			
+
 			@Override
-		    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
-		    {
-		        return tank.fill(resource, doFill);
-		    }
+			public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+				return tank.fill(resource, doFill);
+			}
 
-		    @Override
-		    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
-		    {
-		        if (resource == null || !resource.isFluidEqual(tank.getFluid()))
-		        {
-		            return null;
-		        }
-		        return tank.drain(resource.amount, doDrain);
-		    }
+			@Override
+			public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+				if (resource == null || !resource.isFluidEqual(tank.getFluid())) {
+					return null;
+				}
+				return tank.drain(resource.amount, doDrain);
+			}
 
-		    @Override
-		    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
-		    {
-		        return tank.drain(maxDrain, doDrain);
-		    }
+			@Override
+			public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+				return tank.drain(maxDrain, doDrain);
+			}
 
-		    @Override
-		    public boolean canFill(EnumFacing from, Fluid fluid)
-		    {
-		        return true;
-		    }
+			@Override
+			public boolean canFill(EnumFacing from, Fluid fluid) {
+				return true;
+			}
 
-		    @Override
-		    public boolean canDrain(EnumFacing from, Fluid fluid)
-		    {
-		        return true;
-		    }
+			@Override
+			public boolean canDrain(EnumFacing from, Fluid fluid) {
+				return true;
+			}
 
-		    @Override
-		    public FluidTankInfo[] getTankInfo(EnumFacing from)
-		    {
-		        return new FluidTankInfo[] { tank.getInfo() };
-		    }
+			@Override
+			public FluidTankInfo[] getTankInfo(EnumFacing from) {
+				return new FluidTankInfo[] { tank.getInfo() };
+			}
 		};
 	}
 
