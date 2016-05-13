@@ -19,7 +19,6 @@ public class PacketHandler {
 		INSTANCE.registerMessage(SortMessage.class, SortMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(RecipeMessage.class, RecipeMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(LimitMessage.class, LimitMessage.class, id++, Side.SERVER);
-		INSTANCE.registerMessage(RemoteMessage.class, RemoteMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(InsertMessage.class, InsertMessage.class, id++, Side.SERVER);
 		INSTANCE.registerMessage(StackMessage.class, StackMessage.class, id++, Side.CLIENT);
 		INSTANCE.registerMessage(FilterMessage.class, FilterMessage.class, id++, Side.SERVER);

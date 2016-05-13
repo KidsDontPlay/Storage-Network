@@ -81,8 +81,6 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 						boolean canFill = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, space), fill.copy()) != null;
 						if (space > 0 && canFill) {
 							FluidStack fluid = tile.frequest(message.fluid, space, true);
-							// System.out.println("zip: " + message.fluid);
-							// System.out.println("zap: " + fluid.amount);
 							if (fluid != null) {
 								ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(message.fluid, fluid.amount), fill);
 								if (filled != null) {

@@ -9,7 +9,6 @@ import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.MyGuiContainer;
-import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.ClearMessage;
@@ -228,7 +227,7 @@ public class GuiRequest extends MyGuiContainer {
 			tile.downwards = !tile.downwards;
 		else if (button.id == 1)
 			tile.sort = tile.sort.next();
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), tile.downwards, tile.sort));
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos(), tile.downwards, tile.sort));
 	}
 
 	@Override

@@ -1,15 +1,13 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-
-import java.util.List;
-
+import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
+import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileMaster;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -17,8 +15,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import com.google.common.collect.Lists;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 	int id;
@@ -55,13 +51,24 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-					FilterItem x = new FilterItem(new ItemStack(Blocks.bookshelf), true, false, false);
-					List<FilterItem> missing = Lists.newArrayList();
-					// System.out.println("can: " +
-					// tile.getMissing(tile.getStacks(), x, 5, true,missing));
-					// System.out.println(missing);
+
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
+				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
+					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.getHeldItem());
+					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), false);
+					if (stack != null) {
+						if (message.shift) {
+							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
+							if (rest != 0) {
+								ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+							}
+						} else {
+							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
+							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
+						}
+					}
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 				}
 
 			}

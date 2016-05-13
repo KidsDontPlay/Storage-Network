@@ -21,7 +21,7 @@ public class ConfigHandler {
 		energyCapacity = config.get(Configuration.CATEGORY_GENERAL, "energyCapacity", 32000).getInt();
 		energyMultiplier = config.get(Configuration.CATEGORY_GENERAL, "energyMultiplier", 15).getInt();
 		rangeWirelessAccessor = config.get(Configuration.CATEGORY_GENERAL, "rangeWirelessAccessor", 32).getInt();
-		itemBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "itemBoxCapacity", 256).getInt();
+		itemBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "itemBoxCapacity", 200).getInt();
 		fluidBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "fluidBoxCapacity", 64).getInt();
 
 		if (config.hasChanged()) {

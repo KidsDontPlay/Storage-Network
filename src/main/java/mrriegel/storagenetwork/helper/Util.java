@@ -141,9 +141,6 @@ public class Util {
 	}
 
 	public static ItemStack randomItem() {
-		// int a = new Random().nextInt(Item.itemRegistry.getKeys().size());
-		// return new
-		// ItemStack(Item.itemRegistry.getObject(Lists.newArrayList(Item.itemRegistry.getKeys()).get(a)));
 		int a = new Random().nextInt(stacks.size());
 		return stacks.get(a);
 	}

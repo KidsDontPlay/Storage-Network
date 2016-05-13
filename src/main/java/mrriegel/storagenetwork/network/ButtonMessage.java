@@ -40,9 +40,6 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 					case 1:
 						tile.setPriority(tile.getPriority() + 1);
 						break;
-					// case 2:
-					// tile.setMeta(!tile.isMeta());
-					// break;
 					case 3:
 						tile.setWhite(!tile.isWhite());
 						break;

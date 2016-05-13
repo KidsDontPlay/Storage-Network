@@ -140,7 +140,7 @@ public class GuiFCable extends MyGuiContainer {
 			GlStateManager.popMatrix();
 			GlStateManager.enableLighting();
 		}
-		if (white.isMouseOver()) {
+		if (white != null && white.isMouseOver()) {
 			List<String> list = new ArrayList<String>();
 			list.add(tile.isWhite() ? "Whitelist" : "Blacklist");
 			GlStateManager.pushMatrix();

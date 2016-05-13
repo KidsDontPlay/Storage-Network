@@ -18,17 +18,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMessage> {
-	int x, y, z;
+	BlockPos pos;
 	boolean direction;
 	Sort sort;
 
 	public SortMessage() {
 	}
 
-	public SortMessage(int x, int y, int z, boolean direction, Sort sort) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public SortMessage(BlockPos pos, boolean direction, Sort sort) {
+		this.pos = pos;
 		this.direction = direction;
 		this.sort = sort;
 	}
@@ -46,7 +44,7 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 					return;
 
 				}
-				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
+				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
 				if (t instanceof TileRequest) {
 					TileRequest tile = (TileRequest) t;
 					tile.sort = message.sort;
@@ -63,18 +61,14 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+		this.pos = BlockPos.fromLong(buf.readLong());
 		this.direction = buf.readBoolean();
 		this.sort = Sort.valueOf(ByteBufUtils.readUTF8String(buf));
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+		buf.writeLong(this.pos.toLong());
 		buf.writeBoolean(this.direction);
 		ByteBufUtils.writeUTF8String(buf, this.sort.toString());
 	}

@@ -173,7 +173,7 @@ public class GuiFRequest extends MyGuiContainer {
 			tile.downwards = !tile.downwards;
 		else if (button.id == 1)
 			tile.sort = tile.sort.next();
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), tile.downwards, tile.sort));
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(tile.getPos(), tile.downwards, tile.sort));
 	}
 
 	@Override

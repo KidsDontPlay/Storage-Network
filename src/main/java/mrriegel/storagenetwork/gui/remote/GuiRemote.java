@@ -14,7 +14,7 @@ import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
-import mrriegel.storagenetwork.network.RemoteMessage;
+import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -53,7 +54,7 @@ public class GuiRemote extends MyGuiContainer {
 		this.xSize = 176;
 		this.ySize = 256;
 		stacks = new ArrayList<StackWrapper>();
-		PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(Minecraft.getMinecraft().thePlayer.getHeldItem(), "dim"), null, false, false));
+		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
 	}
 
 	@Override
@@ -226,14 +227,14 @@ public class GuiRemote extends MyGuiContainer {
 			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
 		else if (button.id == 1)
 			NBTHelper.setString(mc.thePlayer.getHeldItem(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")).next().toString());
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(BlockPos.ORIGIN, NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
 	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (over != null && mc.thePlayer.inventory.getItemStack() == null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RemoteMessage(mouseButton, NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "dim"), over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
@@ -250,7 +251,7 @@ public class GuiRemote extends MyGuiContainer {
 		if (!this.checkHotbarKeys(p_73869_2_)) {
 			Keyboard.enableRepeatEvents(true);
 			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
-				PacketHandler.INSTANCE.sendToServer(new RemoteMessage(0, NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "dim"), null, false, false));
+				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
 			} else {
 				super.keyTyped(p_73869_1_, p_73869_2_);
 			}

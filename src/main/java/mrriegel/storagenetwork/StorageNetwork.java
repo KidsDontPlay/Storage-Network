@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, guiFactory = "mrriegel.storagenetwork.config.GuiFactory")
 public class StorageNetwork {
 	public static final String MODID = "storagenetwork";
-	public static final String VERSION = "1.9.2";
+	public static final String VERSION = "1.10.0";
 	public static final String MODNAME = "Storage Network";
 
 	@Instance(StorageNetwork.MODID)
@@ -63,22 +63,12 @@ public class StorageNetwork {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
-		// ItemStack s = new ItemStack(ModItems.ssdd);
-		// System.out.println("one: " + s.getTagCompound());
-		// IInventory i = ItemSSDD.getInventory(s);
-		// System.out.println("zip: " + i.getSizeInventory());
-		// i.setInventorySlotContents(3, new ItemStack(Blocks.furnace));
-		// ItemSSDD.setInventory(i, s);
-		// System.out.println("two: " + s.getTagCompound());
 	}
 
 	@SubscribeEvent
 	public void task(PlayerInteractEvent e) {
 		if (!e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK) {
-			// System.out.println(e.world.getTileEntity(e.pos).serializeNBT());
-			// e.entityPlayer.inventory.addItemStackToInventory(Util.randomItem());
 		}
-		// System.out.println(e.entityPlayer.getUniqueID());
 	}
 
 }

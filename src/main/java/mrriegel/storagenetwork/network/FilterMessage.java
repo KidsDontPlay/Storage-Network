@@ -6,7 +6,6 @@ import mrriegel.storagenetwork.gui.cable.ContainerFCable;
 import mrriegel.storagenetwork.gui.indicator.ContainerIndicator;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -71,8 +70,6 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (this.wrap != null)
 			this.wrap.writeToNBT(nbt);
-		buf.array();
-		PacketBuffer f;
 		ByteBufUtils.writeTag(buf, nbt);
 	}
 }

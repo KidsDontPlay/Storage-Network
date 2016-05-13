@@ -21,6 +21,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -172,7 +173,7 @@ public class GuiFRemote extends MyGuiContainer {
 			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
 		else if (button.id == 1)
 			NBTHelper.setString(mc.thePlayer.getHeldItem(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")).next().toString());
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(BlockPos.ORIGIN, NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
 	}
 
 	@Override

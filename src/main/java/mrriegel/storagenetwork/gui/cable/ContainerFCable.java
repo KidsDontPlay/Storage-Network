@@ -10,7 +10,6 @@ import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
-import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -77,7 +76,9 @@ public class ContainerFCable extends Container {
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		return true;
-//		return tile != null && tile.getMaster() != null && tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster;
+		// return tile != null && tile.getMaster() != null &&
+		// tile.getWorld().getTileEntity(tile.getMaster()) instanceof
+		// TileMaster;
 	}
 
 	public void slotChanged() {
