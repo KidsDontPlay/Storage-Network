@@ -456,27 +456,28 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		en.readFromNBT(compound);
-//		NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
-//		tasks = new ArrayList<CraftingTask>();
-//		for (int i = 0; i < tasksList.tagCount(); i++) {
-//			NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
-//			CraftingTask t = new CraftingTask();
-//			t.readFromNBT(stackTag);
-//			tasks.add(t);
-//		}
+		// NBTTagList tasksList = compound.getTagList("tasks",
+		// Constants.NBT.TAG_COMPOUND);
+		// tasks = new ArrayList<CraftingTask>();
+		// for (int i = 0; i < tasksList.tagCount(); i++) {
+		// NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
+		// CraftingTask t = new CraftingTask();
+		// t.readFromNBT(stackTag);
+		// tasks.add(t);
+		// }
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		en.writeToNBT(compound);
-//		NBTTagList tasksList = new NBTTagList();
-//		for (CraftingTask t : tasks) {
-//			NBTTagCompound stackTag = new NBTTagCompound();
-//			t.writeToNBT(stackTag);
-//			tasksList.appendTag(stackTag);
-//		}
-//		compound.setTag("tasks", tasksList);
+		// NBTTagList tasksList = new NBTTagList();
+		// for (CraftingTask t : tasks) {
+		// NBTTagCompound stackTag = new NBTTagCompound();
+		// t.writeToNBT(stackTag);
+		// tasksList.appendTag(stackTag);
+		// }
+		// compound.setTag("tasks", tasksList);
 	}
 
 	private void addConnectables(final BlockPos pos) {

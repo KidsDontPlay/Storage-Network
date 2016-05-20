@@ -1,10 +1,7 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.proxy.CommonProxy;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -30,18 +27,6 @@ public class StorageNetwork {
 
 	@SidedProxy(clientSide = "mrriegel.storagenetwork.proxy.ClientProxy", serverSide = "mrriegel.storagenetwork.proxy.CommonProxy")
 	public static CommonProxy proxy;
-
-	public static CreativeTabs tab1 = new CreativeTabs(StorageNetwork.MODID) {
-		@Override
-		public Item getTabIconItem() {
-			return Item.getItemFromBlock(ModBlocks.kabel);
-		}
-
-		@Override
-		public String getTranslatedTabLabel() {
-			return StorageNetwork.MODNAME;
-		}
-	};
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

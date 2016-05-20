@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.items;
 
 import java.util.List;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import net.minecraft.creativetab.CreativeTabs;
@@ -17,7 +18,7 @@ public class ItemTemplate extends Item {
 
 	public ItemTemplate() {
 		super();
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 		this.setHasSubtypes(true);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":template");
 	}

@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.blocks;
 
 import java.util.List;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.tile.TileIndicator;
@@ -28,7 +29,7 @@ public class BlockIndicator extends BlockConnectable {
 	public BlockIndicator() {
 		super(Material.iron);
 		this.setHardness(3.0F);
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(STATE, false));
 		this.setUnlocalizedName(StorageNetwork.MODID + ":indicator");
 	}

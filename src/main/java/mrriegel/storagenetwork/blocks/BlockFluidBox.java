@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.blocks;
 import java.util.List;
 import java.util.Random;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
@@ -30,7 +31,7 @@ public class BlockFluidBox extends BlockConnectable {
 	public BlockFluidBox() {
 		super(Material.iron);
 		this.setHardness(2.0F);
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":fluidbox");
 	}
 

@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.blocks;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
@@ -18,7 +19,7 @@ public class BlockContainer extends BlockConnectable {
 	public BlockContainer() {
 		super(Material.iron);
 		this.setHardness(3.0F);
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":container");
 	}
 

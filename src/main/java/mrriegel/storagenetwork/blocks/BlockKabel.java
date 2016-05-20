@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.blocks;
 
 import java.util.List;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
@@ -52,7 +53,7 @@ public class BlockKabel extends BlockContainer {
 	public BlockKabel() {
 		super(Material.iron);
 		this.setHardness(1.4F);
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 	}
 
 	@Override

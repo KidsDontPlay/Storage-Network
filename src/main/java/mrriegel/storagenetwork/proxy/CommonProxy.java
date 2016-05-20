@@ -31,4 +31,5 @@ public class CommonProxy {
 	public void postInit(FMLPostInitializationEvent event) {
 		Util.init();
 	}
+
 }

@@ -73,16 +73,16 @@ public class CraftingRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.fannexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.bucket), 'c', ModBlocks.kabel));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.itemBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.planks) {
 
-			@Override
-			public ItemStack getCraftingResult(InventoryCrafting var1) {
-				TileItemBox t = new TileItemBox();
-				t.getInventory().setInventorySlotContents(0, Util.randomItem());
-				ItemStack res = super.getCraftingResult(var1);
-				NBTTagCompound x = new NBTTagCompound();
-				t.writeInventory(x);
-				res.setTagCompound(x);
-				return res;
-			}
+//			@Override
+//			public ItemStack getCraftingResult(InventoryCrafting var1) {
+//				TileItemBox t = new TileItemBox();
+//				t.getInventory().setInventorySlotContents(0, Util.randomItem());
+//				ItemStack res = super.getCraftingResult(var1);
+//				NBTTagCompound x = new NBTTagCompound();
+//				t.writeInventory(x);
+//				res.setTagCompound(x);
+//				return res;
+//			}
 		});
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fluidBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.glass);
 	}

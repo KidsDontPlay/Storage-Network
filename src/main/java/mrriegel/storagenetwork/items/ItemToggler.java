@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.items;
 import java.awt.Color;
 import java.util.List;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.Util;
@@ -32,7 +33,7 @@ public class ItemToggler extends Item {
 
 	public ItemToggler() {
 		super();
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":toggler");
 	}
 

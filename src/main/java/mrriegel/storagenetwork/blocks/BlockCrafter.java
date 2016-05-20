@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.blocks;
 
 import java.util.List;
 
+import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
@@ -24,7 +25,7 @@ public class BlockCrafter extends BlockContainer {
 	public BlockCrafter() {
 		super(Material.iron);
 		this.setHardness(3.5F);
-		this.setCreativeTab(StorageNetwork.tab1);
+		this.setCreativeTab(CreativeTab.tab1);
 		this.setUnlocalizedName(StorageNetwork.MODID + ":crafter");
 	}
 
