@@ -27,6 +27,10 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
+		readSettings(compound);
+	}
+
+	public void readSettings(NBTTagCompound compound) {
 		white = compound.getBoolean("white");
 		priority = compound.getInteger("prio");
 		NBTTagList invList = compound.getTagList("crunchTE", Constants.NBT.TAG_COMPOUND);
@@ -61,6 +65,10 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
+		writeSettings(compound);
+	}
+
+	public void writeSettings(NBTTagCompound compound) {
 		compound.setBoolean("white", white);
 		compound.setInteger("prio", priority);
 		NBTTagList invList = new NBTTagList();

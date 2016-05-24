@@ -3,15 +3,12 @@ package mrriegel.storagenetwork.init;
 import java.util.Arrays;
 import java.util.List;
 
-import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemRemote;
-import mrriegel.storagenetwork.tile.TileItemBox;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -71,20 +68,10 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.toggler), "  t", " s ", "i  ", 'i', Items.iron_ingot, 't', Blocks.redstone_torch, 's', Items.stick);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.annexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.iron_pickaxe), 'c', ModBlocks.kabel));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.fannexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.bucket), 'c', ModBlocks.kabel));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.itemBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.planks) {
-
-//			@Override
-//			public ItemStack getCraftingResult(InventoryCrafting var1) {
-//				TileItemBox t = new TileItemBox();
-//				t.getInventory().setInventorySlotContents(0, Util.randomItem());
-//				ItemStack res = super.getCraftingResult(var1);
-//				NBTTagCompound x = new NBTTagCompound();
-//				t.writeInventory(x);
-//				res.setTagCompound(x);
-//				return res;
-//			}
-		});
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.itemBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.planks));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fluidBox), "imi", "mgm", "imi", 'i', Items.iron_ingot, 'g', Items.gold_ingot, 'm', Blocks.glass);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.duplicator), "  t", " s ", "i  ", 'i', Items.iron_ingot, 't', Items.paper, 's', Items.stick);
+		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.duplicator), ModItems.duplicator);
 	}
 
 }

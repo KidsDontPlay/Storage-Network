@@ -124,6 +124,8 @@ public class ContainerFCable extends Container {
 		FluidStack f1 = Util.getFluid(s1);
 		FluidStack f2 = Util.getFluid(s2);
 		// System.out.println(f1.getFluid() +" "+ f2.getFluid());
+		if (f1 == null || f2 == null)
+			return false;
 		return f1.getFluid() == f2.getFluid();
 	}
 

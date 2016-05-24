@@ -29,6 +29,7 @@ item.storagenetwork:fremote_1.name=Fluid Advanced Wireless Accessor
 
 item.storagenetwork:coverstick.name=Cover Staff
 item.storagenetwork:toggler.name=Toggle Staff
+item.storagenetwork:duplicator.name=Setting Duplicator
 
 gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the network.
 gui.storagenetwork.operate.tooltip.more=more
@@ -66,3 +67,4 @@ tooltip.storagenetwork.upgrade_0=Increases the speed of importing/exporting.
 tooltip.storagenetwork.upgrade_1=Activity of the cable depends on the amount of items.
 tooltip.storagenetwork.upgrade_2=Increases the stack size of task.
 tooltip.storagenetwork.upgrade_3=Keeps a specific amount of items in the attached inventory (only in export cable).
+tooltip.storagenetwork.duplicator=Shift right click a cable to save settings. Right click another cable to copy the settings.

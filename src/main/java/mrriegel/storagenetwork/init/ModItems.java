@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.init;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.items.ItemCoverStick;
+import mrriegel.storagenetwork.items.ItemDuplicator;
 import mrriegel.storagenetwork.items.ItemFRemote;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.items.ItemSSDD;
@@ -21,6 +22,7 @@ public class ModItems {
 	public static final Item template = new ItemTemplate();
 	public static final Item toggler = new ItemToggler();
 	public static final Item ssdd = new ItemSSDD();
+	public static final Item duplicator = new ItemDuplicator();
 
 	public static void init() {
 		GameRegistry.registerItem(upgrade, "upgrade");
@@ -30,6 +32,7 @@ public class ModItems {
 		// GameRegistry.registerItem(template, "template");
 		GameRegistry.registerItem(toggler, "toggler");
 		// GameRegistry.registerItem(ssdd, "ssdd");
+		GameRegistry.registerItem(duplicator, "duplicator");
 	}
 
 }

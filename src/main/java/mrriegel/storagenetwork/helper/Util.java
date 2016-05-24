@@ -29,11 +29,10 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import com.google.common.collect.Lists;
-
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
-//	private static List<ItemStack> stacks = Lists.newArrayList();
+
+	// private static List<ItemStack> stacks = Lists.newArrayList();
 
 	public static void init() {
 		Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
@@ -42,10 +41,10 @@ public class Util {
 			String modName = modEntry.getValue().getName();
 			modNamesForIds.put(lowercaseId, modName);
 		}
-//		for (ResourceLocation r : Item.itemRegistry.getKeys()) {
-//			Item b = Item.itemRegistry.getObject(r);
-//			b.getSubItems(b, b.getCreativeTab(), stacks);
-//		}
+		// for (ResourceLocation r : Item.itemRegistry.getKeys()) {
+		// Item b = Item.itemRegistry.getObject(r);
+		// b.getSubItems(b, b.getCreativeTab(), stacks);
+		// }
 	}
 
 	@Nonnull
@@ -140,8 +139,8 @@ public class Util {
 		return lis;
 	}
 
-//	public static ItemStack randomItem() {
-//		int a = new Random().nextInt(stacks.size());
-//		return stacks.get(a);
-//	}
+	// public static ItemStack randomItem() {
+	// int a = new Random().nextInt(stacks.size());
+	// return stacks.get(a);
+	// }
 }

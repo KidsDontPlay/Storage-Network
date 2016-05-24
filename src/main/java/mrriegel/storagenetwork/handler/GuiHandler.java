@@ -42,6 +42,7 @@ public class GuiHandler implements IGuiHandler {
 	public static final int FREQUEST = 8;
 	public static final int FREMOTE = 9;
 	public static final int INDICATOR = 10;
+	public static final int CASE = 11;
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
