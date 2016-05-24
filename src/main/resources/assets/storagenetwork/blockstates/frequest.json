@@ -1,7 +1,30 @@
 {
-    "variants" : {
-        "normal" : {
-            "model" : "storagenetwork:frequest"
+    "variants":{
+        "facing=north":{
+            "model":"storagenetwork:frequest",
+            "x":270
+        },
+        "facing=south":{
+            "model":"storagenetwork:frequest",
+            "x":270,
+            "y":180
+        },
+        "facing=west":{
+            "model":"storagenetwork:frequest",
+            "x":270,
+            "y":270
+        },
+        "facing=east":{
+            "model":"storagenetwork:frequest",
+            "x":270,
+            "y":90
+        },
+        "facing=down":{
+            "model":"storagenetwork:frequest"
+        },
+        "facing=up":{
+            "model":"storagenetwork:frequest",
+            "x":180
         }
     }
 }

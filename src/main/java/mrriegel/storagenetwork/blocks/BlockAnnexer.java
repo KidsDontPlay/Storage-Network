@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.blocks;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.tile.TileAnnexer;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -29,7 +28,8 @@ public class BlockAnnexer extends BlockConnectable {
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		this.setUnlocalizedName(StorageNetwork.MODID + ":annexer");
+		this.setRegistryName("annexer");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

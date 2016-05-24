@@ -1,10 +1,30 @@
 {
-    "variants": {
-        "facing=north": { "model": "storagenetwork:annexer", "x":90, "y": 180},
-        "facing=south": { "model": "storagenetwork:annexer", "x": 90 },
-        "facing=west":  { "model": "storagenetwork:annexer", "x":90, "y": 90 },
-        "facing=east":  { "model": "storagenetwork:annexer", "x":90, "y": 270 },
-        "facing=down":  { "model": "storagenetwork:annexer" },
-        "facing=up":  { "model": "storagenetwork:annexer", "x": 180 }
+    "variants":{
+        "facing=north":{
+            "model":"storagenetwork:annexer",
+            "x":90,
+            "y":180
+        },
+        "facing=south":{
+            "model":"storagenetwork:annexer",
+            "x":90
+        },
+        "facing=west":{
+            "model":"storagenetwork:annexer",
+            "x":90,
+            "y":90
+        },
+        "facing=east":{
+            "model":"storagenetwork:annexer",
+            "x":90,
+            "y":270
+        },
+        "facing=down":{
+            "model":"storagenetwork:annexer"
+        },
+        "facing=up":{
+            "model":"storagenetwork:annexer",
+            "x":180
+        }
     }
 }

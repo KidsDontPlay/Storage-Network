@@ -27,21 +27,19 @@ import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@ObjectHolder(value = StorageNetwork.MODID)
 public class ModBlocks {
 	public static final Block master = new BlockMaster();
 	public static final Block request = new BlockRequest();
 	public static final Block frequest = new BlockFRequest();
-	public static final Block kabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":kabel");
-	public static final Block storageKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":storageKabel");
-	public static final Block exKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
-	public static final Block imKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":imKabel");
-	public static final Block vacuumKabel = new BlockKabel().setUnlocalizedName(StorageNetwork.MODID + ":vacuumKabel");
-	public static final Block fstorageKabel = new BlockFKabel().setUnlocalizedName(StorageNetwork.MODID + ":fstorageKabel");
-	public static final Block fexKabel = new BlockFKabel().setUnlocalizedName(StorageNetwork.MODID + ":fexKabel");
-	public static final Block fimKabel = new BlockFKabel().setUnlocalizedName(StorageNetwork.MODID + ":fimKabel");
+	public static final Block kabel = new BlockKabel().setRegistryName("kabel").setUnlocalizedName(StorageNetwork.MODID + ":kabel");
+	public static final Block storageKabel = new BlockKabel().setRegistryName("storageKabel").setUnlocalizedName(StorageNetwork.MODID + ":storageKabel");
+	public static final Block exKabel = new BlockKabel().setRegistryName("exKabel").setUnlocalizedName(StorageNetwork.MODID + ":exKabel");
+	public static final Block imKabel = new BlockKabel().setRegistryName("imKabel").setUnlocalizedName(StorageNetwork.MODID + ":imKabel");
+	public static final Block vacuumKabel = new BlockKabel().setRegistryName("vacuumKabel").setUnlocalizedName(StorageNetwork.MODID + ":vacuumKabel");
+	public static final Block fstorageKabel = new BlockFKabel().setRegistryName("fstorageKabel").setUnlocalizedName(StorageNetwork.MODID + ":fstorageKabel");
+	public static final Block fexKabel = new BlockFKabel().setRegistryName("fexKabel").setUnlocalizedName(StorageNetwork.MODID + ":fexKabel");
+	public static final Block fimKabel = new BlockFKabel().setRegistryName("fimKabel").setUnlocalizedName(StorageNetwork.MODID + ":fimKabel");
 	public static final Block cover = new BlockCover();
 	public static final Block container = new BlockContainer();
 	public static final Block crafter = new BlockCrafter();
@@ -52,25 +50,25 @@ public class ModBlocks {
 	public static final Block fluidBox = new BlockFluidBox();
 
 	public static void init() {
-		GameRegistry.registerBlock(master, BlockMaster.Item.class, "master");
-		GameRegistry.registerBlock(request, BlockRequest.Item.class, "request");
-		GameRegistry.registerBlock(frequest, BlockFRequest.Item.class, "frequest");
-		GameRegistry.registerBlock(kabel, BlockKabel.Item.class, "kabel");
-		GameRegistry.registerBlock(storageKabel, BlockKabel.Item.class, "storageKabel");
-		GameRegistry.registerBlock(exKabel, BlockKabel.Item.class, "exKabel");
-		GameRegistry.registerBlock(imKabel, BlockKabel.Item.class, "imKabel");
-		GameRegistry.registerBlock(vacuumKabel, BlockKabel.Item.class, "vacuumKabel");
-		GameRegistry.registerBlock(fstorageKabel, BlockFKabel.Item.class, "fstorageKabel");
-		GameRegistry.registerBlock(fexKabel, BlockFKabel.Item.class, "fexKabel");
-		GameRegistry.registerBlock(fimKabel, BlockFKabel.Item.class, "fimKabel");
-		GameRegistry.registerBlock(cover, BlockCover.Item.class, "cover");
-		GameRegistry.registerBlock(indicator, BlockIndicator.Item.class, "indicator");
+		GameRegistry.registerBlock(master, BlockMaster.Item.class);
+		GameRegistry.registerBlock(request, BlockRequest.Item.class);
+		GameRegistry.registerBlock(frequest, BlockFRequest.Item.class);
+		GameRegistry.registerBlock(kabel, BlockKabel.Item.class);
+		GameRegistry.registerBlock(storageKabel, BlockKabel.Item.class);
+		GameRegistry.registerBlock(exKabel, BlockKabel.Item.class);
+		GameRegistry.registerBlock(imKabel, BlockKabel.Item.class);
+		GameRegistry.registerBlock(vacuumKabel, BlockKabel.Item.class);
+		GameRegistry.registerBlock(fstorageKabel, BlockFKabel.Item.class);
+		GameRegistry.registerBlock(fexKabel, BlockFKabel.Item.class);
+		GameRegistry.registerBlock(fimKabel, BlockFKabel.Item.class);
+		GameRegistry.registerBlock(cover, BlockCover.Item.class);
+		GameRegistry.registerBlock(indicator, BlockIndicator.Item.class);
 		// GameRegistry.registerBlock(container, "container");
 		// GameRegistry.registerBlock(crafter, "crafter");
-		GameRegistry.registerBlock(annexer, BlockAnnexer.Item.class, "annexer");
-		GameRegistry.registerBlock(fannexer, BlockFannexer.Item.class, "fannexer");
-		GameRegistry.registerBlock(itemBox, BlockItemBox.Item.class, "itemBox");
-		GameRegistry.registerBlock(fluidBox, BlockFluidBox.Item.class, "fluidBox");
+		GameRegistry.registerBlock(annexer, BlockAnnexer.Item.class);
+		GameRegistry.registerBlock(fannexer, BlockFannexer.Item.class);
+		GameRegistry.registerBlock(itemBox, BlockItemBox.Item.class);
+		GameRegistry.registerBlock(fluidBox, BlockFluidBox.Item.class);
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");

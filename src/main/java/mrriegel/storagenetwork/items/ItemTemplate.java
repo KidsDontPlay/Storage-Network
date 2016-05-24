@@ -20,7 +20,8 @@ public class ItemTemplate extends Item {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setHasSubtypes(true);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":template");
+		this.setRegistryName("template");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

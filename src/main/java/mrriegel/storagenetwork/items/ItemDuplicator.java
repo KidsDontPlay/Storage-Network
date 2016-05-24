@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.items;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +20,8 @@ public class ItemDuplicator extends Item {
 	public ItemDuplicator() {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":duplicator");
+		this.setRegistryName("duplicator");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

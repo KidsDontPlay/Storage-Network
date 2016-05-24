@@ -33,7 +33,8 @@ public class BlockItemBox extends BlockConnectable {
 		super(Material.iron);
 		this.setHardness(2.0F);
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":itembox");
+		this.setRegistryName("itemBox");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

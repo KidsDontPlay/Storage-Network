@@ -29,7 +29,6 @@ public class ItemRemote extends Item {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setHasSubtypes(true);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":remote");
 	}
 
 	@Override

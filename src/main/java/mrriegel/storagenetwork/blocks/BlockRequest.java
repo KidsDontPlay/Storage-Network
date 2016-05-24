@@ -10,7 +10,11 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -21,12 +25,15 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class BlockRequest extends BlockConnectable {
+	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
 	public BlockRequest() {
 		super(Material.iron);
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":request");
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		this.setRegistryName("request");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override
@@ -37,6 +44,32 @@ public class BlockRequest extends BlockConnectable {
 	@Override
 	public int getRenderType() {
 		return 3;
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		EnumFacing enumfacing = EnumFacing.getFront(meta);
+		if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
+			enumfacing = EnumFacing.NORTH;
+		}
+
+		return this.getDefaultState().withProperty(FACING, enumfacing);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return state.getValue(FACING).getIndex();
+	}
+
+	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, new IProperty[] { FACING });
+	}
+
+	@Override
+	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+		IBlockState s = this.getDefaultState().withProperty(FACING, facing.getOpposite());
+		return s;
 	}
 
 	@Override

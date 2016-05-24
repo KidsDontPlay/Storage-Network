@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.items;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,7 +22,8 @@ public class ItemUpgrade extends Item {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setHasSubtypes(true);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":upgrade");
+		this.setRegistryName("upgrade");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

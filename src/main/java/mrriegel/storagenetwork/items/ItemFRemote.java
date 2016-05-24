@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.items;
 
 import java.util.List;
 
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +12,6 @@ public class ItemFRemote extends ItemRemote {
 
 	public ItemFRemote() {
 		super();
-		this.setUnlocalizedName(StorageNetwork.MODID + ":fremote");
 	}
 
 	@Override

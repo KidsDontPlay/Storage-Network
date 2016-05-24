@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.items;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.StorageNetwork;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -20,7 +19,8 @@ public class ItemSSDD extends Item {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setHasSubtypes(true);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":ssdd");
+		this.setRegistryName("ssdd");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

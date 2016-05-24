@@ -33,7 +33,8 @@ public class BlockFluidBox extends BlockConnectable {
 		super(Material.iron);
 		this.setHardness(2.0F);
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":fluidbox");
+		this.setRegistryName("fluidBox");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

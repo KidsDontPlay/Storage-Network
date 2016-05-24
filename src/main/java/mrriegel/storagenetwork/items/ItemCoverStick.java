@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.items;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.tile.TileKabel;
 import net.minecraft.block.Block;
@@ -23,7 +22,8 @@ public class ItemCoverStick extends Item {
 	public ItemCoverStick() {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":coverstick");
+		this.setRegistryName("coverstick");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

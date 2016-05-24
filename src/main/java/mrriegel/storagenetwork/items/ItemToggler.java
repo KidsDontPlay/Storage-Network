@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileKabel;
@@ -34,7 +33,8 @@ public class ItemToggler extends Item {
 	public ItemToggler() {
 		super();
 		this.setCreativeTab(CreativeTab.tab1);
-		this.setUnlocalizedName(StorageNetwork.MODID + ":toggler");
+		this.setRegistryName("toggler");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override

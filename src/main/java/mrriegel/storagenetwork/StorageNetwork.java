@@ -52,7 +52,7 @@ public class StorageNetwork {
 
 	@SubscribeEvent
 	public void task(PlayerInteractEvent e) {
-		if (!e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK) {
+		if (e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK) {
 		}
 	}
 

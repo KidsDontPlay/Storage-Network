@@ -31,7 +31,8 @@ public class BlockIndicator extends BlockConnectable {
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(STATE, false));
-		this.setUnlocalizedName(StorageNetwork.MODID + ":indicator");
+		this.setRegistryName("indicator");
+		this.setUnlocalizedName(getRegistryName().toString());
 	}
 
 	@Override
