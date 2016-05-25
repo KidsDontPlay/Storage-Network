@@ -1,7 +1,7 @@
 {
     "parent" : "storagenetwork:model/stamm", 
     "textures" : {
-        "deck" : "storagenetwork:blocks/itemBox_deck", 
+        "deck" : "storagenetwork:blocks/item_rest", 
         "side" : "storagenetwork:blocks/itemBox_side"
     }
 }

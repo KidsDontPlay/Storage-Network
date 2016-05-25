@@ -3,6 +3,6 @@
     "textures" : {
         "top" : "storagenetwork:blocks/annexer_break", 
         "rest" : "storagenetwork:blocks/annexer_rest",
-        "down" : "storagenetwork:blocks/annexer_down"
+        "down" : "storagenetwork:blocks/item_rest"
     }
 }

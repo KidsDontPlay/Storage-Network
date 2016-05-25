@@ -2,6 +2,6 @@
     "parent" : "storagenetwork:model/top", 
     "textures" : {
         "top" : "storagenetwork:blocks/frequest_top", 
-        "rest" : "storagenetwork:blocks/frequest_rest"
+        "rest" : "storagenetwork:blocks/fluid_rest"
     }
 }

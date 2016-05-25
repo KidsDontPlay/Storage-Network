@@ -3,6 +3,6 @@
     "textures" : {
         "top" : "storagenetwork:blocks/fannexer_break", 
         "rest" : "storagenetwork:blocks/fannexer_rest",
-        "down" : "storagenetwork:blocks/fannexer_down"
+        "down" : "storagenetwork:blocks/fluid_rest"
     }
 }
