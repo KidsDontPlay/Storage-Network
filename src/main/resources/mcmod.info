@@ -2,13 +2,13 @@
 {
   "modid": "storagenetwork",
   "name": "Storage Network",
-  "description": "Example placeholder mod.",
+  "description": "Connect your inventories and manage your items easily.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["MrRiegel"],
+  "credits": "The Forge and FML guys",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

@@ -1,8 +1,6 @@
 package mrriegel.storagenetwork.gui.cable;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -22,20 +20,18 @@ import net.minecraftforge.fluids.FluidStack;
 public class ContainerFCable extends Container {
 	InventoryPlayer playerInv;
 	public AbstractFilterTile tile;
-	private Map<Integer, StackWrapper> filter;
 	IInventory upgrades;
 
 	public ContainerFCable(AbstractFilterTile tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
-		filter = new HashMap<Integer, StackWrapper>(tile.getFilter());
-		upgrades = new InventoryBasic("upgrades", false, 4) {
-			@Override
-			public int getInventoryStackLimit() {
-				return 4;
-			}
-		};
 		if (tile instanceof TileKabel && ((TileKabel) tile).isUpgradeable()) {
+			upgrades = new InventoryBasic("upgrades", false, 4) {
+				@Override
+				public int getInventoryStackLimit() {
+					return 4;
+				}
+			};
 			for (int i = 0; i < ((TileKabel) tile).getUpgrades().size(); i++) {
 				upgrades.setInventorySlotContents(i, ((TileKabel) tile).getUpgrades().get(i));
 			}
@@ -82,7 +78,6 @@ public class ContainerFCable extends Container {
 	}
 
 	public void slotChanged() {
-		tile.setFilter(filter);
 		if (tile instanceof TileKabel) {
 			((TileKabel) tile).setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
 			for (int i = 0; i < upgrades.getSizeInventory(); i++)
@@ -100,8 +95,8 @@ public class ContainerFCable extends Container {
 			for (int i = 0; i < 9; i++) {
 				if (!(tile instanceof TileKabel) || ((TileKabel) tile).getKind() == Kind.fstorageKabel)
 					i = 4;
-				if (filter.get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
-					filter.put(i, new StackWrapper(itemstack1.copy(), 1));
+				if (tile.getFilter().get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
+					tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), 1));
 					slotChanged();
 					break;
 				}
@@ -114,7 +109,7 @@ public class ContainerFCable extends Container {
 
 	boolean in(StackWrapper stack) {
 		for (int i = 0; i < 9; i++) {
-			if (filter.get(i) != null && sameFluid(filter.get(i).getStack(), stack.getStack()))
+			if (tile.getFilter().get(i) != null && sameFluid(tile.getFilter().get(i).getStack(), stack.getStack()))
 				return true;
 		}
 		return false;
@@ -127,14 +122,6 @@ public class ContainerFCable extends Container {
 		if (f1 == null || f2 == null)
 			return false;
 		return f1.getFluid() == f2.getFluid();
-	}
-
-	public Map<Integer, StackWrapper> getFilter() {
-		return filter;
-	}
-
-	public void setFilter(Map<Integer, StackWrapper> filter) {
-		this.filter = filter;
 	}
 
 }

@@ -36,13 +36,13 @@ public class FilterMessage implements IMessage, IMessageHandler<FilterMessage, I
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerCable) {
 					ContainerCable con = (ContainerCable) ctx.getServerHandler().playerEntity.openContainer;
-					con.getFilter().put(message.index, message.wrap);
-					con.getOres().put(message.index, message.ore);
-					con.getMetas().put(message.index, message.meta);
+					con.tile.getFilter().put(message.index, message.wrap);
+					con.tile.getOres().put(message.index, message.ore);
+					con.tile.getMetas().put(message.index, message.meta);
 					con.slotChanged();
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFCable) {
 					ContainerFCable con = (ContainerFCable) ctx.getServerHandler().playerEntity.openContainer;
-					con.getFilter().put(message.index, message.wrap);
+					con.tile.getFilter().put(message.index, message.wrap);
 					con.slotChanged();
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerIndicator) {
 					ContainerIndicator con = (ContainerIndicator) ctx.getServerHandler().playerEntity.openContainer;

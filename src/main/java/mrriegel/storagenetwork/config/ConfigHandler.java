@@ -14,7 +14,6 @@ public class ConfigHandler {
 	public static void refreshConfig(File file) {
 		config = new Configuration(file);
 		config.load();
-
 		smallFont = config.get(Configuration.CATEGORY_CLIENT, "smallFont", true).getBoolean();
 		untouchable = config.get(Configuration.CATEGORY_GENERAL, "invisible=untouchable", true).getBoolean();
 		energyNeeded = config.get(Configuration.CATEGORY_GENERAL, "energyNeeded", true).getBoolean();

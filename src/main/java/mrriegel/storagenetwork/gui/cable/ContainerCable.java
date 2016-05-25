@@ -1,8 +1,6 @@
 package mrriegel.storagenetwork.gui.cable;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModItems;
@@ -19,24 +17,18 @@ import net.minecraft.item.ItemStack;
 public class ContainerCable extends Container {
 	InventoryPlayer playerInv;
 	public AbstractFilterTile tile;
-	private Map<Integer, StackWrapper> filter;
-	private Map<Integer, Boolean> ores;
-	private Map<Integer, Boolean> metas;
 	IInventory upgrades;
 
 	public ContainerCable(AbstractFilterTile tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
-		filter = new HashMap<Integer, StackWrapper>(tile.getFilter());
-		ores = new HashMap<Integer, Boolean>(tile.getOres());
-		metas = new HashMap<Integer, Boolean>(tile.getMetas());
-		upgrades = new InventoryBasic("upgrades", false, 4) {
-			@Override
-			public int getInventoryStackLimit() {
-				return 4;
-			}
-		};
 		if (tile instanceof TileKabel && ((TileKabel) tile).isUpgradeable()) {
+			upgrades = new InventoryBasic("upgrades", false, 4) {
+				@Override
+				public int getInventoryStackLimit() {
+					return 4;
+				}
+			};
 			for (int i = 0; i < ((TileKabel) tile).getUpgrades().size(); i++) {
 				upgrades.setInventorySlotContents(i, ((TileKabel) tile).getUpgrades().get(i));
 			}
@@ -76,16 +68,10 @@ public class ContainerCable extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return true;
-		// return tile != null && tile.getMaster() != null &&
-		// tile.getWorld().getTileEntity(tile.getMaster()) instanceof
-		// TileMaster;
+		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	public void slotChanged() {
-		tile.setFilter(filter);
-		tile.setOres(ores);
-		tile.setMetas(metas);
 		if (tile instanceof TileKabel) {
 			((TileKabel) tile).setUpgrades(Arrays.<ItemStack> asList(null, null, null, null));
 			for (int i = 0; i < upgrades.getSizeInventory(); i++)
@@ -101,9 +87,9 @@ public class ContainerCable extends Container {
 			if (itemstack1 == null)
 				return null;
 			for (int i = 0; i < 9; i++) {
-				if (filter.get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
-					filter.put(i, new StackWrapper(itemstack1.copy(), itemstack1.stackSize));
-					ores.put(i, false);
+				if (tile.getFilter().get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
+					tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.stackSize));
+					tile.getOres().put(i, false);
 					slotChanged();
 					break;
 				}
@@ -114,34 +100,10 @@ public class ContainerCable extends Container {
 
 	boolean in(StackWrapper stack) {
 		for (int i = 0; i < 9; i++) {
-			if (filter.get(i) != null && filter.get(i).getStack().isItemEqual(stack.getStack()))
+			if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack()))
 				return true;
 		}
 		return false;
-	}
-
-	public Map<Integer, StackWrapper> getFilter() {
-		return filter;
-	}
-
-	public void setFilter(Map<Integer, StackWrapper> filter) {
-		this.filter = filter;
-	}
-
-	public Map<Integer, Boolean> getOres() {
-		return ores;
-	}
-
-	public void setOres(Map<Integer, Boolean> ores) {
-		this.ores = ores;
-	}
-
-	public Map<Integer, Boolean> getMetas() {
-		return metas;
-	}
-
-	public void setMetas(Map<Integer, Boolean> metas) {
-		this.metas = metas;
 	}
 
 }

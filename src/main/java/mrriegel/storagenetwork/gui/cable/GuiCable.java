@@ -122,9 +122,9 @@ public class GuiCable extends MyGuiContainer {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				GlStateManager.disableBlend();
-				if (con.getOres().get(i) != null && con.getOres().get(i))
+				if (con.tile.getOres().get(i) != null && con.tile.getOres().get(i))
 					mc.fontRendererObj.drawStringWithShadow("O", e.x + 10, e.y, 0x4f94cd);
-				if (con.getMetas().get(i) == null || !con.getMetas().get(i))
+				if (con.tile.getMetas().get(i) == null || !con.tile.getMetas().get(i))
 					mc.fontRendererObj.drawStringWithShadow("M", e.x + 1, e.y, 0xff4040);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
@@ -201,12 +201,12 @@ public class GuiCable extends MyGuiContainer {
 			ItemSlot e = list.get(i);
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerCable con = (ContainerCable) inventorySlots;
-				StackWrapper x = con.getFilter().get(i);
+				StackWrapper x = con.tile.getFilter().get(i);
 				if (mc.thePlayer.inventory.getItemStack() != null) {
 					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
-						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
-						con.getOres().put(i, false);
-						con.getMetas().put(i, true);
+						con.tile.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), mc.thePlayer.inventory.getItemStack().stackSize));
+						con.tile.getOres().put(i, false);
+						con.tile.getMetas().put(i, true);
 					}
 				} else {
 					if (x != null) {
@@ -215,14 +215,14 @@ public class GuiCable extends MyGuiContainer {
 						else if (mouseButton == 1)
 							x.setSize(x.getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
 						else if (mouseButton == 2) {
-							con.getFilter().put(i, null);
-							con.getOres().put(i, false);
-							con.getMetas().put(i, true);
+							con.tile.getFilter().put(i, null);
+							con.tile.getOres().put(i, false);
+							con.tile.getMetas().put(i, true);
 						}
 						if (x != null && x.getSize() <= 0) {
-							con.getFilter().put(i, null);
-							con.getOres().put(i, false);
-							con.getMetas().put(i, true);
+							con.tile.getFilter().put(i, null);
+							con.tile.getOres().put(i, false);
+							con.tile.getMetas().put(i, true);
 						}
 					}
 				}
@@ -264,9 +264,9 @@ public class GuiCable extends MyGuiContainer {
 				ContainerCable con = (ContainerCable) inventorySlots;
 				if (e.isMouseOverSlot(mouseX, mouseY) && e.stack != null) {
 					if (typedChar == 'o' && OreDictionary.getOreIDs(e.stack).length > 0)
-						con.getOres().put(i, !con.getOres().get(i));
+						con.tile.getOres().put(i, !con.tile.getOres().get(i));
 					else if (typedChar == 'm')
-						con.getMetas().put(i, !con.getMetas().get(i));
+						con.tile.getMetas().put(i, !con.tile.getMetas().get(i));
 					con.slotChanged();
 					PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
 					break;

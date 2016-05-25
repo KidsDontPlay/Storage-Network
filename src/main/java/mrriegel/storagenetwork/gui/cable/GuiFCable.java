@@ -199,14 +199,14 @@ public class GuiFCable extends MyGuiContainer {
 				i = 4;
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerFCable con = (ContainerFCable) inventorySlots;
-				StackWrapper x = con.getFilter().get(i);
+				StackWrapper x = con.tile.getFilter().get(i);
 				if (mc.thePlayer.inventory.getItemStack() != null && Util.getFluid(mc.thePlayer.inventory.getItemStack()) != null) {
 					if (!con.in(new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1))) {
-						con.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1));
+						con.tile.getFilter().put(i, new StackWrapper(mc.thePlayer.inventory.getItemStack(), 1));
 					} else
-						con.getFilter().put(i, null);
+						con.tile.getFilter().put(i, null);
 				} else {
-					con.getFilter().put(i, null);
+					con.tile.getFilter().put(i, null);
 				}
 				con.slotChanged();
 				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
