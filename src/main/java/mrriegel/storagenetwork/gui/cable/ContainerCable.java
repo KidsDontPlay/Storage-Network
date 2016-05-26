@@ -22,13 +22,14 @@ public class ContainerCable extends Container {
 	public ContainerCable(AbstractFilterTile tile, InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
 		this.tile = tile;
+		upgrades = new InventoryBasic("upgrades", false, 4) {
+			@Override
+			public int getInventoryStackLimit() {
+				return 4;
+			}
+		};
 		if (tile instanceof TileKabel && ((TileKabel) tile).isUpgradeable()) {
-			upgrades = new InventoryBasic("upgrades", false, 4) {
-				@Override
-				public int getInventoryStackLimit() {
-					return 4;
-				}
-			};
+
 			for (int i = 0; i < ((TileKabel) tile).getUpgrades().size(); i++) {
 				upgrades.setInventorySlotContents(i, ((TileKabel) tile).getUpgrades().get(i));
 			}

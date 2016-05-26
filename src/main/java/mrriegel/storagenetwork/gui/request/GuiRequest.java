@@ -69,8 +69,6 @@ public class GuiRequest extends MyGuiContainer {
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
-		searchBar.setCanLoseFocus(false);
-		searchBar.setFocused(true);
 		direction = new Button(0, guiLeft + 7, guiTop + 93, "");
 		buttonList.add(direction);
 		sort = new Button(1, guiLeft + 21, guiTop + 93, "");
@@ -235,8 +233,11 @@ public class GuiRequest extends MyGuiContainer {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103) && mouseButton == 1) {
-			searchBar.setText("");
+		searchBar.setFocused(false);
+		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103)) {
+			if (mouseButton == 1)
+				searchBar.setText("");
+			searchBar.setFocused(true);
 		} else if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));

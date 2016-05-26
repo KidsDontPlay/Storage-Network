@@ -1,7 +1,6 @@
 {
-    "parent": "storagenetwork:model/stamm",
+    "parent": "block/cube_all",
     "textures": {
-        "deck": "storagenetwork:blocks/master_deck",
-        "side": "storagenetwork:blocks/master_side"
+        "all": "storagenetwork:blocks/master"
     }
 }

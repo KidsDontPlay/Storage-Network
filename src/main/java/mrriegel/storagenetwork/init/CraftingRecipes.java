@@ -28,7 +28,7 @@ public class CraftingRecipes {
 		GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.frequest), new ItemStack(ModBlocks.request), new ItemStack(Items.bucket));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.master), "dkd", "kck", "dkd", 'd', Blocks.quartz_block, 'k', ModBlocks.kabel, 'c', Items.diamond);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 0), " c ", "gig", " c ", 'c', Blocks.redstone_block, 'i', Items.iron_ingot, 'g', Items.gold_ingot);
-		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 1), "c", "rir", "c", 'c', Items.comparator, 'i', Items.iron_ingot, 'r', Items.redstone);
+		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 1), " c ", "rir", " c ", 'c', Items.comparator, 'i', Items.iron_ingot, 'r', Items.redstone);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 2), " c ", "gig", " c ", 'c', Blocks.redstone_block, 'i', Items.iron_ingot, 'g', Items.blaze_powder);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.upgrade, 1, 3), "c", "i", "c", 'c', Items.comparator, 'i', Items.iron_ingot);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.remote, 1, 0), " c ", "eie", " c ", 'c', Items.gold_ingot, 'i', ModBlocks.kabel, 'e', Items.ender_pearl);

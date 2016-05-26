@@ -59,8 +59,6 @@ public class GuiFRequest extends MyGuiContainer {
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
-		searchBar.setCanLoseFocus(false);
-		searchBar.setFocused(true);
 		direction = new Button(0, guiLeft + 7, guiTop + 93 + 64, "");
 		buttonList.add(direction);
 		sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
@@ -181,8 +179,11 @@ public class GuiFRequest extends MyGuiContainer {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103) && mouseButton == 1) {
-			searchBar.setText("");
+		searchBar.setFocused(false);
+		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96) && j < (guiTop + 103)) {
+			if (mouseButton == 1)
+				searchBar.setText("");
+			searchBar.setFocused(true);
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
 			PacketHandler.INSTANCE.sendToServer(new FRequestMessage(mouseButton, over));
 		}

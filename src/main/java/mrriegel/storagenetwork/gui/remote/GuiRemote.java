@@ -66,8 +66,6 @@ public class GuiRemote extends MyGuiContainer {
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
-		searchBar.setCanLoseFocus(false);
-		searchBar.setFocused(true);
 		direction = new Button(0, guiLeft + 7, guiTop + 93 + 64, "");
 		buttonList.add(direction);
 		sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
@@ -238,8 +236,11 @@ public class GuiRemote extends MyGuiContainer {
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96 + 64) && j < (guiTop + 103 + 64) && mouseButton == 1) {
-			searchBar.setText("");
+		searchBar.setFocused(false);
+		if (i > (guiLeft + 81) && i < (guiLeft + xSize - 7) && j > (guiTop + 96 + 64) && j < (guiTop + 103 + 64)) {
+			if (mouseButton == 1)
+				searchBar.setText("");
+			searchBar.setFocused(true);
 		}
 		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
 			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "x"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "y"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "z"), NBTHelper.getInteger(mc.thePlayer.getHeldItem(), "dim"), mc.thePlayer.inventory.getItemStack()));

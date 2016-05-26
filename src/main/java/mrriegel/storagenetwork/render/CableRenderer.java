@@ -77,6 +77,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 		}
 
 		GlStateManager.pushMatrix();
+		GlStateManager.enableRescaleNormal();
 		GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 		switch (te.getKind()) {
 		case kabel:
@@ -110,18 +111,15 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
 		GlStateManager.pushMatrix();
 		GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.pushAttrib();
+		RenderHelper.disableStandardItemLighting();
 		model.render(te);
-		// GlStateManager.enableRescaleNormal();
-		// GlStateManager.scale(0.4F, 0.4F, 0.4F);
-		// GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
-		// GlStateManager.translate(0, 1.5F, 0);
-		// int r = (int) ((System.currentTimeMillis() / 4) % 360);
-		// GlStateManager.rotate(r, 0.0F, 1.0F, 0.0F);
-		// bindTexture(TextureMap.locationBlocksTexture);
-		// Minecraft.getMinecraft().getRenderItem().renderItem(new
-		// ItemStack(Items.wheat), TransformType.GROUND);
-		// GlStateManager.disableRescaleNormal();
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.popAttrib();
 		GlStateManager.popMatrix();
+		GlStateManager.disableRescaleNormal();
 		GlStateManager.popMatrix();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 }

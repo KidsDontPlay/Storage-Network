@@ -42,12 +42,18 @@ public class ItemToggler extends Item {
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			tile.setDisabled(!tile.isDisabled());
-			if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster)
-				((TileMaster) worldIn.getTileEntity(tile.getMaster())).refreshNetwork();
-			else {
+			if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster) {
+				TileMaster mas = ((TileMaster) worldIn.getTileEntity(tile.getMaster()));
+				for (BlockPos p : mas.connectables)
+					((IConnectable) worldIn.getTileEntity(p)).setMaster(null);
+				mas.refreshNetwork();
+			} else {
 				for (BlockPos p : Util.getSides(pos)) {
 					if (worldIn.getTileEntity(p) instanceof IConnectable && ((IConnectable) worldIn.getTileEntity(p)).getMaster() != null) {
-						((TileMaster) worldIn.getTileEntity(((IConnectable) worldIn.getTileEntity(p)).getMaster())).refreshNetwork();
+						TileMaster mas = ((TileMaster) worldIn.getTileEntity(((IConnectable) worldIn.getTileEntity(p)).getMaster()));
+						for (BlockPos pp : mas.connectables)
+							((IConnectable) worldIn.getTileEntity(pp)).setMaster(null);
+						mas.refreshNetwork();
 						break;
 					}
 				}
