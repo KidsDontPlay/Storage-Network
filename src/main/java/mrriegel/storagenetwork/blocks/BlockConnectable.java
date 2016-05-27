@@ -32,30 +32,39 @@ public abstract class BlockConnectable extends BlockContainer {
 				((IConnectable) worldIn.getTileEntity(pos)).setMaster(p);
 			}
 		}
-		setConnections(worldIn, pos);
+		setConnections(worldIn, pos, state, true);
 	}
 
-	private void setConnections(World worldIn, BlockPos pos) {
+	public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
 
+		if (tile.getMaster() == null) {
+			for (BlockPos p : Util.getSides(pos)) {
+				if (worldIn.getTileEntity(p) instanceof TileMaster) {
+					tile.setMaster(p);
+				}
+			}
+		}
 		if (tile.getMaster() != null) {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
-			removeAllMasters(worldIn, pos);
-			if (mas instanceof TileMaster) {
+			Util.updateTile(worldIn, pos);
+			setAllMastersNull(worldIn, pos);
+			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}
 		}
 	}
 
-	private void removeAllMasters(World world, BlockPos pos) {
+	private void setAllMastersNull(World world, BlockPos pos) {
 		((IConnectable) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
-				Util.updateTile(world, pos);
-				removeAllMasters(world, bl);
+				Util.updateTile(world, bl);
+				setAllMastersNull(world, bl);
 			}
 		}
 	}
+
 }

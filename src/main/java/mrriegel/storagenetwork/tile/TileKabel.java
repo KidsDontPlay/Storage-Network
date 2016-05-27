@@ -152,6 +152,7 @@ public class TileKabel extends AbstractFilterTile {
 				upgrades.set(j, ItemStack.loadItemStackFromNBT(nbttagcompound));
 			}
 		}
+		Util.updateTile(worldObj, pos);
 	}
 
 	@Override
@@ -224,6 +225,8 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	public Kind getKind() {
+		if (worldObj == null)
+			return null;
 		return getKind(worldObj.getBlockState(pos).getBlock());
 	}
 

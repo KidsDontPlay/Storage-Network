@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -23,7 +24,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.IFluidHandler;
 
 public class BlockFKabel extends BlockKabel {
@@ -53,49 +53,8 @@ public class BlockFKabel extends BlockKabel {
 		return false;
 	}
 
-	@Override
-	public void setConnections(World worldIn, BlockPos pos, IBlockState bState, boolean refresh) {
-		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-		EnumFacing face = null;
-		BlockPos con = null;
-		IExtendedBlockState state = (IExtendedBlockState) bState;
-		if (state.getValue(NORTH) == Connect.STORAGE && worldIn.getTileEntity(pos.north()) instanceof IFluidHandler) {
-			face = EnumFacing.NORTH;
-			con = pos.north();
-		} else if (state.getValue(SOUTH) == Connect.STORAGE && worldIn.getTileEntity(pos.south()) instanceof IFluidHandler) {
-			face = EnumFacing.SOUTH;
-			con = pos.south();
-		} else if (state.getValue(EAST) == Connect.STORAGE && worldIn.getTileEntity(pos.east()) instanceof IFluidHandler) {
-			face = EnumFacing.EAST;
-			con = pos.east();
-		} else if (state.getValue(WEST) == Connect.STORAGE && worldIn.getTileEntity(pos.west()) instanceof IFluidHandler) {
-			face = EnumFacing.WEST;
-			con = pos.west();
-		} else if (state.getValue(DOWN) == Connect.STORAGE && worldIn.getTileEntity(pos.down()) instanceof IFluidHandler) {
-			face = EnumFacing.DOWN;
-			con = pos.down();
-		} else if (state.getValue(UP) == Connect.STORAGE && worldIn.getTileEntity(pos.up()) instanceof IFluidHandler) {
-			face = EnumFacing.UP;
-			con = pos.up();
-		}
-		tile.setInventoryFace(face);
-		tile.setConnectedInventory(con);
-		if (tile.getMaster() == null) {
-			for (BlockPos p : Util.getSides(pos)) {
-				if (worldIn.getTileEntity(p) instanceof TileMaster) {
-					tile.setMaster(p);
-				}
-			}
-		}
-		if (tile.getMaster() != null) {
-			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
-			tile.setMaster(null);
-			Util.updateTile(worldIn, pos);
-			setAllMastersNull(worldIn, pos);
-			if (refresh && mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork();
-			}
-		}
+	boolean validInventory(World worldIn, BlockPos pos) {
+		return worldIn.getTileEntity(pos) instanceof IFluidHandler;
 	}
 
 	boolean isConnectedToFluidHandler(IBlockAccess world, BlockPos orig, BlockPos pos) {

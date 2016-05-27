@@ -16,7 +16,6 @@ import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -41,7 +40,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockKabel extends BlockContainer {
+public class BlockKabel extends BlockConnectable {
 	public static final PropertyConnection NORTH = new PropertyConnection("north");
 	public static final PropertyConnection SOUTH = new PropertyConnection("south");
 	public static final PropertyConnection WEST = new PropertyConnection("west");
@@ -98,6 +97,7 @@ public class BlockKabel extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
+		System.out.println(tile.north + " " + tile.south + " " + tile.east + " " + tile.west + " " + tile.down + " " + tile.up);
 		if (worldIn.isRemote)
 			return true;
 		Util.updateTile(worldIn, pos);
@@ -122,10 +122,8 @@ public class BlockKabel extends BlockContainer {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-		if (!(blockIn == Blocks.AIR || blockIn instanceof ITileEntityProvider))
-			return;
 		state = getActualState(state, worldIn, pos);
-		setConnections(worldIn, pos, state, true);
+		super.neighborChanged(state, worldIn, pos, blockIn);
 		updateTE(worldIn, pos, state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 
@@ -139,58 +137,36 @@ public class BlockKabel extends BlockContainer {
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}
 
+	boolean validInventory(World worldIn, BlockPos pos) {
+		return worldIn.getTileEntity(pos) instanceof IInventory;
+	}
+
 	public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
-		if (state.getValue(NORTH) == Connect.STORAGE && worldIn.getTileEntity(pos.north()) instanceof IInventory) {
+		if (state.getValue(NORTH) == Connect.STORAGE && validInventory(worldIn, pos.north())) {
 			face = EnumFacing.NORTH;
 			con = pos.north();
-		} else if (state.getValue(SOUTH) == Connect.STORAGE && worldIn.getTileEntity(pos.south()) instanceof IInventory) {
+		} else if (state.getValue(SOUTH) == Connect.STORAGE && validInventory(worldIn, pos.south())) {
 			face = EnumFacing.SOUTH;
 			con = pos.south();
-		} else if (state.getValue(EAST) == Connect.STORAGE && worldIn.getTileEntity(pos.east()) instanceof IInventory) {
+		} else if (state.getValue(EAST) == Connect.STORAGE && validInventory(worldIn, pos.east())) {
 			face = EnumFacing.EAST;
 			con = pos.east();
-		} else if (state.getValue(WEST) == Connect.STORAGE && worldIn.getTileEntity(pos.west()) instanceof IInventory) {
+		} else if (state.getValue(WEST) == Connect.STORAGE && validInventory(worldIn, pos.west())) {
 			face = EnumFacing.WEST;
 			con = pos.west();
-		} else if (state.getValue(DOWN) == Connect.STORAGE && worldIn.getTileEntity(pos.down()) instanceof IInventory) {
+		} else if (state.getValue(DOWN) == Connect.STORAGE && validInventory(worldIn, pos.down())) {
 			face = EnumFacing.DOWN;
 			con = pos.down();
-		} else if (state.getValue(UP) == Connect.STORAGE && worldIn.getTileEntity(pos.up()) instanceof IInventory) {
+		} else if (state.getValue(UP) == Connect.STORAGE && validInventory(worldIn, pos.up())) {
 			face = EnumFacing.UP;
 			con = pos.up();
 		}
 		tile.setInventoryFace(face);
 		tile.setConnectedInventory(con);
-		if (tile.getMaster() == null) {
-			for (BlockPos p : Util.getSides(pos)) {
-				if (worldIn.getTileEntity(p) instanceof TileMaster) {
-					tile.setMaster(p);
-				}
-			}
-		}
-		if (tile.getMaster() != null) {
-			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
-			tile.setMaster(null);
-			Util.updateTile(worldIn, pos);
-			setAllMastersNull(worldIn, pos);
-			if (refresh && mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork();
-			}
-		}
-	}
-
-	public static void setAllMastersNull(World world, BlockPos pos) {
-		((IConnectable) world.getTileEntity(pos)).setMaster(null);
-		for (BlockPos bl : Util.getSides(pos)) {
-			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
-				((IConnectable) world.getTileEntity(bl)).setMaster(null);
-				Util.updateTile(world, bl);
-				setAllMastersNull(world, bl);
-			}
-		}
+		super.setConnections(worldIn, pos, state, refresh);
 	}
 
 	boolean isConnectedToInventory(IBlockAccess world, BlockPos orig, BlockPos pos) {
@@ -229,11 +205,9 @@ public class BlockKabel extends BlockContainer {
 		state = state.getActualState(worldIn, pos);
 		try {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-			if (tile != null && tile.getCover() != null) {
-				if (tile.getCover() != Blocks.GLASS) {
-					addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0, 0, 0, 1, 1, 1));
-					return;
-				}
+			if (tile != null && tile.getCover() != null && tile.getCover() != Blocks.GLASS) {
+				addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+				return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -246,31 +220,36 @@ public class BlockKabel extends BlockContainer {
 		float f5 = 0.6875F;
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 
-		if (state.getValue(NORTH) != Connect.NULL) {
-			f2 = 0f;
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-		}
-		if (state.getValue(SOUTH) != Connect.NULL) {
-			f3 = 1f;
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-		}
-		if (state.getValue(WEST) != Connect.NULL) {
-			f = 0f;
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-		}
-
-		if (state.getValue(EAST) != Connect.NULL) {
-			f1 = 1f;
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-		}
-		if (state.getValue(EAST) != Connect.NULL) {
-			f4 = 0f;
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-		}
-		if (state.getValue(EAST) != Connect.NULL) {
-			f5 = 1f;
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
-		}
+		// if (state.getValue(NORTH) != Connect.NULL) {
+		// f2 = 0f;
+		// addCollisionBoxToList(pos, entityBox, collidingBoxes, new
+		// AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		// }
+		// if (state.getValue(SOUTH) != Connect.NULL) {
+		// f3 = 1f;
+		// addCollisionBoxToList(pos, entityBox, collidingBoxes, new
+		// AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		// }
+		// if (state.getValue(WEST) != Connect.NULL) {
+		// f = 0f;
+		// addCollisionBoxToList(pos, entityBox, collidingBoxes, new
+		// AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		// }
+		// if (state.getValue(EAST) != Connect.NULL) {
+		// f1 = 1f;
+		// addCollisionBoxToList(pos, entityBox, collidingBoxes, new
+		// AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		// }
+		// if (state.getValue(EAST) != Connect.NULL) {
+		// f4 = 0f;
+		// addCollisionBoxToList(pos, entityBox, collidingBoxes, new
+		// AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		// }
+		// if (state.getValue(EAST) != Connect.NULL) {
+		// f5 = 1f;
+		// addCollisionBoxToList(pos, entityBox, collidingBoxes, new
+		// AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		// }
 
 	}
 
@@ -316,6 +295,7 @@ public class BlockKabel extends BlockContainer {
 		super.breakBlock(worldIn, pos, state);
 	}
 
+	@Override
 	public int getMetaFromState(IBlockState state) {
 		return 0;
 	}
