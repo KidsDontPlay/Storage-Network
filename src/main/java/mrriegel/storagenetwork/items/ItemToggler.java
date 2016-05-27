@@ -40,7 +40,7 @@ public class ItemToggler extends Item {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			tile.setDisabled(!tile.isDisabled());

@@ -137,7 +137,7 @@ public class Util {
 	}
 
 	public static void updateTile(World world, BlockPos pos) {
-		if (world.isRemote || world.getTileEntity(pos) == null)
+		if (world == null || world.isRemote || world.getTileEntity(pos) == null)
 			return;
 		WorldServer w = (WorldServer) world;
 		for (EntityPlayer p : w.playerEntities) {

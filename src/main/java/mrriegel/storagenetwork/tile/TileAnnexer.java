@@ -25,6 +25,11 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	private BlockPos master;
 
 	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
@@ -112,6 +117,6 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	}
 
 	private boolean canBreakBlock(Block block, BlockPos pos) {
-		return !worldObj.isAirBlock(pos) && !block.getMaterial(worldObj.getBlockState(pos)).isLiquid() && block != Blocks.BEDROCK && block.getBlockHardness(worldObj.getBlockState(pos),worldObj, pos) > -1.0F && block.getHarvestLevel(worldObj.getBlockState(pos)) <= 3;
+		return !worldObj.isAirBlock(pos) && !block.getMaterial(worldObj.getBlockState(pos)).isLiquid() && block != Blocks.BEDROCK && block.getBlockHardness(worldObj.getBlockState(pos), worldObj, pos) > -1.0F && block.getHarvestLevel(worldObj.getBlockState(pos)) <= 3;
 	}
 }

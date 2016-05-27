@@ -25,6 +25,11 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	private int priority;
 
 	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		readSettings(compound);

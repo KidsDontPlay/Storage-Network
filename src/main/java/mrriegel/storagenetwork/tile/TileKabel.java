@@ -3,7 +3,7 @@ package mrriegel.storagenetwork.tile;
 import java.util.Arrays;
 import java.util.List;
 
-import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
+import mrriegel.storagenetwork.blocks.BlockKabel.Connect;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -39,6 +38,10 @@ public class TileKabel extends AbstractFilterTile {
 
 	public enum Kind {
 		kabel, exKabel, imKabel, storageKabel, vacuumKabel, fexKabel, fimKabel, fstorageKabel;
+
+		public boolean isFluid() {
+			return this == Kind.fexKabel || this == Kind.fimKabel || this == Kind.fstorageKabel;
+		}
 	}
 
 	public int elements(int num) {
@@ -54,8 +57,7 @@ public class TileKabel extends AbstractFilterTile {
 
 	@Override
 	public boolean isFluid() {
-		Kind kind = getKind();
-		return kind == Kind.fexKabel || kind == Kind.fimKabel || kind == Kind.fstorageKabel;
+		return getKind().isFluid();
 	}
 
 	public boolean isUpgradeable() {
@@ -125,16 +127,19 @@ public class TileKabel extends AbstractFilterTile {
 			stack = (ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack")));
 		else
 			stack = null;
-
-		try {
+		if (compound.hasKey("north"))
 			north = Connect.valueOf(compound.getString("north"));
+		if (compound.hasKey("south"))
 			south = Connect.valueOf(compound.getString("south"));
+		if (compound.hasKey("east"))
 			east = Connect.valueOf(compound.getString("east"));
+		if (compound.hasKey("west"))
 			west = Connect.valueOf(compound.getString("west"));
+		if (compound.hasKey("up"))
 			up = Connect.valueOf(compound.getString("up"));
+		if (compound.hasKey("down"))
 			down = Connect.valueOf(compound.getString("down"));
-		} catch (Exception e) {
-		}
+
 		String fs = compound.getString("cover");
 		if (fs == null || "null".equals(fs)) {
 			cover = null;
@@ -152,7 +157,6 @@ public class TileKabel extends AbstractFilterTile {
 				upgrades.set(j, ItemStack.loadItemStackFromNBT(nbttagcompound));
 			}
 		}
-		Util.updateTile(worldObj, pos);
 	}
 
 	@Override
@@ -168,16 +172,19 @@ public class TileKabel extends AbstractFilterTile {
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
 
-		try {
-
+		if (north != null)
 			compound.setString("north", north.toString());
+		if (south != null)
 			compound.setString("south", south.toString());
+		if (east != null)
 			compound.setString("east", east.toString());
+		if (west != null)
 			compound.setString("west", west.toString());
+		if (up != null)
 			compound.setString("up", up.toString());
+		if (down != null)
 			compound.setString("down", down.toString());
-		} catch (Exception e) {
-		}
+
 		if (cover != null) {
 			compound.setString("cover", Block.REGISTRY.getNameForObject(cover).toString());
 		} else {

@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.render;
 
-import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
+import mrriegel.storagenetwork.blocks.BlockKabel.Connect;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.client.model.ModelBase;

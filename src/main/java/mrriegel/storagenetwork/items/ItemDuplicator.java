@@ -27,7 +27,7 @@ public class ItemDuplicator extends Item {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote && worldIn.getTileEntity(pos) instanceof AbstractFilterTile) {
 			AbstractFilterTile tile = (AbstractFilterTile) worldIn.getTileEntity(pos);
 			boolean sneak = playerIn.isSneaking();
@@ -35,7 +35,7 @@ public class ItemDuplicator extends Item {
 				stack.setTagCompound(new NBTTagCompound());
 				tile.writeSettings(stack.getTagCompound());
 				NBTHelper.setBoolean(stack, "fluid", tile.isFluid());
-				
+
 				playerIn.addChatComponentMessage(new TextComponentString("Saved Data to " + getItemStackDisplayName(stack)));
 			} else {
 				if (stack.getTagCompound() != null)

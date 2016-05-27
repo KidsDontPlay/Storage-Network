@@ -1,11 +1,8 @@
 package mrriegel.storagenetwork.jei;
 
-import mezz.jei.api.IItemRegistry;
-import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
-import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.JEIPlugin;
 
 @JEIPlugin

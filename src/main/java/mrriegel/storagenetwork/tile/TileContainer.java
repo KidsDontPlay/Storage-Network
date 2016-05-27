@@ -23,6 +23,11 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 	}
 
 	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
 	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
 		master = new Gson().fromJson(tag.getString("master"), new TypeToken<BlockPos>() {
 		}.getType());

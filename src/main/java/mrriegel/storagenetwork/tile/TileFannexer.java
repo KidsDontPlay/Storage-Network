@@ -7,7 +7,6 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -25,6 +24,11 @@ import com.google.gson.Gson;
 public class TileFannexer extends TileEntity implements IConnectable, ITickable {
 
 	private BlockPos master;
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {

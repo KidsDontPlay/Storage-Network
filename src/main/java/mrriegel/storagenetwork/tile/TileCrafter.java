@@ -26,6 +26,11 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 	}
 
 	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
 	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
 		progress = tag.getInteger("progress");
 		master = tag.getLong("master") == Long.MAX_VALUE ? null : BlockPos.fromLong(tag.getLong("master"));

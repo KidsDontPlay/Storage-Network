@@ -5,7 +5,6 @@ import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -18,6 +17,11 @@ public class TileFRequest extends TileEntity implements IConnectable {
 	public ItemStack fill, drain;
 	public boolean downwards;
 	public Sort sort = Sort.NAME;
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {

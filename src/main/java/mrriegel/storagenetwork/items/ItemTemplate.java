@@ -39,14 +39,14 @@ public class ItemTemplate extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 		if (playerIn.isSneaking()) {
 			itemStackIn.setTagCompound(new NBTTagCompound());
 		} else {
 			if (!worldIn.isRemote && itemStackIn.stackSize == 1)
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.TEMPLATE, worldIn, 0, 0, 0);
 		}
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn,hand);
+		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}
 
 	@Override

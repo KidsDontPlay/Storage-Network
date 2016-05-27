@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -30,6 +29,11 @@ public class TileRequest extends TileEntity implements IConnectable {
 		public Sort next() {
 			return vals[(this.ordinal() + 1) % vals.length];
 		}
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
 	}
 
 	@Override
@@ -64,7 +68,8 @@ public class TileRequest extends TileEntity implements IConnectable {
 				invList.appendTag(stackTag);
 			}
 		}
-		compound.setTag("matrix", invList);return compound;
+		compound.setTag("matrix", invList);
+		return compound;
 	}
 
 	@Override

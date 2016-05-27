@@ -8,7 +8,6 @@ import mrriegel.storagenetwork.helper.Util;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -23,6 +22,11 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	private boolean more;
 	private StackWrapper stack;
 	private BlockPos master;
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
