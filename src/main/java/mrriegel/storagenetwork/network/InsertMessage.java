@@ -8,10 +8,11 @@ import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -39,7 +40,7 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				World w = MinecraftServer.getServer().worldServerForDimension(message.dim);
+				World w = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.dim);
 				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
 					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
 					int rest = tile.insertStack(message.stack, null, false);

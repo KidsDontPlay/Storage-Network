@@ -73,7 +73,7 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids(), GuiHandler.FREQUEST), ctx.getServerHandler().playerEntity);
 
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote) {
-					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.getHeldItem());
+					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
 					ContainerFRemote con = ((ContainerFRemote) ctx.getServerHandler().playerEntity.openContainer);
 					ItemStack fill = con.inv.getStackInSlot(0);
 					if (tile != null && message.id < 2 && message.fluid != null && fill != null && FluidContainerRegistry.isEmptyContainer(fill)) {

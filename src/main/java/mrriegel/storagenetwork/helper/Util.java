@@ -11,12 +11,15 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
@@ -32,8 +35,6 @@ import org.apache.commons.lang3.text.WordUtils;
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
 
-	// private static List<ItemStack> stacks = Lists.newArrayList();
-
 	public static void init() {
 		Map<String, ModContainer> modMap = Loader.instance().getIndexedModList();
 		for (Map.Entry<String, ModContainer> modEntry : modMap.entrySet()) {
@@ -41,10 +42,6 @@ public class Util {
 			String modName = modEntry.getValue().getName();
 			modNamesForIds.put(lowercaseId, modName);
 		}
-		// for (ResourceLocation r : Item.itemRegistry.getKeys()) {
-		// Item b = Item.itemRegistry.getObject(r);
-		// b.getSubItems(b, b.getCreativeTab(), stacks);
-		// }
 	}
 
 	@Nonnull
@@ -139,8 +136,15 @@ public class Util {
 		return lis;
 	}
 
-	// public static ItemStack randomItem() {
-	// int a = new Random().nextInt(stacks.size());
-	// return stacks.get(a);
-	// }
+	public static void updateTile(World world, BlockPos pos) {
+		if (world.isRemote || world.getTileEntity(pos) == null)
+			return;
+		WorldServer w = (WorldServer) world;
+		for (EntityPlayer p : w.playerEntities) {
+			if (p.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ()) < 32) {
+				((EntityPlayerMP) p).connection.sendPacket(world.getTileEntity(pos).getUpdatePacket());
+			}
+		}
+
+	}
 }

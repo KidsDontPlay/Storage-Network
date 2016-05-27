@@ -18,21 +18,24 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockMaster extends BlockContainer {
 
 	public BlockMaster() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setRegistryName("master");
@@ -45,16 +48,10 @@ public class BlockMaster extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		onBlockPlacedBy(worldIn, pos, state, null, null);
-		updateNeighbors(worldIn, pos);
-	}
-
-	private void updateNeighbors(World worldIn, BlockPos pos) {
-		for (BlockPos p : Util.getSides(pos)) {
-			if (worldIn.getTileEntity(p) instanceof IConnectable)
-				worldIn.markBlockForUpdate(p);
-		}
+		for (BlockPos p : Util.getSides(pos))
+			Util.updateTile(worldIn, p);
 	}
 
 	@Override
@@ -79,18 +76,18 @@ public class BlockMaster extends BlockContainer {
 	}
 
 	@Override
-	public int getRenderType() {
-		return 3;
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
-				playerIn.addChatMessage(new ChatComponentText("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
-			playerIn.addChatMessage(new ChatComponentText("(Potential) Empty Slots: " + tile.emptySlots()));
-			playerIn.addChatMessage(new ChatComponentText("Connectables: " + tile.connectables.size()));
+				playerIn.addChatMessage(new TextComponentString("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
+			playerIn.addChatMessage(new TextComponentString("(Potential) Empty Slots: " + tile.emptySlots()));
+			playerIn.addChatMessage(new TextComponentString("Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			for (BlockPos p : tile.connectables) {
 				String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
@@ -108,9 +105,9 @@ public class BlockMaster extends BlockContainer {
 				}
 			});
 			for (Entry<String, Integer> e : lis)
-				playerIn.addChatMessage(new ChatComponentText("   " + e.getKey() + ": " + e.getValue()));
+				playerIn.addChatMessage(new TextComponentString("   " + e.getKey() + ": " + e.getValue()));
 		}
-		return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
+		return false;
 	}
 
 	public static class Item extends ItemBlock {
@@ -122,9 +119,9 @@ public class BlockMaster extends BlockContainer {
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
-			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.master"));
+			tooltip.add(I18n.format("tooltip.storagenetwork.master"));
 			if (ConfigHandler.energyNeeded)
-				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.RFNeeded"));
+				tooltip.add(I18n.format("tooltip.storagenetwork.RFNeeded"));
 		}
 
 	}

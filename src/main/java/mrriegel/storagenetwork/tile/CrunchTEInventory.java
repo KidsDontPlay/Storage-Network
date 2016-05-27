@@ -6,10 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public abstract class CrunchTEInventory extends TileEntity implements IInventory {
@@ -58,7 +57,7 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 	protected abstract void readSyncableDataFromNBT(NBTTagCompound tag);
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < inv.length; i++) {
@@ -73,19 +72,20 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 		tag.setInteger("size", INVSIZE);
 		tag.setInteger("limit", stackLimit);
 		writeSyncableDataToNBT(tag);
+		return tag;
 	}
 
 	protected abstract void writeSyncableDataToNBT(NBTTagCompound tag);
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeSyncableDataToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readSyncableDataFromNBT(pkt.getNbtCompound());
 	}
 
@@ -193,7 +193,8 @@ public abstract class CrunchTEInventory extends TileEntity implements IInventory
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public ITextComponent getDisplayName() {
 		return null;
 	}
+
 }

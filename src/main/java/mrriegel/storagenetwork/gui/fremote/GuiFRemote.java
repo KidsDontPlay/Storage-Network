@@ -21,8 +21,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -89,11 +89,11 @@ public class GuiFRemote extends MyGuiContainer {
 		if (con.inv.getStackInSlot(1) == null)
 			this.drawTexturedModalRect(i + 46, j + 139, 176 + 12, 22, 12, 14);
 		Collections.sort(tmp, new Comparator<FluidStack>() {
-			int mul = NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? -1 : 1;
+			int mul = NBTHelper.getBoolean(mc.thePlayer.inventory.getCurrentItem(), "down") ? -1 : 1;
 
 			@Override
 			public int compare(FluidStack o2, FluidStack o1) {
-				switch (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))) {
+				switch (Sort.valueOf(NBTHelper.getString(mc.thePlayer.inventory.getCurrentItem(), "sort"))) {
 				case AMOUNT:
 					return Integer.compare(o1.amount, o2.amount) * mul;
 				case NAME:
@@ -168,10 +168,10 @@ public class GuiFRemote extends MyGuiContainer {
 		if (button.id == 3 && page < maxPage)
 			page++;
 		if (button.id == 0)
-			NBTHelper.setBoolean(mc.thePlayer.getHeldItem(), "down", !NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"));
+			NBTHelper.setBoolean(mc.thePlayer.inventory.getCurrentItem(), "down", !NBTHelper.getBoolean(mc.thePlayer.inventory.getCurrentItem(), "down"));
 		else if (button.id == 1)
-			NBTHelper.setString(mc.thePlayer.getHeldItem(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")).next().toString());
-		PacketHandler.INSTANCE.sendToServer(new SortMessage(BlockPos.ORIGIN, NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort"))));
+			NBTHelper.setString(mc.thePlayer.inventory.getCurrentItem(), "sort", Sort.valueOf(NBTHelper.getString(mc.thePlayer.inventory.getCurrentItem(), "sort")).next().toString());
+		PacketHandler.INSTANCE.sendToServer(new SortMessage(BlockPos.ORIGIN, NBTHelper.getBoolean(mc.thePlayer.inventory.getCurrentItem(), "down"), Sort.valueOf(NBTHelper.getString(mc.thePlayer.inventory.getCurrentItem(), "sort"))));
 	}
 
 	@Override
@@ -237,10 +237,10 @@ public class GuiFRemote extends MyGuiContainer {
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 162 + 14 * k, 0, 14, 14);
 				if (id == 0) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.getHeldItem(), "down") ? 6 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 176 + (NBTHelper.getBoolean(mc.thePlayer.inventory.getCurrentItem(), "down") ? 6 : 0), 14, 6, 8);
 				}
 				if (id == 1) {
-					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.AMOUNT ? 6 : Sort.valueOf(NBTHelper.getString(mc.thePlayer.getHeldItem(), "sort")) == Sort.MOD ? 12 : 0), 14, 6, 8);
+					this.drawTexturedModalRect(this.xPosition + 4, this.yPosition + 3, 188 + (Sort.valueOf(NBTHelper.getString(mc.thePlayer.inventory.getCurrentItem(), "sort")) == Sort.AMOUNT ? 6 : Sort.valueOf(NBTHelper.getString(mc.thePlayer.inventory.getCurrentItem(), "sort")) == Sort.MOD ? 12 : 0), 14, 6, 8);
 
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);

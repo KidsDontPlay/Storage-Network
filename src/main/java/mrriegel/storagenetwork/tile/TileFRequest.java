@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -37,7 +37,7 @@ public class TileFRequest extends TileEntity implements IConnectable {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
 		compound.setBoolean("dir", downwards);
@@ -46,17 +46,18 @@ public class TileFRequest extends TileEntity implements IConnectable {
 			compound.setTag("fill", fill.writeToNBT(new NBTTagCompound()));
 		if (drain != null)
 			compound.setTag("drain", drain.writeToNBT(new NBTTagCompound()));
+		return compound;
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 

@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.gui.frequest;
 
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileFRequest;
@@ -8,6 +9,7 @@ import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -54,8 +56,8 @@ public class ContainerFRequest extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
-		ItemStack k = super.slotClick(slotId, clickedButton, mode, playerIn);
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+		ItemStack k = super.slotClick(slotId, dragType, clickTypeIn, player);
 		slotChanged();
 		return k;
 	}
@@ -63,7 +65,7 @@ public class ContainerFRequest extends Container {
 	public void slotChanged() {
 		tile.fill = inv.getStackInSlot(0);
 		tile.drain = inv.getStackInSlot(1);
-		tile.getWorld().markBlockForUpdate(tile.getPos());
+		Util.updateTile(tile.getWorld(), tile.getPos());
 	}
 
 	@Override

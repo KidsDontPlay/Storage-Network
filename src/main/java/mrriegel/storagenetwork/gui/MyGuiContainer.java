@@ -118,7 +118,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 				float g = ((color >> 8) & 0xFF) / 255.0F;
 				float b = ((color >> 0) & 0xFF) / 255.0F;
 				GlStateManager.color(r, g, b, a);
-				this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+				this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				drawTexturedModalRect(x, y, fluidIcon, 16, 16);
@@ -131,10 +131,10 @@ public abstract class MyGuiContainer extends GuiContainer {
 					if (smallFont) {
 						GlStateManager.pushMatrix();
 						GlStateManager.scale(.5f, .5f, .5f);
-						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.chainmail_boots), x * 2 + 16, y * 2 + 16, amount);
+						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.CHAINMAIL_BOOTS), x * 2 + 16, y * 2 + 16, amount);
 						GlStateManager.popMatrix();
 					} else
-						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.chainmail_boots), x, y, amount);
+						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, new ItemStack(Items.CHAINMAIL_BOOTS), x, y, amount);
 				}
 			}
 			if (square && this.isMouseOverSlot(mx, my)) {

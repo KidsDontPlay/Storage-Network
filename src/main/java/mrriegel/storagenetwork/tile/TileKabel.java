@@ -15,10 +15,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.reflect.TypeToken;
@@ -155,7 +155,7 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
 		compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
@@ -178,7 +178,7 @@ public class TileKabel extends AbstractFilterTile {
 		} catch (Exception e) {
 		}
 		if (cover != null) {
-			compound.setString("cover", Block.blockRegistry.getNameForObject(cover).toString());
+			compound.setString("cover", Block.REGISTRY.getNameForObject(cover).toString());
 		} else {
 			compound.setString("cover", "null");
 		}
@@ -194,13 +194,14 @@ public class TileKabel extends AbstractFilterTile {
 			}
 		}
 		compound.setTag("Items", nbttaglist);
+		return compound;
 
 	}
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		double renderExtention = 1.0d;
-		AxisAlignedBB bb = AxisAlignedBB.fromBounds(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
+		AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
 		return bb;
 	}
 
@@ -291,14 +292,14 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 

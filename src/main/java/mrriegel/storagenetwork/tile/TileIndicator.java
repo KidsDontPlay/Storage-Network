@@ -4,14 +4,15 @@ import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.BlockIndicator;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import com.google.common.reflect.TypeToken;
@@ -37,12 +38,13 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
 		compound.setBoolean("more", more);
 		if (stack != null)
 			compound.setTag("stack", stack.writeToNBT(new NBTTagCompound()));
+		return compound;
 	}
 
 	@Override
@@ -77,14 +79,14 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 
@@ -115,7 +117,7 @@ public class TileIndicator extends TileEntity implements IConnectable, ITickable
 			}
 			if (worldObj.getBlockState(pos).getValue(BlockIndicator.STATE) != x) {
 				((BlockIndicator) worldObj.getBlockState(pos).getBlock()).setState(worldObj, pos, worldObj.getBlockState(pos), x);
-				worldObj.markBlockForUpdate(pos);
+				Util.updateTile(worldObj, pos);
 			}
 		}
 	}

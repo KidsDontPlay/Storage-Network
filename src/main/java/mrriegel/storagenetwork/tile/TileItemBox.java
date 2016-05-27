@@ -8,8 +8,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -41,10 +41,10 @@ public class TileItemBox extends AbstractFilterTile {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
-		writeInventory(compound);
+		writeInventory(compound);return compound;
 	}
 
 	public void writeInventory(NBTTagCompound compound) {
@@ -79,14 +79,14 @@ public class TileItemBox extends AbstractFilterTile {
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 

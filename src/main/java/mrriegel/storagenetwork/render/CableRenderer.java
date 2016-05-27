@@ -10,14 +10,14 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
@@ -40,13 +40,13 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
 	@Override
 	public void renderTileEntityAt(TileKabel te, double x, double y, double z, float partialTicks, int destroyStage) {
-		boolean show = Minecraft.getMinecraft().thePlayer.getHeldItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.getHeldItem().getItem()) instanceof BlockKabel;
+		boolean show = Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem() != null && Block.getBlockFromItem(Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem().getItem()) instanceof BlockKabel;
 		if (te == null || te.getKind() == null || !(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockKabel))
 			return;
 		if (te.getCover() != null && !show) {
-			if (te.getCover() == Blocks.glass)
+			if (te.getCover() == Blocks.GLASS)
 				return;
-			this.bindTexture(TextureMap.locationBlocksTexture);
+			this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			World world = te.getWorld();
 			BlockPos blockpos = te.getPos();
@@ -57,7 +57,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			GlStateManager.translate((float) x, (float) y, (float) z);
 
 			Tessellator tessellator = Tessellator.getInstance();
-			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+			VertexBuffer worldrenderer = tessellator.getBuffer();
 			worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
 			int i = blockpos.getX();
@@ -66,7 +66,7 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 
 			worldrenderer.setTranslation(((-i)), (-j), ((-k)));
 			worldrenderer.color(1F, 1F, 1F, 1F);
-			IBakedModel ibakedmodel = blockrendererdispatcher.getModelFromBlockState(iblockstate, world, blockpos);
+			IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(iblockstate);
 			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, ibakedmodel, iblockstate, blockpos, worldrenderer, true);
 
 			worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);

@@ -5,15 +5,15 @@ import java.util.List;
 import mrriegel.storagenetwork.CreativeTab;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 
 public class BlockCover extends Block {
 
 	public BlockCover() {
-		super(Material.rock);
+		super(Material.ROCK);
 		this.setHardness(1.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setRegistryName("cover");
@@ -29,7 +29,7 @@ public class BlockCover extends Block {
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
-			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.cover"));
+			tooltip.add(I18n.format("tooltip.storagenetwork.cover"));
 		}
 
 	}

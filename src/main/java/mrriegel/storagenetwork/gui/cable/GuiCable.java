@@ -24,10 +24,10 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.apache.commons.lang3.StringUtils;
@@ -357,7 +357,7 @@ public class GuiCable extends MyGuiContainer {
 				}
 				if (tile instanceof TileKabel) {
 					List<String> lis = new ArrayList<String>();
-					String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit(), ((TileKabel) tile).getStack() != null ? ((TileKabel) tile).getStack().getDisplayName() : "Items");
+					String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit(), ((TileKabel) tile).getStack() != null ? ((TileKabel) tile).getStack().getDisplayName() : "Items");
 					List<String> matchList = new ArrayList<String>();
 					Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 					Matcher regexMatcher = regex.matcher(s);

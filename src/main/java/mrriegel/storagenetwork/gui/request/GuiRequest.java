@@ -245,7 +245,7 @@ public class GuiRequest extends MyGuiContainer {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
 		} else if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90)) {
 			TileEntity t = tile.getWorld().getTileEntity(tile.getMaster());
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(t.getPos().getX(), t.getPos().getY(), t.getPos().getZ(), tile.getWorld().provider.getDimensionId(), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(t.getPos().getX(), t.getPos().getY(), t.getPos().getZ(), tile.getWorld().provider.getDimension(), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 

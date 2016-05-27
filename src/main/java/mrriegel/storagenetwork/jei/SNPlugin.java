@@ -17,18 +17,6 @@ public class SNPlugin implements IModPlugin {
 	}
 
 	@Override
-	public void onJeiHelpersAvailable(IJeiHelpers jeiHelpers) {
-	}
-
-	@Override
-	public void onItemRegistryAvailable(IItemRegistry itemRegistry) {
-	}
-
-	@Override
-	public void onRecipeRegistryAvailable(IRecipeRegistry recipeRegistry) {
-	}
-
-	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 	}
 }

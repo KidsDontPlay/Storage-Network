@@ -1,6 +1,6 @@
 package mrriegel.storagenetwork.api;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public interface IConnectable {
 	public BlockPos getMaster();

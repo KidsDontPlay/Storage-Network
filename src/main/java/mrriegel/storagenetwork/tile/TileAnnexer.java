@@ -11,11 +11,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import com.google.common.reflect.TypeToken;
@@ -34,9 +33,10 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setString("master", new Gson().toJson(master));
+		return compound;
 	}
 
 	@Override
@@ -55,14 +55,14 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 
@@ -81,13 +81,13 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 				return;
 			List<ItemStack> lis = block.getDrops(worldObj, p, worldObj.getBlockState(p), 0);
 			TileMaster mas = (TileMaster) worldObj.getTileEntity(master);
-			if (!mas.consumeRF((int) (block.getBlockHardness(worldObj, p) * 5f), false))
+			if (!mas.consumeRF((int) (block.getBlockHardness(worldObj.getBlockState(p), worldObj, p) * 5f), false))
 				return;
-			worldObj.playAuxSFX(2001, p, Block.getStateId(worldObj.getBlockState(p)));
+			worldObj.playEvent(2001, p, Block.getStateId(worldObj.getBlockState(p)));
 			worldObj.setBlockToAir(p);
 			if (worldObj.getTileEntity(p) != null)
 				worldObj.removeTileEntity(p);
-			block.dropXpOnBlockBreak(worldObj, p, block.getExpDrop(worldObj, p, 0));
+			block.dropXpOnBlockBreak(worldObj, p, block.getExpDrop(worldObj.getBlockState(p), worldObj, p, 0));
 			for (ItemStack s : lis) {
 				int rest = mas.insertStack(s, null, false);
 				if (rest > 0) {
@@ -112,6 +112,6 @@ public class TileAnnexer extends TileEntity implements IConnectable, ITickable {
 	}
 
 	private boolean canBreakBlock(Block block, BlockPos pos) {
-		return !block.isAir(worldObj, pos) && !block.getMaterial().isLiquid() && block != Blocks.bedrock && block.getBlockHardness(worldObj, pos) > -1.0F && block.getHarvestLevel(worldObj.getBlockState(pos)) <= 3;
+		return !worldObj.isAirBlock(pos) && !block.getMaterial(worldObj.getBlockState(pos)).isLiquid() && block != Blocks.BEDROCK && block.getBlockHardness(worldObj.getBlockState(pos),worldObj, pos) > -1.0F && block.getHarvestLevel(worldObj.getBlockState(pos)) <= 3;
 	}
 }

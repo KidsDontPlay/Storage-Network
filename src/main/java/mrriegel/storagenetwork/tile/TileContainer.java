@@ -6,8 +6,8 @@ import java.util.List;
 import mrriegel.storagenetwork.api.IConnectable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;

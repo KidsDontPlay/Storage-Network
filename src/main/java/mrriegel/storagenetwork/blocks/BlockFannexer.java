@@ -8,23 +8,24 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockFannexer extends BlockConnectable {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
 	public BlockFannexer() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(3.0F);
 		this.setCreativeTab(CreativeTab.tab1);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
@@ -33,8 +34,8 @@ public class BlockFannexer extends BlockConnectable {
 	}
 
 	@Override
-	public int getRenderType() {
-		return 3;
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
 	}
 
 	@Override
@@ -58,8 +59,8 @@ public class BlockFannexer extends BlockConnectable {
 	}
 
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, new IProperty[] { FACING });
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, new IProperty[] { FACING });
 	}
 
 	@Override
@@ -77,8 +78,8 @@ public class BlockFannexer extends BlockConnectable {
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
-			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.fannexer"));
-			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
+			tooltip.add(I18n.format("tooltip.storagenetwork.fannexer"));
+			tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));
 		}
 
 	}

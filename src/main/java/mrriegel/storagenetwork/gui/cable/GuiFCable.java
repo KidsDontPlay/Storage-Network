@@ -26,10 +26,10 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.Fluid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -92,7 +92,7 @@ public class GuiFCable extends MyGuiContainer {
 						float g = ((color >> 8) & 0xFF) / 255.0F;
 						float b = ((color >> 0) & 0xFF) / 255.0F;
 						GlStateManager.color(r, g, b, a);
-						this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+						this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 						drawTexturedModalRect(guiLeft + 8, guiTop - 18, fluidIcon, 16, 16);
 					}
 				}
@@ -322,7 +322,7 @@ public class GuiFCable extends MyGuiContainer {
 				if (tile instanceof TileKabel) {
 					if (((TileKabel) tile).getStack() != null) {
 						List<String> lis = new ArrayList<String>();
-						String s = StatCollector.translateToLocalFormatted("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit() + " mB", Util.getFluid(((TileKabel) tile).getStack()).getFluid().getName());
+						String s = I18n.format("gui.storagenetwork.operate.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (((TileKabel) tile).isMode() ? "more" : "less")), ((TileKabel) tile).getLimit() + " mB", Util.getFluid(((TileKabel) tile).getStack()).getFluid().getName());
 						List<String> matchList = new ArrayList<String>();
 						Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 						Matcher regexMatcher = regex.matcher(s);

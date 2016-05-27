@@ -27,7 +27,7 @@ import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 

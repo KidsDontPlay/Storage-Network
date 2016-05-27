@@ -11,11 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 
 public class TileCrafter extends CrunchTEInventory implements ISidedInventory, ITickable {
 	int progress, duration;
@@ -98,7 +97,6 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 		ItemStack result = CraftingManager.getInstance().findMatchingRecipe(getMatrix(), this.worldObj);
 		if (result == null) {
 			progress = 0;
-			worldObj.markBlockForUpdate(pos);
 			return;
 		}
 		if (canProcess()) {
@@ -110,7 +108,6 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 				processItem();
 				progress = 0;
 			}
-			worldObj.markBlockForUpdate(pos);
 		}
 	}
 
@@ -132,7 +129,6 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 					setInventorySlotContents(i, null);
 				}
 			}
-			worldObj.markBlockForUpdate(pos);
 		}
 	}
 
@@ -157,14 +153,14 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound syncData = new NBTTagCompound();
 		this.writeToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.pos, 1, syncData);
+		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 

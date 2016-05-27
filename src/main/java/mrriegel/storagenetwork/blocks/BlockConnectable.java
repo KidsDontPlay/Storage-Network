@@ -10,7 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BlockConnectable extends BlockContainer {
@@ -20,8 +20,8 @@ public abstract class BlockConnectable extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		if (!(neighborBlock == Blocks.air || neighborBlock instanceof ITileEntityProvider))
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+		if (!(blockIn == Blocks.AIR || blockIn instanceof ITileEntityProvider))
 			return;
 		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
@@ -53,7 +53,7 @@ public abstract class BlockConnectable extends BlockContainer {
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
-				world.markBlockForUpdate(bl);
+				Util.updateTile(world, pos);
 				removeAllMasters(world, bl);
 			}
 		}

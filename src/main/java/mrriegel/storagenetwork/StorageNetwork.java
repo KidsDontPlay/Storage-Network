@@ -5,7 +5,6 @@ import mrriegel.storagenetwork.proxy.CommonProxy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -48,12 +47,6 @@ public class StorageNetwork {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
-	}
-
-	@SubscribeEvent
-	public void task(PlayerInteractEvent e) {
-		if (e.world.isRemote && e.action == Action.RIGHT_CLICK_BLOCK) {
-		}
 	}
 
 }

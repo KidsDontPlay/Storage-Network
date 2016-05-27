@@ -3,11 +3,11 @@ package mrriegel.storagenetwork.items;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,6 +42,6 @@ public class ItemUpgrade extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
-		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.upgrade_" + stack.getItemDamage()));
+		tooltip.add(I18n.format("tooltip.storagenetwork.upgrade_" + stack.getItemDamage()));
 	}
 }

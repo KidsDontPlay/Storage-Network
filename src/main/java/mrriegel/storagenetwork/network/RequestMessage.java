@@ -44,7 +44,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 						if (message.shift) {
 							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
 							if (rest != 0) {
-								ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+								ctx.getServerHandler().playerEntity.dropItem(Inv.copyStack(stack, rest), false);
 							}
 						} else {
 							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
@@ -55,13 +55,13 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.getHeldItem());
+					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
 					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), false);
 					if (stack != null) {
 						if (message.shift) {
 							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
 							if (rest != 0) {
-								ctx.getServerHandler().playerEntity.dropPlayerItemWithRandomChoice(Inv.copyStack(stack, rest), false);
+								ctx.getServerHandler().playerEntity.dropItem(Inv.copyStack(stack, rest), false);
 							}
 						} else {
 							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);

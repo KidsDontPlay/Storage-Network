@@ -2,11 +2,12 @@ package mrriegel.storagenetwork.blocks;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.blocks.PropertyConnection.Connect;
-import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -19,8 +20,10 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -29,18 +32,14 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockKabel extends BlockContainer {
 	public static final PropertyConnection NORTH = new PropertyConnection("north");
@@ -51,39 +50,38 @@ public class BlockKabel extends BlockContainer {
 	public static final PropertyConnection DOWN = new PropertyConnection("down");
 
 	public BlockKabel() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(1.4F);
+		this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, Connect.NULL).withProperty(EAST, Connect.NULL).withProperty(SOUTH, Connect.NULL).withProperty(WEST, Connect.NULL).withProperty(UP, Connect.NULL).withProperty(DOWN, Connect.NULL));
 		this.setCreativeTab(CreativeTab.tab1);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube() {
+	public boolean isFullCube(IBlockState state) {
 		return false;
 	}
 
 	@Override
-	public int getRenderType() {
-		return 3 - 1;
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.INVISIBLE;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public EnumWorldBlockLayer getBlockLayer() {
-		return EnumWorldBlockLayer.CUTOUT;
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 
-	public void updateTE(World world, BlockPos pos, IExtendedBlockState state) {
+	public void updateTE(World world, BlockPos pos, IBlockState state) {
 		TileKabel tile = (TileKabel) world.getTileEntity(pos);
 		if (tile == null)
 			return;
@@ -93,17 +91,17 @@ public class BlockKabel extends BlockContainer {
 		tile.east = state.getValue(BlockKabel.EAST);
 		tile.up = state.getValue(BlockKabel.UP);
 		tile.down = state.getValue(BlockKabel.DOWN);
-		world.markBlockForUpdate(pos);
+		Util.updateTile(world, pos);
 
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		if (worldIn.isRemote)
 			return true;
-		worldIn.markBlockForUpdate(pos);
-		if (/* tile.getMaster() == null || */(playerIn.getHeldItem() != null && (playerIn.getHeldItem().getItem() == ModItems.coverstick || playerIn.getHeldItem().getItem() == ModItems.toggler || playerIn.getHeldItem().getItem() == ModItems.duplicator)))
+		Util.updateTile(worldIn, pos);
+		if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.toggler || heldItem.getItem() == ModItems.duplicator)))
 			return false;
 		else
 			switch (tile.getKind()) {
@@ -123,29 +121,28 @@ public class BlockKabel extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		if (!(neighborBlock == Blocks.air || neighborBlock instanceof ITileEntityProvider))
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+		if (!(blockIn == Blocks.AIR || blockIn instanceof ITileEntityProvider))
 			return;
-		state = getExtendedState(state, worldIn, pos);
+		state = getActualState(state, worldIn, pos);
 		setConnections(worldIn, pos, state, true);
-		updateTE(worldIn, pos, (IExtendedBlockState) state);
+		updateTE(worldIn, pos, state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		state = getExtendedState(state, worldIn, pos);
+		state = getActualState(state, worldIn, pos);
 		setConnections(worldIn, pos, state, false);
-		updateTE(worldIn, pos, (IExtendedBlockState) state);
+		updateTE(worldIn, pos, state);
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}
 
-	public void setConnections(World worldIn, BlockPos pos, IBlockState bState, boolean refresh) {
+	public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
-		IExtendedBlockState state = (IExtendedBlockState) bState;
 		if (state.getValue(NORTH) == Connect.STORAGE && worldIn.getTileEntity(pos.north()) instanceof IInventory) {
 			face = EnumFacing.NORTH;
 			con = pos.north();
@@ -177,7 +174,7 @@ public class BlockKabel extends BlockContainer {
 		if (tile.getMaster() != null) {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
-			worldIn.markBlockForUpdate(pos);
+			Util.updateTile(worldIn, pos);
 			setAllMastersNull(worldIn, pos);
 			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
@@ -190,7 +187,7 @@ public class BlockKabel extends BlockContainer {
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
-				world.markBlockForUpdate(bl);
+				Util.updateTile(world, bl);
 				setAllMastersNull(world, bl);
 			}
 		}
@@ -211,22 +208,6 @@ public class BlockKabel extends BlockContainer {
 		return false;
 	}
 
-	// PropertyConnection face2prop(EnumFacing face) {
-	// if (face == EnumFacing.DOWN)
-	// return DOWN;
-	// if (face == EnumFacing.UP)
-	// return UP;
-	// if (face == EnumFacing.NORTH)
-	// return NORTH;
-	// if (face == EnumFacing.SOUTH)
-	// return SOUTH;
-	// if (face == EnumFacing.EAST)
-	// return EAST;
-	// if (face == EnumFacing.WEST)
-	// return WEST;
-	// return null;
-	// }
-
 	public static EnumFacing get(BlockPos a, BlockPos b) {
 		if (a.up().equals(b))
 			return EnumFacing.DOWN;
@@ -244,73 +225,64 @@ public class BlockKabel extends BlockContainer {
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
+		state = state.getActualState(worldIn, pos);
 		try {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			if (tile != null && tile.getCover() != null) {
-				if (tile.getCover() != Blocks.glass) {
-					this.setBlockBounds(0f, 0f, 0f, 1f, 1f, 1f);
+				if (tile.getCover() != Blocks.GLASS) {
+					addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0, 0, 0, 1, 1, 1));
 					return;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		boolean d = this.getConnect(worldIn, pos, pos.down()) != Connect.NULL;
-		boolean u = this.getConnect(worldIn, pos, pos.up()) != Connect.NULL;
-		boolean e = this.getConnect(worldIn, pos, pos.east()) != Connect.NULL;
-		boolean w = this.getConnect(worldIn, pos, pos.west()) != Connect.NULL;
-		boolean s = this.getConnect(worldIn, pos, pos.south()) != Connect.NULL;
-		boolean n = this.getConnect(worldIn, pos, pos.north()) != Connect.NULL;
-
 		float f = 0.3125F;
 		float f1 = 0.6875F;
 		float f2 = 0.3125F;
 		float f3 = 0.6875F;
 		float f4 = 0.3125F;
 		float f5 = 0.6875F;
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 
-		if (n)
-			f2 = 0.0F;
-		if (s)
-			f3 = 1.0F;
-		if (w)
-			f = 0.0F;
-		if (e)
-			f1 = 1.0F;
-		if (d)
-			f4 = 0.0f;
-		if (u)
-			f5 = 1.0f;
-		this.setBlockBounds(f, f4, f2, f1, f5, f3);
-	}
-
-	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
-		try {
-			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-			if (ConfigHandler.untouchable && tile != null && tile.getCover() != null) {
-				if (tile.getCover() == Blocks.glass) {
-					return AxisAlignedBB.fromBounds(0, 0, 0, 0, 0, 0);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (state.getValue(NORTH) != Connect.NULL) {
+			f2 = 0f;
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
 		}
-		setBlockBoundsBasedOnState(worldIn, pos);
-		return super.getCollisionBoundingBox(worldIn, pos, state);
+		if (state.getValue(SOUTH) != Connect.NULL) {
+			f3 = 1f;
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		}
+		if (state.getValue(WEST) != Connect.NULL) {
+			f = 0f;
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		}
+
+		if (state.getValue(EAST) != Connect.NULL) {
+			f1 = 1f;
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		}
+		if (state.getValue(EAST) != Connect.NULL) {
+			f4 = 0f;
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		}
+		if (state.getValue(EAST) != Connect.NULL) {
+			f5 = 1f;
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(f, f4, f2, f1, f5, f3));
+		}
+
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
+	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		Connect north = getConnect(world, pos, pos.north());
 		Connect south = getConnect(world, pos, pos.south());
 		Connect west = getConnect(world, pos, pos.west());
 		Connect east = getConnect(world, pos, pos.east());
 		Connect up = getConnect(world, pos, pos.up());
 		Connect down = getConnect(world, pos, pos.down());
-		return extendedBlockState.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
+		return state.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
 	}
 
 	protected Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
@@ -344,46 +316,18 @@ public class BlockKabel extends BlockContainer {
 		super.breakBlock(worldIn, pos, state);
 	}
 
+	public int getMetaFromState(IBlockState state) {
+		return 0;
+	}
+
 	@Override
-	protected BlockState createBlockState() {
-		IProperty[] listedProperties = new IProperty[] {};
-		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN };
-		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, new IProperty[] { NORTH, EAST, WEST, SOUTH, UP, DOWN });
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new TileKabel();
-	}
-
-	static class PropertyBlock implements IUnlistedProperty<Block> {
-
-		private final String name;
-
-		public PropertyBlock(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public boolean isValid(Block value) {
-			return true;
-		}
-
-		@Override
-		public Class<Block> getType() {
-			return Block.class;
-		}
-
-		@Override
-		public String valueToString(Block value) {
-			return value.toString();
-		}
-
 	}
 
 	public static class Item extends ItemBlock {
@@ -396,16 +340,16 @@ public class BlockKabel extends BlockContainer {
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 			super.addInformation(stack, playerIn, tooltip, advanced);
 			if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.exKabel))
-				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_E"));
+				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_E"));
 			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.imKabel))
-				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_I"));
+				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_I"));
 			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.storageKabel))
-				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_S"));
+				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_S"));
 			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.vacuumKabel))
-				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_V"));
+				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_V"));
 			else if (stack.getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.kabel))
-				tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.kabel_L"));
-			tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.networkNeeded"));
+				tooltip.add(I18n.format("tooltip.storagenetwork.kabel_L"));
+			tooltip.add(I18n.format("tooltip.storagenetwork.networkNeeded"));
 		}
 
 	}

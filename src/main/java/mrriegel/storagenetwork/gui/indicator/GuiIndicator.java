@@ -17,9 +17,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -166,7 +166,7 @@ public class GuiIndicator extends MyGuiContainer {
 					l = 16777120;
 				}
 				List<String> lis = new ArrayList<String>();
-				String s = tile.getStack() == null ? "" : StatCollector.translateToLocalFormatted("gui.storagenetwork.indi.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), StatCollector.translateToLocal("gui.storagenetwork.operate.tooltip." + (tile.isMore() ? "more" : "less")), tile.getStack().getSize(), tile.getStack() != null ? tile.getStack().getStack().getDisplayName() : "Items");
+				String s = tile.getStack() == null ? "" : I18n.format("gui.storagenetwork.indi.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isMore() ? "more" : "less")), tile.getStack().getSize(), tile.getStack() != null ? tile.getStack().getStack().getDisplayName() : "Items");
 				List<String> matchList = new ArrayList<String>();
 				Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 				Matcher regexMatcher = regex.matcher(s);

@@ -65,7 +65,7 @@ public class ContainerFRemote extends Container {
 				ItemStack itemstack = this.inv.removeStackFromSlot(i);
 
 				if (itemstack != null) {
-					playerIn.dropPlayerItemWithRandomChoice(itemstack, false);
+					playerIn.dropItem(itemstack, false);
 				}
 			}
 		}
@@ -107,7 +107,7 @@ public class ContainerFRemote extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		TileMaster mas = ItemRemote.getTile(playerIn.getHeldItem());
+		TileMaster mas = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
 		if (mas == null || !(mas instanceof TileMaster))
 			return false;
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 20 == 0) {
@@ -132,7 +132,7 @@ public class ContainerFRemote extends Container {
 			}
 			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
 		}
-		return playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.fremote;
+		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.fremote;
 	}
 
 }

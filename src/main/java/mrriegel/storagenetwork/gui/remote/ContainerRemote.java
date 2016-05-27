@@ -54,7 +54,7 @@ public class ContainerRemote extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			TileMaster tile = ItemRemote.getTile(playerIn.getHeldItem());
+			TileMaster tile = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
 			if (tile != null) {
 				int rest = tile.insertStack(itemstack1, null, false);
 				ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
@@ -73,12 +73,12 @@ public class ContainerRemote extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		TileMaster tile = ItemRemote.getTile(playerIn.getHeldItem());
+		TileMaster tile = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
 		if (tile == null || !(tile instanceof TileMaster))
 			return false;
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 50 == 0)
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(ItemRemote.getTile(playerIn.getHeldItem()).getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
-		return playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.remote;
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(ItemRemote.getTile(playerIn.inventory.getCurrentItem()).getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), (EntityPlayerMP) playerIn);
+		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
 	}
 
 }

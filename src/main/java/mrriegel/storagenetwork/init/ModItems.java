@@ -22,14 +22,14 @@ public class ModItems {
 	public static final Item duplicator = new ItemDuplicator();
 
 	public static void init() {
-		GameRegistry.registerItem(upgrade);
-		GameRegistry.registerItem(remote.setUnlocalizedName(remote.getRegistryName()));
-		GameRegistry.registerItem(fremote.setUnlocalizedName(fremote.getRegistryName()));
-		GameRegistry.registerItem(coverstick);
+		GameRegistry.register(upgrade);
+		GameRegistry.register(remote.setUnlocalizedName(remote.getRegistryName().toString()));
+		GameRegistry.register(fremote.setUnlocalizedName(fremote.getRegistryName().toString()));
+		GameRegistry.register(coverstick);
 		// GameRegistry.registerItem(template);
-		GameRegistry.registerItem(toggler);
+		GameRegistry.register(toggler);
 		// GameRegistry.registerItem(ssdd);
-		GameRegistry.registerItem(duplicator);
+		GameRegistry.register(duplicator);
 	}
 
 }

@@ -10,6 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,14 +39,14 @@ public class ItemTemplate extends Item {
 	}
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,EnumHand hand) {
 		if (playerIn.isSneaking()) {
 			itemStackIn.setTagCompound(new NBTTagCompound());
 		} else {
 			if (!worldIn.isRemote && itemStackIn.stackSize == 1)
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.TEMPLATE, worldIn, 0, 0, 0);
 		}
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn);
+		return super.onItemRightClick(itemStackIn, worldIn, playerIn,hand);
 	}
 
 	@Override

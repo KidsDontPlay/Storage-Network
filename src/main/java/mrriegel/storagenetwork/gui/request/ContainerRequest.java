@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -100,7 +101,7 @@ public class ContainerRequest extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
+	public ItemStack slotClick(int slotId, int clickedButton, ClickType mode, EntityPlayer playerIn) {
 		lastTime = System.currentTimeMillis();
 		return super.slotClick(slotId, clickedButton, mode, playerIn);
 	}

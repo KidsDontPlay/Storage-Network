@@ -9,8 +9,8 @@ import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -38,7 +38,7 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 			@Override
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote || ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote) {
-					ItemStack s = ctx.getServerHandler().playerEntity.getHeldItem();
+					ItemStack s = ctx.getServerHandler().playerEntity.inventory.getCurrentItem();
 					NBTHelper.setBoolean(s, "down", message.direction);
 					NBTHelper.setString(s, "sort", message.sort.toString());
 					return;

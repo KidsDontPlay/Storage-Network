@@ -4,6 +4,7 @@ import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -27,7 +28,7 @@ public class ContainerTemplate extends Container {
 
 	public ContainerTemplate(InventoryPlayer playerInventory) {
 		this.worldObj = playerInventory.player.worldObj;
-		this.storedInv = playerInventory.player.getHeldItem();
+		this.storedInv = playerInventory.player.inventory.getCurrentItem();
 		this.playerInv = playerInventory;
 		if (storedInv != null && storedInv.getTagCompound() != null) {
 			NBTTagList invList = storedInv.getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);
@@ -89,7 +90,7 @@ public class ContainerTemplate extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
+	public ItemStack slotClick(int slotId, int clickedButton, ClickType mode, EntityPlayer playerIn) {
 		if (slotId >= 10 || slotId < 0)
 			return super.slotClick(slotId, clickedButton, mode, playerIn);
 		if (playerInv.getItemStack() == null) {
@@ -121,7 +122,7 @@ public class ContainerTemplate extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return playerIn.getHeldItem() != null && playerIn.getHeldItem().getItem() == ModItems.template;
+		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.template;
 	}
 
 	@Override

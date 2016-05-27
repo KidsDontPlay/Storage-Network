@@ -6,7 +6,7 @@ import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.render.CableRenderer;
 import mrriegel.storagenetwork.tile.TileKabel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;

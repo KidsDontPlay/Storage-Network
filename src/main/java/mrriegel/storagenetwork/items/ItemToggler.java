@@ -12,14 +12,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -38,7 +40,7 @@ public class ItemToggler extends Item {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 			tile.setDisabled(!tile.isDisabled());
@@ -58,10 +60,10 @@ public class ItemToggler extends Item {
 					}
 				}
 			}
-			worldIn.markBlockForUpdate(pos);
-			return true;
+			Util.updateTile(worldIn, pos);
+			return EnumActionResult.SUCCESS;
 		}
-		return false;
+		return EnumActionResult.PASS;
 	}
 
 	List<BlockPos> lis = Lists.newArrayList();
@@ -69,7 +71,7 @@ public class ItemToggler extends Item {
 	@SubscribeEvent
 	public void render(RenderWorldLastEvent event) {
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		if (player.getHeldItem() == null || player.getHeldItem().getItem() != this)
+		if (player.inventory.getCurrentItem() == null || player.inventory.getCurrentItem().getItem() != this)
 			return;
 		if (player.worldObj.getTotalWorldTime() % 10 == 0) {
 			lis = Lists.newArrayList();
@@ -86,9 +88,9 @@ public class ItemToggler extends Item {
 						}
 					}
 		}
-		double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.partialTicks;
-		double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks;
-		double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks;
+		double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+		double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+		double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
 
 		GlStateManager.pushMatrix();
 
@@ -104,7 +106,7 @@ public class ItemToggler extends Item {
 			float x = p.getX(), y = p.getY(), z = p.getZ();
 			// RenderHelper.enableStandardItemLighting();
 			Tessellator tessellator = Tessellator.getInstance();
-			WorldRenderer renderer = tessellator.getWorldRenderer();
+			VertexBuffer renderer = tessellator.getBuffer();
 			renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1f);
 			GL11.glLineWidth(2.5f);
@@ -163,7 +165,7 @@ public class ItemToggler extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
-		tooltip.add(StatCollector.translateToLocal("tooltip.storagenetwork.toggler"));
+		tooltip.add(I18n.format("tooltip.storagenetwork.toggler"));
 	}
 
 }
