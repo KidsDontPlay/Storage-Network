@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileFluidBox;
 import net.minecraft.block.Block;
@@ -78,7 +77,6 @@ public class BlockFluidBox extends BlockConnectable {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.toggler || heldItem.getItem() == ModItems.duplicator)))
 			return false;
-		Util.updateTile(worldIn, pos);
 		if (worldIn.getTileEntity(pos) instanceof TileFluidBox) {
 			TileFluidBox tile = (TileFluidBox) worldIn.getTileEntity(pos);
 			if (worldIn.isRemote)

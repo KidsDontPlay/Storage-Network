@@ -20,6 +20,7 @@ import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.gui.request.GuiRequest;
 import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.gui.template.GuiTemplate;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
@@ -46,6 +47,7 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+		Util.updateTile(world, new BlockPos(x, y, z));
 		if (ID == CABLE) {
 			return new ContainerCable((AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z)), player.inventory);
 		}

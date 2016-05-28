@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileIndicator;
+import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -44,6 +45,13 @@ public class GuiIndicator extends MyGuiContainer {
 		String s = tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
 		this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
 
+	}
+
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
+			mc.thePlayer.closeScreen();
 	}
 
 	@Override

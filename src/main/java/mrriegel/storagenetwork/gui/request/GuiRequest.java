@@ -16,6 +16,7 @@ import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
+import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
@@ -77,6 +78,13 @@ public class GuiRequest extends MyGuiContainer {
 		buttonList.add(left);
 		right = new Button(3, guiLeft + 58, guiTop + 93, ">");
 		buttonList.add(right);
+	}
+
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
+			mc.thePlayer.closeScreen();
 	}
 
 	@Override

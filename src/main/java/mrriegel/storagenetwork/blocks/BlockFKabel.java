@@ -29,7 +29,6 @@ public class BlockFKabel extends BlockKabel {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		if (worldIn.isRemote)
 			return true;
-		Util.updateTile(worldIn, pos);
 		if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.toggler || heldItem.getItem() == ModItems.duplicator)))
 			return false;
 		else if (tile.getKind().isFluid()) {

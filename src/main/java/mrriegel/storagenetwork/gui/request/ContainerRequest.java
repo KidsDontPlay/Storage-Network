@@ -6,6 +6,7 @@ import java.util.List;
 import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -120,6 +121,7 @@ public class ContainerRequest extends Container {
 		}
 		nbt.setTag("matrix", invList);
 		tile.readFromNBT(nbt);
+		Util.updateTile(tile.getWorld(), tile.getPos());
 
 	}
 
