@@ -79,7 +79,6 @@ public class BlockKabel extends BlockConnectable {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		if (worldIn.isRemote)
 			return true;
-		Util.updateTile(worldIn, pos);
 		if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.toggler || heldItem.getItem() == ModItems.duplicator)))
 			return false;
 		else if (tile.getKind() == Kind.exKabel || tile.getKind() == Kind.imKabel || tile.getKind() == Kind.storageKabel) {
@@ -106,6 +105,7 @@ public class BlockKabel extends BlockConnectable {
 		return worldIn.getTileEntity(pos) instanceof IInventory;
 	}
 
+	@Override
 	public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
@@ -138,7 +138,8 @@ public class BlockKabel extends BlockConnectable {
 		tile.setInventoryFace(face);
 		tile.setConnectedInventory(con);
 		super.setConnections(worldIn, pos, state, refresh);
-		Util.updateTile(worldIn, pos);
+		if (refresh)
+			Util.updateTile(worldIn, pos);
 	}
 
 	boolean isConnectedToInventory(IBlockAccess world, BlockPos orig, BlockPos pos) {

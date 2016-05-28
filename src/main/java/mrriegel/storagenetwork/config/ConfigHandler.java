@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.config;
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
 
 public class ConfigHandler {
 

@@ -48,7 +48,8 @@ public abstract class BlockConnectable extends BlockContainer {
 		if (tile.getMaster() != null) {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
-			Util.updateTile(worldIn, pos);
+//			if (refresh)
+				Util.updateTile(worldIn, pos);
 			setAllMastersNull(worldIn, pos);
 			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
