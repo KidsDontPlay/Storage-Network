@@ -7,6 +7,10 @@ public class FilterItem {
 	ItemStack stack;
 	boolean meta, ore, nbt;
 
+	public FilterItem(ItemStack stack) {
+		this(stack, true, false, false);
+	}
+
 	public FilterItem(ItemStack stack, boolean meta, boolean ore, boolean nbt) {
 		if (stack == null)
 			throw new NullPointerException();

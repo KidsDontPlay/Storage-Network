@@ -64,7 +64,7 @@ public class BlockFKabel extends BlockKabel {
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return Connect.NULL;
 		EnumFacing face = get(orig, pos);
-		boolean sided = worldIn.getTileEntity(pos) instanceof IFluidHandler;
+		boolean sided = worldIn.getTileEntity(pos) instanceof IFluidHandler && ((IFluidHandler) worldIn.getTileEntity(pos)).getTankInfo(face) != null && ((IFluidHandler) worldIn.getTileEntity(pos)).getTankInfo(face).length > 0;
 		if (!sided)
 			return Connect.NULL;
 		if (isConnectedToFluidHandler(worldIn, orig, pos))

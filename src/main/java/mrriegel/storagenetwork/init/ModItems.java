@@ -26,7 +26,7 @@ public class ModItems {
 		GameRegistry.register(remote.setUnlocalizedName(remote.getRegistryName().toString()));
 		GameRegistry.register(fremote.setUnlocalizedName(fremote.getRegistryName().toString()));
 		GameRegistry.register(coverstick);
-		// GameRegistry.registerItem(template);
+		GameRegistry.register(template);
 		GameRegistry.register(toggler);
 		// GameRegistry.registerItem(ssdd);
 		GameRegistry.register(duplicator);

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class ContainerContainer extends Container {
 	InventoryPlayer playerInv;
@@ -20,7 +21,14 @@ public class ContainerContainer extends Container {
 			this.addSlotToContainer(new Slot(tile, i, 8 + i * 18, 26) {
 				@Override
 				public boolean isItemValid(ItemStack stack) {
-					return stack != null && stack.isItemEqual(new ItemStack(ModItems.template)) && stack.getTagCompound().getTag("res") != null;
+					return stack != null && stack.isItemEqual(new ItemStack(ModItems.template)) && stack.getTagCompound() != null && stack.getTagCompound().getTag("res") != null;
+				}
+
+				@Override
+				public void onSlotChanged() {
+					super.onSlotChanged();
+					if (getStack() != null)
+						getStack().getTagCompound().setLong("machine", ((TileEntity) inventory).getPos().toLong());
 				}
 			});
 		}

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import mrriegel.storagenetwork.api.ITemplate;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.CraftingTask;
 import mrriegel.storagenetwork.helper.FilterItem;
@@ -17,6 +18,7 @@ import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
@@ -36,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import cofh.api.energy.EnergyStorage;
@@ -250,15 +253,21 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return size;
 	}
 
-	public List<ItemStack> getTemplates(FilterItem fil, boolean nbt) {
-		List<ItemStack> templates = new ArrayList<ItemStack>();
+	public List<TileContainer> getContainers() {
+		List<TileContainer> lis = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileContainer))
 				continue;
-			TileContainer tile = (TileContainer) worldObj.getTileEntity(p);
+			lis.add((TileContainer) worldObj.getTileEntity(p));
+		}
+		return lis;
+	}
+
+	public List<ItemStack> getTemplates(FilterItem fil) {
+		List<ItemStack> templates = new ArrayList<ItemStack>();
+		for (TileContainer tile : getContainers()) {
 			for (ItemStack s : tile.getTemplates()) {
-				NBTTagCompound res = (NBTTagCompound) s.getTagCompound().getTag("res");
-				ItemStack result = ItemStack.loadItemStackFromNBT(res);
+				ItemStack result = ItemTemplate.getOutput(s);
 				if (fil.match(result)) {
 					ItemStack a = s;
 					a.stackSize = result.stackSize;
@@ -296,8 +305,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public int canCraft(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww) {
 		int result = 0;
-		for (int ii = 0; ii < getTemplates(fil, false).size(); ii++) {
-			ItemStack s = getTemplates(fil, false).get(ii);
+		for (int ii = 0; ii < getTemplates(fil).size(); ii++) {
+			ItemStack s = getTemplates(fil).get(ii);
 			if (neww)
 				stacks = getStacks();
 			boolean done = true;
@@ -335,8 +344,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public int getMissing(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww, List<FilterItem> missing) {
 		int result = 0;
-		for (int ii = 0; ii < getTemplates(fil, false).size(); ii++) {
-			ItemStack s = getTemplates(fil, false).get(ii);
+		for (int ii = 0; ii < getTemplates(fil).size(); ii++) {
+			ItemStack s = getTemplates(fil).get(ii);
 			if (neww)
 				stacks = getStacks();
 			boolean done = true;
@@ -375,7 +384,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public ItemStack craft(FilterItem fil, int num) {
-		for (ItemStack s : getTemplates(fil, false)) {
+		for (ItemStack s : getTemplates(fil)) {
 			boolean done = false;
 			ItemStack last = null;
 			for (FilterItem f : getIngredients(s)) {
@@ -460,28 +469,25 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		en.readFromNBT(compound);
-		// NBTTagList tasksList = compound.getTagList("tasks",
-		// Constants.NBT.TAG_COMPOUND);
-		// tasks = new ArrayList<CraftingTask>();
-		// for (int i = 0; i < tasksList.tagCount(); i++) {
-		// NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
-		// CraftingTask t = new CraftingTask();
-		// t.readFromNBT(stackTag);
-		// tasks.add(t);
-		// }
+		NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
+		tasks = new ArrayList<CraftingTask>();
+		for (int i = 0; i < tasksList.tagCount(); i++) {
+			NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
+			tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
+		}
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		en.writeToNBT(compound);
-		// NBTTagList tasksList = new NBTTagList();
-		// for (CraftingTask t : tasks) {
-		// NBTTagCompound stackTag = new NBTTagCompound();
-		// t.writeToNBT(stackTag);
-		// tasksList.appendTag(stackTag);
-		// }
-		// compound.setTag("tasks", tasksList);
+		NBTTagList tasksList = new NBTTagList();
+		for (CraftingTask t : tasks) {
+			NBTTagCompound stackTag = new NBTTagCompound();
+			t.writeToNBT(stackTag);
+			tasksList.appendTag(stackTag);
+		}
+		compound.setTag("tasks", tasksList);
 		return compound;
 	}
 
@@ -779,9 +785,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (inv.getTankInfo(t.getInventoryFace().getOpposite()) == null)
 				continue;
-			// System.out.println("inv: " + inv);
-			// System.out.println("inv info: " +
-			// inv.getTankInfo(t.getInventoryFace().getOpposite()));
 			for (FluidTankInfo i : inv.getTankInfo(t.getInventoryFace().getOpposite())) {
 				FluidStack s = i.fluid;
 				if (s == null)
@@ -790,8 +793,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (!t.status())
 					continue;
-				// for(EnumFacing f:EnumFacing.values())
-				// System.out.println(f+" "+inv.canDrain(f, s.getFluid()));
 				if (!inv.canDrain(t.getInventoryFace().getOpposite(), s.getFluid()))
 					continue;
 				int num = s.amount;
@@ -1056,10 +1057,23 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		vacuum();
 		impor();
 		export();
-		// craft();
 		fimpor();
 		fexport();
+		craft();
 
+	}
+
+	private void craft() {
+		Iterator<CraftingTask> it = tasks.iterator();
+		while (it.hasNext()) {
+			CraftingTask t = it.next();
+			if (t.getDone() >= t.getOutputSize())
+				it.remove();
+		}
+		for (CraftingTask t : tasks) {
+			if (t.progress(this))
+				break;
+		}
 	}
 
 	public void removeFalse() {

@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.api.IConnectable;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileContainer extends CrunchTEInventory implements IConnectable {
+public class TileContainer extends CrunchTEInventory implements IConnectable,ISidedInventory {
 	private BlockPos master;
 	private EnumFacing input, output;
 
@@ -44,6 +47,11 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 			tag.setString("input", input.toString());
 		if (output != null)
 			tag.setString("output", output.toString());
+	}
+
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+		return oldState.getBlock() != newSate.getBlock();
 	}
 
 	@Override
@@ -89,6 +97,21 @@ public class TileContainer extends CrunchTEInventory implements IConnectable {
 	public void onChunkUnload() {
 		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
 			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
+	}
+
+	@Override
+	public int[] getSlotsForFace(EnumFacing side) {
+		return new int[]{};
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+		return false;
 	}
 
 }

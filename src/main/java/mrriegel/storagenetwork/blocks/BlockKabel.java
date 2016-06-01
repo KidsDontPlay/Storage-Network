@@ -147,8 +147,6 @@ public class BlockKabel extends BlockConnectable {
 		for (BlockPos p : Util.getSides(orig)) {
 			if (p.equals(pos))
 				continue;
-			if (world.getTileEntity(p) instanceof TileContainer)
-				continue;
 			if (world.getTileEntity(p) instanceof ISidedInventory && (((ISidedInventory) world.getTileEntity(p)).getSlotsForFace(get(orig, p)).length != 0))
 				return true;
 			if (world.getTileEntity(p) instanceof IInventory)
@@ -264,7 +262,6 @@ public class BlockKabel extends BlockConnectable {
 			return Connect.NULL;
 		boolean inventory = worldIn.getTileEntity(pos) instanceof IInventory && !(worldIn.getTileEntity(pos) instanceof ISidedInventory);
 		EnumFacing face = get(orig, pos);
-
 		boolean sided = worldIn.getTileEntity(pos) instanceof ISidedInventory && (((ISidedInventory) worldIn.getTileEntity(pos)).getSlotsForFace(face).length != 0);
 		if (!inventory && !sided)
 			return Connect.NULL;
