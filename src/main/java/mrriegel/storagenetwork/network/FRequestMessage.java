@@ -39,6 +39,8 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest) {
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+					if (tile == null)
+						return;
 					ContainerFRequest con = ((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer);
 					ItemStack fill = con.tile.fill;
 					if (message.id < 2 && message.fluid != null && fill != null && FluidContainerRegistry.isEmptyContainer(fill)) {
@@ -74,6 +76,8 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote) {
 					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
+					if (tile == null)
+						return;
 					ContainerFRemote con = ((ContainerFRemote) ctx.getServerHandler().playerEntity.openContainer);
 					ItemStack fill = con.inv.getStackInSlot(0);
 					if (tile != null && message.id < 2 && message.fluid != null && fill != null && FluidContainerRegistry.isEmptyContainer(fill)) {

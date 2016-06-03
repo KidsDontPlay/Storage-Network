@@ -13,7 +13,6 @@ import mrriegel.storagenetwork.network.ButtonMessage;
 import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.TileIndicator;
-import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -50,8 +49,10 @@ public class GuiIndicator extends MyGuiContainer {
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
-			mc.thePlayer.closeScreen();
+		// if (tile == null || tile.getMaster() == null ||
+		// !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof
+		// TileMaster))
+		// mc.thePlayer.closeScreen();
 	}
 
 	@Override
@@ -101,9 +102,9 @@ public class GuiIndicator extends MyGuiContainer {
 			} else {
 				if (x != null) {
 					if (mouseButton == 0)
-						x.setSize(x.getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+						x.setSize(x.getSize() + (isShiftKeyDown() ? 10 : 1));
 					else if (mouseButton == 1)
-						x.setSize(x.getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+						x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
 					else if (mouseButton == 2) {
 						x = null;
 					}

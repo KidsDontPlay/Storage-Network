@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-public class TileContainer extends CrunchTEInventory implements IConnectable,ISidedInventory {
+public class TileContainer extends CrunchTEInventory implements IConnectable, ISidedInventory {
 	private BlockPos master;
 	private EnumFacing input, output;
 
@@ -101,7 +101,7 @@ public class TileContainer extends CrunchTEInventory implements IConnectable,ISi
 
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		return new int[]{};
+		return new int[] {};
 	}
 
 	@Override

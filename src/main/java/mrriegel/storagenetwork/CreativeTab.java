@@ -8,7 +8,7 @@ public class CreativeTab {
 	public static CreativeTabs tab1 = new CreativeTabs(StorageNetwork.MODID) {
 		@Override
 		public Item getTabIconItem() {
-			return Item.getItemFromBlock(ModBlocks.kabel);
+			return Item.getItemFromBlock(ModBlocks.request);
 		}
 
 		@Override

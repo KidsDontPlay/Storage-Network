@@ -211,9 +211,9 @@ public class GuiCable extends MyGuiContainer {
 				} else {
 					if (x != null) {
 						if (mouseButton == 0)
-							x.setSize(x.getSize() + (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+							x.setSize(x.getSize() + (isShiftKeyDown() ? 10 : 1));
 						else if (mouseButton == 1)
-							x.setSize(x.getSize() - (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1));
+							x.setSize(x.getSize() - (isShiftKeyDown() ? 10 : 1));
 						else if (mouseButton == 2) {
 							con.tile.getFilter().put(i, null);
 							con.tile.getOres().put(i, false);

@@ -25,6 +25,8 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 					ContainerRequest c = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
 					for (int i = 0; i < 9; i++) {
 						World w = ctx.getServerHandler().playerEntity.worldObj;
+						if (w.getTileEntity(c.tile.getMaster()) == null)
+							break;
 						ItemStack s = c.craftMatrix.getStackInSlot(i);
 						if (s == null)
 							continue;

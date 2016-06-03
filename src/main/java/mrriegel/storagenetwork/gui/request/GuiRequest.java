@@ -16,7 +16,6 @@ import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
 import mrriegel.storagenetwork.network.SortMessage;
-import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
@@ -78,13 +77,6 @@ public class GuiRequest extends MyGuiContainer {
 		buttonList.add(left);
 		right = new Button(3, guiLeft + 58, guiTop + 93, ">");
 		buttonList.add(right);
-	}
-
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
-		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
-			mc.thePlayer.closeScreen();
 	}
 
 	@Override
@@ -250,10 +242,10 @@ public class GuiRequest extends MyGuiContainer {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
 		} else if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90)) {
 			TileEntity t = tile.getWorld().getTileEntity(tile.getMaster());
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(t.getPos().getX(), t.getPos().getY(), t.getPos().getZ(), tile.getWorld().provider.getDimension(), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(t.getPos(), tile.getWorld().provider.getDimension(), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 

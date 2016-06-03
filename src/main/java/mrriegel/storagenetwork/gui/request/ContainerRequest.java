@@ -26,6 +26,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import com.google.common.collect.Lists;
+
 public class ContainerRequest extends Container {
 	public InventoryPlayer playerInv;
 	public TileRequest tile;
@@ -70,6 +72,15 @@ public class ContainerRequest extends Container {
 				detectAndSendChanges();
 			}
 		};
+
+		if (!tile.getWorld().isRemote) {
+			TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
+			List<FilterItem> lis = Lists.newArrayList();
+			// System.out.println("cratfante: "+t.getMissing(null, new
+			// FilterItem(new ItemStack(Items.STICK)), 18, true, lis));
+			for (FilterItem x : lis)
+				System.out.println("     " + x);
+		}
 		this.addSlotToContainer(x);
 		int index = 0;
 		for (int i = 0; i < 3; ++i) {
@@ -127,6 +138,8 @@ public class ContainerRequest extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
+		if (playerIn.worldObj.isRemote)
+			return null;
 		ItemStack itemstack = null;
 		Slot slot = this.inventorySlots.get(slotIndex);
 		if (slot != null && slot.getHasStack()) {
@@ -190,7 +203,7 @@ public class ContainerRequest extends Container {
 		if (x.crafted != 0 && Math.abs(System.currentTimeMillis() - lastTime) > 500) {
 			x.crafted = 0;
 		}
-		return true;
+		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override

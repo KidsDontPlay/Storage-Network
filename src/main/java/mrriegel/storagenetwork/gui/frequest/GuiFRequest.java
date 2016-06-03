@@ -14,7 +14,6 @@ import mrriegel.storagenetwork.network.FRequestMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.SortMessage;
 import mrriegel.storagenetwork.tile.TileFRequest;
-import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -54,8 +53,10 @@ public class GuiFRequest extends MyGuiContainer {
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
-			mc.thePlayer.closeScreen();
+		// if (tile == null || tile.getMaster() == null ||
+		// !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof
+		// TileMaster))
+		// mc.thePlayer.closeScreen();
 	}
 
 	@Override

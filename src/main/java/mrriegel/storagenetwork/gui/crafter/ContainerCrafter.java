@@ -42,7 +42,7 @@ public class ContainerCrafter extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return true;
+		return playerIn.getDistanceSq(crafter.getPos().getX() + 0.5D, crafter.getPos().getY() + 0.5D, crafter.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override

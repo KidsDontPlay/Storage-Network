@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.google.common.collect.Lists;
-
 import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+
+import com.google.common.collect.Lists;
 
 public class CraftingTask {
 	CraftingTask parent = null;
@@ -60,7 +59,7 @@ public class CraftingTask {
 	public void writeToNBT(NBTTagCompound nbt) {
 		nbt.setInteger("craftingID", id);
 		NBTTagCompound c = new NBTTagCompound();
-		output.writeToNBT(c);	
+		output.writeToNBT(c);
 		nbt.setTag("outputStack", c);
 		nbt.setInteger("outputSize", outputSize);
 		nbt.setInteger("done", done);

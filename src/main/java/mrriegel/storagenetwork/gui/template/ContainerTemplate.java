@@ -17,8 +17,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import org.lwjgl.input.Keyboard;
-
 public class ContainerTemplate extends Container {
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
 	public IInventory craftResult = new InventoryCraftResult();
@@ -99,9 +97,9 @@ public class ContainerTemplate extends Container {
 			else {
 				if (getSlot(slotId).getHasStack()) {
 					if (clickedButton == 0)
-						getSlot(slotId).getStack().stackSize += (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1);
+						getSlot(slotId).getStack().stackSize += (mode == ClickType.QUICK_MOVE ? 10 : 1);
 					else if (clickedButton == 1)
-						getSlot(slotId).getStack().stackSize -= (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 10 : 1);
+						getSlot(slotId).getStack().stackSize -= (mode == ClickType.QUICK_MOVE ? 10 : 1);
 					else if (clickedButton == 2)
 						getSlot(slotId).putStack(null);
 					if (getSlot(slotId).getStack() != null && getSlot(slotId).getStack().stackSize <= 0)

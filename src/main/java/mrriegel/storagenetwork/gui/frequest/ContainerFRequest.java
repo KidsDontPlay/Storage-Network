@@ -104,6 +104,8 @@ public class ContainerFRequest extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
+		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
+			return false;
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 20 == 0) {
 			ItemStack drain = tile.drain;
 			TileMaster mas = (TileMaster) playerIn.worldObj.getTileEntity(tile.getMaster());
@@ -129,8 +131,6 @@ public class ContainerFRequest extends Container {
 			}
 			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREQUEST), (EntityPlayerMP) playerIn);
 		}
-		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
-			return false;
-		return true;
+		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 }

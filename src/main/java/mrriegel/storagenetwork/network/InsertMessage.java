@@ -18,16 +18,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
-	int x, y, z, dim;
+	int dim;
 	ItemStack stack;
+	BlockPos pos;
 
 	public InsertMessage() {
 	}
 
-	public InsertMessage(int x, int y, int z, int dim, ItemStack stack) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public InsertMessage(BlockPos pos, int dim, ItemStack stack) {
+		this.pos = pos;
 		this.dim = dim;
 		this.stack = stack;
 
@@ -40,8 +39,8 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 			@Override
 			public void run() {
 				World w = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.dim);
-				if (w.getTileEntity(new BlockPos(message.x, message.y, message.z)) instanceof TileMaster) {
-					TileMaster tile = (TileMaster) w.getTileEntity(new BlockPos(message.x, message.y, message.z));
+				if (w.getTileEntity(message.pos) instanceof TileMaster) {
+					TileMaster tile = (TileMaster) w.getTileEntity(message.pos);
 					int rest = tile.insertStack(message.stack, null, false);
 					if (rest != 0) {
 						ctx.getServerHandler().playerEntity.inventory.setItemStack(Inv.copyStack(message.stack, rest));
@@ -51,13 +50,12 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 						PacketHandler.INSTANCE.sendTo(new StackMessage(null), ctx.getServerHandler().playerEntity);
 					}
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-						((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer).detectAndSendChanges();
 						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
 					}
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-						((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).detectAndSendChanges();
 						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
 					}
+					ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
 				}
 
 			}
@@ -67,18 +65,14 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+		this.pos = BlockPos.fromLong(buf.readLong());
 		this.dim = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+		buf.writeLong(this.pos.toLong());
 		buf.writeInt(this.dim);
 		ByteBufUtils.writeItemStack(buf, this.stack);
 	}

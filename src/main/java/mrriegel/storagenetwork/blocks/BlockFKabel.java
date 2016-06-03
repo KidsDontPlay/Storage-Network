@@ -40,6 +40,7 @@ public class BlockFKabel extends BlockKabel {
 		return false;
 	}
 
+	@Override
 	boolean validInventory(World worldIn, BlockPos pos) {
 		return worldIn.getTileEntity(pos) instanceof IFluidHandler;
 	}

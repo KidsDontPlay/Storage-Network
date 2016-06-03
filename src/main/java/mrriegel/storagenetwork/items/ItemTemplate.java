@@ -21,7 +21,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ItemTemplate extends Item {
@@ -86,8 +85,8 @@ public class ItemTemplate extends Item {
 		return result;
 	}
 
-	public static Map<Integer,ItemStack> getInput(ItemStack stack) {
-		Map<Integer,ItemStack> map = Maps.newHashMap();
+	public static Map<Integer, ItemStack> getInput(ItemStack stack) {
+		Map<Integer, ItemStack> map = Maps.newHashMap();
 		if (stack.getTagCompound() == null)
 			return map;
 		NBTTagList invList = stack.getTagCompound().getTagList("crunchItem", Constants.NBT.TAG_COMPOUND);

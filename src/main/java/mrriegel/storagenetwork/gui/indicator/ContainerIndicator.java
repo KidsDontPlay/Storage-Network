@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.gui.indicator;
 
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.tile.TileIndicator;
-import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -30,7 +29,7 @@ public class ContainerIndicator extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return tile != null && tile.getMaster() != null && tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster;
+		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	public void slotChanged() {

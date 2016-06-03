@@ -15,8 +15,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.lwjgl.input.Keyboard;
-
 public abstract class MyGuiContainer extends GuiContainer {
 
 	public MyGuiContainer(Container inventorySlotsIn) {
@@ -87,7 +85,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 			if (toolTip && this.isMouseOverSlot(mx, my) && stack != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+				if (!isShiftKeyDown())
 					renderToolTip(stack, mx, my);
 				else
 					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx, my);
@@ -154,7 +152,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 			if (toolTip && this.isMouseOverSlot(mx, my) && fluid != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
-				if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || !number) {
+				if (!isShiftKeyDown() || !number) {
 					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx, my, fontRendererObj);
 				} else
 					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx, my);

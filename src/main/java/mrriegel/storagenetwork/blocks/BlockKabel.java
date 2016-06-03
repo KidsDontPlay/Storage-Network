@@ -12,7 +12,6 @@ import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
-import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import mrriegel.storagenetwork.tile.TileMaster;

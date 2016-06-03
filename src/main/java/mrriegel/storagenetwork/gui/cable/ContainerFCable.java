@@ -72,10 +72,7 @@ public class ContainerFCable extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return true;
-		// return tile != null && tile.getMaster() != null &&
-		// tile.getWorld().getTileEntity(tile.getMaster()) instanceof
-		// TileMaster;
+		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	public void slotChanged() {

@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.gui.MyGuiContainer;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
+import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.InsertMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.RequestMessage;
@@ -232,7 +233,7 @@ public class GuiRemote extends MyGuiContainer {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (over != null && mc.thePlayer.inventory.getItemStack() == null && (mouseButton == 0 || mouseButton == 1)) {
-			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT), Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)));
+			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
 		}
 		int i = Mouse.getX() * this.width / this.mc.displayWidth;
 		int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
@@ -243,7 +244,7 @@ public class GuiRemote extends MyGuiContainer {
 			searchBar.setFocused(true);
 		}
 		if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90 + 64)) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(NBTHelper.getInteger(mc.thePlayer.inventory.getCurrentItem(), "x"), NBTHelper.getInteger(mc.thePlayer.inventory.getCurrentItem(), "y"), NBTHelper.getInteger(mc.thePlayer.inventory.getCurrentItem(), "z"), NBTHelper.getInteger(mc.thePlayer.inventory.getCurrentItem(), "dim"), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(ItemRemote.getTile(mc.thePlayer.inventory.getCurrentItem()).getPos(), NBTHelper.getInteger(mc.thePlayer.inventory.getCurrentItem(), "dim"), mc.thePlayer.inventory.getItemStack()));
 		}
 	}
 

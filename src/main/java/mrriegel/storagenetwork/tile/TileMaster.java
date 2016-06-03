@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import mrriegel.storagenetwork.api.IConnectable;
-import mrriegel.storagenetwork.api.ITemplate;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.helper.CraftingTask;
 import mrriegel.storagenetwork.helper.FilterItem;
@@ -38,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import cofh.api.energy.EnergyStorage;
@@ -278,7 +276,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return templates;
 	}
 
-	private List<FilterItem> getIngredients(ItemStack template) {
+	public List<FilterItem> getIngredients(ItemStack template) {
 		Map<Integer, ItemStack> stacks = Maps.<Integer, ItemStack> newHashMap();
 		Map<Integer, Boolean> metas = Maps.<Integer, Boolean> newHashMap();
 		Map<Integer, Boolean> ores = Maps.<Integer, Boolean> newHashMap();
@@ -344,118 +342,62 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	public int getMissing(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww, List<FilterItem> missing) {
 		int result = 0;
-		for (int ii = 0; ii < getTemplates(fil).size(); ii++) {
-			ItemStack s = getTemplates(fil).get(ii);
-			if (neww)
-				stacks = getStacks();
+		if (neww)
+			stacks = getStacks();
+		for (ItemStack s : getTemplates(fil)) {
+			ItemStack output = ItemTemplate.getOutput(s);
 			boolean done = true;
-			int con = num / s.stackSize;
-			if (num % s.stackSize != 0)
+			int con = num / output.stackSize;
+			if (num % output.stackSize != 0)
 				con++;
 			for (int i = 0; i < con; i++) {
 				boolean oneCraft = true;
 				for (FilterItem f : getIngredients(s)) {
-					// if (!oneCraft)
-					// break;
-					while (true) {
-						boolean found = consume(stacks, f, 1) == 1;
-						System.out.println("found: " + found + ", " + f);
-						if (!found) {
-							int t = getMissing(stacks, f, 1, false, missing);
-							if (t != 0) {
-								addToList(stacks, f.getStack(), t);
+					if (!oneCraft)
+						break;
 
-							} else {
-								oneCraft = false;
-								missing.add(f);
-								break;
-							}
+					boolean found = consume(stacks, f, 1) == 1;
+					System.out.println(f.getStack() + " found: " + found);
+					if (!found) {
+						int t = getMissing(stacks, f, 1, false, missing);
+						if (t != 0) {
+							addToList(stacks, f.getStack(), t);
 						} else {
-							break;
+							oneCraft = false;
+							missing.add(f);
 						}
 					}
 				}
 				if (oneCraft)
-					result += s.stackSize;
+					result += output.stackSize;
+				System.out.println(fil.getStack() + "i: " + i + " res: " + result);
 			}
 
 		}
 		return result;
 	}
 
-	public ItemStack craft(FilterItem fil, int num) {
-		for (ItemStack s : getTemplates(fil)) {
-			boolean done = false;
-			ItemStack last = null;
-			for (FilterItem f : getIngredients(s)) {
-				int con = num / s.stackSize;
-				if (num % s.stackSize != 0)
-					con++;
-				// System.out.println("consume: "+con+" "+f.getStack());
-
-				ItemStack req = request(new FilterItem(f.getStack(), f.isMeta(), f.isOre(), f.isNbt()), con, false);
-				if (req != null && req.stackSize == con) {
-					done = true;
-					continue;
-				}
-				int rest = con - req.stackSize;
-				// System.out.println("craft: "+con+" "+f.getStack());
-				ItemStack craft = craft(f, rest);
-				if (craft != null && craft.stackSize == rest) {
-					done = true;
-					continue;
-				}
-				done = false;
-				break;
-			}
-			if (done)
-				return null;
-
-		}
-		return null;
-	}
-
 	private int consume(List<StackWrapper> wraps, FilterItem fil, int num) {
-		boolean meta = fil.isMeta(), ore = fil.isOre();
-		ItemStack stack = fil.getStack();
 		// System.out.println(fil.getStack()+" "+num);
 		int rest = num;
 		for (StackWrapper w : wraps) {
-			if (!ore) {
-				if (meta ? w.getStack().isItemEqual(stack) : w.getStack().getItem() == stack.getItem()) {
-					if (w.getSize() >= rest) {
-						w.setSize(w.getSize() - rest);
-						if (w.getSize() == 0) {
-							// w = null;
-							wraps.remove(w);
-							// wraps.removeAll(Collections.singleton(null));
-						}
-						return num;
-					} else {
-						rest = rest - w.getSize();
+			if (fil.match(w.getStack())) {
+				if (w.getSize() >= rest) {
+					w.setSize(w.getSize() - rest);
+					if (w.getSize() == 0) {
 						// w = null;
 						wraps.remove(w);
 						// wraps.removeAll(Collections.singleton(null));
 					}
-				}
-			} else {
-				if (Util.equalOreDict(w.getStack(), stack)) {
-					if (w.getSize() >= rest) {
-						w.setSize(w.getSize() - rest);
-						if (w.getSize() == 0) {
-							// w = null;
-							wraps.remove(w);
-							// wraps.removeAll(Collections.singleton(null));
-						}
-						return num;
-					} else {
-						rest = rest - w.getSize();
-						// w = null;
-						wraps.remove(w);
-						// wraps.removeAll(Collections.singleton(null));
-					}
+					return num;
+				} else {
+					rest = rest - w.getSize();
+					// w = null;
+					wraps.remove(w);
+					// wraps.removeAll(Collections.singleton(null));
 				}
 			}
+
 		}
 		return num - rest;
 	}
@@ -502,6 +444,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (worldObj.getTileEntity(bl) instanceof IConnectable && (!(worldObj.getTileEntity(bl) instanceof TileKabel) || !((TileKabel) worldObj.getTileEntity(bl)).isDisabled()) && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
+				Util.updateTile(worldObj, bl);
 				addConnectables(bl);
 			}
 		}

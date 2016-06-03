@@ -57,6 +57,8 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 						return;
 					ContainerRequest con = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
 					TileMaster tile = (TileMaster) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(con.tile.getMaster());
+					if (tile == null)
+						return;
 					for (int j = 1; j < 10; j++) {
 						NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
