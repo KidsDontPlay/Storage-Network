@@ -25,7 +25,6 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(StorageNetwork.instance, new GuiHandler());
-
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {

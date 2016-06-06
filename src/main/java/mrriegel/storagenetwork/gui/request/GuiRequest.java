@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -50,6 +49,7 @@ public class GuiRequest extends MyGuiContainer {
 	private Button direction, sort, left, right;
 	TileRequest tile;
 	private List<ItemSlot> slots;
+	long lastClick;
 
 	public GuiRequest(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -58,6 +58,11 @@ public class GuiRequest extends MyGuiContainer {
 		this.stacks = new ArrayList<StackWrapper>();
 		tile = ((ContainerRequest) inventorySlots).tile;
 		PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
+		lastClick = System.currentTimeMillis();
+	}
+
+	boolean canClick() {
+		return System.currentTimeMillis() > lastClick + 80L;
 	}
 
 	@Override
@@ -241,11 +246,12 @@ public class GuiRequest extends MyGuiContainer {
 		} else if (mouseOverX(mouseX - guiLeft, mouseY - guiTop)) {
 			PacketHandler.INSTANCE.sendToServer(new ClearMessage());
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
-		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null) {
+		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null && canClick()) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
-		} else if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90)) {
-			TileEntity t = tile.getWorld().getTileEntity(tile.getMaster());
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(t.getPos(), tile.getWorld().provider.getDimension(), mc.thePlayer.inventory.getItemStack()));
+			lastClick = System.currentTimeMillis();
+		} else if (mc.thePlayer.inventory.getItemStack() != null && i > (guiLeft + 7) && i < (guiLeft + xSize - 7) && j > (guiTop + 7) && j < (guiTop + 90) && canClick()) {
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(tile.getMaster(), tile.getWorld().provider.getDimension(), mc.thePlayer.inventory.getItemStack()));
+			lastClick = System.currentTimeMillis();
 		}
 	}
 
