@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.helper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.player.InventoryPlayer;
@@ -13,6 +12,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
+import com.google.common.collect.Lists;
 
 public class Inv {
 	public static int addToInventoriesWithLeftover(ItemStack stack, List<IInventory> inventorys, boolean simulate) {
@@ -46,7 +47,7 @@ public class Inv {
 	}
 
 	public static List<IInventory> getInventorys(List<IInventory> inventorys, ItemStack stack, boolean with) {
-		List<IInventory> lis = new ArrayList<IInventory>();
+		List<IInventory> lis = Lists.newArrayList();
 		for (IInventory inv : inventorys) {
 
 			if (with) {
@@ -61,7 +62,7 @@ public class Inv {
 	}
 
 	public static List<IInventory> getInventorys(List<IInventory> inventorys, ItemStack stack, boolean with, EnumFacing face) {
-		List<IInventory> lis = new ArrayList<IInventory>();
+		List<IInventory> lis = Lists.newArrayList();
 		for (IInventory inv : inventorys) {
 			if (inv instanceof ISidedInventory) {
 				if (with) {

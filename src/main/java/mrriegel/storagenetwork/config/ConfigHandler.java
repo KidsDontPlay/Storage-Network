@@ -3,12 +3,13 @@ package mrriegel.storagenetwork.config;
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
 
 public class ConfigHandler {
 
 	public static Configuration config;
 
-	public static boolean smallFont, energyNeeded, untouchable;
+	public static boolean smallFont, energyNeeded, untouchable, jeiLoaded;
 	public static int energyCapacity, energyMultiplier, rangeWirelessAccessor, itemBoxCapacity, fluidBoxCapacity;
 
 	public static void refreshConfig(File file) {
@@ -22,6 +23,7 @@ public class ConfigHandler {
 		rangeWirelessAccessor = config.get(Configuration.CATEGORY_GENERAL, "rangeWirelessAccessor", 32).getInt();
 		itemBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "itemBoxCapacity", 200).getInt();
 		fluidBoxCapacity = config.get(Configuration.CATEGORY_GENERAL, "fluidBoxCapacity", 64).getInt();
+		jeiLoaded = Loader.isModLoaded("JEI");
 
 		if (config.hasChanged()) {
 			config.save();

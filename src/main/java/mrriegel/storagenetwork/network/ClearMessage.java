@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -38,7 +37,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 							c.craftMatrix.setInventorySlotContents(i, null);
 						else
 							c.craftMatrix.setInventorySlotContents(i, Inv.copyStack(s, rest));
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) w.getTileEntity(c.tile.getMaster())).getStacks(), ((TileMaster) w.getTileEntity(c.tile.getMaster())).getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) w.getTileEntity(c.tile.getMaster())).getStacks(), ((TileMaster) w.getTileEntity(c.tile.getMaster())).getCraftableStacks()), ctx.getServerHandler().playerEntity);
 					}
 
 				}

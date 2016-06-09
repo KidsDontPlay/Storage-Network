@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.helper;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -16,21 +15,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.oredict.OreDictionary;
 
-import org.apache.commons.lang3.text.WordUtils;
+import com.google.common.collect.Lists;
 
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
@@ -46,25 +42,52 @@ public class Util {
 
 	@Nonnull
 	public static String getModNameForItem(@Nonnull Item item) {
-		ResourceLocation itemResourceLocation = GameData.getItemRegistry().getNameForObject(item);
-		String modId = itemResourceLocation.getResourceDomain();
-		String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
-		String modName = modNamesForIds.get(lowercaseModId);
-		if (modName == null) {
-			modName = WordUtils.capitalize(modId);
-			modNamesForIds.put(lowercaseModId, modName);
-		}
+		// ResourceLocation itemResourceLocation =
+		// GameData.getItemRegistry().getNameForObject(item);
+		// String modId = itemResourceLocation.getResourceDomain();
+		// String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
+		// String modName = modNamesForIds.get(lowercaseModId);
+		// if (modName == null) {
+		// modName = WordUtils.capitalize(modId);
+		// modNamesForIds.put(lowercaseModId, modName);
+		// }
+		ModContainer m = Loader.instance().getIndexedModList().get(item.getRegistryName().getResourceDomain());
+		if (m == null)
+			return "Minecraft";
+		else
+			return m.getName();
 
-		return modName;
+		// return modName;
 	}
 
-	public static String getModNameForFluid(Fluid fluid) {
-		for (FluidContainerData d : FluidContainerRegistry.getRegisteredFluidContainerData()) {
-			if (fluid == d.fluid.getFluid())
-				return getModNameForItem(d.filledContainer.getItem());
-		}
-		return "Unknown";
+	@Nonnull
+	public static String getModNameForFluid(@Nonnull Fluid fluid) {
+		// ResourceLocation itemResourceLocation =
+		// GameData.getItemRegistry().getNameForObject(item);
+		// String modId = itemResourceLocation.getResourceDomain();
+		// String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
+		// String modName = modNamesForIds.get(lowercaseModId);
+		// if (modName == null) {
+		// modName = WordUtils.capitalize(modId);
+		// modNamesForIds.put(lowercaseModId, modName);
+		// }
+		ModContainer m = Loader.instance().getIndexedModList().get(fluid.getBlock().getRegistryName().getResourceDomain());
+		if (m == null)
+			return "Minecraft";
+		else
+			return m.getName();
+
+		// return modName;
 	}
+
+	// public static String getModNameForFluid(Fluid fluid) {
+	// for (FluidContainerData d :
+	// FluidContainerRegistry.getRegisteredFluidContainerData()) {
+	// if (fluid == d.fluid.getFluid())
+	// return getModNameForItem(d.filledContainer.getItem());
+	// }
+	// return "Unknown";
+	// }
 
 	public static boolean equalOreDict(ItemStack a, ItemStack b) {
 		int[] ar = OreDictionary.getOreIDs(a);
@@ -126,7 +149,7 @@ public class Util {
 	}
 
 	public static List<BlockPos> getSides(BlockPos pos) {
-		List<BlockPos> lis = new ArrayList<BlockPos>();
+		List<BlockPos> lis = Lists.newArrayList();
 		lis.add(pos.up());
 		lis.add(pos.down());
 		lis.add(pos.east());

@@ -37,6 +37,10 @@ gui.storagenetwork.operate.tooltip.less=less
 
 gui.storagenetwork.indi.tooltip=%s gives a redstone signal if %s than %d %s are in the network.
 
+gui.storagenetwork.req.tooltip_NAME=Sort by name
+gui.storagenetwork.req.tooltip_MOD=Sort by mod
+gui.storagenetwork.req.tooltip_AMOUNT=Sort by amount
+
 tooltip.storagenetwork.networkNeeded=Needs to be connected to the network.
 tooltip.storagenetwork.RFNeeded=Needs RF to operate.
 tooltip.storagenetwork.annexer=Breaks the block in front of it and inserts the drops into the network.

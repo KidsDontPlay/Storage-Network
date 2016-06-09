@@ -39,7 +39,6 @@ public class StorageNetwork {
 		tagCompound.setString("AlignToGrid", "left");
 		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
 		MinecraftForge.EVENT_BUS.register(this);
-
 	}
 
 	@EventHandler

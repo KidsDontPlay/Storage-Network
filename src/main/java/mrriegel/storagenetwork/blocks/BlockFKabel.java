@@ -26,6 +26,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class BlockFKabel extends BlockKabel {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+			return false;
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		if (worldIn.isRemote)
 			return true;

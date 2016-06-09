@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.blocks;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,6 +29,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+
+import com.google.common.collect.Lists;
 
 public class BlockMaster extends BlockContainer {
 
@@ -81,6 +82,8 @@ public class BlockMaster extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileMaster))
+			return false;
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
@@ -93,7 +96,7 @@ public class BlockMaster extends BlockContainer {
 				map.put(block, map.get(block) != null ? (map.get(block) + 1) : 1);
 
 			}
-			List<Entry<String, Integer>> lis = new ArrayList<Map.Entry<String, Integer>>();
+			List<Entry<String, Integer>> lis = Lists.newArrayList();
 			for (Entry<String, Integer> e : map.entrySet()) {
 				lis.add(e);
 			}

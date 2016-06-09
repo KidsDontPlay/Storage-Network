@@ -1,9 +1,7 @@
 package mrriegel.storagenetwork.gui.request;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.Util;
@@ -57,7 +55,7 @@ public class ContainerRequest extends Container {
 				if (playerIn.worldObj.isRemote) {
 					return;
 				}
-				List<ItemStack> lis = new ArrayList<ItemStack>();
+				List<ItemStack> lis = Lists.newArrayList();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					lis.add(craftMatrix.getStackInSlot(i));
 				super.onPickupFromSlot(playerIn, stack);
@@ -68,7 +66,7 @@ public class ContainerRequest extends Container {
 						ItemStack req = t.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, true, false) : null, 1, false);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
-				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerIn);
 				detectAndSendChanges();
 			}
 		};
@@ -164,7 +162,7 @@ public class ContainerRequest extends Container {
 					ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
 					slot.putStack(stack);
 					detectAndSendChanges();
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerIn);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
 					if (stack == null)
 						return null;
 					slot.onPickupFromSlot(playerIn, itemstack1);
@@ -197,7 +195,7 @@ public class ContainerRequest extends Container {
 			return false;
 		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 50 == 0) {
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks(), GuiHandler.REQUEST), (EntityPlayerMP) playerInv.player);
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerInv.player);
 		}
 
 		if (x.crafted != 0 && Math.abs(System.currentTimeMillis() - lastTime) > 500) {

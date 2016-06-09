@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.gui.indicator;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +23,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.collect.Lists;
 
 public class GuiIndicator extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
@@ -174,15 +175,15 @@ public class GuiIndicator extends MyGuiContainer {
 				} else if (this.hovered) {
 					l = 16777120;
 				}
-				List<String> lis = new ArrayList<String>();
+				List<String> lis = Lists.newArrayList();
 				String s = tile.getStack() == null ? "" : I18n.format("gui.storagenetwork.indi.tooltip", mc.theWorld.getBlockState(tile.getPos()).getBlock().getLocalizedName(), I18n.format("gui.storagenetwork.operate.tooltip." + (tile.isMore() ? "more" : "less")), tile.getStack().getSize(), tile.getStack() != null ? tile.getStack().getStack().getDisplayName() : "Items");
-				List<String> matchList = new ArrayList<String>();
+				List<String> matchList = Lists.newArrayList();
 				Pattern regex = Pattern.compile(".{1,25}(?:\\s|$)", Pattern.DOTALL);
 				Matcher regexMatcher = regex.matcher(s);
 				while (regexMatcher.find()) {
 					matchList.add(regexMatcher.group());
 				}
-				lis = new ArrayList<String>(matchList);
+				lis = Lists.newArrayList(matchList);
 				if (this.hovered && id == 4 && tile.getStack() != null) {
 					GlStateManager.pushMatrix();
 					GlStateManager.disableLighting();

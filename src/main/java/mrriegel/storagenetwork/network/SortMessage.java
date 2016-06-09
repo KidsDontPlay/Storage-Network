@@ -2,7 +2,9 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
+import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
+import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileRequest;
@@ -44,15 +46,17 @@ public class SortMessage implements IMessage, IMessageHandler<SortMessage, IMess
 					return;
 
 				}
-				TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
-				if (t instanceof TileRequest) {
-					TileRequest tile = (TileRequest) t;
-					tile.sort = message.sort;
-					tile.downwards = message.direction;
-				} else if (t instanceof TileFRequest) {
-					TileFRequest tile = (TileFRequest) t;
-					tile.sort = message.sort;
-					tile.downwards = message.direction;
+				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest || ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest) {
+					TileEntity t = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+					if (t instanceof TileRequest) {
+						TileRequest tile = (TileRequest) t;
+						tile.sort = message.sort;
+						tile.downwards = message.direction;
+					} else if (t instanceof TileFRequest) {
+						TileFRequest tile = (TileFRequest) t;
+						tile.sort = message.sort;
+						tile.downwards = message.direction;
+					}
 				}
 			}
 		});

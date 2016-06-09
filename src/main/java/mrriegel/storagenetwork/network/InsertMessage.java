@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -50,10 +49,9 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 						PacketHandler.INSTANCE.sendTo(new StackMessage(null), ctx.getServerHandler().playerEntity);
 					}
 					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REMOTE), ctx.getServerHandler().playerEntity);
-					}
-					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
+					} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
+						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
 					}
 					ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
 				}

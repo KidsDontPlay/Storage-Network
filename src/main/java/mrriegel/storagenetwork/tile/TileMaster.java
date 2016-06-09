@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -52,11 +51,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public Set<BlockPos> connectables;
 	public List<BlockPos> storageInventorys, fstorageInventorys;
 	public EnergyStorage en = new EnergyStorage(ConfigHandler.energyCapacity, Integer.MAX_VALUE, 0);
-	public List<CraftingTask> tasks = new ArrayList<CraftingTask>();
+	public List<CraftingTask> tasks = Lists.newArrayList();
 
 	public List<FluidStack> getFluids() {
-		List<FluidStack> stacks = new ArrayList<FluidStack>();
-		List<AbstractFilterTile> invs = new ArrayList<AbstractFilterTile>();
+		List<FluidStack> stacks = Lists.newArrayList();
+		List<AbstractFilterTile> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
@@ -173,8 +172,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public List<StackWrapper> getCraftableStacks() {
-		List<StackWrapper> craftableStacks = new ArrayList<StackWrapper>();
-		List<TileContainer> invs = new ArrayList<TileContainer>();
+		List<StackWrapper> craftableStacks = Lists.newArrayList();
+		List<TileContainer> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileContainer))
 				continue;
@@ -262,7 +261,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public List<ItemStack> getTemplates(FilterItem fil) {
-		List<ItemStack> templates = new ArrayList<ItemStack>();
+		List<ItemStack> templates = Lists.newArrayList();
 		for (TileContainer tile : getContainers()) {
 			for (ItemStack s : tile.getTemplates()) {
 				ItemStack result = ItemTemplate.getOutput(s);
@@ -286,7 +285,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			int slot = stackTag.getByte("Slot");
 			stacks.put(slot, ItemStack.loadItemStackFromNBT(stackTag));
 		}
-		List<FilterItem> list = new ArrayList<FilterItem>();
+		List<FilterItem> list = Lists.newArrayList();
 		for (int i = 1; i < 10; i++) {
 			metas.put(i - 1, NBTHelper.getBoolean(template, "meta" + i));
 			ores.put(i - 1, NBTHelper.getBoolean(template, "ore" + i));
@@ -412,7 +411,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		super.readFromNBT(compound);
 		en.readFromNBT(compound);
 		NBTTagList tasksList = compound.getTagList("tasks", Constants.NBT.TAG_COMPOUND);
-		tasks = new ArrayList<CraftingTask>();
+		tasks = Lists.newArrayList();
 		for (int i = 0; i < tasksList.tagCount(); i++) {
 			NBTTagCompound stackTag = tasksList.getCompoundTagAt(i);
 			tasks.add(CraftingTask.loadCraftingTaskFromNBT(stackTag));
@@ -452,8 +451,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	private void addInventorys() {
-		storageInventorys = new ArrayList<BlockPos>();
-		fstorageInventorys = new ArrayList<BlockPos>();
+		storageInventorys = Lists.newArrayList();
+		fstorageInventorys = Lists.newArrayList();
 		for (BlockPos cable : connectables) {
 			if (worldObj.getTileEntity(cable) instanceof AbstractFilterTile) {
 				AbstractFilterTile s = (AbstractFilterTile) worldObj.getTileEntity(cable);
@@ -586,7 +585,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public int insertFluid(FluidStack stack, BlockPos source, boolean simulate) {
 		if (stack == null)
 			return 0;
-		List<AbstractFilterTile> invs = new ArrayList<AbstractFilterTile>();
+		List<AbstractFilterTile> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
@@ -639,7 +638,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void impor() {
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<TileKabel> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
@@ -707,7 +706,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void fimpor() {
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<TileKabel> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
@@ -753,7 +752,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void export() {
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<TileKabel> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
@@ -806,7 +805,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	public void fexport() {
-		List<TileKabel> invs = new ArrayList<TileKabel>();
+		List<TileKabel> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (!(worldObj.getTileEntity(p) instanceof TileKabel))
 				continue;
@@ -935,7 +934,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public FluidStack frequest(Fluid fluid, final int size, boolean simulate) {
 		if (size == 0 || fluid == null)
 			return null;
-		List<AbstractFilterTile> invs = new ArrayList<AbstractFilterTile>();
+		List<AbstractFilterTile> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);

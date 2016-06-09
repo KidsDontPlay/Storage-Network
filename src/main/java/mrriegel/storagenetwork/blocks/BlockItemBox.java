@@ -77,6 +77,8 @@ public class BlockItemBox extends BlockConnectable {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (/* tile.getMaster() == null || */(heldItem != null && (heldItem.getItem() == ModItems.coverstick || heldItem.getItem() == ModItems.toggler || heldItem.getItem() == ModItems.duplicator)))
 			return false;
+		if (!(worldIn.getTileEntity(pos) instanceof TileItemBox))
+			return false;
 		if (worldIn.getTileEntity(pos) instanceof TileItemBox) {
 			TileItemBox tile = (TileItemBox) worldIn.getTileEntity(pos);
 			if (worldIn.isRemote)

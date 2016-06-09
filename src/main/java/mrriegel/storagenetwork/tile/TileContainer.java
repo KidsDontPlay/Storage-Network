@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.api.IConnectable;
@@ -12,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -86,7 +86,7 @@ public class TileContainer extends CrunchTEInventory implements IConnectable, IS
 	}
 
 	public List<ItemStack> getTemplates() {
-		List<ItemStack> lis = new ArrayList<ItemStack>();
+		List<ItemStack> lis = Lists.newArrayList();
 		for (int i = 0; i < INVSIZE; i++)
 			if (getStackInSlot(i) != null)
 				lis.add(getStackInSlot(i).copy());

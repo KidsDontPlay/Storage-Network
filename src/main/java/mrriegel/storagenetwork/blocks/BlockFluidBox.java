@@ -51,6 +51,8 @@ public class BlockFluidBox extends BlockConnectable {
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileFluidBox))
+			return;
 		TileFluidBox tile = (TileFluidBox) worldIn.getTileEntity(pos);
 		if (stack.getTagCompound() != null)
 			tile.readTank(stack.getTagCompound());

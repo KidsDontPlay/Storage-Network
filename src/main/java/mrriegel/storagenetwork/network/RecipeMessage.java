@@ -7,7 +7,6 @@ import java.util.Map;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.gui.template.ContainerTemplate;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -80,7 +79,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 						}
 					}
 					con.slotChanged();
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks(), GuiHandler.REQUEST), ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
 				} else if (message.index == 1) {
 					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerTemplate))
 						return;

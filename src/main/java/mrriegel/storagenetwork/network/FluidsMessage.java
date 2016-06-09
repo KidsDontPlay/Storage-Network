@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.storagenetwork.gui.fremote.GuiFRemote;
@@ -16,6 +15,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import com.google.common.collect.Lists;
 
 public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, IMessage> {
 	int size, id;
@@ -54,7 +55,7 @@ public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, I
 	public void fromBytes(ByteBuf buf) {
 		this.size = buf.readInt();
 		this.id = buf.readInt();
-		stacks = new ArrayList<FluidStack>();
+		stacks = Lists.newArrayList();
 		for (int i = 0; i < size; i++) {
 			NBTTagCompound compound = ByteBufUtils.readTag(buf);
 			FluidStack w = FluidStack.loadFluidStackFromNBT(compound);

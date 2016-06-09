@@ -76,6 +76,8 @@ public class BlockFRequest extends BlockConnectable {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (!(worldIn.getTileEntity(pos) instanceof IConnectable))
+			return false;
 		IConnectable tile = (IConnectable) worldIn.getTileEntity(pos);
 		if (!worldIn.isRemote && tile.getMaster() != null) {
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.FREQUEST, worldIn, pos.getX(), pos.getY(), pos.getZ());

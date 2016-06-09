@@ -75,6 +75,8 @@ public class BlockKabel extends BlockConnectable {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+			return false;
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		if (worldIn.isRemote)
 			return true;
@@ -106,6 +108,8 @@ public class BlockKabel extends BlockConnectable {
 
 	@Override
 	public void setConnections(World worldIn, BlockPos pos, IBlockState state, boolean refresh) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+			return;
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
@@ -172,6 +176,8 @@ public class BlockKabel extends BlockConnectable {
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileKabel))
+			return;
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		if (tile != null && tile.getCover() != null) {
 			if (tile.getCover() != Blocks.GLASS)
@@ -217,6 +223,8 @@ public class BlockKabel extends BlockConnectable {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		if (!(source.getTileEntity(pos) instanceof TileKabel))
+			return FULL_BLOCK_AABB;
 		TileKabel tile = (TileKabel) source.getTileEntity(pos);
 		float f = 0.3125F;
 		float f1 = 0.6875F;

@@ -35,6 +35,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Lists;
+
 public class GuiCable extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
@@ -42,7 +44,7 @@ public class GuiCable extends MyGuiContainer {
 	AbstractFilterTile tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
-	ArrayList<ItemSlot> list = new ArrayList<ItemSlot>();
+	List<ItemSlot> list = Lists.newArrayList();
 
 	public GuiCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -85,7 +87,7 @@ public class GuiCable extends MyGuiContainer {
 				RenderHelper.disableStandardItemLighting();
 			}
 		}
-		list = new ArrayList<ItemSlot>();
+		list = Lists.newArrayList();
 		for (int ii = 0; ii < 9; ii++) {
 			ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
 			int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
@@ -133,7 +135,7 @@ public class GuiCable extends MyGuiContainer {
 		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
 		int my = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10 && my < guiTop + 20) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = Lists.newArrayList();
 			list.add("Priority");
 			GlStateManager.pushMatrix();
 			GlStateManager.disableLighting();
@@ -143,7 +145,7 @@ public class GuiCable extends MyGuiContainer {
 		}
 
 		if (white != null && white.isMouseOver()) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = Lists.newArrayList();
 			list.add(tile.isWhite() ? "Whitelist" : "Blacklist");
 			GlStateManager.pushMatrix();
 			GlStateManager.disableLighting();
@@ -152,6 +154,11 @@ public class GuiCable extends MyGuiContainer {
 			GlStateManager.enableLighting();
 		}
 
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (ItemSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
 	}

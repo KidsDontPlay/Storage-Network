@@ -21,7 +21,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 		super(inventorySlotsIn);
 	}
 
-	private class AbstractSlot {
+	private abstract class AbstractSlot {
 		public int x, y, size, guiLeft, guiTop;
 		public boolean number, square, smallFont, toolTip;
 		protected Minecraft mc;
@@ -44,6 +44,10 @@ public abstract class MyGuiContainer extends GuiContainer {
 			return isPointInRegion(x - guiLeft, y - guiTop, 16, 16, mouseX, mouseY);
 		}
 
+		public abstract void drawSlot(int mx, int my);
+
+		public abstract void drawTooltip(int mx, int my);
+
 	}
 
 	public class ItemSlot extends AbstractSlot {
@@ -54,19 +58,22 @@ public abstract class MyGuiContainer extends GuiContainer {
 			this.stack = stack;
 		}
 
+		@Override
 		public void drawSlot(int mx, int my) {
 			GlStateManager.pushMatrix();
-			RenderHelper.enableGUIStandardItemLighting();
-			mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-			String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
-			if (number)
-				if (smallFont) {
-					GlStateManager.pushMatrix();
-					GlStateManager.scale(.5f, .5f, .5f);
-					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
-					GlStateManager.popMatrix();
-				} else
-					mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+			if (stack != null) {
+				RenderHelper.enableGUIStandardItemLighting();
+				mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+				String amount = size < 1000 ? String.valueOf(size) : size < 1000000 ? size / 1000 + "K" : size / 1000000 + "M";
+				if (number)
+					if (smallFont) {
+						GlStateManager.pushMatrix();
+						GlStateManager.scale(.5f, .5f, .5f);
+						mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x * 2 + 16, y * 2 + 16, amount);
+						GlStateManager.popMatrix();
+					} else
+						mc.getRenderItem().renderItemOverlayIntoGUI(fontRendererObj, stack, x, y, amount);
+			}
 			if (square && this.isMouseOverSlot(mx, my)) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
@@ -81,14 +88,15 @@ public abstract class MyGuiContainer extends GuiContainer {
 			GlStateManager.popMatrix();
 		}
 
+		@Override
 		public void drawTooltip(int mx, int my) {
 			if (toolTip && this.isMouseOverSlot(mx, my) && stack != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
 				if (!isShiftKeyDown())
-					renderToolTip(stack, mx, my);
+					renderToolTip(stack, mx - this.guiLeft, my - this.guiTop);
 				else
-					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx, my);
+					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) }), mx - this.guiLeft, my - this.guiTop);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}
@@ -104,6 +112,7 @@ public abstract class MyGuiContainer extends GuiContainer {
 			this.fluid = fluid;
 		}
 
+		@Override
 		public void drawSlot(int mx, int my) {
 			if (fluid != null) {
 				GlStateManager.pushMatrix();
@@ -148,14 +157,15 @@ public abstract class MyGuiContainer extends GuiContainer {
 			}
 		}
 
+		@Override
 		public void drawTooltip(int mx, int my) {
 			if (toolTip && this.isMouseOverSlot(mx, my) && fluid != null) {
 				GlStateManager.pushMatrix();
 				GlStateManager.disableLighting();
 				if (!isShiftKeyDown() || !number) {
-					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx, my, fontRendererObj);
+					drawHoveringText(Arrays.asList(fluid.getLocalizedName(FluidRegistry.getFluidStack(fluid.getName(), 1))), mx - this.guiLeft, my - this.guiTop);
 				} else
-					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx, my);
+					drawHoveringText(Arrays.asList(new String[] { "Amount: " + String.valueOf(size) + " mB" }), mx - this.guiLeft, my - this.guiTop);
 				GlStateManager.popMatrix();
 				GlStateManager.enableLighting();
 			}
