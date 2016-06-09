@@ -40,7 +40,7 @@ public class ModBlocks {
 	public static final Block fexKabel = new BlockFKabel().setRegistryName("fexKabel");
 	public static final Block fimKabel = new BlockFKabel().setRegistryName("fimKabel");
 	public static final Block cover = new BlockCover();
-	public static final Block container = new BlockContainer();
+	// public static final Block container = new BlockContainer();
 	public static final Block crafter = new BlockCrafter();
 	public static final Block indicator = new BlockIndicator();
 	public static final Block annexer = new BlockAnnexer();
@@ -66,7 +66,7 @@ public class ModBlocks {
 		GameRegistry.register(fannexer);
 		GameRegistry.register(itemBox);
 		GameRegistry.register(fluidBox);
-		GameRegistry.register(container);
+		// GameRegistry.register(container);
 
 		GameRegistry.register(new BlockMaster.Item(master).setRegistryName(master.getRegistryName()));
 		GameRegistry.register(new BlockRequest.Item(request).setRegistryName(request.getRegistryName()));
@@ -85,7 +85,8 @@ public class ModBlocks {
 		GameRegistry.register(new BlockFannexer.Item(fannexer).setRegistryName(fannexer.getRegistryName()));
 		GameRegistry.register(new BlockItemBox.Item(itemBox).setRegistryName(itemBox.getRegistryName()));
 		GameRegistry.register(new BlockFluidBox.Item(fluidBox).setRegistryName(fluidBox.getRegistryName()));
-		GameRegistry.register(new BlockContainer.Item(container).setRegistryName(container.getRegistryName()));
+		// GameRegistry.register(new
+		// BlockContainer.Item(container).setRegistryName(container.getRegistryName()));
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");

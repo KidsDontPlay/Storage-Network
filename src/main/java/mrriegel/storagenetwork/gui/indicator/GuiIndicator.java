@@ -44,7 +44,7 @@ public class GuiIndicator extends MyGuiContainer {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String s = tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
 		this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
-
+		slot.drawTooltip(mouseX, mouseY);
 	}
 
 	@Override
@@ -71,15 +71,6 @@ public class GuiIndicator extends MyGuiContainer {
 			slot.size = tile.getStack().getSize();
 		}
 		slot.drawSlot(mouseX, mouseY);
-
-	}
-
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
-		int my = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		slot.drawTooltip(mouseX, mouseY);
 
 	}
 
@@ -153,13 +144,6 @@ public class GuiIndicator extends MyGuiContainer {
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 160 + 16 * k, 52, 16, 16);
-				// if (id == 2) {
-				// this.drawTexturedModalRect(this.xPosition + 4, this.yPosition
-				// + 4, 180, 70, 8, 9);
-				// if (!tile.isMeta())
-				// this.drawTexturedModalRect(this.xPosition + 2, this.yPosition
-				// + 2, 195, 70, 12, 12);
-				// }
 				if (tile.isMore())
 					this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176, 94, 16, 15);
 				else

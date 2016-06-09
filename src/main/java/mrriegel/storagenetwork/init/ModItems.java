@@ -16,7 +16,7 @@ public class ModItems {
 	public static final Item remote = new ItemRemote().setRegistryName("remote");
 	public static final Item fremote = new ItemFRemote().setRegistryName("fremote");
 	public static final Item coverstick = new ItemCoverStick();
-	public static final Item template = new ItemTemplate();
+	// public static final Item template = new ItemTemplate();
 	public static final Item toggler = new ItemToggler();
 	public static final Item ssdd = new ItemSSDD();
 	public static final Item duplicator = new ItemDuplicator();
@@ -26,7 +26,7 @@ public class ModItems {
 		GameRegistry.register(remote.setUnlocalizedName(remote.getRegistryName().toString()));
 		GameRegistry.register(fremote.setUnlocalizedName(fremote.getRegistryName().toString()));
 		GameRegistry.register(coverstick);
-		GameRegistry.register(template);
+		// GameRegistry.register(template);
 		GameRegistry.register(toggler);
 		// GameRegistry.registerItem(ssdd);
 		GameRegistry.register(duplicator);

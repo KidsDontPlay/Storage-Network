@@ -26,7 +26,6 @@ public class StackMessage implements IMessage, IMessageHandler<StackMessage, IMe
 			@Override
 			public void run() {
 				Minecraft.getMinecraft().thePlayer.inventory.setItemStack(message.a);
-
 			}
 		});
 		return null;

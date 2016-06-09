@@ -62,15 +62,6 @@ public class Util {
 
 	@Nonnull
 	public static String getModNameForFluid(@Nonnull Fluid fluid) {
-		// ResourceLocation itemResourceLocation =
-		// GameData.getItemRegistry().getNameForObject(item);
-		// String modId = itemResourceLocation.getResourceDomain();
-		// String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
-		// String modName = modNamesForIds.get(lowercaseModId);
-		// if (modName == null) {
-		// modName = WordUtils.capitalize(modId);
-		// modNamesForIds.put(lowercaseModId, modName);
-		// }
 		ModContainer m = Loader.instance().getIndexedModList().get(fluid.getBlock().getRegistryName().getResourceDomain());
 		if (m == null)
 			return "Minecraft";
