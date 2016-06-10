@@ -1,9 +1,14 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
+import mrriegel.storagenetwork.gui.cable.ContainerCable;
+import mrriegel.storagenetwork.helper.StackWrapper;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
@@ -47,11 +52,35 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 						if (tile instanceof TileKabel)
 							((TileKabel) tile).setMode(!((TileKabel) tile).isMode());
 						break;
+					case 5:
+						if (tile.getInventory() != null) {
+							IInventory inv = tile.getInventory();
+							int index = 0;
+							tile.setWhite(true);
+							for (int i = 0; i < 9; i++)
+								tile.getFilter().put(i, null);
+							for (int i = 0; i < inv.getSizeInventory() && index < 9; i++) {
+								ItemStack s = inv.getStackInSlot(i);
+								if (s == null)
+									continue;
+								else {
+									if (!new ContainerCable(tile, ctx.getServerHandler().playerEntity.inventory).in(new StackWrapper(s, 1))) {
+										tile.getFilter().put(index, new StackWrapper(s, 1));
+										index++;
+									}
+								}
+							}
+						}
+						break;
+					case 6:
+						tile.setWay(tile.getWay().next());
+						break;
 					}
 				} else if (t instanceof TileIndicator) {
 					TileIndicator tile = (TileIndicator) t;
 					tile.setMore(!tile.isMore());
 				}
+				Util.updateTile(t.getWorld(), t.getPos());
 			}
 		});
 		return null;

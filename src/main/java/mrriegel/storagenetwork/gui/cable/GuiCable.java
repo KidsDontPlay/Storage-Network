@@ -40,7 +40,7 @@ import com.google.common.collect.Lists;
 public class GuiCable extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
-	Button pPlus, pMinus, white, acti;
+	Button pPlus, pMinus, white, acti, impor, way;
 	AbstractFilterTile tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
@@ -161,6 +161,10 @@ public class GuiCable extends MyGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (ItemSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
+		if (impor.isMouseOver())
+			drawHoveringText(Lists.newArrayList("Import Settings"), mouseX - guiLeft, mouseY - guiTop);
+		if (way.isMouseOver())
+			drawHoveringText(Lists.newArrayList(tile.getWay().toString()), mouseX - guiLeft, mouseY - guiTop);
 	}
 
 	@Override
@@ -170,6 +174,12 @@ public class GuiCable extends MyGuiContainer {
 		buttonList.add(pMinus);
 		pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
 		buttonList.add(pPlus);
+		if (tile.isStorage()) {
+			impor = new Button(5, guiLeft + 95, guiTop + 5, "I");
+			buttonList.add(impor);
+			way = new Button(6, guiLeft + 115, guiTop + 5, "");
+			buttonList.add(way);
+		}
 
 		if (tile instanceof TileItemBox || kind == Kind.imKabel || kind == Kind.storageKabel) {
 			white = new Button(3, guiLeft + 70, guiTop + 5, "");

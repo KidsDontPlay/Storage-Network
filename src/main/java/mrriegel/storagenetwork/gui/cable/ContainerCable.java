@@ -99,7 +99,7 @@ public class ContainerCable extends Container {
 		return null;
 	}
 
-	boolean in(StackWrapper stack) {
+	public boolean in(StackWrapper stack) {
 		for (int i = 0; i < 9; i++) {
 			if (tile.getFilter().get(i) != null && tile.getFilter().get(i).getStack().isItemEqual(stack.getStack()))
 				return true;

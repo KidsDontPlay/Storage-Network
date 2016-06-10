@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.MyGuiContainer;
+import mrriegel.storagenetwork.gui.cable.GuiCable.Button;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -42,7 +43,7 @@ import com.google.common.collect.Lists;
 public class GuiFCable extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
-	Button pPlus, pMinus, white, acti;
+	Button pPlus, pMinus, white, acti,way;
 	AbstractFilterTile tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
@@ -158,6 +159,8 @@ public class GuiFCable extends MyGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (FluidSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
+		if (way.isMouseOver())
+			drawHoveringText(Lists.newArrayList(tile.getWay().toString()), mouseX - guiLeft, mouseY - guiTop);
 	}
 
 	@Override
@@ -170,6 +173,10 @@ public class GuiFCable extends MyGuiContainer {
 		if (storage() || kind == Kind.fimKabel) {
 			white = new Button(3, guiLeft + 70, guiTop + 5, "");
 			buttonList.add(white);
+		}
+		if (tile.isStorage()) {
+			way = new Button(6, guiLeft + 115, guiTop + 5, "");
+			buttonList.add(way);
 		}
 		if (tile instanceof TileKabel) {
 			Keyboard.enableRepeatEvents(true);

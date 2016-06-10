@@ -19,14 +19,11 @@ import com.google.gson.Gson;
 
 public class TileFluidBox extends AbstractFilterTile {
 
-	private BlockPos master;
 	private FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * ConfigHandler.fluidBoxCapacity);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
-		}.getType());
 		readTank(compound);
 	}
 
@@ -37,23 +34,12 @@ public class TileFluidBox extends AbstractFilterTile {
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
-		compound.setString("master", new Gson().toJson(master));
 		writeTank(compound);
 		return compound;
 	}
 
 	public void writeTank(NBTTagCompound compound) {
 		tank.writeToNBT(compound);
-	}
-
-	@Override
-	public BlockPos getMaster() {
-		return master;
-	}
-
-	@Override
-	public void setMaster(BlockPos master) {
-		this.master = master;
 	}
 
 	@Override
@@ -66,12 +52,6 @@ public class TileFluidBox extends AbstractFilterTile {
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
-	}
-
-	@Override
-	public void onChunkUnload() {
-		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
-			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 
 	@Override
@@ -125,6 +105,11 @@ public class TileFluidBox extends AbstractFilterTile {
 
 	@Override
 	public boolean isFluid() {
+		return true;
+	}
+
+	@Override
+	public boolean isStorage() {
 		return true;
 	}
 

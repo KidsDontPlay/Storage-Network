@@ -18,6 +18,7 @@ import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.items.ItemUpgrade;
+import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -72,7 +73,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (inv.getTankInfo(f) == null)
 				continue;
 			for (FluidTankInfo i : inv.getTankInfo(f)) {
-				if (i != null && i.fluid != null && t.canTransfer(i.fluid.getFluid()))
+				if (i != null && i.fluid != null && t.canTransfer(i.fluid.getFluid(), Direction.BOTH))
 					addToList(stacks, i.fluid.getFluid(), i.fluid.amount);
 			}
 
@@ -102,7 +103,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					IDrawer drawer = group.getDrawer(i);
 					ItemStack stack = drawer.getStoredItemPrototype();
-					if (stack != null && stack.getItem() != null && t.canTransfer(stack)) {
+					if (stack != null && stack.getItem() != null && t.canTransfer(stack, Direction.BOTH)) {
 						addToList(stacks, stack.copy(), drawer.getStoredItemCount());
 					}
 				}
@@ -110,13 +111,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				TileKabel k = (TileKabel) t;
 				EnumFacing f = k.getInventoryFace().getOpposite();
 				for (int i : ((ISidedInventory) inv).getSlotsForFace(f)) {
-					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i)) && ((ISidedInventory) inv).canExtractItem(i, inv.getStackInSlot(i), f)) {
+					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH) && ((ISidedInventory) inv).canExtractItem(i, inv.getStackInSlot(i), f)) {
 						addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).stackSize);
 					}
 				}
 			} else {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
-					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i)))
+					if (inv.getStackInSlot(i) != null && t.canTransfer(inv.getStackInSlot(i), Direction.BOTH))
 						addToList(stacks, inv.getStackInSlot(i).copy(), inv.getStackInSlot(i).stackSize);
 				}
 			}
@@ -456,11 +457,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		for (BlockPos cable : connectables) {
 			if (worldObj.getTileEntity(cable) instanceof AbstractFilterTile) {
 				AbstractFilterTile s = (AbstractFilterTile) worldObj.getTileEntity(cable);
-				if (s.getInventory() != null) {
+				if (s.getInventory() != null && s.isStorage()) {
 					BlockPos pos = s.getSource();
 					if (worldObj.getChunkFromBlockCoords(pos).isLoaded())
 						storageInventorys.add(pos);
-				} else if (s.getFluidTank() != null) {
+				} else if (s.getFluidTank() != null && s.isStorage()) {
 					BlockPos pos = s.getSource();
 					if (worldObj.getChunkFromBlockCoords(pos).isLoaded())
 						fstorageInventorys.add(pos);
@@ -553,7 +554,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (!(inv instanceof ISidedInventory) && !Inv.contains(inv, in))
 				continue;
-			if (!t.canTransfer(stack))
+			if (!t.canTransfer(stack, Direction.IN))
 				continue;
 			if (t.getSource().equals(source))
 				continue;
@@ -569,7 +570,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (!(inv instanceof ISidedInventory) && Inv.contains(inv, in))
 				continue;
-			if (!t.canTransfer(stack))
+			if (!t.canTransfer(stack, Direction.IN))
 				continue;
 			if (t.getSource().equals(source))
 				continue;
@@ -611,7 +612,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
 			if (!Inv.contains(inv, in.getFluid(), f))
 				continue;
-			if (!t.canTransfer(stack.getFluid()))
+			if (!t.canTransfer(stack.getFluid(), Direction.IN))
 				continue;
 			if (t.getSource().equals(source))
 				continue;
@@ -625,7 +626,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
 			if (Inv.contains(inv, in.getFluid(), f))
 				continue;
-			if (!t.canTransfer(stack.getFluid()))
+			if (!t.canTransfer(stack.getFluid(), Direction.IN))
 				continue;
 			if (t.getSource().equals(source))
 				continue;
@@ -662,7 +663,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
-					if (!t.canTransfer(s))
+					if (!t.canTransfer(s, Direction.OUT))
 						continue;
 					if (!t.status())
 						continue;
@@ -683,7 +684,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					ItemStack s = inv.getStackInSlot(i);
 					if (s == null)
 						continue;
-					if (!t.canTransfer(s))
+					if (!t.canTransfer(s, Direction.OUT))
 						continue;
 					if (!t.status())
 						continue;
@@ -731,7 +732,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				FluidStack s = i.fluid;
 				if (s == null)
 					continue;
-				if (!t.canTransfer(s.getFluid()))
+				if (!t.canTransfer(s.getFluid(), Direction.OUT))
 					continue;
 				if (!t.status())
 					continue;
@@ -883,7 +884,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					if (!fil.match(s))
 						continue;
-					if (!t.canTransfer(s))
+					if (!t.canTransfer(s, Direction.OUT))
 						continue;
 					int miss = size - result;
 					result += Math.min(s.stackSize, miss);
@@ -908,7 +909,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 						continue;
 					if (!fil.match(s))
 						continue;
-					if (!t.canTransfer(s))
+					if (!t.canTransfer(s, Direction.OUT))
 						continue;
 					if (!((ISidedInventory) inv).canExtractItem(i, s, f))
 						continue;
@@ -959,7 +960,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				if (s.getFluid() != fluid)
 					continue;
-				if (!t.canTransfer(fluid))
+				if (!t.canTransfer(fluid, Direction.OUT))
 					continue;
 				if (!inv.canDrain(f, fluid))
 					continue;

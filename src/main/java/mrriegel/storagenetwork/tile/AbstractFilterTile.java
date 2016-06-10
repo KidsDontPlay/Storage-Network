@@ -3,6 +3,9 @@ package mrriegel.storagenetwork.tile;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -23,6 +26,22 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	private Map<Integer, Boolean> metas = new HashMap<Integer, Boolean>();
 	private boolean white;
 	private int priority;
+	private BlockPos master;
+	private Direction way = Direction.BOTH;
+
+	public enum Direction {
+		IN, OUT, BOTH;
+
+		public boolean match(Direction way) {
+			if (this == BOTH)
+				return true;
+			return this == way;
+		}
+
+		public Direction next() {
+			return values()[(this.ordinal() + 1) % values().length];
+		}
+	}
 
 	@Override
 	public NBTTagCompound getUpdateTag() {
@@ -32,6 +51,8 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
+		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
+		}.getType());
 		readSettings(compound);
 	}
 
@@ -65,11 +86,17 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 			int slot = stackTag.getByte("Slot");
 			metas.put(slot, stackTag.getBoolean("Meta"));
 		}
+		try {
+			way = Direction.valueOf(compound.getString("way"));
+		} catch (Exception e) {
+			way = Direction.BOTH;
+		}
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
+		compound.setString("master", new Gson().toJson(master));
 		writeSettings(compound);
 		return compound;
 	}
@@ -109,9 +136,12 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 			}
 		}
 		compound.setTag("metas", metaList);
+		compound.setString("way", way.toString());
 	}
 
-	public boolean canTransfer(ItemStack stack) {
+	public boolean canTransfer(ItemStack stack, Direction way) {
+		if (isStorage() && !this.way.match(way))
+			return false;
 		if (isWhite()) {
 			boolean tmp = false;
 			for (int i = 0; i < 9; i++) {
@@ -147,7 +177,9 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 		}
 	}
 
-	public boolean canTransfer(Fluid fluid) {
+	public boolean canTransfer(Fluid fluid, Direction way) {
+		if (isStorage() && !this.way.match(way))
+			return false;
 		if (isWhite()) {
 			boolean tmp = false;
 			for (int i = 0; i < 9; i++) {
@@ -177,6 +209,12 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 			}
 			return tmp;
 		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
+			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
 	}
 
 	public abstract IFluidHandler getFluidTank();
@@ -186,6 +224,8 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	public abstract BlockPos getSource();
 
 	public abstract boolean isFluid();
+
+	public abstract boolean isStorage();
 
 	public boolean getOre(int i) {
 		return getOres().get(i) == null ? false : getOres().get(i);
@@ -233,6 +273,24 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	@Override
+	public BlockPos getMaster() {
+		return master;
+	}
+
+	@Override
+	public void setMaster(BlockPos master) {
+		this.master = master;
+	}
+
+	public Direction getWay() {
+		return way;
+	}
+
+	public void setWay(Direction way) {
+		this.way = way;
 	}
 
 }

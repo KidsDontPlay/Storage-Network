@@ -24,7 +24,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 public class TileKabel extends AbstractFilterTile {
-	private BlockPos master, connectedInventory;
+	private BlockPos connectedInventory;
 	private EnumFacing inventoryFace;
 	private List<ItemStack> upgrades = Arrays.asList(null, null, null, null);
 	private boolean mode = true;
@@ -114,8 +114,6 @@ public class TileKabel extends AbstractFilterTile {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		master = new Gson().fromJson(compound.getString("master"), new TypeToken<BlockPos>() {
-		}.getType());
 		connectedInventory = new Gson().fromJson(compound.getString("connectedInventory"), new TypeToken<BlockPos>() {
 		}.getType());
 		inventoryFace = EnumFacing.byName(compound.getString("inventoryFace"));
@@ -162,7 +160,6 @@ public class TileKabel extends AbstractFilterTile {
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
-		compound.setString("master", new Gson().toJson(master));
 		compound.setString("connectedInventory", new Gson().toJson(connectedInventory));
 		if (inventoryFace != null)
 			compound.setString("inventoryFace", inventoryFace.toString());
@@ -211,16 +208,6 @@ public class TileKabel extends AbstractFilterTile {
 		double renderExtention = 1.0d;
 		AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
 		return bb;
-	}
-
-	@Override
-	public BlockPos getMaster() {
-		return master;
-	}
-
-	@Override
-	public void setMaster(BlockPos master) {
-		this.master = master;
 	}
 
 	public boolean isDisabled() {
@@ -314,12 +301,6 @@ public class TileKabel extends AbstractFilterTile {
 	}
 
 	@Override
-	public void onChunkUnload() {
-		if (master != null && worldObj.getChunkFromBlockCoords(master).isLoaded() && worldObj.getTileEntity(master) instanceof TileMaster)
-			((TileMaster) worldObj.getTileEntity(master)).refreshNetwork();
-	}
-
-	@Override
 	public IFluidHandler getFluidTank() {
 		if (getKind() == Kind.fstorageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IFluidHandler)
 			return (IFluidHandler) worldObj.getTileEntity(getConnectedInventory());
@@ -336,6 +317,11 @@ public class TileKabel extends AbstractFilterTile {
 	@Override
 	public BlockPos getSource() {
 		return getConnectedInventory();
+	}
+
+	@Override
+	public boolean isStorage() {
+		return getKind() == Kind.storageKabel || getKind() == Kind.fstorageKabel;
 	}
 
 }
