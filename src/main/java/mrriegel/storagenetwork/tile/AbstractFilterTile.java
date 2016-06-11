@@ -3,9 +3,6 @@ package mrriegel.storagenetwork.tile;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
@@ -18,6 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.IFluidHandler;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 public abstract class AbstractFilterTile extends TileEntity implements IConnectable {
 
@@ -33,7 +33,7 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 		IN, OUT, BOTH;
 
 		public boolean match(Direction way) {
-			if (this == BOTH)
+			if (this == BOTH || way == BOTH)
 				return true;
 			return this == way;
 		}

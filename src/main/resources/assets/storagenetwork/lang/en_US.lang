@@ -41,6 +41,10 @@ gui.storagenetwork.req.tooltip_NAME=Sort by name
 gui.storagenetwork.req.tooltip_MOD=Sort by mod
 gui.storagenetwork.req.tooltip_AMOUNT=Sort by amount
 
+gui.storagenetwork.fil.tooltip_IN=Only input
+gui.storagenetwork.fil.tooltip_OUT=Only output
+gui.storagenetwork.fil.tooltip_BOTH=Input and output
+
 tooltip.storagenetwork.networkNeeded=Needs to be connected to the network.
 tooltip.storagenetwork.RFNeeded=Needs RF to operate.
 tooltip.storagenetwork.annexer=Breaks the block in front of it and inserts the drops into the network.

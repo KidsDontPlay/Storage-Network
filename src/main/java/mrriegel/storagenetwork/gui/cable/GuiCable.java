@@ -162,9 +162,9 @@ public class GuiCable extends MyGuiContainer {
 		for (ItemSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
 		if (impor.isMouseOver())
-			drawHoveringText(Lists.newArrayList("Import Settings"), mouseX - guiLeft, mouseY - guiTop);
+			drawHoveringText(Lists.newArrayList("Import Filter"), mouseX - guiLeft, mouseY - guiTop);
 		if (way.isMouseOver())
-			drawHoveringText(Lists.newArrayList(tile.getWay().toString()), mouseX - guiLeft, mouseY - guiTop);
+			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
 	}
 
 	@Override
@@ -341,13 +341,6 @@ public class GuiCable extends MyGuiContainer {
 				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 				GlStateManager.blendFunc(770, 771);
 				this.drawTexturedModalRect(this.xPosition, this.yPosition, 160 + 16 * k, 52, 16, 16);
-				// if (id == 2) {
-				// this.drawTexturedModalRect(this.xPosition + 4, this.yPosition
-				// + 4, 180, 70, 8, 9);
-				// if (!tile.isMeta())
-				// this.drawTexturedModalRect(this.xPosition + 2, this.yPosition
-				// + 2, 195, 70, 12, 12);
-				// }
 				if (id == 3) {
 					if (tile.isWhite())
 						this.drawTexturedModalRect(this.xPosition + 1, this.yPosition + 3, 176, 83, 13, 10);
@@ -361,6 +354,9 @@ public class GuiCable extends MyGuiContainer {
 					else
 						this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176 + 16, 94, 16, 15);
 
+				}
+				if (id == 6) {
+					this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, 176 + tile.getWay().ordinal() * 12, 114, 12, 12);
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
 				int l = 14737632;

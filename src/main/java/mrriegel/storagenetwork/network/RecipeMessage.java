@@ -43,6 +43,10 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeTag(buf, nbt);
 		buf.writeInt(this.index);
+		// for (int i = 0; i < 1000; i++)
+		// ByteBufUtils.writeUTF8String(buf,
+		// "lalalsd afmidf amausd fmeir s ds");
+		System.out.println(": " + buf.array().length);
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class ModBlocks {
 	public static final Block fexKabel = new BlockFKabel().setRegistryName("fexKabel");
 	public static final Block fimKabel = new BlockFKabel().setRegistryName("fimKabel");
 	public static final Block cover = new BlockCover();
-	 public static final Block container = new BlockContainer();
+	public static final Block container = new BlockContainer();
 	public static final Block crafter = new BlockCrafter();
 	public static final Block indicator = new BlockIndicator();
 	public static final Block annexer = new BlockAnnexer();

@@ -14,9 +14,6 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 public class TileFluidBox extends AbstractFilterTile {
 
 	private FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * ConfigHandler.fluidBoxCapacity);

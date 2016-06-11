@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.gui.MyGuiContainer;
-import mrriegel.storagenetwork.gui.cable.GuiCable.Button;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.items.ItemUpgrade;
@@ -43,7 +42,7 @@ import com.google.common.collect.Lists;
 public class GuiFCable extends MyGuiContainer {
 	private ResourceLocation texture = new ResourceLocation(StorageNetwork.MODID + ":textures/gui/cable.png");
 	Kind kind;
-	Button pPlus, pMinus, white, acti,way;
+	Button pPlus, pMinus, white, acti, way;
 	AbstractFilterTile tile;
 	private GuiTextField searchBar;
 	ItemStack stack;
@@ -160,7 +159,7 @@ public class GuiFCable extends MyGuiContainer {
 		for (FluidSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
 		if (way.isMouseOver())
-			drawHoveringText(Lists.newArrayList(tile.getWay().toString()), mouseX - guiLeft, mouseY - guiTop);
+			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
 	}
 
 	@Override
@@ -322,6 +321,9 @@ public class GuiFCable extends MyGuiContainer {
 					else
 						this.drawTexturedModalRect(this.xPosition + 0, this.yPosition + 0, 176 + 16, 94, 16, 15);
 
+				}
+				if (id == 6) {
+					this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, 176 + tile.getWay().ordinal() * 12, 114, 12, 12);
 				}
 				this.mouseDragged(p_146112_1_, p_146112_2_, p_146112_3_);
 				int l = 14737632;

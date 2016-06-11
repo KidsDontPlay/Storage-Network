@@ -12,9 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 public class TileItemBox extends AbstractFilterTile {
 
 	private InventoryBasic inv = new InventoryBasic(null, false, ConfigHandler.itemBoxCapacity);
