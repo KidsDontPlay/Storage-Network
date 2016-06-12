@@ -91,10 +91,10 @@ public class FilterItem {
 			return false;
 		if (nbt && !ItemStack.areItemStackTagsEqual(stack, s))
 			return false;
-		if (meta && s.getItemDamage() != stack.getItemDamage())
-			return false;
 		if (ore && Util.equalOreDict(s, stack))
 			return true;
+		if (meta && s.getItemDamage() != stack.getItemDamage())
+			return false;
 		return s.getItem() == stack.getItem();
 	}
 }

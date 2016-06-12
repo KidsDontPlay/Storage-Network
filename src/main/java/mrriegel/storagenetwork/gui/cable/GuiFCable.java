@@ -158,7 +158,7 @@ public class GuiFCable extends MyGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (FluidSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
-		if (way.isMouseOver())
+		if (way != null && way.isMouseOver())
 			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
 	}
 

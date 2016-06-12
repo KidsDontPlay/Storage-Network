@@ -161,9 +161,9 @@ public class GuiCable extends MyGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (ItemSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
-		if (impor.isMouseOver())
+		if (impor != null && impor.isMouseOver())
 			drawHoveringText(Lists.newArrayList("Import Filter"), mouseX - guiLeft, mouseY - guiTop);
-		if (way.isMouseOver())
+		if (way != null && way.isMouseOver())
 			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
 	}
 

@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, IMessage> {
 	NBTTagCompound nbt;
@@ -43,10 +45,6 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeTag(buf, nbt);
 		buf.writeInt(this.index);
-		// for (int i = 0; i < 1000; i++)
-		// ByteBufUtils.writeUTF8String(buf,
-		// "lalalsd afmidf amausd fmeir s ds");
-		System.out.println(": " + buf.array().length);
 	}
 
 	@Override
@@ -63,11 +61,17 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 					if (tile == null)
 						return;
 					for (int j = 1; j < 10; j++) {
-						NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
-						for (int i = 0; i < invList.tagCount(); i++) {
-							NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-							lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+						if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
+							List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
+							for (int i = 0; i < l.size(); i++)
+								lis.put(i, l.get(i));
+						} else {
+							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
+							for (int i = 0; i < invList.tagCount(); i++) {
+								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+								lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+							}
 						}
 						for (int i = 0; i < lis.size(); i++) {
 							ItemStack s = lis.get(i);
@@ -75,7 +79,7 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 								con.craftMatrix.setInventorySlotContents(j - 1, s);
 								break;
 							}
-							s = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, true, false) : null, 1, false);
+							s = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
 							if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
 								con.craftMatrix.setInventorySlotContents(j - 1, s);
 								break;
@@ -90,11 +94,17 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 					ContainerTemplate con = (ContainerTemplate) ctx.getServerHandler().playerEntity.openContainer;
 					for (int j = 1; j < 10; j++) {
 						con.craftMatrix.setInventorySlotContents(j - 1, null);
-						NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
-						for (int i = 0; i < invList.tagCount(); i++) {
-							NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-							lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+						if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
+							List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
+							for (int i = 0; i < l.size(); i++)
+								lis.put(i, l.get(i));
+						} else {
+							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
+							for (int i = 0; i < invList.tagCount(); i++) {
+								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
+								lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+							}
 						}
 						ItemStack s = lis.get(0);
 						con.craftMatrix.setInventorySlotContents(j - 1, s);

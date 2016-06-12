@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 public class GuiFRemote extends AbstractGuiFRequest {
@@ -41,7 +42,8 @@ public class GuiFRemote extends AbstractGuiFRequest {
 
 	@Override
 	protected BlockPos getMaster() {
-		return ItemRemote.getTile(mc.thePlayer.inventory.getCurrentItem()).getPos();
+		ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+		return new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z"));
 	}
 
 	@Override
