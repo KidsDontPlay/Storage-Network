@@ -68,11 +68,15 @@ public class BlockFluidBox extends BlockConnectable {
 
 	@Override
 	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		ItemStack stack = new ItemStack(getItemDropped(state, new Random(), fortune));
-		NBTTagCompound x = new NBTTagCompound();
-		((TileFluidBox) world.getTileEntity(pos)).writeTank(x);
-		stack.setTagCompound(x);
-		return Lists.newArrayList(stack);
+		try {
+			ItemStack stack = new ItemStack(getItemDropped(state, new Random(), fortune));
+			NBTTagCompound x = new NBTTagCompound();
+			((TileFluidBox) world.getTileEntity(pos)).writeTank(x);
+			stack.setTagCompound(x);
+			return Lists.newArrayList(stack);
+		} catch (Exception e) {
+			return super.getDrops(world, pos, state, fortune);
+		}
 	}
 
 	@Override
@@ -83,8 +87,6 @@ public class BlockFluidBox extends BlockConnectable {
 			TileFluidBox tile = (TileFluidBox) worldIn.getTileEntity(pos);
 			if (worldIn.isRemote)
 				return true;
-			if (tile.getMaster() == null)
-				return false;
 			playerIn.openGui(StorageNetwork.instance, GuiHandler.FCABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}

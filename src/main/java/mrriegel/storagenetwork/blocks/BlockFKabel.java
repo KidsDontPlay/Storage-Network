@@ -5,7 +5,6 @@ import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileKabel;
@@ -47,17 +46,6 @@ public class BlockFKabel extends BlockKabel {
 		return worldIn.getTileEntity(pos) instanceof IFluidHandler;
 	}
 
-	boolean isConnectedToFluidHandler(IBlockAccess world, BlockPos orig, BlockPos pos) {
-		IBlockState s = world.getBlockState(orig);
-		for (BlockPos p : Util.getSides(orig)) {
-			if (p.equals(pos))
-				continue;
-			if (world.getTileEntity(p) instanceof IFluidHandler && (((IFluidHandler) world.getTileEntity(p)).getTankInfo(get(orig, p)) != null) && (((IFluidHandler) world.getTileEntity(p)).getTankInfo(get(orig, p)).length != 0))
-				return true;
-		}
-		return false;
-	}
-
 	@Override
 	protected Connect getConnect(IBlockAccess worldIn, BlockPos orig, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
@@ -69,8 +57,6 @@ public class BlockFKabel extends BlockKabel {
 		EnumFacing face = get(orig, pos);
 		boolean sided = worldIn.getTileEntity(pos) instanceof IFluidHandler && ((IFluidHandler) worldIn.getTileEntity(pos)).getTankInfo(face) != null && ((IFluidHandler) worldIn.getTileEntity(pos)).getTankInfo(face).length > 0;
 		if (!sided)
-			return Connect.NULL;
-		if (isConnectedToFluidHandler(worldIn, orig, pos))
 			return Connect.NULL;
 		return Connect.STORAGE;
 	}

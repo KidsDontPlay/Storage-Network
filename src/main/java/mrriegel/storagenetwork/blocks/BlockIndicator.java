@@ -96,7 +96,7 @@ public class BlockIndicator extends BlockConnectable {
 			return true;
 		} else {
 			TileEntity tileentity = worldIn.getTileEntity(pos);
-			if (tileentity instanceof TileIndicator) {
+			if (tileentity instanceof TileIndicator && ((TileIndicator) tileentity).getMaster() != null) {
 				playerIn.openGui(StorageNetwork.instance, GuiHandler.INDICATOR, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			}
 			return true;

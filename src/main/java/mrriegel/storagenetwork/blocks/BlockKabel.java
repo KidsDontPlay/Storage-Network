@@ -1,6 +1,8 @@
 package mrriegel.storagenetwork.blocks;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +38,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import com.google.common.collect.Maps;
 
 public class BlockKabel extends BlockConnectable {
 	public static enum Connect {
@@ -113,12 +117,38 @@ public class BlockKabel extends BlockConnectable {
 		TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
 		EnumFacing face = null;
 		BlockPos con = null;
-		tile.north = getConnect(worldIn, pos, pos.north());
-		tile.south = getConnect(worldIn, pos, pos.south());
-		tile.east = getConnect(worldIn, pos, pos.east());
-		tile.west = getConnect(worldIn, pos, pos.west());
-		tile.down = getConnect(worldIn, pos, pos.down());
-		tile.up = getConnect(worldIn, pos, pos.up());
+		Map<EnumFacing, Connect> oldMap = tile.getConnects();
+		Map<EnumFacing, Connect> newMap = Maps.newHashMap();
+
+		EnumFacing stor = null;
+		for (Entry<EnumFacing, Connect> e : oldMap.entrySet()) {
+			if (e.getValue() == Connect.STORAGE) {
+				stor = e.getKey();
+				break;
+			}
+		}
+		boolean storage = false;
+		boolean first = false;
+		if (stor != null && getConnect(worldIn, pos, pos.offset(stor)) == Connect.STORAGE) {
+			newMap.put(stor, Connect.STORAGE);
+			storage = true;
+			first = true;
+		}
+		for (EnumFacing f : EnumFacing.values()) {
+			if (stor == f && first)
+				continue;
+			Connect neu = getConnect(worldIn, pos, pos.offset(f));
+			if (neu == Connect.STORAGE)
+				if (!storage) {
+					newMap.put(f, neu);
+					storage = true;
+				} else
+					newMap.put(f, Connect.NULL);
+			else
+				newMap.put(f, neu);
+		}
+		tile.setConnects(newMap);
+
 		if (tile.north == Connect.STORAGE && validInventory(worldIn, pos.north())) {
 			face = EnumFacing.NORTH;
 			con = pos.north();
@@ -143,19 +173,6 @@ public class BlockKabel extends BlockConnectable {
 		super.setConnections(worldIn, pos, state, refresh);
 		if (refresh)
 			Util.updateTile(worldIn, pos);
-	}
-
-	boolean isConnectedToInventory(IBlockAccess world, BlockPos orig, BlockPos pos) {
-		IBlockState s = world.getBlockState(orig);
-		for (BlockPos p : Util.getSides(orig)) {
-			if (p.equals(pos))
-				continue;
-			if (world.getTileEntity(p) instanceof ISidedInventory && (((ISidedInventory) world.getTileEntity(p)).getSlotsForFace(get(orig, p)).length != 0))
-				return true;
-			if (world.getTileEntity(p) instanceof IInventory)
-				return true;
-		}
-		return false;
 	}
 
 	public static EnumFacing get(BlockPos a, BlockPos b) {
@@ -271,8 +288,6 @@ public class BlockKabel extends BlockConnectable {
 		EnumFacing face = get(orig, pos);
 		boolean sided = worldIn.getTileEntity(pos) instanceof ISidedInventory && (((ISidedInventory) worldIn.getTileEntity(pos)).getSlotsForFace(face).length != 0);
 		if (!inventory && !sided)
-			return Connect.NULL;
-		if (isConnectedToInventory(worldIn, orig, pos))
 			return Connect.NULL;
 		return Connect.STORAGE;
 	}

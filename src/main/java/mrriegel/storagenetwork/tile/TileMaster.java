@@ -301,45 +301,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	}
 
-	public int canCraft(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww) {
-		int result = 0;
-		for (int ii = 0; ii < getTemplates(fil).size(); ii++) {
-			ItemStack s = getTemplates(fil).get(ii);
-			if (neww)
-				stacks = getStacks();
-			boolean done = true;
-			int con = num / s.stackSize;
-			if (num % s.stackSize != 0)
-				con++;
-			for (int i = 0; i < con; i++) {
-				boolean oneCraft = true;
-				for (FilterItem f : getIngredients(s)) {
-					if (!oneCraft)
-						break;
-					while (true) {
-						boolean found = consume(stacks, f, 1) == 1;
-						if (!found) {
-							int t = canCraft(stacks, f, 1, false);
-							if (t != 0) {
-								addToList(stacks, f.getStack(), t);
-
-							} else {
-								oneCraft = false;
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-				}
-				if (oneCraft)
-					result += s.stackSize;
-			}
-
-		}
-		return result;
-	}
-
 	public int getMissing(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww, List<FilterItem> missing) {
 		int result = 0;
 		if (neww)
@@ -444,7 +405,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (worldObj.getTileEntity(bl) instanceof IConnectable && (!(worldObj.getTileEntity(bl) instanceof TileKabel) || !((TileKabel) worldObj.getTileEntity(bl)).isDisabled()) && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
-				Util.updateTile(worldObj, bl);
+				// Util.updateTile(worldObj, bl);
 				addConnectables(bl);
 			}
 		}
@@ -606,7 +567,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	int addToTanks(FluidStack stack, List<AbstractFilterTile> list, BlockPos source, boolean simulate) {
-		FluidStack in = stack;
+		FluidStack in = stack.copy();
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
 			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
@@ -842,17 +803,18 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (!t.status())
 					continue;
 				int num = 200 + t.elements(ItemUpgrade.STACK) * 200;
+				num = Math.min(num, inv.fill(t.getInventoryFace().getOpposite(), new FluidStack(f, num), false));
+				if (num <= 0)
+					continue;
 				FluidStack recs = frequest(f, num, true);
 				if (recs == null)
-					continue;
-				if (inv.fill(t.getInventoryFace().getOpposite(), recs, false) <= 0)
 					continue;
 				if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
 					continue;
 				FluidStack rec = frequest(f, num, false);
 				if (rec == null)
 					continue;
-				consumeRF(rec.amount + t.elements(ItemUpgrade.SPEED), false);
+				consumeRF(num + t.elements(ItemUpgrade.SPEED), false);
 				inv.fill(t.getInventoryFace().getOpposite(), rec, true);
 				break;
 			}
@@ -989,8 +951,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		// if(1==1)
 		// return;
 		if (storageInventorys == null || fstorageInventorys == null || connectables == null) {
-			if (connectables == null)
-				connectables = Sets.newHashSet();
 			refreshNetwork();
 		}
 		if (worldObj.getTotalWorldTime() % (200) == 0) {

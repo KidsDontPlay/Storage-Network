@@ -83,6 +83,7 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+
 		if (ID == CABLE) {
 			AbstractFilterTile tile = (AbstractFilterTile) world.getTileEntity(new BlockPos(x, y, z));
 			return new GuiCable(new ContainerCable(tile, player.inventory));

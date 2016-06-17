@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import mrriegel.storagenetwork.blocks.BlockKabel.Connect;
 import mrriegel.storagenetwork.helper.FilterItem;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -29,6 +31,7 @@ public class TileKabel extends AbstractFilterTile {
 	private List<ItemStack> upgrades = Arrays.asList(null, null, null, null);
 	private boolean mode = true;
 	private int limit = 0;
+	// public Map<EnumFacing, Connect> connections = Maps.newHashMap();
 	public Connect north, south, east, west, up, down;
 	private Block cover;
 	private int coverMeta;
@@ -83,6 +86,43 @@ public class TileKabel extends AbstractFilterTile {
 		if (b == ModBlocks.fstorageKabel)
 			return Kind.fstorageKabel;
 		return null;
+	}
+
+	public boolean hasStorage() {
+		return getConnects().containsValue(Connect.STORAGE);
+		// if (north == Connect.STORAGE)
+		// return true;
+		// if (south == Connect.STORAGE)
+		// return true;
+		// if (east == Connect.STORAGE)
+		// return true;
+		// if (west == Connect.STORAGE)
+		// return true;
+		// if (up == Connect.STORAGE)
+		// return true;
+		// if (down == Connect.STORAGE)
+		// return true;
+		// return false;
+	}
+
+	public Map<EnumFacing, Connect> getConnects() {
+		Map<EnumFacing, Connect> map = Maps.newHashMap();
+		map.put(EnumFacing.NORTH, north);
+		map.put(EnumFacing.SOUTH, south);
+		map.put(EnumFacing.EAST, east);
+		map.put(EnumFacing.WEST, west);
+		map.put(EnumFacing.UP, up);
+		map.put(EnumFacing.DOWN, down);
+		return map;
+	}
+
+	public void setConnects(Map<EnumFacing, Connect> map) {
+		north = map.get(EnumFacing.NORTH);
+		south = map.get(EnumFacing.SOUTH);
+		east = map.get(EnumFacing.EAST);
+		west = map.get(EnumFacing.WEST);
+		up = map.get(EnumFacing.UP);
+		down = map.get(EnumFacing.DOWN);
 	}
 
 	public boolean status() {

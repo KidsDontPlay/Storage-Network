@@ -107,7 +107,7 @@ public class BlockMaster extends BlockContainer {
 				}
 			});
 			for (Entry<String, Integer> e : lis)
-				playerIn.addChatMessage(new TextComponentString("   " + e.getKey() + ": " + e.getValue()));
+				playerIn.addChatMessage(new TextComponentString("    " + e.getKey() + ": " + e.getValue()));
 		}
 		return false;
 	}
