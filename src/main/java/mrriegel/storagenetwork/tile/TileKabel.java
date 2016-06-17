@@ -88,23 +88,6 @@ public class TileKabel extends AbstractFilterTile {
 		return null;
 	}
 
-	public boolean hasStorage() {
-		return getConnects().containsValue(Connect.STORAGE);
-		// if (north == Connect.STORAGE)
-		// return true;
-		// if (south == Connect.STORAGE)
-		// return true;
-		// if (east == Connect.STORAGE)
-		// return true;
-		// if (west == Connect.STORAGE)
-		// return true;
-		// if (up == Connect.STORAGE)
-		// return true;
-		// if (down == Connect.STORAGE)
-		// return true;
-		// return false;
-	}
-
 	public Map<EnumFacing, Connect> getConnects() {
 		Map<EnumFacing, Connect> map = Maps.newHashMap();
 		map.put(EnumFacing.NORTH, north);
