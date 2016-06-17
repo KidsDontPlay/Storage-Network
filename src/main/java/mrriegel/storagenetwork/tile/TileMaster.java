@@ -652,7 +652,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	int addToTanks(FluidStack stack, List<AbstractFilterTile> list, BlockPos source, boolean simulate) {
-		FluidStack in = stack;
+		FluidStack in = stack.copy();
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
 			EnumFacing f = t instanceof TileKabel ? ((TileKabel) t).getInventoryFace().getOpposite() : EnumFacing.DOWN;
@@ -893,17 +893,18 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (!t.status())
 					continue;
 				int num = 200 + t.elements(ItemUpgrade.STACK) * 200;
+				num = Math.min(num, inv.fill(t.getInventoryFace().getOpposite(), new FluidStack(f, num), false));
+				if (num <= 0)
+					continue;
 				FluidStack recs = frequest(f, num, true);
 				if (recs == null)
-					continue;
-				if (inv.fill(t.getInventoryFace().getOpposite(), recs, false) <= 0)
 					continue;
 				if (!consumeRF(num + t.elements(ItemUpgrade.SPEED), true))
 					continue;
 				FluidStack rec = frequest(f, num, false);
 				if (rec == null)
 					continue;
-				consumeRF(rec.amount + t.elements(ItemUpgrade.SPEED), false);
+				consumeRF(num + t.elements(ItemUpgrade.SPEED), false);
 				inv.fill(t.getInventoryFace().getOpposite(), rec, true);
 				break;
 			}

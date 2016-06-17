@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.VERSION, guiFactory = "mrriegel.storagenetwork.config.GuiFactory")
 public class StorageNetwork {
 	public static final String MODID = "storagenetwork";
-	public static final String VERSION = "1.11.0";
+	public static final String VERSION = "1.11.1-final";
 	public static final String MODNAME = "Storage Network";
 
 	@Instance(StorageNetwork.MODID)
