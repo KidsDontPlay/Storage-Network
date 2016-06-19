@@ -4,7 +4,6 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.AbstractGuiRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.Container;

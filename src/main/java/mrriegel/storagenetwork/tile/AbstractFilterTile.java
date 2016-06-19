@@ -6,7 +6,6 @@ import java.util.Map;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,7 +13,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -219,7 +219,7 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 
 	public abstract IFluidHandler getFluidTank();
 
-	public abstract IInventory getInventory();
+	public abstract IItemHandler getInventory();
 
 	public abstract BlockPos getSource();
 

@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
-import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
@@ -15,6 +14,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
 	int dim;
@@ -42,8 +42,8 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 					TileMaster tile = (TileMaster) w.getTileEntity(message.pos);
 					int rest = tile.insertStack(message.stack, null, false);
 					if (rest != 0) {
-						ctx.getServerHandler().playerEntity.inventory.setItemStack(Inv.copyStack(message.stack, rest));
-						PacketHandler.INSTANCE.sendTo(new StackMessage(Inv.copyStack(message.stack, rest)), ctx.getServerHandler().playerEntity);
+						ctx.getServerHandler().playerEntity.inventory.setItemStack(ItemHandlerHelper.copyStackWithSize(message.stack, rest));
+						PacketHandler.INSTANCE.sendTo(new StackMessage(ItemHandlerHelper.copyStackWithSize(message.stack, rest)), ctx.getServerHandler().playerEntity);
 					} else {
 						ctx.getServerHandler().playerEntity.inventory.setItemStack(null);
 						PacketHandler.INSTANCE.sendTo(new StackMessage(null), ctx.getServerHandler().playerEntity);

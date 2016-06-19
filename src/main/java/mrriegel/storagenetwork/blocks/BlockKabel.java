@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
@@ -25,8 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -106,8 +105,8 @@ public class BlockKabel extends BlockConnectable {
 		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 	}
 
-	boolean validInventory(World worldIn, BlockPos pos) {
-		return worldIn.getTileEntity(pos) instanceof IInventory;
+	boolean validInventory(World worldIn, BlockPos pos, EnumFacing side) {
+		return InvHelper.hasItemHandler(worldIn, pos, side);
 	}
 
 	@Override
@@ -149,22 +148,22 @@ public class BlockKabel extends BlockConnectable {
 		}
 		tile.setConnects(newMap);
 
-		if (tile.north == Connect.STORAGE && validInventory(worldIn, pos.north())) {
+		if (tile.north == Connect.STORAGE) {
 			face = EnumFacing.NORTH;
 			con = pos.north();
-		} else if (tile.south == Connect.STORAGE && validInventory(worldIn, pos.south())) {
+		} else if (tile.south == Connect.STORAGE) {
 			face = EnumFacing.SOUTH;
 			con = pos.south();
-		} else if (tile.east == Connect.STORAGE && validInventory(worldIn, pos.east())) {
+		} else if (tile.east == Connect.STORAGE) {
 			face = EnumFacing.EAST;
 			con = pos.east();
-		} else if (tile.west == Connect.STORAGE && validInventory(worldIn, pos.west())) {
+		} else if (tile.west == Connect.STORAGE) {
 			face = EnumFacing.WEST;
 			con = pos.west();
-		} else if (tile.down == Connect.STORAGE && validInventory(worldIn, pos.down())) {
+		} else if (tile.down == Connect.STORAGE) {
 			face = EnumFacing.DOWN;
 			con = pos.down();
-		} else if (tile.up == Connect.STORAGE && validInventory(worldIn, pos.up())) {
+		} else if (tile.up == Connect.STORAGE) {
 			face = EnumFacing.UP;
 			con = pos.up();
 		}
@@ -284,10 +283,8 @@ public class BlockKabel extends BlockConnectable {
 			return Connect.CONNECT;
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return Connect.NULL;
-		boolean inventory = worldIn.getTileEntity(pos) instanceof IInventory && !(worldIn.getTileEntity(pos) instanceof ISidedInventory);
 		EnumFacing face = get(orig, pos);
-		boolean sided = worldIn.getTileEntity(pos) instanceof ISidedInventory && (((ISidedInventory) worldIn.getTileEntity(pos)).getSlotsForFace(face).length != 0);
-		if (!inventory && !sided)
+		if (!validInventory((World) worldIn, pos, face))
 			return Connect.NULL;
 		return Connect.STORAGE;
 	}

@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.config.ConfigHandler;
-import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.block.Block;
@@ -29,6 +28,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.google.common.collect.Lists;
 
@@ -66,7 +66,7 @@ public class BlockMaster extends BlockContainer {
 		}
 		if (mas != null) {
 			worldIn.setBlockToAir(pos);
-			Block.spawnAsEntity(worldIn, pos, Inv.copyStack(stack, 1));
+			Block.spawnAsEntity(worldIn, pos, ItemHandlerHelper.copyStackWithSize(stack, 1));
 			((TileMaster) worldIn.getTileEntity(mas)).refreshNetwork();
 		} else {
 			if (worldIn.getTileEntity(pos) != null)

@@ -6,11 +6,11 @@ import java.util.Map;
 
 import mrriegel.storagenetwork.blocks.BlockKabel.Connect;
 import mrriegel.storagenetwork.helper.FilterItem;
+import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,7 +19,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
@@ -325,15 +326,16 @@ public class TileKabel extends AbstractFilterTile {
 
 	@Override
 	public IFluidHandler getFluidTank() {
-		if (getKind() == Kind.fstorageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IFluidHandler)
-			return (IFluidHandler) worldObj.getTileEntity(getConnectedInventory());
+		// WARNIGN getopposite
+		if (getConnectedInventory() != null)
+			return InvHelper.getFluidHandler(worldObj.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
 		return null;
 	}
 
 	@Override
-	public IInventory getInventory() {
-		if (getKind() == Kind.storageKabel && getConnectedInventory() != null && worldObj.getTileEntity(getConnectedInventory()) instanceof IInventory)
-			return (IInventory) worldObj.getTileEntity(getConnectedInventory());
+	public IItemHandler getInventory() {
+		if (getConnectedInventory() != null)
+			return InvHelper.getItemHandler(worldObj.getTileEntity(getConnectedInventory()), inventoryFace.getOpposite());
 		return null;
 	}
 

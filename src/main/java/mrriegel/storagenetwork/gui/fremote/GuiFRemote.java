@@ -2,7 +2,6 @@ package mrriegel.storagenetwork.gui.fremote;
 
 import mrriegel.storagenetwork.gui.AbstractGuiFRequest;
 import mrriegel.storagenetwork.helper.NBTHelper;
-import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;

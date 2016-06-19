@@ -5,6 +5,7 @@ import java.util.List;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.TileKabel;
@@ -20,7 +21,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidHandler;
 
 public class BlockFKabel extends BlockKabel {
 	@Override
@@ -42,8 +42,8 @@ public class BlockFKabel extends BlockKabel {
 	}
 
 	@Override
-	boolean validInventory(World worldIn, BlockPos pos) {
-		return worldIn.getTileEntity(pos) instanceof IFluidHandler;
+	boolean validInventory(World worldIn, BlockPos pos, EnumFacing side) {
+		return InvHelper.hasFluidHandler(worldIn, pos, side);
 	}
 
 	@Override
@@ -55,8 +55,7 @@ public class BlockFKabel extends BlockKabel {
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return Connect.NULL;
 		EnumFacing face = get(orig, pos);
-		boolean sided = worldIn.getTileEntity(pos) instanceof IFluidHandler && ((IFluidHandler) worldIn.getTileEntity(pos)).getTankInfo(face) != null && ((IFluidHandler) worldIn.getTileEntity(pos)).getTankInfo(face).length > 0;
-		if (!sided)
+		if (!validInventory((World) worldIn, pos, face))
 			return Connect.NULL;
 		return Connect.STORAGE;
 	}

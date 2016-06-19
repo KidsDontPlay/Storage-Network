@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import mrriegel.storagenetwork.tile.TileKabel;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -16,6 +15,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.IItemHandler;
 
 public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, IMessage> {
 	int id;
@@ -54,12 +54,12 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 						break;
 					case 5:
 						if (tile.getInventory() != null) {
-							IInventory inv = tile.getInventory();
+							IItemHandler inv = tile.getInventory();
 							int index = 0;
 							tile.setWhite(true);
 							for (int i = 0; i < 9; i++)
 								tile.getFilter().put(i, null);
-							for (int i = 0; i < inv.getSizeInventory() && index < 9; i++) {
+							for (int i = 0; i < inv.getSlots() && index < 9; i++) {
 								ItemStack s = inv.getStackInSlot(i);
 								if (s == null)
 									continue;

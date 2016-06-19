@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -14,6 +13,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class RequestMessage implements IMessage, IMessageHandler<RequestMessage, IMessage> {
 	int id;
@@ -43,10 +43,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), false);
 					if (stack != null) {
 						if (message.shift) {
-							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
-							if (rest != 0) {
-								ctx.getServerHandler().playerEntity.dropItem(Inv.copyStack(stack, rest), false);
-							}
+							ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);
 						} else {
 							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
@@ -62,10 +59,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 					ItemStack stack = message.stack == null ? null : tile.request(new FilterItem(message.stack, true, false, true), message.id == 0 ? message.stack.getMaxStackSize() : message.ctrl ? 1 : Math.max(message.stack.getMaxStackSize() / 2, 1), false);
 					if (stack != null) {
 						if (message.shift) {
-							int rest = Inv.addToInventoryWithLeftover(stack, ctx.getServerHandler().playerEntity.inventory, false);
-							if (rest != 0) {
-								ctx.getServerHandler().playerEntity.dropItem(Inv.copyStack(stack, rest), false);
-							}
+							ItemHandlerHelper.giveItemToPlayer(ctx.getServerHandler().playerEntity, stack);
 						} else {
 							ctx.getServerHandler().playerEntity.inventory.setItemStack(stack);
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);

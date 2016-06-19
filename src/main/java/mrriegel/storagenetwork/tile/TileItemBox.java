@@ -1,8 +1,6 @@
 package mrriegel.storagenetwork.tile;
 
 import mrriegel.storagenetwork.config.ConfigHandler;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,11 +8,13 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class TileItemBox extends AbstractFilterTile {
 
-	private InventoryBasic inv = new InventoryBasic(null, false, ConfigHandler.itemBoxCapacity);
+	private ItemStackHandler inv = new ItemStackHandler(ConfigHandler.itemBoxCapacity);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -27,8 +27,8 @@ public class TileItemBox extends AbstractFilterTile {
 		for (int i = 0; i < invList.tagCount(); i++) {
 			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
 			int slot = stackTag.getByte("Slot");
-			if (slot >= 0 && slot < inv.getSizeInventory()) {
-				inv.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
+			if (slot >= 0 && slot < inv.getSlots()) {
+				inv.setStackInSlot(slot, ItemStack.loadItemStackFromNBT(stackTag));
 			}
 		}
 	}
@@ -42,7 +42,7 @@ public class TileItemBox extends AbstractFilterTile {
 
 	public void writeInventory(NBTTagCompound compound) {
 		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < inv.getSizeInventory(); i++) {
+		for (int i = 0; i < inv.getSlots(); i++) {
 			if (inv.getStackInSlot(i) != null) {
 				NBTTagCompound stackTag = new NBTTagCompound();
 				stackTag.setByte("Slot", (byte) i);
@@ -53,12 +53,8 @@ public class TileItemBox extends AbstractFilterTile {
 		compound.setTag("box", invList);
 	}
 
-	public InventoryBasic getInv() {
+	public IItemHandler getInv() {
 		return inv;
-	}
-
-	public void setInv(InventoryBasic inv) {
-		this.inv = inv;
 	}
 
 	@Override
@@ -79,7 +75,7 @@ public class TileItemBox extends AbstractFilterTile {
 	}
 
 	@Override
-	public IInventory getInventory() {
+	public IItemHandler getInventory() {
 		return getInv();
 	}
 

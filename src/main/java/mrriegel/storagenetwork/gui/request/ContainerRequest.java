@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.gui.request;
 import java.util.List;
 
 import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
@@ -23,6 +22,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.google.common.collect.Lists;
 
@@ -159,7 +159,7 @@ public class ContainerRequest extends Container {
 				TileMaster tile = (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster());
 				if (tile != null && !tile.getWorld().isRemote) {
 					int rest = tile.insertStack(itemstack1, null, false);
-					ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
+					ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
 					slot.putStack(stack);
 					detectAndSendChanges();
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);

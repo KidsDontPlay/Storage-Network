@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.gui.remote;
 
-import mrriegel.storagenetwork.helper.Inv;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -12,6 +11,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends Container {
 	public InventoryPlayer playerInv;
@@ -56,7 +56,7 @@ public class ContainerRemote extends Container {
 			TileMaster tile = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
 			if (tile != null) {
 				int rest = tile.insertStack(itemstack1, null, false);
-				ItemStack stack = rest == 0 ? null : Inv.copyStack(itemstack1, rest);
+				ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
 				slot.putStack(stack);
 				detectAndSendChanges();
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
