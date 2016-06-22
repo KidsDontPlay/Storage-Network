@@ -62,7 +62,6 @@ public class ContainerRemote extends Container {
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
 				if (stack == null)
 					return null;
-				slot.onPickupFromSlot(playerIn, itemstack1);
 				return null;
 			}
 		}
@@ -75,8 +74,8 @@ public class ContainerRemote extends Container {
 		TileMaster tile = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
 		if (tile == null || !(tile instanceof TileMaster))
 			return false;
-		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 50 == 0)
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(ItemRemote.getTile(playerIn.inventory.getCurrentItem()).getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
+		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 40 == 0)
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
 		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
 	}
 

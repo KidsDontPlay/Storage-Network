@@ -194,7 +194,7 @@ public class ContainerRequest extends Container {
 		if (tile == null || tile.getMaster() == null || !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof TileMaster))
 			return false;
 		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
-		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 50 == 0) {
+		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 40 == 0) {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerInv.player);
 		}
 

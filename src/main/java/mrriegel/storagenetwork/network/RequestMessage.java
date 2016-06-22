@@ -28,6 +28,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 		this.stack = stack;
 		this.shift = shift;
 		this.ctrl = ctrl;
+
 	}
 
 	@Override

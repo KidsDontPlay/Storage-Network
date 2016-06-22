@@ -90,10 +90,10 @@ public class FilterItem {
 	public boolean match(ItemStack s) {
 		if (s == null)
 			return false;
-		if (nbt && !ItemStack.areItemStackTagsEqual(stack, s))
-			return false;
 		if (ore && Util.equalOreDict(s, stack))
 			return true;
+		if (nbt && !ItemStack.areItemStackTagsEqual(stack, s))
+			return false;
 		if (meta && s.getItemDamage() != stack.getItemDamage())
 			return false;
 		return s.getItem() == stack.getItem();

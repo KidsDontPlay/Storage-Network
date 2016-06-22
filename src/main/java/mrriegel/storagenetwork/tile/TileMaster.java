@@ -418,12 +418,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 				List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
 				for (EntityItem item : items) {
-					if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().stackSize, false))
+					if (item.ticksExisted < 40 || item.isDead || !consumeRF(item.getEntityItem().stackSize, true))
 						continue;
 					ItemStack stack = item.getEntityItem().copy();
 					int rest = insertStack(stack, null, false);
 					ItemStack r = stack.copy();
 					r.stackSize = rest;
+					consumeRF(stack.stackSize - rest, true);
 					if (rest <= 0)
 						item.setDead();
 					else

@@ -193,6 +193,8 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 			} else
 				over = null;
 		}
+		if (slots.isEmpty())
+			over = null;
 
 	}
 

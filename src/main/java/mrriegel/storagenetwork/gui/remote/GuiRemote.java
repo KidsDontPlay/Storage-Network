@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.helper.NBTHelper;
 import mrriegel.storagenetwork.tile.TileRequest.Sort;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
@@ -79,11 +78,12 @@ public class GuiRemote extends AbstractGuiRequest {
 		return BlockPos.ORIGIN;
 	}
 
-//	@Override
-//	protected BlockPos getMaster() {
-//		ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-//		return new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z"));
-//	}
+	// @Override
+	// protected BlockPos getMaster() {
+	// ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+	// return new BlockPos(NBTHelper.getInteger(stack, "x"),
+	// NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z"));
+	// }
 
 	@Override
 	protected int getDim() {

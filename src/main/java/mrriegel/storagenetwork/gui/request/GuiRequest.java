@@ -78,10 +78,10 @@ public class GuiRequest extends AbstractGuiRequest {
 		return tile.getPos();
 	}
 
-//	@Override
-//	protected BlockPos getMaster() {
-//		return tile.getMaster();
-//	}
+	// @Override
+	// protected BlockPos getMaster() {
+	// return tile.getMaster();
+	// }
 
 	@Override
 	protected int getDim() {
