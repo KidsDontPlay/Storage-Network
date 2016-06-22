@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -87,9 +88,9 @@ public class BlockMaster extends BlockContainer {
 		TileMaster tile = (TileMaster) worldIn.getTileEntity(pos);
 		if (!worldIn.isRemote) {
 			if (ConfigHandler.energyNeeded)
-				playerIn.addChatMessage(new TextComponentString("RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
-			playerIn.addChatMessage(new TextComponentString("(Potential) Empty Slots: " + tile.emptySlots()));
-			playerIn.addChatMessage(new TextComponentString("Connectables: " + tile.connectables.size()));
+				playerIn.addChatMessage(new TextComponentString(TextFormatting.RED + "RF: " + tile.en.getEnergyStored() + "/" + tile.en.getMaxEnergyStored()));
+			playerIn.addChatMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "(Potential) Empty Slots: " + tile.emptySlots()));
+			playerIn.addChatMessage(new TextComponentString(TextFormatting.DARK_AQUA + "Connectables: " + tile.connectables.size()));
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			for (BlockPos p : tile.connectables) {
 				String block = worldIn.getBlockState(p).getBlock().getLocalizedName();
@@ -107,9 +108,10 @@ public class BlockMaster extends BlockContainer {
 				}
 			});
 			for (Entry<String, Integer> e : lis)
-				playerIn.addChatMessage(new TextComponentString("    " + e.getKey() + ": " + e.getValue()));
+				playerIn.addChatMessage(new TextComponentString(TextFormatting.AQUA + "    " + e.getKey() + ": " + e.getValue()));
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	public static class Item extends ItemBlock {

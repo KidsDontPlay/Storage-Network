@@ -138,7 +138,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					if (!Util.contains(stacks, new StackWrapper(ItemStack.loadItemStackFromNBT(res), 0), new Comparator<StackWrapper>() {
 						@Override
 						public int compare(StackWrapper o1, StackWrapper o2) {
-							if (o1.getStack().isItemEqual(o2.getStack()) && ItemStack.areItemStackTagsEqual(o2.getStack(), o1.getStack())) {
+							if (ItemHandlerHelper.canItemStacksStack(o1.getStack(), o2.getStack())) {
 								return 0;
 							}
 							return 1;
@@ -155,7 +155,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		boolean added = false;
 		for (int i = 0; i < lis.size(); i++) {
 			ItemStack stack = lis.get(i).getStack();
-			if (s.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(stack, s)) {
+			if (ItemHandlerHelper.canItemStacksStack(s, stack)) {
 				lis.get(i).setSize(lis.get(i).getSize() + num);
 				added = true;
 			}
@@ -380,21 +380,21 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public void addIConnectable(BlockPos pos) {
-		if (connectables == null)
-			connectables = Sets.newHashSet();
-		if (pos != null && !connectables.contains(pos))
-			connectables.add(pos);
-		removeFalse();
-	}
-
-	public void removeIConnectable(BlockPos pos) {
-		if (connectables == null)
-			connectables = Sets.newHashSet();
-		if (pos != null)
-			connectables.remove(pos);
-		removeFalse();
-	}
+	// public void addIConnectable(BlockPos pos) {
+	// if (connectables == null)
+	// connectables = Sets.newHashSet();
+	// if (pos != null && !connectables.contains(pos))
+	// connectables.add(pos);
+	// removeFalse();
+	// }
+	//
+	// public void removeIConnectable(BlockPos pos) {
+	// if (connectables == null)
+	// connectables = Sets.newHashSet();
+	// if (pos != null)
+	// connectables.remove(pos);
+	// removeFalse();
+	// }
 
 	public void refreshNetwork() {
 		if (worldObj.isRemote)
@@ -462,7 +462,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			IItemHandler inv = t.getInventory();
 			if (!InvHelper.contains(inv, in))
 				continue;
-			if (!t.canTransfer(stack, Direction.IN))
+			if (!t.canTransfer(in, Direction.IN))
 				continue;
 			if (t.getSource().equals(source))
 				continue;
@@ -476,7 +476,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			IItemHandler inv = t.getInventory();
 			if (InvHelper.contains(inv, in))
 				continue;
-			if (!t.canTransfer(stack, Direction.IN))
+			if (!t.canTransfer(in, Direction.IN))
 				continue;
 			if (t.getSource().equals(source))
 				continue;
@@ -760,7 +760,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				ItemStack s = inv.getStackInSlot(i);
 				if (s == null)
 					continue;
-				if (res != null && !s.isItemEqual(res))
+				if (res != null && !ItemHandlerHelper.canItemStacksStack(s, res))
 					continue;
 				if (!fil.match(s))
 					continue;
@@ -775,7 +775,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				// inv.markDirty();
 				if (result == size)
 					return ItemHandlerHelper.copyStackWithSize(res, size);
-				// break;
 			}
 		}
 		if (result == 0)
@@ -836,13 +835,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public void update() {
 		if (worldObj.isRemote)
 			return;
-		// if(1==1)
-		// return;
 		if (storageInventorys == null || fstorageInventorys == null || connectables == null) {
 			refreshNetwork();
 		}
 		if (worldObj.getTotalWorldTime() % (200) == 0) {
-			// System.out.println("SSref");
 			refreshNetwork();
 		}
 		vacuum();
@@ -867,17 +863,18 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	public void removeFalse() {
-		if (connectables != null) {
-			Iterator<BlockPos> it = connectables.iterator();
-			while (it.hasNext()) {
-				TileEntity t = worldObj.getTileEntity(it.next());
-				if (!(t instanceof IConnectable) || ((IConnectable) t).getMaster() == null)
-					it.remove();
-			}
-		}
-		addInventorys();
-	}
+	// public void removeFalse() {
+	// if (connectables != null) {
+	// Iterator<BlockPos> it = connectables.iterator();
+	// while (it.hasNext()) {
+	// TileEntity t = worldObj.getTileEntity(it.next());
+	// if (!(t instanceof IConnectable) || ((IConnectable) t).getMaster() ==
+	// null)
+	// it.remove();
+	// }
+	// }
+	// addInventorys();
+	// }
 
 	boolean consumeRF(int num, boolean simulate) {
 		if (!ConfigHandler.energyNeeded)

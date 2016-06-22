@@ -116,7 +116,7 @@ public class TileKabel extends AbstractFilterTile {
 			TileMaster m = (TileMaster) worldObj.getTileEntity(getMaster());
 			if (getStack() == null)
 				return true;
-			int amount = m.getAmount(new FilterItem(getStack(), true, false, false));
+			int amount = m.getAmount(new FilterItem(getStack()));
 			if (isMode()) {
 				return amount > getLimit();
 			} else {

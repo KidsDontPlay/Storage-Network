@@ -79,11 +79,11 @@ public class GuiRemote extends AbstractGuiRequest {
 		return BlockPos.ORIGIN;
 	}
 
-	@Override
-	protected BlockPos getMaster() {
-		ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-		return new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z"));
-	}
+//	@Override
+//	protected BlockPos getMaster() {
+//		ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+//		return new BlockPos(NBTHelper.getInteger(stack, "x"), NBTHelper.getInteger(stack, "y"), NBTHelper.getInteger(stack, "z"));
+//	}
 
 	@Override
 	protected int getDim() {

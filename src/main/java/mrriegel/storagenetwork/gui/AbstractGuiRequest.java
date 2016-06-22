@@ -75,7 +75,7 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 
 	protected abstract BlockPos getPos();
 
-	protected abstract BlockPos getMaster();
+	// protected abstract BlockPos getMaster();
 
 	protected abstract int getDim();
 
@@ -260,8 +260,8 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 		} else if (over != null && (mouseButton == 0 || mouseButton == 1) && mc.thePlayer.inventory.getItemStack() == null && canClick()) {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
 			lastClick = System.currentTimeMillis();
-		} else if (mc.thePlayer.inventory.getItemStack() != null && inField(mouseX, mouseY) && canClick() && getMaster() != null) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getMaster(), getDim(), mc.thePlayer.inventory.getItemStack()));
+		} else if (mc.thePlayer.inventory.getItemStack() != null && inField(mouseX, mouseY) && canClick()) {
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mc.thePlayer.inventory.getItemStack()));
 			lastClick = System.currentTimeMillis();
 		}
 	}

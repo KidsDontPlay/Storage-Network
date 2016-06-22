@@ -8,9 +8,11 @@ import mrriegel.storagenetwork.init.CraftingRecipes;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.network.PacketHandler;
+import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class CommonProxy {
@@ -25,10 +27,16 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(StorageNetwork.instance, new GuiHandler());
+		// MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
 		Util.init();
+	}
+
+	@SubscribeEvent
+	public void nei(NeighborNotifyEvent e) {
+		System.out.println(e.getState());
 	}
 
 }

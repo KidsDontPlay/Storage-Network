@@ -157,7 +157,7 @@ public class ContainerRequest extends Container {
 				slot.onSlotChange(itemstack1, itemstack);
 			} else {
 				TileMaster tile = (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster());
-				if (tile != null && !tile.getWorld().isRemote) {
+				if (tile != null) {
 					int rest = tile.insertStack(itemstack1, null, false);
 					ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
 					slot.putStack(stack);

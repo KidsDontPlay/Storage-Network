@@ -72,6 +72,26 @@ public class InvHelper {
 		return amount;
 	}
 
+	public static ItemStack extractItem(IItemHandler inv, FilterItem fil, int num, boolean simulate) {
+		if (inv == null || fil == null)
+			return null;
+		int extracted = 0;
+		for (int i = 0; i < inv.getSlots(); i++) {
+			ItemStack slot = inv.getStackInSlot(i);
+			if (fil.match(slot)) {
+				ItemStack ex = inv.extractItem(i, 1, simulate);
+				if (ex != null) {
+					extracted++;
+					if (extracted == num)
+						return ItemHandlerHelper.copyStackWithSize(slot, num);
+					else
+						i--;
+				}
+			}
+		}
+		return null;
+	}
+
 	public static boolean hasFluidHandler(World world, BlockPos pos, EnumFacing facing) {
 		return getFluidHandler(world.getTileEntity(pos), facing) != null;
 	}

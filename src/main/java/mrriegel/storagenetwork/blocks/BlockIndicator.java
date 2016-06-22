@@ -5,7 +5,6 @@ import java.util.List;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.handler.GuiHandler;
-import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.tile.TileIndicator;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -80,7 +79,6 @@ public class BlockIndicator extends BlockConnectable {
 			tileentity.validate();
 			world.setTileEntity(pos, tileentity);
 		}
-		Util.updateTile(world, pos);
 		world.notifyNeighborsOfStateChange(pos, this);
 
 	}

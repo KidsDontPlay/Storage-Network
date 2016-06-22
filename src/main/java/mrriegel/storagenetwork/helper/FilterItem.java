@@ -2,13 +2,14 @@ package mrriegel.storagenetwork.helper;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class FilterItem {
 	ItemStack stack;
 	boolean meta, ore, nbt;
 
 	public FilterItem(ItemStack stack) {
-		this(stack, true, false, false);
+		this(stack, stack != null ? stack.getItemDamage() != OreDictionary.WILDCARD_VALUE : true, false, false);
 	}
 
 	public FilterItem(ItemStack stack, boolean meta, boolean ore, boolean nbt) {

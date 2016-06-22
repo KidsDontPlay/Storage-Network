@@ -1,12 +1,12 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.remote.ContainerRemote;
+import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -19,13 +19,11 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
 	int dim;
 	ItemStack stack;
-	BlockPos pos;
 
 	public InsertMessage() {
 	}
 
-	public InsertMessage(BlockPos pos, int dim, ItemStack stack) {
-		this.pos = pos;
+	public InsertMessage(int dim, ItemStack stack) {
 		this.dim = dim;
 		this.stack = stack;
 
@@ -38,21 +36,20 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 			@Override
 			public void run() {
 				World w = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.dim);
-				if (w.getTileEntity(message.pos) instanceof TileMaster) {
-					TileMaster tile = (TileMaster) w.getTileEntity(message.pos);
+				TileEntity t = null;
+				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest)
+					t = w.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+				else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest)
+					t = w.getTileEntity(((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+				if (t instanceof TileMaster) {
+					TileMaster tile = (TileMaster) t;
 					int rest = tile.insertStack(message.stack, null, false);
-					if (rest != 0) {
-						ctx.getServerHandler().playerEntity.inventory.setItemStack(ItemHandlerHelper.copyStackWithSize(message.stack, rest));
-						PacketHandler.INSTANCE.sendTo(new StackMessage(ItemHandlerHelper.copyStackWithSize(message.stack, rest)), ctx.getServerHandler().playerEntity);
-					} else {
-						ctx.getServerHandler().playerEntity.inventory.setItemStack(null);
-						PacketHandler.INSTANCE.sendTo(new StackMessage(null), ctx.getServerHandler().playerEntity);
-					}
-					if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
-					} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
-					}
+					ItemStack send = null;
+					if (rest != 0)
+						send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
+					ctx.getServerHandler().playerEntity.inventory.setItemStack(send);
+					PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().playerEntity);
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
 					ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
 				}
 
@@ -63,14 +60,12 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.pos = BlockPos.fromLong(buf.readLong());
 		this.dim = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeLong(this.pos.toLong());
 		buf.writeInt(this.dim);
 		ByteBufUtils.writeItemStack(buf, this.stack);
 	}

@@ -9,8 +9,8 @@ import java.util.Map;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.helper.FilterItem;
+import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.tile.TileMaster;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,6 +21,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, IMessage> {
@@ -73,13 +74,18 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 								lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
 							}
 						}
+
 						for (int i = 0; i < lis.size(); i++) {
 							ItemStack s = lis.get(i);
-							if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null && consumeItem(ctx.getServerHandler().playerEntity.inventory, s.copy())) {
-								con.craftMatrix.setInventorySlotContents(j - 1, s);
+							if (s == null)
+								continue;
+							ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, true);
+							if (ex != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
+								con.craftMatrix.setInventorySlotContents(j - 1, ex);
+								InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, false);
 								break;
 							}
-							s = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+							s = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i)) : null, 1, false);
 							if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
 								con.craftMatrix.setInventorySlotContents(j - 1, s);
 								break;
@@ -118,13 +124,4 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 		return null;
 	}
 
-	boolean consumeItem(InventoryPlayer inv, ItemStack stack) {
-		for (int i = 0; i < inv.getSizeInventory() - 4; i++) {
-			if (inv.getStackInSlot(i) != null && inv.getStackInSlot(i).isItemEqual(stack)) {
-				inv.decrStackSize(i, 1);
-				return true;
-			}
-		}
-		return false;
-	}
 }
