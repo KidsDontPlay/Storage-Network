@@ -424,7 +424,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					int rest = insertStack(stack, null, false);
 					ItemStack r = stack.copy();
 					r.stackSize = rest;
-					consumeRF(stack.stackSize - rest, true);
+					consumeRF(stack.stackSize - rest, false);
 					if (rest <= 0)
 						item.setDead();
 					else
@@ -668,7 +668,12 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				ItemStack g = request(new FilterItem(fil, meta, ore, false), 1, true);
 				if (g == null)
 					continue;
-				ItemStack max = ItemHandlerHelper.copyStackWithSize(g, g.getMaxStackSize());
+				int m = g.getMaxStackSize();
+				if ((t.elements(ItemUpgrade.STOCK) > 0))
+					m = Math.min(m, t.getFilter().get(i).getSize() - InvHelper.getAmount(inv, new FilterItem(g, meta, ore, false)));
+				if (m <= 0)
+					continue;
+				ItemStack max = ItemHandlerHelper.copyStackWithSize(g, m);
 				ItemStack remain = ItemHandlerHelper.insertItem(inv, max, true);
 				int insert = remain == null ? max.stackSize : max.stackSize - remain.stackSize;
 				insert = Math.min(insert, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
