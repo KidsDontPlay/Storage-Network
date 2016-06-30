@@ -51,8 +51,6 @@ public class BlockMaster extends BlockContainer {
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		onBlockPlacedBy(worldIn, pos, state, null, null);
-		for (BlockPos p : Util.getSides(pos))
-			Util.updateTile(worldIn, p);
 	}
 
 	@Override

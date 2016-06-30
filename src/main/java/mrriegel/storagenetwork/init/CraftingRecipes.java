@@ -11,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class CraftingRecipes {
@@ -57,6 +59,7 @@ public class CraftingRecipes {
 				}
 			}
 		}
+		RecipeSorter.register("storagenetwork:foo", Foo.class, Category.SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
 		Foo a = new Foo(new ItemStack(ModItems.fremote, 1, 0), Arrays.asList(new ItemStack(ModItems.remote, 1, 0), new ItemStack(Items.BUCKET)));
 		GameRegistry.addRecipe(a);
 		Foo b = new Foo(new ItemStack(ModItems.fremote, 1, 1), Arrays.asList(new ItemStack(ModItems.remote, 1, 1), new ItemStack(Items.BUCKET)));
