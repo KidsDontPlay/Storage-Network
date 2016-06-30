@@ -355,7 +355,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				worldObj.removeTileEntity(bl);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) instanceof IConnectable && (!(worldObj.getTileEntity(bl) instanceof TileKabel) || !((TileKabel) worldObj.getTileEntity(bl)).isDisabled()) && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+				if (worldObj.getTileEntity(bl) instanceof TileToggler && ((TileToggler) worldObj.getTileEntity(bl)).isDisabled())
+					continue;
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
 				// Util.updateTile(worldObj, bl);

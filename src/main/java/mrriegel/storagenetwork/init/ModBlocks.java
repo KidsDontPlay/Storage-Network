@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.blocks.BlockItemBox;
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
+import mrriegel.storagenetwork.blocks.BlockToggle;
 import mrriegel.storagenetwork.tile.TileAnnexer;
 import mrriegel.storagenetwork.tile.TileContainer;
 import mrriegel.storagenetwork.tile.TileCrafter;
@@ -24,6 +25,7 @@ import mrriegel.storagenetwork.tile.TileItemBox;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileRequest;
+import mrriegel.storagenetwork.tile.TileToggler;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -47,6 +49,7 @@ public class ModBlocks {
 	public static final Block fannexer = new BlockFannexer();
 	public static final Block itemBox = new BlockItemBox();
 	public static final Block fluidBox = new BlockFluidBox();
+	public static final Block toggler = new BlockToggle();
 
 	public static void init() {
 		GameRegistry.register(master);
@@ -67,6 +70,7 @@ public class ModBlocks {
 		GameRegistry.register(itemBox);
 		GameRegistry.register(fluidBox);
 		// GameRegistry.register(container);
+		GameRegistry.register(toggler);
 
 		GameRegistry.register(new BlockMaster.Item(master).setRegistryName(master.getRegistryName()));
 		GameRegistry.register(new BlockRequest.Item(request).setRegistryName(request.getRegistryName()));
@@ -87,6 +91,7 @@ public class ModBlocks {
 		GameRegistry.register(new BlockFluidBox.Item(fluidBox).setRegistryName(fluidBox.getRegistryName()));
 		// GameRegistry.register(new
 		// BlockContainer.Item(container).setRegistryName(container.getRegistryName()));
+		GameRegistry.register(new BlockToggle.Item(toggler).setRegistryName(toggler.getRegistryName()));
 
 		GameRegistry.registerTileEntity(TileKabel.class, "tileKabel");
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
@@ -99,6 +104,7 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TileFannexer.class, "tileFannexer");
 		GameRegistry.registerTileEntity(TileItemBox.class, "tileItemBox");
 		GameRegistry.registerTileEntity(TileFluidBox.class, "tileFluidBox");
+		GameRegistry.registerTileEntity(TileToggler.class, "tileToggler");
 
 	}
 

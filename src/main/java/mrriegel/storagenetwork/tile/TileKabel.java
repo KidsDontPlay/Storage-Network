@@ -36,7 +36,6 @@ public class TileKabel extends AbstractFilterTile {
 	public Connect north, south, east, west, up, down;
 	private Block cover;
 	private int coverMeta;
-	private boolean disabled;
 
 	ItemStack stack = null;
 
@@ -168,7 +167,6 @@ public class TileKabel extends AbstractFilterTile {
 		} else {
 			cover = Block.getBlockFromName(fs);
 		}
-		disabled = compound.getBoolean("disabled");
 
 		NBTTagList nbttaglist = compound.getTagList("Items", 10);
 		upgrades = Arrays.asList(null, null, null, null);
@@ -211,7 +209,6 @@ public class TileKabel extends AbstractFilterTile {
 		} else {
 			compound.setString("cover", "null");
 		}
-		compound.setBoolean("disabled", disabled);
 
 		NBTTagList nbttaglist = new NBTTagList();
 		for (int i = 0; i < upgrades.size(); ++i) {
@@ -232,14 +229,6 @@ public class TileKabel extends AbstractFilterTile {
 		double renderExtention = 1.0d;
 		AxisAlignedBB bb = new AxisAlignedBB(pos.getX() - renderExtention, pos.getY() - renderExtention, pos.getZ() - renderExtention, pos.getX() + 1 + renderExtention, pos.getY() + 1 + renderExtention, pos.getZ() + 1 + renderExtention);
 		return bb;
-	}
-
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean enabled) {
-		this.disabled = enabled;
 	}
 
 	public Kind getKind() {

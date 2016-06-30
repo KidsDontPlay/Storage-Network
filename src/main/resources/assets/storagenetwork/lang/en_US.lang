@@ -16,6 +16,7 @@ tile.storagenetwork:annexer.name=Block Liquidator
 tile.storagenetwork:fannexer.name=Fluid Liquidator
 tile.storagenetwork:itemBox.name=Item Box
 tile.storagenetwork:fluidBox.name=Fluid Box
+tile.storagenetwork:toggler.name=Toggle Unit
 
 item.storagenetwork:upgrade_0.name=Speed Upgrade
 item.storagenetwork:upgrade_1.name=Operation Upgrade
@@ -70,7 +71,7 @@ tooltip.storagenetwork.fremote_0=Used to overview and request fluids from the ne
 tooltip.storagenetwork.remote_0=Used to overview and request items from the network from short distance.
 tooltip.storagenetwork.fremote_1=Used to overview and request fluids from the network from far distance.
 tooltip.storagenetwork.remote_1=Used to overview and request items from the network from far distance.
-tooltip.storagenetwork.toggler=Disables/enables a cable.
+tooltip.storagenetwork.toggler=Can disable parts of the network when powered with redstone.
 tooltip.storagenetwork.upgrade_0=Increases the speed of importing/exporting.
 tooltip.storagenetwork.upgrade_1=Activity of the cable depends on the amount of items.
 tooltip.storagenetwork.upgrade_2=Increases the stack size of task.

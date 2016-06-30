@@ -74,6 +74,7 @@ public class CraftingRecipes {
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.fluidBox), "imi", "mgm", "imi", 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT, 'm', Blocks.GLASS);
 		GameRegistry.addShapedRecipe(new ItemStack(ModItems.duplicator), "  t", " s ", "i  ", 'i', Items.IRON_INGOT, 't', Items.PAPER, 's', Items.STICK);
 		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.duplicator), ModItems.duplicator);
+		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.toggler), " k ", "iti", " k ", 'k', ModBlocks.kabel, 'i', Items.IRON_INGOT, 't', Blocks.REDSTONE_TORCH);
 	}
 
 }

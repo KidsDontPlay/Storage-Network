@@ -43,7 +43,7 @@ public class ItemToggler extends Item {
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) instanceof TileKabel) {
 			TileKabel tile = (TileKabel) worldIn.getTileEntity(pos);
-			tile.setDisabled(!tile.isDisabled());
+			// tile.setDisabled(!tile.isDisabled());
 			if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster) {
 				TileMaster mas = ((TileMaster) worldIn.getTileEntity(tile.getMaster()));
 				for (BlockPos p : mas.connectables)
@@ -82,9 +82,9 @@ public class ItemToggler extends Item {
 						BlockPos pos = new BlockPos(i + player.posX, j + player.posY, k + player.posZ);
 						if (!player.worldObj.isAirBlock(pos) && player.worldObj.getTileEntity(pos) instanceof TileKabel) {
 							TileKabel tile = (TileKabel) player.worldObj.getTileEntity(pos);
-							if (tile.isDisabled()) {
-								lis.add(pos);
-							}
+							// if (tile.isDisabled()) {
+							// lis.add(pos);
+							// }
 						}
 					}
 		}

@@ -68,6 +68,7 @@ public class ClientProxy extends CommonProxy {
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.itemBox), 0, new ModelResourceLocation(StorageNetwork.MODID + ":itemBox", "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.fluidBox), 0, new ModelResourceLocation(StorageNetwork.MODID + ":fluidBox", "inventory"));
 		ModelLoader.setCustomModelResourceLocation(ModItems.duplicator, 0, new ModelResourceLocation(StorageNetwork.MODID + ":duplicator", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.toggler), 0, new ModelResourceLocation(StorageNetwork.MODID + ":toggler", "inventory"));
 	}
 
 	public void registerRenderers() {
