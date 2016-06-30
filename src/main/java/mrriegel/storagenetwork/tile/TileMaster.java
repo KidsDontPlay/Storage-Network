@@ -54,6 +54,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public List<FluidStack> getFluids() {
 		List<FluidStack> stacks = Lists.newArrayList();
 		List<AbstractFilterTile> invs = Lists.newArrayList();
+		if (connectables == null)
+			refreshNetwork();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
@@ -80,6 +82,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	public List<StackWrapper> getStacks() {
 		List<StackWrapper> stacks = Lists.newArrayList();
 		List<AbstractFilterTile> invs = Lists.newArrayList();
+		if (connectables == null)
+			refreshNetwork();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);

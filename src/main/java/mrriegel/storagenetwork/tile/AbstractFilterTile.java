@@ -6,11 +6,13 @@ import java.util.Map;
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -46,6 +48,11 @@ public abstract class AbstractFilterTile extends TileEntity implements IConnecta
 	@Override
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+		return oldState.getBlock() != newSate.getBlock();
 	}
 
 	@Override

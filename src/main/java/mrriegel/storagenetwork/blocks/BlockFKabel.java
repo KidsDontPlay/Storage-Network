@@ -42,7 +42,7 @@ public class BlockFKabel extends BlockKabel {
 	}
 
 	@Override
-	boolean validInventory(World worldIn, BlockPos pos, EnumFacing side) {
+	boolean validInventory(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
 		return InvHelper.hasFluidHandler(worldIn, pos, side);
 	}
 
@@ -55,7 +55,7 @@ public class BlockFKabel extends BlockKabel {
 		if (ori == ModBlocks.kabel || ori == ModBlocks.vacuumKabel)
 			return Connect.NULL;
 		EnumFacing face = get(orig, pos);
-		if (!validInventory((World) worldIn, pos, face))
+		if (!validInventory(worldIn, pos, face))
 			return Connect.NULL;
 		return Connect.STORAGE;
 	}

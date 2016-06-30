@@ -2,19 +2,20 @@
     "forge_marker" : 1, 
     "defaults" : {
         "textures" : {
-            "particle" : "storagenetwork:blocks/storageKabel", 
-            "all" : "storagenetwork:blocks/storageKabel", 
-            "plate" : "blocks/iron_block"
-        }, 
-        "model" : "storagenetwork:kabelCube"
+            "particle" : "storagenetwork:blocks/vacuumKabel", 
+            "all" : "storagenetwork:blocks/vacuumKabel"
+        },"model" : "storagenetwork:kabelCube"
     }, 
     "variants" : {
+        "normal" : [{
+                
+            }], 
         "straight" : {
             "true" : {
-                
             }, 
             "false" : {
                 "model" : "storagenetwork:kabelCube"
+                
             }
         }, 
         "north" : {
@@ -38,8 +39,7 @@
                     }
                 }
             }, 
-            "null" : {
-                
+            "null" : {  
             }
         }, 
         "south" : {

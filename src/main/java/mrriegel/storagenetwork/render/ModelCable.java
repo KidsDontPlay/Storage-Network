@@ -80,7 +80,7 @@ public class ModelCable extends ModelBase {
 		boolean a = connected(tile.north) && connected(tile.south) && !connected(tile.west) && !connected(tile.east) && !connected(tile.up) && !connected(tile.down);
 		boolean b = !connected(tile.north) && !connected(tile.south) && connected(tile.west) && connected(tile.east) && !connected(tile.up) && !connected(tile.down);
 		boolean c = !connected(tile.north) && !connected(tile.south) && !connected(tile.west) && !connected(tile.east) && connected(tile.up) && connected(tile.down);
-		return a ^ b ^ c;
+		return (a ^ b ^ c);
 	}
 
 	private boolean connected(Connect c) {

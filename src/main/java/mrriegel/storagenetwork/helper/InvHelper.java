@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -19,7 +19,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class InvHelper {
-	public static boolean hasItemHandler(World world, BlockPos pos, EnumFacing facing) {
+	public static boolean hasItemHandler(IBlockAccess world, BlockPos pos, EnumFacing facing) {
 		return getItemHandler(world.getTileEntity(pos), facing) != null;
 	}
 
@@ -92,7 +92,7 @@ public class InvHelper {
 		return null;
 	}
 
-	public static boolean hasFluidHandler(World world, BlockPos pos, EnumFacing facing) {
+	public static boolean hasFluidHandler(IBlockAccess world, BlockPos pos, EnumFacing facing) {
 		return getFluidHandler(world.getTileEntity(pos), facing) != null;
 	}
 
@@ -142,4 +142,5 @@ public class InvHelper {
 		}
 		return amount;
 	}
+
 }
