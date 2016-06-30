@@ -151,12 +151,20 @@ public class Util {
 	}
 
 	public static void updateTile(World world, BlockPos pos) {
-		if (world == null || world.isRemote || world.getTileEntity(pos) == null)
+		if (world == null || world.isRemote || world.getTileEntity(pos) == null || !world.getChunkFromBlockCoords(pos).isLoaded())
 			return;
 		WorldServer w = (WorldServer) world;
 		for (EntityPlayer p : w.playerEntities) {
 			if (p.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ()) < 32) {
-				((EntityPlayerMP) p).connection.sendPacket(world.getTileEntity(pos).getUpdatePacket());
+				try {
+					System.out.println(world.getBlockState(pos).getBlock().getLocalizedName() + " at " + pos);
+					System.out.println("TE: " + world.getTileEntity(pos));
+					((EntityPlayerMP) p).connection.sendPacket(world.getTileEntity(pos).getUpdatePacket());
+					System.out.println("Send: " + world.getTileEntity(pos).getUpdatePacket());
+				} catch (Error e) {
+					System.out.println(e.getMessage());
+					e.printStackTrace();
+				}
 			}
 		}
 
