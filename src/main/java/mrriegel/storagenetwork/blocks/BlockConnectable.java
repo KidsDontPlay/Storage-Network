@@ -7,7 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -19,6 +19,8 @@ public abstract class BlockConnectable extends BlockContainer {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR)
+			return;
 		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
@@ -42,13 +44,12 @@ public abstract class BlockConnectable extends BlockContainer {
 				}
 			}
 		}
-		if (tile.getMaster() != null) {
-			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
+		if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster) {
+			TileMaster mas = (TileMaster) worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
-			Util.updateTile(worldIn, pos);
 			setAllMastersNull(worldIn, pos);
-			if (refresh && mas instanceof TileMaster) {
-				((TileMaster) mas).refreshNetwork();
+			if (refresh) {
+				mas.refreshNetwork();
 			}
 		}
 	}
@@ -58,7 +59,6 @@ public abstract class BlockConnectable extends BlockContainer {
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
-				Util.updateTile(world, bl);
 				setAllMastersNull(world, bl);
 			}
 		}

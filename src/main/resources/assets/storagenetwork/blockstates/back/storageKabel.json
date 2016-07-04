@@ -5,7 +5,8 @@
             "particle" : "storagenetwork:blocks/storageKabel", 
             "all" : "storagenetwork:blocks/storageKabel", 
             "plate" : "blocks/iron_block"
-        },"model" : "storagenetwork:kabelCube"
+        }, 
+        "model" : "storagenetwork:kabelCube"
     }, 
     "variants" : {
         "straight" : {

@@ -67,7 +67,6 @@ public class CraftingRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.coverstick), " rg", " sb", "s  ", 's', "stickWood", 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.cover, 24), "dcd", "c c", "dcd", 'c', Blocks.HARDENED_CLAY, 'd', new ItemStack(Items.DYE, 1, OreDictionary.WILDCARD_VALUE)));
 		GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.indicator), " i ", "ioi", " i ", 'i', Items.IRON_INGOT, 'o', new ItemStack(ModItems.upgrade, 1, 1));
-		GameRegistry.addShapedRecipe(new ItemStack(ModItems.toggler), "  t", " s ", "i  ", 'i', Items.IRON_INGOT, 't', Blocks.REDSTONE_TORCH, 's', Items.STICK);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.annexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.IRON_PICKAXE), 'c', ModBlocks.kabel));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.fannexer), "sps", "pcp", "s s", 's', "stone", 'p', new ItemStack(Items.BUCKET), 'c', ModBlocks.kabel));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.itemBox), "imi", "mgm", "imi", 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT, 'm', Blocks.PLANKS));

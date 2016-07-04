@@ -5,7 +5,6 @@ import mrriegel.storagenetwork.items.ItemDuplicator;
 import mrriegel.storagenetwork.items.ItemFRemote;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.items.ItemTemplate;
-import mrriegel.storagenetwork.items.ItemToggler;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -16,7 +15,6 @@ public class ModItems {
 	public static final Item fremote = new ItemFRemote().setRegistryName("fremote");
 	public static final Item coverstick = new ItemCoverStick();
 	public static final Item template = new ItemTemplate();
-	public static final Item toggler = new ItemToggler();
 	public static final Item duplicator = new ItemDuplicator();
 
 	public static void init() {
@@ -25,7 +23,6 @@ public class ModItems {
 		GameRegistry.register(fremote.setUnlocalizedName(fremote.getRegistryName().toString()));
 		GameRegistry.register(coverstick);
 		// GameRegistry.register(template);
-		// GameRegistry.register(toggler);
 		// GameRegistry.registerItem(ssdd);
 		GameRegistry.register(duplicator);
 	}

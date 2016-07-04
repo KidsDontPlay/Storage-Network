@@ -1,7 +1,7 @@
 {
     "variants" : {
         "normal" : {
-            "model" : "storagenetwork:storageKabel"
+            "model" : "storagenetwork:fexKabel"
         }
     }
 }

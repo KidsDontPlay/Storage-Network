@@ -221,6 +221,8 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 		}
 		if (sort.isMouseOver())
 			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.req.tooltip_" + getSort().toString())), mouseX - guiLeft, mouseY - guiTop);
+		if (jei != null && jei.isMouseOver())
+			drawHoveringText(Lists.newArrayList(Settings.jeiSearch ? "JEI search enabled" : "JEI search disabled"), mouseX - guiLeft, mouseY - guiTop);
 		if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
 			Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 		}

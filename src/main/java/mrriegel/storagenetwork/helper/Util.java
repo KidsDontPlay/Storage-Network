@@ -157,10 +157,7 @@ public class Util {
 		for (EntityPlayer p : w.playerEntities) {
 			if (p.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ()) < 32) {
 				try {
-					System.out.println(world.getBlockState(pos).getBlock().getLocalizedName() + " at " + pos);
-					System.out.println("TE: " + world.getTileEntity(pos));
 					((EntityPlayerMP) p).connection.sendPacket(world.getTileEntity(pos).getUpdatePacket());
-					System.out.println("Send: " + world.getTileEntity(pos).getUpdatePacket());
 				} catch (Error e) {
 					System.out.println(e.getMessage());
 					e.printStackTrace();
