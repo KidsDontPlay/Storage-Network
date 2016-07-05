@@ -9,20 +9,16 @@ import mrriegel.storagenetwork.blocks.BlockFRequest;
 import mrriegel.storagenetwork.blocks.BlockFannexer;
 import mrriegel.storagenetwork.blocks.BlockFluidBox;
 import mrriegel.storagenetwork.blocks.BlockIndicator;
-import mrriegel.storagenetwork.blocks.BlockInterface;
 import mrriegel.storagenetwork.blocks.BlockItemBox;
 import mrriegel.storagenetwork.blocks.BlockKabel;
 import mrriegel.storagenetwork.blocks.BlockMaster;
 import mrriegel.storagenetwork.blocks.BlockRequest;
 import mrriegel.storagenetwork.blocks.BlockToggle;
 import mrriegel.storagenetwork.tile.TileAnnexer;
-import mrriegel.storagenetwork.tile.TileContainer;
-import mrriegel.storagenetwork.tile.TileCrafter;
 import mrriegel.storagenetwork.tile.TileFRequest;
 import mrriegel.storagenetwork.tile.TileFannexer;
 import mrriegel.storagenetwork.tile.TileFluidBox;
 import mrriegel.storagenetwork.tile.TileIndicator;
-import mrriegel.storagenetwork.tile.TileInterface;
 import mrriegel.storagenetwork.tile.TileItemBox;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileMaster;
@@ -52,7 +48,6 @@ public class ModBlocks {
 	public static final Block itemBox = new BlockItemBox();
 	public static final Block fluidBox = new BlockFluidBox();
 	public static final Block toggler = new BlockToggle();
-	public static final Block interfac = new BlockInterface();
 
 	public static void init() {
 		GameRegistry.register(master);
@@ -74,7 +69,6 @@ public class ModBlocks {
 		GameRegistry.register(fluidBox);
 		// GameRegistry.register(container);
 		GameRegistry.register(toggler);
-		// GameRegistry.register(interfac);
 
 		GameRegistry.register(new BlockMaster.Item(master).setRegistryName(master.getRegistryName()));
 		GameRegistry.register(new BlockRequest.Item(request).setRegistryName(request.getRegistryName()));
@@ -101,15 +95,15 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TileMaster.class, "tileMaster");
 		GameRegistry.registerTileEntity(TileRequest.class, "tileRequest");
 		GameRegistry.registerTileEntity(TileFRequest.class, "tileFRequest");
-		GameRegistry.registerTileEntity(TileContainer.class, "tileContainer");
-		GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
+		// GameRegistry.registerTileEntity(TileContainer.class,
+		// "tileContainer");
+		// GameRegistry.registerTileEntity(TileCrafter.class, "tileCrafter");
 		GameRegistry.registerTileEntity(TileIndicator.class, "tileIndicator");
 		GameRegistry.registerTileEntity(TileAnnexer.class, "tileAnnexer");
 		GameRegistry.registerTileEntity(TileFannexer.class, "tileFannexer");
 		GameRegistry.registerTileEntity(TileItemBox.class, "tileItemBox");
 		GameRegistry.registerTileEntity(TileFluidBox.class, "tileFluidBox");
 		GameRegistry.registerTileEntity(TileToggler.class, "tileToggler");
-		GameRegistry.registerTileEntity(TileInterface.class, "tileInterface");
 
 	}
 

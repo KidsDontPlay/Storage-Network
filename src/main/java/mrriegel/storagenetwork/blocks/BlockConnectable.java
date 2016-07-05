@@ -8,6 +8,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -44,12 +45,12 @@ public abstract class BlockConnectable extends BlockContainer {
 				}
 			}
 		}
-		if (tile.getMaster() != null && worldIn.getTileEntity(tile.getMaster()) instanceof TileMaster) {
-			TileMaster mas = (TileMaster) worldIn.getTileEntity(tile.getMaster());
+		if (tile.getMaster() != null) {
+			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
 			setAllMastersNull(worldIn, pos);
-			if (refresh) {
-				mas.refreshNetwork();
+			if (refresh && mas instanceof TileMaster) {
+				((TileMaster) mas).refreshNetwork();
 			}
 		}
 	}
