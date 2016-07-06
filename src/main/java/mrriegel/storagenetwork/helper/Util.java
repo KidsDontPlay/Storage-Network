@@ -158,6 +158,7 @@ public class Util {
 			if (p.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ()) < 32) {
 				try {
 					((EntityPlayerMP) p).connection.sendPacket(world.getTileEntity(pos).getUpdatePacket());
+					world.getTileEntity(pos).markDirty();
 				} catch (Error e) {
 					System.out.println(e.getMessage());
 					e.printStackTrace();

@@ -76,9 +76,11 @@ public class ButtonMessage implements IMessage, IMessageHandler<ButtonMessage, I
 						tile.setWay(tile.getWay().next());
 						break;
 					}
+					tile.markDirty();
 				} else if (t instanceof TileIndicator) {
 					TileIndicator tile = (TileIndicator) t;
 					tile.setMore(!tile.isMore());
+					tile.markDirty();
 				}
 				Util.updateTile(t.getWorld(), t.getPos());
 			}

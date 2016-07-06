@@ -360,6 +360,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
+				worldObj.getTileEntity(bl).markDirty();
 				// Util.updateTile(worldObj, bl);
 				addConnectables(bl);
 			}
@@ -408,7 +409,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		connectables = Sets.newHashSet();
 		addConnectables(pos);
 		addInventorys();
-		// System.out.println("ref");
+		System.out.println("ref");
+		markDirty();
 	}
 
 	public void vacuum() {
@@ -459,7 +461,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				return Integer.compare(o2.getPriority(), o1.getPriority());
 			}
 		});
-
 		return addToInventories(stack, invs, source, simulate);
 	}
 
@@ -477,7 +478,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (remain == null)
 				return 0;
 			in = ItemHandlerHelper.copyStackWithSize(in, remain.stackSize);
-			// worldObj.getTileEntity(t.getSource()).markDirty();
+			worldObj.getTileEntity(t.getSource()).markDirty();
 		}
 		for (AbstractFilterTile t : list) {
 			IItemHandler inv = t.getInventory();
@@ -491,7 +492,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (remain == null)
 				return 0;
 			in = ItemHandlerHelper.copyStackWithSize(in, remain.stackSize);
-			// worldObj.getTileEntity(t.getSource()).markDirty();
+			worldObj.getTileEntity(t.getSource()).markDirty();
 		}
 		return in.stackSize;
 	}
@@ -532,6 +533,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (remain <= 0)
 				return 0;
 			in = new FluidStack(in.getFluid(), remain);
+			worldObj.getTileEntity(t.getSource()).markDirty();
 		}
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
@@ -545,6 +547,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (remain <= 0)
 				return 0;
 			in = new FluidStack(in.getFluid(), remain);
+			worldObj.getTileEntity(t.getSource()).markDirty();
 		}
 		return in.amount;
 	}
@@ -586,7 +589,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				int rest = insertStack(ItemHandlerHelper.copyStackWithSize(s, insert), t.getConnectedInventory(), false);
 				inv.extractItem(i, insert - rest, false);
-				// inv.markDirty();
+				worldObj.getTileEntity(t.getSource()).markDirty();
 				break;
 
 			}
@@ -634,6 +637,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (insert == rest)
 					continue;
 				inv.drain(new FluidStack(s.getFluid(), insert - rest), true);
+				worldObj.getTileEntity(t.getSource()).markDirty();
 				break;
 
 			}
@@ -692,6 +696,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
 				ItemHandlerHelper.insertItem(inv, rec, false);
+				worldObj.getTileEntity(t.getSource()).markDirty();
 				break;
 			}
 		}
@@ -747,6 +752,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				consumeRF(num + t.elements(ItemUpgrade.SPEED), false);
 				inv.fill(rec, true);
+				worldObj.getTileEntity(t.getSource()).markDirty();
 				break;
 			}
 		}
@@ -780,6 +786,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 					continue;
 				int miss = size - result;
 				ItemStack extracted = inv.extractItem(i, miss, simulate);
+				worldObj.getTileEntity(t.getSource()).markDirty();
 				result += Math.min(extracted == null ? 0 : extracted.stackSize, miss);
 				int rest = s.stackSize - miss;
 				if (res == null)
@@ -830,6 +837,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				int rest = s.amount - miss;
 				if (!simulate)
 					inv.drain(new FluidStack(s.getFluid(), miss), true);
+				worldObj.getTileEntity(t.getSource()).markDirty();
 				if (res == null)
 					res = s.getFluid();
 				if (result == size)
@@ -858,7 +866,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		export();
 		fimpor();
 		fexport();
-		craft();
+		// craft();
 
 	}
 

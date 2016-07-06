@@ -20,8 +20,9 @@ public abstract class BlockConnectable extends BlockContainer {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR)
+		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !blockIn.isReplaceable(worldIn, pos.up()))
 			return;
+		System.out.println("block: " + blockIn);
 		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
@@ -48,11 +49,13 @@ public abstract class BlockConnectable extends BlockContainer {
 		if (tile.getMaster() != null) {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
+			((TileEntity) tile).markDirty();
 			setAllMastersNull(worldIn, pos);
 			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}
 		}
+		((TileEntity) tile).markDirty();
 	}
 
 	private void setAllMastersNull(World world, BlockPos pos) {
@@ -60,6 +63,7 @@ public abstract class BlockConnectable extends BlockContainer {
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
+				world.getTileEntity(bl).markDirty();
 				setAllMastersNull(world, bl);
 			}
 		}

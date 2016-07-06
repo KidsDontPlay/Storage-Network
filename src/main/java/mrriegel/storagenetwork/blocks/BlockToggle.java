@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.blocks;
 import java.util.List;
 
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.tile.TileMaster;
 import mrriegel.storagenetwork.tile.TileToggler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -34,12 +35,11 @@ public class BlockToggle extends BlockConnectable {
 			boolean changed = x != tile.isDisabled();
 			if (changed) {
 				tile.setDisabled(x);
-				// if (master != null &&
-				// worldObj.getChunkFromBlockCoords(master).isLoaded() &&
-				// worldObj.getTileEntity(master) instanceof TileMaster) {
-				// ((TileMaster)
-				// worldObj.getTileEntity(master)).refreshNetwork();
-				// }
+				tile.markDirty();
+				BlockPos master = tile.getMaster();
+				if (master != null && worldIn.getChunkFromBlockCoords(master).isLoaded() && worldIn.getTileEntity(master) instanceof TileMaster) {
+					((TileMaster) worldIn.getTileEntity(master)).refreshNetwork();
+				}
 			}
 		}
 		super.neighborChanged(state, worldIn, pos, blockIn);

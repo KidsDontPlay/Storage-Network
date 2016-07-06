@@ -35,6 +35,7 @@ public class LimitMessage implements IMessage, IMessageHandler<LimitMessage, IMe
 				TileKabel tile = (TileKabel) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
 				tile.setLimit(message.limit);
 				tile.setStack(message.stack);
+				tile.markDirty();
 			}
 		});
 		return null;

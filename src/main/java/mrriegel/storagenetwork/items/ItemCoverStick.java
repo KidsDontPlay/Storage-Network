@@ -41,10 +41,12 @@ public class ItemCoverStick extends Item {
 				tile.setCover(b);
 				tile.setCoverMeta(right.getItemDamage());
 				Util.updateTile(worldIn, pos);
+				tile.markDirty();
 				playerIn.openContainer.detectAndSendChanges();
 				return EnumActionResult.SUCCESS;
 			} else if (!playerIn.isSneaking() && b == null && tile.getCover() != null) {
 				tile.setCoverMeta(nextMeta(tile.getCover(), tile.getCoverMeta()));
+				tile.markDirty();
 				Util.updateTile(worldIn, pos);
 				playerIn.openContainer.detectAndSendChanges();
 				return EnumActionResult.SUCCESS;
@@ -55,6 +57,7 @@ public class ItemCoverStick extends Item {
 					if (!worldIn.isRemote && !playerIn.capabilities.isCreativeMode)
 						worldIn.spawnEntityInWorld(new EntityItem(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ, new ItemStack(ModBlocks.cover)));
 					Util.updateTile(worldIn, pos);
+					tile.markDirty();
 					playerIn.openContainer.detectAndSendChanges();
 					return EnumActionResult.SUCCESS;
 				}

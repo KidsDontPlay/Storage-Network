@@ -37,6 +37,7 @@ public class FaceMessage implements IMessage, IMessageHandler<FaceMessage, IMess
 					tile.setOutput(GuiContainer.next(tile.getOutput()));
 					break;
 				}
+				tile.markDirty();
 
 			}
 		});
