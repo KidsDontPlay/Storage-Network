@@ -17,16 +17,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, IMessage> {
-	int dim;
+
+	int dim, buttonID;
 	ItemStack stack;
 
 	public InsertMessage() {
 	}
 
-	public InsertMessage(int dim, ItemStack stack) {
+	public InsertMessage(int dim, int buttonID, ItemStack stack) {
 		this.dim = dim;
 		this.stack = stack;
-
+		this.buttonID = buttonID;
 	}
 
 	@Override
@@ -43,10 +44,20 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 					t = w.getTileEntity(((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
 				if (t instanceof TileMaster) {
 					TileMaster tile = (TileMaster) t;
-					int rest = tile.insertStack(message.stack, null, false);
+					int rest;
 					ItemStack send = null;
-					if (rest != 0)
-						send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
+					if(message.buttonID == 0){
+						rest = tile.insertStack(message.stack, null, false);
+						if (rest != 0)
+							send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
+					} else if(message.buttonID == 1){
+						ItemStack stack1 = message.stack.copy();
+						stack1.stackSize = 1;
+						message.stack.stackSize--;
+						rest = tile.insertStack(stack1, null, false) + message.stack.stackSize;
+						if (rest != 0)
+							send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
+					}
 					ctx.getServerHandler().playerEntity.inventory.setItemStack(send);
 					PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().playerEntity);
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
@@ -62,11 +73,13 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 	public void fromBytes(ByteBuf buf) {
 		this.dim = buf.readInt();
 		this.stack = ByteBufUtils.readItemStack(buf);
+		this.buttonID = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.dim);
 		ByteBufUtils.writeItemStack(buf, this.stack);
+		buf.writeInt(this.buttonID);
 	}
 }
