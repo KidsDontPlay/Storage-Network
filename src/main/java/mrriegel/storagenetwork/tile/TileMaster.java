@@ -523,31 +523,35 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		FluidStack in = stack.copy();
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
-			if (!InvHelper.contains(inv, in))
-				continue;
-			if (!t.canTransfer(stack.getFluid(), Direction.IN))
-				continue;
-			if (t.getSource().equals(source))
-				continue;
-			int remain = in.amount - inv.fill(in, !simulate);
-			if (remain <= 0)
-				return 0;
-			in = new FluidStack(in.getFluid(), remain);
-			worldObj.getTileEntity(t.getSource()).markDirty();
+			if(inv != null){
+				if (!InvHelper.contains(inv, in))
+					continue;
+				if (!t.canTransfer(stack.getFluid(), Direction.IN))
+					continue;
+				if (t.getSource().equals(source))
+					continue;
+				int remain = in.amount - inv.fill(in, !simulate);
+				if (remain <= 0)
+					return 0;
+				in = new FluidStack(in.getFluid(), remain);
+				worldObj.getTileEntity(t.getSource()).markDirty();
+			}
 		}
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
-			if (InvHelper.contains(inv, in))
-				continue;
-			if (!t.canTransfer(stack.getFluid(), Direction.IN))
-				continue;
-			if (t.getSource().equals(source))
-				continue;
-			int remain = in.amount - inv.fill(in, !simulate);
-			if (remain <= 0)
-				return 0;
-			in = new FluidStack(in.getFluid(), remain);
-			worldObj.getTileEntity(t.getSource()).markDirty();
+			if(inv != null){
+				if (InvHelper.contains(inv, in))
+					continue;
+				if (!t.canTransfer(stack.getFluid(), Direction.IN))
+					continue;
+				if (t.getSource().equals(source))
+					continue;
+				int remain = in.amount - inv.fill(in, !simulate);
+				if (remain <= 0)
+					return 0;
+				in = new FluidStack(in.getFluid(), remain);
+				worldObj.getTileEntity(t.getSource()).markDirty();
+			}
 		}
 		return in.amount;
 	}
@@ -614,32 +618,33 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		});
 		for (TileKabel t : invs) {
 			IFluidHandler inv = t.getFluidTank();
-			if ((worldObj.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
-				continue;
-			if (inv.getTankProperties() == null)
-				continue;
-			for (IFluidTankProperties i : inv.getTankProperties()) {
-				FluidStack s = i.getContents();
-				if (s == null)
+			if(inv != null){
+				if ((worldObj.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 					continue;
-				if (!t.canTransfer(s.getFluid(), Direction.OUT))
+				if (inv.getTankProperties() == null)
 					continue;
-				if (!t.status())
-					continue;
-				FluidStack canDrain = inv.drain(s, false);
-				if (canDrain == null || canDrain.amount <= 0)
-					continue;
-				int num = s.amount;
-				int insert = Math.min(s.amount, 200 + t.elements(ItemUpgrade.STACK) * 200);
-				if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
-					continue;
-				int rest = insertFluid(new FluidStack(s, insert), t.getSource(), false);
-				if (insert == rest)
-					continue;
-				inv.drain(new FluidStack(s.getFluid(), insert - rest), true);
-				worldObj.getTileEntity(t.getSource()).markDirty();
-				break;
-
+				for (IFluidTankProperties i : inv.getTankProperties()) {
+					FluidStack s = i.getContents();
+					if (s == null)
+						continue;
+					if (!t.canTransfer(s.getFluid(), Direction.OUT))
+						continue;
+					if (!t.status())
+						continue;
+					FluidStack canDrain = inv.drain(s, false);
+					if (canDrain == null || canDrain.amount <= 0)
+						continue;
+					int num = s.amount;
+					int insert = Math.min(s.amount, 200 + t.elements(ItemUpgrade.STACK) * 200);
+					if (!consumeRF(insert + t.elements(ItemUpgrade.SPEED), false))
+						continue;
+					int rest = insertFluid(new FluidStack(s, insert), t.getSource(), false);
+					if (insert == rest)
+						continue;
+					inv.drain(new FluidStack(s.getFluid(), insert - rest), true);
+					worldObj.getTileEntity(t.getSource()).markDirty();
+					break;
+				}
 			}
 		}
 	}
