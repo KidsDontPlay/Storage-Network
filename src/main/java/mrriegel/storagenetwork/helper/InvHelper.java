@@ -101,8 +101,10 @@ public class InvHelper {
 			return null;
 		if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side))
 			return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+		/*
 		if (tile instanceof net.minecraftforge.fluids.IFluidHandler)
 			return new FluidHandlerWrapper((net.minecraftforge.fluids.IFluidHandler) tile, side);
+			*/
 		return null;
 	}
 
