@@ -265,7 +265,7 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 			PacketHandler.INSTANCE.sendToServer(new RequestMessage(mouseButton, over, isShiftKeyDown(), isCtrlKeyDown()));
 			lastClick = System.currentTimeMillis();
 		} else if (mc.thePlayer.inventory.getItemStack() != null && inField(mouseX, mouseY) && canClick()) {
-			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mc.thePlayer.inventory.getItemStack()));
+			PacketHandler.INSTANCE.sendToServer(new InsertMessage(getDim(), mouseButton, mc.thePlayer.inventory.getItemStack()));
 			lastClick = System.currentTimeMillis();
 		}
 	}
