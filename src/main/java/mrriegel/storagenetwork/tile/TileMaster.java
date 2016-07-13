@@ -92,6 +92,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				}
 			}
 		}
+
 		for (AbstractFilterTile t : invs) {
 			IItemHandler inv = t.getInventory();
 			for (int i = 0; i < inv.getSlots(); i++) {
@@ -409,7 +410,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		connectables = Sets.newHashSet();
 		addConnectables(pos);
 		addInventorys();
-		System.out.println("ref");
 		markDirty();
 	}
 
@@ -785,7 +785,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (!t.canTransfer(s, Direction.OUT))
 					continue;
 				int miss = size - result;
-				ItemStack extracted = inv.extractItem(i, miss, simulate);
+				ItemStack extracted = inv.extractItem(i, Math.min(inv.getStackInSlot(i).stackSize, miss), simulate);
 				worldObj.getTileEntity(t.getSource()).markDirty();
 				result += Math.min(extracted == null ? 0 : extracted.stackSize, miss);
 				int rest = s.stackSize - miss;

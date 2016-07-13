@@ -22,7 +22,6 @@ public abstract class BlockConnectable extends BlockContainer {
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !blockIn.isReplaceable(worldIn, pos.up()))
 			return;
-		System.out.println("block: " + blockIn);
 		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
 				if (((IConnectable) worldIn.getTileEntity(p)).getMaster() != null)
