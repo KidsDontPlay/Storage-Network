@@ -46,11 +46,11 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 					TileMaster tile = (TileMaster) t;
 					int rest;
 					ItemStack send = null;
-					if(message.buttonID == 0){
+					if (message.buttonID == 0) {
 						rest = tile.insertStack(message.stack, null, false);
 						if (rest != 0)
 							send = ItemHandlerHelper.copyStackWithSize(message.stack, rest);
-					} else if(message.buttonID == 1){
+					} else if (message.buttonID == 1) {
 						ItemStack stack1 = message.stack.copy();
 						stack1.stackSize = 1;
 						message.stack.stackSize--;

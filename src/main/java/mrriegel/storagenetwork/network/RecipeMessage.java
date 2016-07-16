@@ -62,30 +62,29 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 					if (tile == null)
 						return;
 					for (int j = 1; j < 10; j++) {
-						Map<Integer, ItemStack> lis = new HashMap<Integer, ItemStack>();
+						Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
 						if (message.nbt.hasKey("s" + j, Constants.NBT.TAG_STRING)) {
 							List<ItemStack> l = OreDictionary.getOres(message.nbt.getString("s" + j));
 							for (int i = 0; i < l.size(); i++)
-								lis.put(i, l.get(i));
+								map.put(i, l.get(i));
 						} else {
 							NBTTagList invList = message.nbt.getTagList("s" + j, Constants.NBT.TAG_COMPOUND);
 							for (int i = 0; i < invList.tagCount(); i++) {
 								NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-								lis.put(i, ItemStack.loadItemStackFromNBT(stackTag));
+								map.put(i, ItemStack.loadItemStackFromNBT(stackTag));
 							}
 						}
 
-						for (int i = 0; i < lis.size(); i++) {
-							ItemStack s = lis.get(i);
+						for (int i = 0; i < map.size(); i++) {
+							ItemStack s = map.get(i);
 							if (s == null)
 								continue;
 							ItemStack ex = InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, true);
 							if (ex != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
-								con.craftMatrix.setInventorySlotContents(j - 1, ex);
-								InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, false);
+								con.craftMatrix.setInventorySlotContents(j - 1, InvHelper.extractItem(new PlayerMainInvWrapper(ctx.getServerHandler().playerEntity.inventory), new FilterItem(s), 1, false));
 								break;
 							}
-							s = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i)) : null, 1, false);
+							s = tile.request(map.get(i) != null ? new FilterItem(map.get(i)) : null, 1, false);
 							if (s != null && con.craftMatrix.getStackInSlot(j - 1) == null) {
 								con.craftMatrix.setInventorySlotContents(j - 1, s);
 								break;

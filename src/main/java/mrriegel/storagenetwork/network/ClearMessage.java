@@ -39,6 +39,7 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 							c.craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
 						PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) w.getTileEntity(c.tile.getMaster())).getStacks(), ((TileMaster) w.getTileEntity(c.tile.getMaster())).getCraftableStacks()), ctx.getServerHandler().playerEntity);
 					}
+					c.detectAndSendChanges();
 
 				}
 			}

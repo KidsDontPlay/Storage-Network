@@ -58,12 +58,21 @@ public class ContainerRequest extends Container {
 				List<ItemStack> lis = Lists.newArrayList();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					lis.add(craftMatrix.getStackInSlot(i));
+
 				super.onPickupFromSlot(playerIn, stack);
 				TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 				detectAndSendChanges();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					if (craftMatrix.getStackInSlot(i) == null) {
 						ItemStack req = t.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+						// if (req == null)
+						// req = t.request(lis.get(i) != null ? new
+						// FilterItem(lis.get(i), false, false, false) : null,
+						// 1, false);
+						// if (req == null)
+						// req = t.request(lis.get(i) != null ? new
+						// FilterItem(lis.get(i), false, true, false) : null, 1,
+						// false);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerIn);
@@ -101,7 +110,7 @@ public class ContainerRequest extends Container {
 
 	@Override
 	public void onCraftMatrixChanged(IInventory inventoryIn) {
-		this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, tile.getWorld()));
+		this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, tile.getWorld()));
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -102,9 +101,10 @@ public class InvHelper {
 		if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side))
 			return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
 		/*
-		if (tile instanceof net.minecraftforge.fluids.IFluidHandler)
-			return new FluidHandlerWrapper((net.minecraftforge.fluids.IFluidHandler) tile, side);
-			*/
+		 * if (tile instanceof net.minecraftforge.fluids.IFluidHandler) return
+		 * new FluidHandlerWrapper((net.minecraftforge.fluids.IFluidHandler)
+		 * tile, side);
+		 */
 		return null;
 	}
 

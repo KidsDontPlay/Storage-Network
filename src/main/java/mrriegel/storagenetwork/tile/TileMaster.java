@@ -523,7 +523,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		FluidStack in = stack.copy();
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
-			if(inv != null){
+			if (inv != null) {
 				if (!InvHelper.contains(inv, in))
 					continue;
 				if (!t.canTransfer(stack.getFluid(), Direction.IN))
@@ -539,7 +539,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 		for (AbstractFilterTile t : list) {
 			IFluidHandler inv = t.getFluidTank();
-			if(inv != null){
+			if (inv != null) {
 				if (InvHelper.contains(inv, in))
 					continue;
 				if (!t.canTransfer(stack.getFluid(), Direction.IN))
@@ -618,7 +618,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		});
 		for (TileKabel t : invs) {
 			IFluidHandler inv = t.getFluidTank();
-			if(inv != null){
+			if (inv != null) {
 				if ((worldObj.getTotalWorldTime() + 10) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 					continue;
 				if (inv.getTankProperties() == null)
