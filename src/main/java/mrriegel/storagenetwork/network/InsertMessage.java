@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
+import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -40,8 +41,8 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 				TileEntity t = null;
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest)
 					t = w.getTileEntity(((ContainerRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
-				else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRequest)
-					t = w.getTileEntity(((ContainerFRequest) ctx.getServerHandler().playerEntity.openContainer).tile.getMaster());
+				else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote)
+					t = ((ContainerRemote) ctx.getServerHandler().playerEntity.openContainer).tile;
 				if (t instanceof TileMaster) {
 					TileMaster tile = (TileMaster) t;
 					int rest;

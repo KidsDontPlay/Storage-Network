@@ -15,10 +15,11 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerRemote extends Container {
 	public InventoryPlayer playerInv;
+	public TileMaster tile;
 
 	public ContainerRemote(final InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
-
+		tile = ItemRemote.getTile(playerInv.getCurrentItem());
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
@@ -53,7 +54,6 @@ public class ContainerRemote extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			TileMaster tile = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
 			if (tile != null) {
 				int rest = tile.insertStack(itemstack1, null, false);
 				ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
@@ -71,8 +71,7 @@ public class ContainerRemote extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		TileMaster tile = ItemRemote.getTile(playerIn.inventory.getCurrentItem());
-		if (tile == null || !(tile instanceof TileMaster))
+		if (tile == null)
 			return false;
 		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 40 == 0)
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);

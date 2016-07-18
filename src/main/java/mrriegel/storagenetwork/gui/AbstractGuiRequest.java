@@ -43,7 +43,7 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 	public List<StackWrapper> stacks, craftableStacks;
 	protected ItemStack over;
 	protected GuiTextField searchBar;
-	protected Button direction, sort, left, right, jei;
+	protected Button direction, sort,/* left, right, */jei;
 	protected List<ItemSlot> slots;
 	protected long lastClick;
 
@@ -148,38 +148,39 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 				return 0;
 			}
 		});
-		maxPage = tmp.size() / (getLines() * getColumns());
-		if (tmp.size() % (getLines() * getColumns()) != 0)
+		maxPage = tmp.size() / (getColumns());
+		if (tmp.size() % (getColumns()) != 0)
 			maxPage++;
+		maxPage -= (getLines() - 1);
 		if (maxPage < 1)
 			maxPage = 1;
 		if (page < 1)
 			page = 1;
 		if (page > maxPage)
 			page = maxPage;
-		if (page == 1) {
-			left.visible = false;
-			left.enabled = false;
-		} else {
-			left.visible = true;
-			left.enabled = true;
-		}
-		if (page == maxPage) {
-			right.visible = false;
-			right.enabled = false;
-		} else {
-			right.visible = true;
-			right.enabled = true;
-		}
+		// if (page == 1) {
+		// left.visible = false;
+		// left.enabled = false;
+		// } else {
+		// left.visible = true;
+		// left.enabled = true;
+		// }
+		// if (page == maxPage) {
+		// right.visible = false;
+		// right.enabled = false;
+		// } else {
+		// right.visible = true;
+		// right.enabled = true;
+		// }
 		searchBar.drawTextBox();
 		slots = Lists.newArrayList();
-		int index = (page - 1) * (getLines() * getColumns());
+		int index = (page - 1) * (getColumns());
 		for (int jj = 0; jj < getLines(); jj++) {
 			for (int ii = 0; ii < getColumns(); ii++) {
 				int in = index;
 				if (in >= tmp.size())
 					break;
-				slots.add(new ItemSlot(tmp.get(in).getStack(), guiLeft + 10 + ii * 20, guiTop + 10 + jj * 20, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
+				slots.add(new ItemSlot(tmp.get(in).getStack(), guiLeft + 8 + ii * 18, guiTop + 10 + jj * 18, tmp.get(in).getSize(), guiLeft, guiTop, true, true, ConfigHandler.smallFont, true));
 				index++;
 			}
 		}
