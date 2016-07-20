@@ -49,7 +49,17 @@ public abstract class BlockConnectable extends BlockContainer {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
 			((TileEntity) tile).markDirty();
-			setAllMastersNull(worldIn, pos);
+			try {
+				setAllMastersNull(worldIn, pos);
+			} catch (Error e) {
+				e.printStackTrace();
+				if (mas instanceof TileMaster)
+					for (BlockPos p : ((TileMaster) mas).connectables)
+						if (worldIn.getChunkFromBlockCoords(p).isLoaded() && worldIn.getTileEntity(p) instanceof IConnectable) {
+							((IConnectable) worldIn.getTileEntity(p)).setMaster(null);
+							worldIn.getTileEntity(p).markDirty();
+						}
+			}
 			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}

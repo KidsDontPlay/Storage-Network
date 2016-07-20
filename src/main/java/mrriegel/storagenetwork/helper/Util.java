@@ -15,12 +15,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -141,12 +145,14 @@ public class Util {
 
 	public static List<BlockPos> getSides(BlockPos pos) {
 		List<BlockPos> lis = Lists.newArrayList();
-		lis.add(pos.up());
-		lis.add(pos.down());
-		lis.add(pos.east());
-		lis.add(pos.west());
-		lis.add(pos.north());
-		lis.add(pos.south());
+		for(EnumFacing face:EnumFacing.values())
+			lis.add(pos.offset(face));
+//		lis.add(pos.up());
+//		lis.add(pos.down());
+//		lis.add(pos.east());
+//		lis.add(pos.west());
+//		lis.add(pos.north());
+//		lis.add(pos.south());
 		return lis;
 	}
 

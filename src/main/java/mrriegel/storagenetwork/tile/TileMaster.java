@@ -31,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -349,20 +350,24 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	}
 
 	private void addConnectables(final BlockPos pos) {
+		if (pos == null || worldObj == null)
+			return;
 		for (BlockPos bl : Util.getSides(pos)) {
-			if (worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos) && worldObj.getChunkFromBlockCoords(bl) != null && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (bl == null)
+				return;
+			Chunk chunk = worldObj.getChunkFromBlockCoords(bl);
+			if (worldObj.getTileEntity(bl) != null && worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos) && chunk != null && chunk.isLoaded()) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
 				worldObj.removeTileEntity(bl);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && worldObj.getChunkFromBlockCoords(bl).isLoaded()) {
+			if (worldObj.getTileEntity(bl) != null && worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && chunk != null && chunk.isLoaded()) {
 				if (worldObj.getTileEntity(bl) instanceof TileToggler && ((TileToggler) worldObj.getTileEntity(bl)).isDisabled())
 					continue;
 				connectables.add(bl);
 				((IConnectable) worldObj.getTileEntity(bl)).setMaster(this.pos);
-				worldObj.getTileEntity(bl).markDirty();
-				// Util.updateTile(worldObj, bl);
+				chunk.setChunkModified();
 				addConnectables(bl);
 			}
 		}
@@ -408,9 +413,13 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (worldObj.isRemote)
 			return;
 		connectables = Sets.newHashSet();
-		addConnectables(pos);
+		try {
+			addConnectables(pos);
+		} catch (Error e) {
+			e.printStackTrace();
+		}
 		addInventorys();
-		markDirty();
+		worldObj.getChunkFromBlockCoords(pos).setChunkModified();
 	}
 
 	public void vacuum() {
@@ -858,7 +867,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	@Override
 	public void update() {
-		if (worldObj.isRemote)
+		if (worldObj == null || worldObj.isRemote)
 			return;
 		if (storageInventorys == null || fstorageInventorys == null || connectables == null) {
 			refreshNetwork();
