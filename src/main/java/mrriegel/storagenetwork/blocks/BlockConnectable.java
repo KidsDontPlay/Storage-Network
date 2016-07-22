@@ -70,7 +70,7 @@ public abstract class BlockConnectable extends BlockContainer {
 	private void setAllMastersNull(World world, BlockPos pos) {
 		((IConnectable) world.getTileEntity(pos)).setMaster(null);
 		for (BlockPos bl : Util.getSides(pos)) {
-			if (world.getTileEntity(bl) instanceof IConnectable && world.getChunkFromBlockCoords(bl).isLoaded() && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
+			if (world.getChunkFromBlockCoords(bl).isLoaded() && world.getTileEntity(bl) instanceof IConnectable && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
 				world.getTileEntity(bl).markDirty();
 				setAllMastersNull(world, bl);

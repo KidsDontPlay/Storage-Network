@@ -14,8 +14,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -299,18 +297,6 @@ public class TileKabel extends AbstractFilterTile {
 
 	public void setCoverMeta(int coverMeta) {
 		this.coverMeta = coverMeta;
-	}
-
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound syncData = new NBTTagCompound();
-		this.writeToNBT(syncData);
-		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override

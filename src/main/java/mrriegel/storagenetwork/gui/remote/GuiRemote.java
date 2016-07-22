@@ -32,10 +32,10 @@ public class GuiRemote extends AbstractGuiRequest {
 		buttonList.add(direction);
 		sort = new Button(1, guiLeft + 21, guiTop + 93 + 64, "");
 		buttonList.add(sort);
-//		left = new Button(2, guiLeft + 44, guiTop + 93 + 64, "<");
-//		buttonList.add(left);
-//		right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
-//		buttonList.add(right);
+		// left = new Button(2, guiLeft + 44, guiTop + 93 + 64, "<");
+		// buttonList.add(left);
+		// right = new Button(3, guiLeft + 58, guiTop + 93 + 64, ">");
+		// buttonList.add(right);
 		jei = new Button(4, guiLeft + 169, guiTop + 93 + 64, "");
 		if (ConfigHandler.jeiLoaded)
 			buttonList.add(jei);

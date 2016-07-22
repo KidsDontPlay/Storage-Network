@@ -1,7 +1,6 @@
 package mrriegel.storagenetwork.network;
 
 import io.netty.buffer.ByteBuf;
-import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.tile.TileMaster;

@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.tile;
 
+import javax.annotation.Nullable;
+
 import mrriegel.storagenetwork.api.IConnectable;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModBlocks;
@@ -7,42 +9,59 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
-public class TileCrafter extends CrunchTEInventory implements ISidedInventory, ITickable {
+public class TileCrafter extends TileConnectable implements ISidedInventory, ITickable {
 	int progress, duration;
-	BlockPos master;
+	private ItemStack[] inv;
+	public static final int SIZE = 10;
 
 	public TileCrafter() {
-		super(10);
+		super();
+		inv = new ItemStack[SIZE];
 		duration = 150;
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public void readFromNBT(NBTTagCompound compound) {
+		super.readFromNBT(compound);
+		progress = compound.getInteger("progress");
+
+		NBTTagList nbttaglist = compound.getTagList("Items", 10);
+		for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+			int j = nbttagcompound.getByte("Slot") & 255;
+			if (j >= 0 && j < this.inv.length) {
+				this.inv[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+			}
+		}
 	}
 
 	@Override
-	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
-		progress = tag.getInteger("progress");
-		master = tag.getLong("master") == Long.MAX_VALUE ? null : BlockPos.fromLong(tag.getLong("master"));
-	}
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		compound.setInteger("progress", progress);
 
-	@Override
-	protected void writeSyncableDataToNBT(NBTTagCompound tag) {
-		tag.setInteger("progress", progress);
-		if (master != null)
-			tag.setLong("master", master.toLong());
-		else
-			tag.setLong("master", Long.MAX_VALUE);
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < inv.length; ++i) {
+			if (this.inv[i] != null) {
+				NBTTagCompound nbttagcompound = new NBTTagCompound();
+				nbttagcompound.setByte("Slot", (byte) i);
+				this.inv[i].writeToNBT(nbttagcompound);
+				nbttaglist.appendTag(nbttagcompound);
+			}
+		}
+		compound.setTag("Items", nbttaglist);
+		return super.writeToNBT(compound);
 	}
 
 	public int getProgress() {
@@ -158,23 +177,106 @@ public class TileCrafter extends CrunchTEInventory implements ISidedInventory, I
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound syncData = new NBTTagCompound();
-		this.writeToNBT(syncData);
-		return new SPacketUpdateTileEntity(this.pos, 1, syncData);
+	@Nullable
+	public ItemStack getStackInSlot(int index) {
+		return index >= 0 && index < this.inv.length ? this.inv[index] : null;
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	@Nullable
+	public ItemStack decrStackSize(int index, int count) {
+		ItemStack itemstack = ItemStackHelper.getAndSplit(this.inv, index, count);
+
+		if (itemstack != null) {
+			this.markDirty();
+		}
+
+		return itemstack;
 	}
 
-	public BlockPos getMaster() {
-		return master;
+	@Override
+	@Nullable
+	public ItemStack removeStackFromSlot(int index) {
+		if (this.inv[index] != null) {
+			ItemStack itemstack = this.inv[index];
+			this.inv[index] = null;
+			return itemstack;
+		} else {
+			return null;
+		}
 	}
 
-	public void setMaster(BlockPos master) {
-		this.master = master;
+	@Override
+	public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+		this.inv[index] = stack;
+
+		if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
+			stack.stackSize = this.getInventoryStackLimit();
+		}
+
+		this.markDirty();
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return SIZE;
+	}
+
+	@Override
+	public String getName() {
+		return "null";
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public ITextComponent getDisplayName() {
+		return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName(), new Object[0]);
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return true;
+	}
+
+	@Override
+	public void openInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		inv = new ItemStack[SIZE];
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int index, ItemStack stack) {
+		return true;
 	}
 
 }

@@ -19,9 +19,6 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.google.common.collect.Lists;
@@ -40,13 +37,8 @@ public class ContainerRequest extends Container {
 		this.playerInv = playerInv;
 		lastTime = System.currentTimeMillis();
 		result = new InventoryCraftResult();
-		NBTTagCompound nbt = new NBTTagCompound();
-		tile.writeToNBT(nbt);
-		NBTTagList invList = nbt.getTagList("matrix", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < invList.tagCount(); i++) {
-			NBTTagCompound stackTag = invList.getCompoundTagAt(i);
-			int slot = stackTag.getByte("Slot");
-			craftMatrix.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
+		for (int i = 0; i < 9; i++) {
+			craftMatrix.setInventorySlotContents(i, tile.matrix.get(i));
 		}
 
 		x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
@@ -80,14 +72,6 @@ public class ContainerRequest extends Container {
 			}
 		};
 
-		if (!tile.getWorld().isRemote) {
-			TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
-			List<FilterItem> lis = Lists.newArrayList();
-			// System.out.println("cratfante: "+t.getMissing(null, new
-			// FilterItem(new ItemStack(Items.STICK)), 18, true, lis));
-			for (FilterItem x : lis)
-				System.out.println("     " + x);
-		}
 		this.addSlotToContainer(x);
 		int index = 0;
 		for (int i = 0; i < 3; ++i) {
@@ -111,6 +95,7 @@ public class ContainerRequest extends Container {
 	@Override
 	public void onCraftMatrixChanged(IInventory inventoryIn) {
 		this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, tile.getWorld()));
+		slotChanged();
 	}
 
 	@Override
@@ -126,19 +111,9 @@ public class ContainerRequest extends Container {
 	}
 
 	public void slotChanged() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		tile.writeToNBT(nbt);
-		NBTTagList invList = new NBTTagList();
 		for (int i = 0; i < 9; i++) {
-			if (craftMatrix.getStackInSlot(i) != null) {
-				NBTTagCompound stackTag = new NBTTagCompound();
-				stackTag.setByte("Slot", (byte) i);
-				craftMatrix.getStackInSlot(i).writeToNBT(stackTag);
-				invList.appendTag(stackTag);
-			}
+			tile.matrix.put(i, craftMatrix.getStackInSlot(i));
 		}
-		nbt.setTag("matrix", invList);
-		tile.readFromNBT(nbt);
 		Util.updateTile(tile.getWorld(), tile.getPos());
 
 	}

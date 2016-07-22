@@ -2,71 +2,75 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.List;
 
-import mrriegel.storagenetwork.api.IConnectable;
-import net.minecraft.block.state.IBlockState;
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
-public class TileContainer extends CrunchTEInventory implements IConnectable, ISidedInventory {
-	private BlockPos master;
+public class TileContainer extends TileConnectable implements ISidedInventory {
 	private EnumFacing input, output;
+	private ItemStack[] inv;
+	public static final int SIZE = 9;
 
 	public TileContainer() {
-		super(9);
+		super();
+		inv = new ItemStack[SIZE];
 		input = EnumFacing.UP;
 		output = EnumFacing.DOWN;
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Override
-	protected void readSyncableDataFromNBT(NBTTagCompound tag) {
-		master = new Gson().fromJson(tag.getString("master"), new TypeToken<BlockPos>() {
-		}.getType());
-		input = EnumFacing.byName(tag.getString("input"));
+	public void readFromNBT(NBTTagCompound compound) {
+		super.readFromNBT(compound);
+		input = EnumFacing.byName(compound.getString("input"));
 		input = input != null ? input : EnumFacing.UP;
-		output = EnumFacing.byName(tag.getString("output"));
+		output = EnumFacing.byName(compound.getString("output"));
 		output = output != null ? output : EnumFacing.DOWN;
+		inv = new ItemStack[SIZE];
+
+		NBTTagList nbttaglist = compound.getTagList("Items", 10);
+		for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+			int j = nbttagcompound.getByte("Slot") & 255;
+			if (j >= 0 && j < this.inv.length) {
+				this.inv[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+			}
+		}
 	}
 
 	@Override
-	protected void writeSyncableDataToNBT(NBTTagCompound tag) {
-		tag.setString("master", new Gson().toJson(master));
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		if (input != null)
-			tag.setString("input", input.toString());
+			compound.setString("input", input.toString());
 		if (output != null)
-			tag.setString("output", output.toString());
-	}
+			compound.setString("output", output.toString());
 
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
-		return oldState.getBlock() != newSate.getBlock();
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < inv.length; ++i) {
+			if (this.inv[i] != null) {
+				NBTTagCompound nbttagcompound = new NBTTagCompound();
+				nbttagcompound.setByte("Slot", (byte) i);
+				this.inv[i].writeToNBT(nbttagcompound);
+				nbttaglist.appendTag(nbttagcompound);
+			}
+		}
+		compound.setTag("Items", nbttaglist);
+		return super.writeToNBT(compound);
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
 		return false;
-	}
-
-	@Override
-	public BlockPos getMaster() {
-		return this.master;
-	}
-
-	@Override
-	public void setMaster(BlockPos master) {
-		this.master = master;
 	}
 
 	public EnumFacing getInput() {
@@ -87,9 +91,9 @@ public class TileContainer extends CrunchTEInventory implements IConnectable, IS
 
 	public List<ItemStack> getTemplates() {
 		List<ItemStack> lis = Lists.newArrayList();
-		for (int i = 0; i < INVSIZE; i++)
-			if (getStackInSlot(i) != null)
-				lis.add(getStackInSlot(i).copy());
+		// for (int i = 0; i < INVSIZE; i++)
+		// if (getStackInSlot(i) != null)
+		// lis.add(getStackInSlot(i).copy());
 		return lis;
 	}
 
@@ -114,4 +118,101 @@ public class TileContainer extends CrunchTEInventory implements IConnectable, IS
 		return false;
 	}
 
+	@Override
+	@Nullable
+	public ItemStack getStackInSlot(int index) {
+		return index >= 0 && index < this.inv.length ? this.inv[index] : null;
+	}
+
+	@Override
+	@Nullable
+	public ItemStack decrStackSize(int index, int count) {
+		ItemStack itemstack = ItemStackHelper.getAndSplit(this.inv, index, count);
+
+		if (itemstack != null) {
+			this.markDirty();
+		}
+
+		return itemstack;
+	}
+
+	@Override
+	@Nullable
+	public ItemStack removeStackFromSlot(int index) {
+		if (this.inv[index] != null) {
+			ItemStack itemstack = this.inv[index];
+			this.inv[index] = null;
+			return itemstack;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+		this.inv[index] = stack;
+
+		if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
+			stack.stackSize = this.getInventoryStackLimit();
+		}
+
+		this.markDirty();
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return SIZE;
+	}
+
+	@Override
+	public String getName() {
+		return "null";
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public ITextComponent getDisplayName() {
+		return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName(), new Object[0]);
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return true;
+	}
+
+	@Override
+	public void openInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		inv = new ItemStack[SIZE];
+	}
 }

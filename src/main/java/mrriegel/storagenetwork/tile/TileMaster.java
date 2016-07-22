@@ -20,6 +20,7 @@ import mrriegel.storagenetwork.items.ItemTemplate;
 import mrriegel.storagenetwork.items.ItemUpgrade;
 import mrriegel.storagenetwork.tile.AbstractFilterTile.Direction;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +32,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -356,13 +358,15 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			if (bl == null)
 				return;
 			Chunk chunk = worldObj.getChunkFromBlockCoords(bl);
-			if (worldObj.getTileEntity(bl) != null && worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos) && chunk != null && chunk.isLoaded()) {
+			if (chunk == null || !chunk.isLoaded())
+				continue;
+			if (worldObj.getTileEntity(bl) != null && worldObj.getTileEntity(bl) instanceof TileMaster && !bl.equals(this.pos)) {
 				worldObj.getBlockState(bl).getBlock().dropBlockAsItem(worldObj, bl, worldObj.getBlockState(bl), 0);
 				worldObj.setBlockToAir(bl);
 				worldObj.removeTileEntity(bl);
 				continue;
 			}
-			if (worldObj.getTileEntity(bl) != null && worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl) && chunk != null && chunk.isLoaded()) {
+			if (worldObj.getTileEntity(bl) != null && worldObj.getTileEntity(bl) instanceof IConnectable && !connectables.contains(bl)) {
 				if (worldObj.getTileEntity(bl) instanceof TileToggler && ((TileToggler) worldObj.getTileEntity(bl)).isDisabled())
 					continue;
 				connectables.add(bl);
@@ -392,22 +396,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			}
 		}
 	}
-
-	// public void addIConnectable(BlockPos pos) {
-	// if (connectables == null)
-	// connectables = Sets.newHashSet();
-	// if (pos != null && !connectables.contains(pos))
-	// connectables.add(pos);
-	// removeFalse();
-	// }
-	//
-	// public void removeIConnectable(BlockPos pos) {
-	// if (connectables == null)
-	// connectables = Sets.newHashSet();
-	// if (pos != null)
-	// connectables.remove(pos);
-	// removeFalse();
-	// }
 
 	public void refreshNetwork() {
 		if (worldObj.isRemote)
@@ -470,12 +458,9 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				return Integer.compare(o2.getPriority(), o1.getPriority());
 			}
 		});
-		return addToInventories(stack, invs, source, simulate);
-	}
 
-	int addToInventories(ItemStack stack, List<AbstractFilterTile> list, BlockPos source, boolean simulate) {
 		ItemStack in = stack.copy();
-		for (AbstractFilterTile t : list) {
+		for (AbstractFilterTile t : invs) {
 			IItemHandler inv = t.getInventory();
 			if (!InvHelper.contains(inv, in))
 				continue;
@@ -489,7 +474,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			in = ItemHandlerHelper.copyStackWithSize(in, remain.stackSize);
 			worldObj.getTileEntity(t.getSource()).markDirty();
 		}
-		for (AbstractFilterTile t : list) {
+		for (AbstractFilterTile t : invs) {
 			IItemHandler inv = t.getInventory();
 			if (InvHelper.contains(inv, in))
 				continue;
@@ -525,12 +510,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			}
 		});
 
-		return addToTanks(stack, invs, source, simulate);
-	}
-
-	int addToTanks(FluidStack stack, List<AbstractFilterTile> list, BlockPos source, boolean simulate) {
 		FluidStack in = stack.copy();
-		for (AbstractFilterTile t : list) {
+		for (AbstractFilterTile t : invs) {
 			IFluidHandler inv = t.getFluidTank();
 			if (inv != null) {
 				if (!InvHelper.contains(inv, in))
@@ -546,7 +527,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				worldObj.getTileEntity(t.getSource()).markDirty();
 			}
 		}
-		for (AbstractFilterTile t : list) {
+		for (AbstractFilterTile t : invs) {
 			IFluidHandler inv = t.getFluidTank();
 			if (inv != null) {
 				if (InvHelper.contains(inv, in))
@@ -897,23 +878,10 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		}
 	}
 
-	// public void removeFalse() {
-	// if (connectables != null) {
-	// Iterator<BlockPos> it = connectables.iterator();
-	// while (it.hasNext()) {
-	// TileEntity t = worldObj.getTileEntity(it.next());
-	// if (!(t instanceof IConnectable) || ((IConnectable) t).getMaster() ==
-	// null)
-	// it.remove();
-	// }
-	// }
-	// addInventorys();
-	// }
-
 	boolean consumeRF(int num, boolean simulate) {
 		if (!ConfigHandler.energyNeeded)
 			return true;
-		int value = num * ConfigHandler.energyMultiplier + connectables.size();
+		int value = num * ConfigHandler.energyMultiplier + (connectables.size() / 15);
 		if (en.getEnergyStored() < value)
 			return false;
 		if (!simulate) {
@@ -952,6 +920,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 	@Override
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 		return en.receiveEnergy(maxReceive, simulate);
+	}
+
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+		return oldState.getBlock() != newSate.getBlock();
 	}
 
 }
