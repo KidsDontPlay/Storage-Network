@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.proxy;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.CraftingRecipes;
 import mrriegel.storagenetwork.init.ModBlocks;
 import mrriegel.storagenetwork.init.ModItems;
@@ -28,7 +29,7 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		// Util.init();
+		 Util.init();
 	}
 
 }

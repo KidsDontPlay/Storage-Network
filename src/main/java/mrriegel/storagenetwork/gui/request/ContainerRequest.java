@@ -1,8 +1,11 @@
 package mrriegel.storagenetwork.gui.request;
 
+import ibxm.Player;
+
 import java.util.List;
 
 import mrriegel.storagenetwork.helper.FilterItem;
+import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
@@ -11,15 +14,19 @@ import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import com.google.common.collect.Lists;
 
@@ -50,7 +57,6 @@ public class ContainerRequest extends Container {
 				List<ItemStack> lis = Lists.newArrayList();
 				for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
 					lis.add(craftMatrix.getStackInSlot(i));
-
 				super.onPickupFromSlot(playerIn, stack);
 				TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 				detectAndSendChanges();
@@ -95,7 +101,6 @@ public class ContainerRequest extends Container {
 	@Override
 	public void onCraftMatrixChanged(IInventory inventoryIn) {
 		this.result.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, tile.getWorld()));
-		slotChanged();
 	}
 
 	@Override
@@ -133,6 +138,18 @@ public class ContainerRequest extends Container {
 					x.crafted = 0;
 					return null;
 				}
+			// if(slotIndex==0){
+			// System.out.println(itemstack1);
+			// if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
+			// // x.crafted = 0;
+			// return null;
+			// }
+			// slot.onSlotChange(itemstack1, itemstack);
+			// }
+			if (slotIndex == 0) {
+				craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
+				return null;
+			}
 			if (slotIndex <= 9) {
 				if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
 					x.crafted = 0;
@@ -171,6 +188,41 @@ public class ContainerRequest extends Container {
 			x.crafted = 0;
 
 		return itemstack;
+	}
+
+	public void craftShift(EntityPlayer player, TileMaster tile) {
+		SlotCrafting sl = new SlotCrafting(player, craftMatrix, result, 0, 0, 0);
+		int crafted = 0;
+		List<ItemStack> lis = Lists.newArrayList();
+		for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
+			lis.add(craftMatrix.getStackInSlot(i));
+		ItemStack res = result.getStackInSlot(0);
+		while (crafted + res.stackSize <= res.getMaxStackSize()) {
+			if (ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), true) != null)
+				break;
+			ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(playerInv), res.copy(), false);
+			sl.onPickupFromSlot(player, res);
+			crafted += res.stackSize;
+			for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
+				if (craftMatrix.getStackInSlot(i) == null) {
+					ItemStack req = tile.request(lis.get(i) != null ? new FilterItem(lis.get(i), true, false, false) : null, 1, false);
+					// if (req == null)
+					// req = t.request(lis.get(i) != null ? new
+					// FilterItem(lis.get(i), false, false, false) : null,
+					// 1, false);
+					// if (req == null)
+					// req = t.request(lis.get(i) != null ? new
+					// FilterItem(lis.get(i), false, true, false) : null, 1,
+					// false);
+					craftMatrix.setInventorySlotContents(i, req);
+				}
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) player);
+			onCraftMatrixChanged(craftMatrix);
+			if (result.getStackInSlot(0) == null)
+				break;
+		}
+
+		detectAndSendChanges();
 	}
 
 	@Override

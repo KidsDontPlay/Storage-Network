@@ -12,10 +12,10 @@ import javax.annotation.Nonnull;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -23,9 +23,16 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl;
 import net.minecraftforge.oredict.OreDictionary;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 import com.google.common.collect.Lists;
 
@@ -42,44 +49,37 @@ public class Util {
 	}
 
 	@Nonnull
-	public static String getModNameForItem(@Nonnull Item item) {
-		// ResourceLocation itemResourceLocation =
-		// GameData.getItemRegistry().getNameForObject(item);
-		// String modId = itemResourceLocation.getResourceDomain();
-		// String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
-		// String modName = modNamesForIds.get(lowercaseModId);
-		// if (modName == null) {
-		// modName = WordUtils.capitalize(modId);
-		// modNamesForIds.put(lowercaseModId, modName);
-		// }
-		ModContainer m = Loader.instance().getIndexedModList().get(item.getRegistryName().getResourceDomain());
-		if (m == null)
-			return "Minecraft";
-		else
-			return m.getName();
+	public static String getModNameForItem(@Nonnull Impl item) {
+		ResourceLocation itemResourceLocation = GameRegistry.findRegistry(item.getClass()).getKey(item);
+		String modId = itemResourceLocation.getResourceDomain();
+		String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
+		String modName = modNamesForIds.get(lowercaseModId);
+		if (modName == null) {
+			modName = WordUtils.capitalize(modId);
+			modNamesForIds.put(lowercaseModId, modName);
+		}
+		// ModContainer m =
+		// Loader.instance().getIndexedModList().get(item.getRegistryName().getResourceDomain());
+		// if (m == null)
+		// return "Minecraft";
+		// else
+		// return m.getName();
 
-		// return modName;
+		return modName;
 	}
 
 	@Nonnull
 	public static String getModNameForFluid(@Nonnull Fluid fluid) {
-		ModContainer m = Loader.instance().getIndexedModList().get(fluid.getBlock().getRegistryName().getResourceDomain());
-		if (m == null)
-			return "Minecraft";
-		else
-			return m.getName();
+		return getModNameForItem(fluid.getBlock());
+		// ModContainer m =
+		// Loader.instance().getIndexedModList().get(fluid.getBlock().getRegistryName().getResourceDomain());
+		// if (m == null)
+		// return "Minecraft";
+		// else
+		// return m.getName();
 
 		// return modName;
 	}
-
-	// public static String getModNameForFluid(Fluid fluid) {
-	// for (FluidContainerData d :
-	// FluidContainerRegistry.getRegisteredFluidContainerData()) {
-	// if (fluid == d.fluid.getFluid())
-	// return getModNameForItem(d.filledContainer.getItem());
-	// }
-	// return "Unknown";
-	// }
 
 	public static boolean equalOreDict(ItemStack a, ItemStack b) {
 		int[] ar = OreDictionary.getOreIDs(a);
@@ -105,6 +105,12 @@ public class Util {
 		a = FluidContainerRegistry.getFluidForFilledItem(s);
 		if (a != null)
 			return a;
+		IFluidHandler handler = s.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+		if (handler != null) {
+			for (IFluidTankProperties p : handler.getTankProperties())
+				if (p.getContents() != null)
+					return p.getContents().copy();
+		}
 		if (s.getItem() instanceof IFluidContainerItem)
 			a = ((IFluidContainerItem) s.getItem()).getFluid(s);
 		return a;
