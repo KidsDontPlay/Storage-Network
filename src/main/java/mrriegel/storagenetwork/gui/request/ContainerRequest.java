@@ -1,11 +1,8 @@
 package mrriegel.storagenetwork.gui.request;
 
-import ibxm.Player;
-
 import java.util.List;
 
 import mrriegel.storagenetwork.helper.FilterItem;
-import mrriegel.storagenetwork.helper.InvHelper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
@@ -14,18 +11,15 @@ import mrriegel.storagenetwork.tile.TileRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import com.google.common.collect.Lists;
@@ -35,20 +29,16 @@ public class ContainerRequest extends Container {
 	public TileRequest tile;
 	public InventoryCraftResult result;
 	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-	String inv = "";
-	SlotCrafting x;
-	long lastTime;
 
 	public ContainerRequest(final TileRequest tile, final InventoryPlayer playerInv) {
 		this.tile = tile;
 		this.playerInv = playerInv;
-		lastTime = System.currentTimeMillis();
 		result = new InventoryCraftResult();
 		for (int i = 0; i < 9; i++) {
 			craftMatrix.setInventorySlotContents(i, tile.matrix.get(i));
 		}
 
-		x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
+		SlotCrafting x = new SlotCrafting(playerInv.player, craftMatrix, result, 0, 101, 128) {
 			@Override
 			public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
 				if (playerIn.worldObj.isRemote) {
@@ -109,12 +99,6 @@ public class ContainerRequest extends Container {
 		super.onContainerClosed(playerIn);
 	}
 
-	@Override
-	public ItemStack slotClick(int slotId, int clickedButton, ClickType mode, EntityPlayer playerIn) {
-		lastTime = System.currentTimeMillis();
-		return super.slotClick(slotId, clickedButton, mode, playerIn);
-	}
-
 	public void slotChanged() {
 		for (int i = 0; i < 9; i++) {
 			tile.matrix.put(i, craftMatrix.getStackInSlot(i));
@@ -133,26 +117,12 @@ public class ContainerRequest extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (slot.getSlotIndex() == x.getSlotIndex())
-				if (x.crafted + itemstack.stackSize > itemstack.getMaxStackSize()) {
-					x.crafted = 0;
-					return null;
-				}
-			// if(slotIndex==0){
-			// System.out.println(itemstack1);
-			// if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
-			// // x.crafted = 0;
-			// return null;
-			// }
-			// slot.onSlotChange(itemstack1, itemstack);
-			// }
 			if (slotIndex == 0) {
 				craftShift(playerIn, (TileMaster) this.tile.getWorld().getTileEntity(this.tile.getMaster()));
 				return null;
 			}
 			if (slotIndex <= 9) {
 				if (!this.mergeItemStack(itemstack1, 10, 10 + 36, true)) {
-					x.crafted = 0;
 					return null;
 				}
 				slot.onSlotChange(itemstack1, itemstack);
@@ -177,15 +147,10 @@ public class ContainerRequest extends Container {
 			}
 
 			if (itemstack1.stackSize == itemstack.stackSize) {
-				x.crafted = 0;
 				return null;
 			}
 			slot.onPickupFromSlot(playerIn, itemstack1);
-			if (slot.getSlotIndex() == x.getSlotIndex()) {
-				x.crafted += itemstack.stackSize;
-			}
-		} else
-			x.crafted = 0;
+		}
 
 		return itemstack;
 	}
@@ -216,12 +181,12 @@ public class ContainerRequest extends Container {
 					// false);
 					craftMatrix.setInventorySlotContents(i, req);
 				}
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) player);
 			onCraftMatrixChanged(craftMatrix);
 			if (result.getStackInSlot(0) == null)
 				break;
 		}
 
+		PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) player);
 		detectAndSendChanges();
 	}
 
@@ -233,16 +198,12 @@ public class ContainerRequest extends Container {
 		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 40 == 0) {
 			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerInv.player);
 		}
-
-		if (x.crafted != 0 && Math.abs(System.currentTimeMillis() - lastTime) > 500) {
-			x.crafted = 0;
-		}
 		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
-	public boolean canMergeSlot(ItemStack stack, Slot p_94530_2_) {
-		return p_94530_2_.inventory != this.result && super.canMergeSlot(stack, p_94530_2_);
+	public boolean canMergeSlot(ItemStack stack, Slot slot) {
+		return slot.inventory != this.result && super.canMergeSlot(stack, slot);
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import mezz.jei.Internal;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
@@ -235,13 +236,18 @@ public abstract class AbstractGuiFRequest extends MyGuiContainer {
 	}
 
 	@Override
-	protected void keyTyped(char p_73869_1_, int p_73869_2_) throws IOException {
-		if (!this.checkHotbarKeys(p_73869_2_)) {
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);
-			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
+			if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
+				if (keyCode == Keyboard.KEY_R)
+					Internal.getRuntime().getRecipesGui().showRecipes(over);
+				else
+					Internal.getRuntime().getRecipesGui().showUses(over);
+			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, null));
 			} else {
-				super.keyTyped(p_73869_1_, p_73869_2_);
+				super.keyTyped(typedChar, keyCode);
 			}
 		}
 	}

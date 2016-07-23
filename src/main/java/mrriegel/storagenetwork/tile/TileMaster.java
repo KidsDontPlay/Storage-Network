@@ -468,7 +468,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				continue;
 			if (t.getSource().equals(source))
 				continue;
-			ItemStack remain = ItemHandlerHelper.insertItem(inv, in, simulate);
+			ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, in, simulate);
 			if (remain == null)
 				return 0;
 			in = ItemHandlerHelper.copyStackWithSize(in, remain.stackSize);
@@ -679,7 +679,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (m <= 0)
 					continue;
 				ItemStack max = ItemHandlerHelper.copyStackWithSize(g, m);
-				ItemStack remain = ItemHandlerHelper.insertItem(inv, max, true);
+				ItemStack remain = ItemHandlerHelper.insertItemStacked(inv, max, true);
 				int insert = remain == null ? max.stackSize : max.stackSize - remain.stackSize;
 				insert = Math.min(insert, (int) Math.pow(2, t.elements(ItemUpgrade.STACK) + 2));
 				if (!t.status())
@@ -690,7 +690,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 				if (rec == null)
 					continue;
 				consumeRF(rec.stackSize + t.elements(ItemUpgrade.SPEED), false);
-				ItemHandlerHelper.insertItem(inv, rec, false);
+				ItemHandlerHelper.insertItemStacked(inv, rec, false);
 				worldObj.getTileEntity(t.getSource()).markDirty();
 				break;
 			}

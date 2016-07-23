@@ -272,13 +272,18 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 	}
 
 	@Override
-	protected void keyTyped(char p_73869_1_, int p_73869_2_) throws IOException {
-		if (!this.checkHotbarKeys(p_73869_2_)) {
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (!this.checkHotbarKeys(keyCode)) {
 			Keyboard.enableRepeatEvents(true);
-			if (this.searchBar.textboxKeyTyped(p_73869_1_, p_73869_2_)) {
+			if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
+				if (keyCode == Keyboard.KEY_R)
+					Internal.getRuntime().getRecipesGui().showRecipes(over);
+				else
+					Internal.getRuntime().getRecipesGui().showUses(over);
+			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				PacketHandler.INSTANCE.sendToServer(new RequestMessage(0, null, false, false));
 			} else {
-				super.keyTyped(p_73869_1_, p_73869_2_);
+				super.keyTyped(typedChar, keyCode);
 			}
 		}
 	}

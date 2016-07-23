@@ -9,14 +9,17 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
@@ -28,7 +31,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -49,8 +51,9 @@ public class Util {
 	}
 
 	@Nonnull
-	public static String getModNameForItem(@Nonnull Impl item) {
-		ResourceLocation itemResourceLocation = GameRegistry.findRegistry(item.getClass()).getKey(item);
+	public static String getModNameForItem(@Nonnull Impl object) {
+		RegistryNamespaced registry = object instanceof Item ? Item.REGISTRY : object instanceof Block ? Block.REGISTRY : null;
+		ResourceLocation itemResourceLocation = (ResourceLocation) registry.getNameForObject(object);
 		String modId = itemResourceLocation.getResourceDomain();
 		String lowercaseModId = modId.toLowerCase(Locale.ENGLISH);
 		String modName = modNamesForIds.get(lowercaseModId);
