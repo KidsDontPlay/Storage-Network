@@ -19,7 +19,8 @@ public class ContainerRemote extends Container {
 
 	public ContainerRemote(final InventoryPlayer playerInv) {
 		this.playerInv = playerInv;
-		tile = ItemRemote.getTile(playerInv.getCurrentItem());
+		if (!playerInv.player.worldObj.isRemote)
+			tile = ItemRemote.getTile(playerInv.getCurrentItem());
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
