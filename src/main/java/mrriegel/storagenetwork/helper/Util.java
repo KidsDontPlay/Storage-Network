@@ -105,6 +105,12 @@ public class Util {
 		if (s == null || s.getItem() == null)
 			return null;
 		FluidStack a = null;
+		IFluidHandler f = s.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+		if (f != null && f.getTankProperties() != null && f.getTankProperties().length > 1) {
+			for (IFluidTankProperties p : f.getTankProperties())
+				if (p.getContents() != null)
+					return p.getContents();
+		}
 		a = FluidContainerRegistry.getFluidForFilledItem(s);
 		if (a != null)
 			return a;
@@ -153,12 +159,6 @@ public class Util {
 		List<BlockPos> lis = Lists.newArrayList();
 		for (EnumFacing face : EnumFacing.values())
 			lis.add(pos.offset(face));
-		// lis.add(pos.up());
-		// lis.add(pos.down());
-		// lis.add(pos.east());
-		// lis.add(pos.west());
-		// lis.add(pos.north());
-		// lis.add(pos.south());
 		return lis;
 	}
 

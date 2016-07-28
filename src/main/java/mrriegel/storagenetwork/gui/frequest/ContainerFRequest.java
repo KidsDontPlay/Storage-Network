@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.gui.frequest;
 
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.FluidsMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -129,7 +128,8 @@ public class ContainerFRequest extends Container {
 					slotChanged();
 				}
 			}
-			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREQUEST), (EntityPlayerMP) playerIn);
+			detectAndSendChanges();
+			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids()), (EntityPlayerMP) playerIn);
 		}
 		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}

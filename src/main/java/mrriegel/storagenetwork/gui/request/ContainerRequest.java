@@ -182,7 +182,7 @@ public class ContainerRequest extends Container {
 					craftMatrix.setInventorySlotContents(i, req);
 				}
 			onCraftMatrixChanged(craftMatrix);
-			if (result.getStackInSlot(0) == null)
+			if (!(res.isItemEqual(result.getStackInSlot(0)) && ItemStack.areItemStackTagsEqual(res, result.getStackInSlot(0))))
 				break;
 		}
 

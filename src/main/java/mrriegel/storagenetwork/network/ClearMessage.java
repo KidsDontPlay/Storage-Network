@@ -22,8 +22,8 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 			public void run() {
 				if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRequest) {
 					ContainerRequest c = (ContainerRequest) ctx.getServerHandler().playerEntity.openContainer;
+					World w = ctx.getServerHandler().playerEntity.worldObj;
 					for (int i = 0; i < 9; i++) {
-						World w = ctx.getServerHandler().playerEntity.worldObj;
 						if (w.getTileEntity(c.tile.getMaster()) == null)
 							break;
 						ItemStack s = c.craftMatrix.getStackInSlot(i);
@@ -37,8 +37,8 @@ public class ClearMessage implements IMessage, IMessageHandler<ClearMessage, IMe
 							c.craftMatrix.setInventorySlotContents(i, null);
 						else
 							c.craftMatrix.setInventorySlotContents(i, ItemHandlerHelper.copyStackWithSize(s, rest));
-						PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) w.getTileEntity(c.tile.getMaster())).getStacks(), ((TileMaster) w.getTileEntity(c.tile.getMaster())).getCraftableStacks()), ctx.getServerHandler().playerEntity);
 					}
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(((TileMaster) w.getTileEntity(c.tile.getMaster())).getStacks(), ((TileMaster) w.getTileEntity(c.tile.getMaster())).getCraftableStacks()), ctx.getServerHandler().playerEntity);
 					c.detectAndSendChanges();
 
 				}

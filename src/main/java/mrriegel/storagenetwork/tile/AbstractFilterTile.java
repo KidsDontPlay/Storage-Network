@@ -56,7 +56,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
 		NBTTagList oreList = compound.getTagList("ores", Constants.NBT.TAG_COMPOUND);
 		ores = new HashMap<Integer, Boolean>();
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 18; i++)
 			ores.put(i, false);
 		for (int i = 0; i < oreList.tagCount(); i++) {
 			NBTTagCompound stackTag = oreList.getCompoundTagAt(i);
@@ -66,7 +66,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 
 		NBTTagList metaList = compound.getTagList("metas", Constants.NBT.TAG_COMPOUND);
 		metas = new HashMap<Integer, Boolean>();
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 18; i++)
 			metas.put(i, true);
 		for (int i = 0; i < metaList.tagCount(); i++) {
 			NBTTagCompound stackTag = metaList.getCompoundTagAt(i);
@@ -91,7 +91,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 		compound.setBoolean("white", white);
 		compound.setInteger("prio", priority);
 		NBTTagList invList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 18; i++) {
 			if (filter.get(i) != null) {
 				NBTTagCompound stackTag = new NBTTagCompound();
 				stackTag.setByte("Slot", (byte) i);
@@ -102,7 +102,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 		compound.setTag("crunchTE", invList);
 
 		NBTTagList oreList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 18; i++) {
 			if (ores.get(i) != null) {
 				NBTTagCompound stackTag = new NBTTagCompound();
 				stackTag.setByte("Slot", (byte) i);
@@ -113,7 +113,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 		compound.setTag("ores", oreList);
 
 		NBTTagList metaList = new NBTTagList();
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 18; i++) {
 			if (metas.get(i) != null) {
 				NBTTagCompound stackTag = new NBTTagCompound();
 				stackTag.setByte("Slot", (byte) i);
@@ -130,7 +130,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 			return false;
 		if (isWhite()) {
 			boolean tmp = false;
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 18; i++) {
 				if (getFilter().get(i) == null)
 					continue;
 				ItemStack s = getFilter().get(i).getStack();
@@ -146,7 +146,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 			return tmp;
 		} else {
 			boolean tmp = true;
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 18; i++) {
 				if (getFilter().get(i) == null)
 					continue;
 				ItemStack s = getFilter().get(i).getStack();
@@ -168,7 +168,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 			return false;
 		if (isWhite()) {
 			boolean tmp = false;
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 18; i++) {
 				if (getFilter().get(i) == null)
 					continue;
 				ItemStack s = getFilter().get(i).getStack();
@@ -182,7 +182,7 @@ public abstract class AbstractFilterTile extends TileConnectable {
 			return tmp;
 		} else {
 			boolean tmp = true;
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 18; i++) {
 				if (getFilter().get(i) == null)
 					continue;
 				ItemStack s = getFilter().get(i).getStack();

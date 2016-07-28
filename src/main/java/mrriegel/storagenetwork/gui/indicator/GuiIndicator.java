@@ -35,7 +35,7 @@ public class GuiIndicator extends MyGuiContainer {
 		super(inventorySlotsIn);
 		this.xSize = 176;
 		this.tile = ((ContainerIndicator) inventorySlots).tile;
-		this.ySize = 137;
+		this.ySize = 171;
 
 	}
 
@@ -44,15 +44,6 @@ public class GuiIndicator extends MyGuiContainer {
 		String s = tile.getWorld().getBlockState(tile.getPos()).getBlock().getLocalizedName();
 		this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
 		slot.drawTooltip(mouseX, mouseY);
-	}
-
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
-		// if (tile == null || tile.getMaster() == null ||
-		// !(tile.getWorld().getTileEntity(tile.getMaster()) instanceof
-		// TileMaster))
-		// mc.thePlayer.closeScreen();
 	}
 
 	@Override

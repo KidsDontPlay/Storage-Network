@@ -61,8 +61,6 @@ public class ContainerRemote extends Container {
 				slot.putStack(stack);
 				detectAndSendChanges();
 				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
-				if (stack == null)
-					return null;
 				return null;
 			}
 		}

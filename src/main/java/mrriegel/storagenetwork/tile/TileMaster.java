@@ -258,68 +258,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 
 	}
 
-	public int getMissing(List<StackWrapper> stacks, FilterItem fil, int num, boolean neww, List<FilterItem> missing) {
-		int result = 0;
-		if (neww)
-			stacks = getStacks();
-		for (ItemStack s : getTemplates(fil)) {
-			ItemStack output = ItemTemplate.getOutput(s);
-			boolean done = true;
-			int con = num / output.stackSize;
-			if (num % output.stackSize != 0)
-				con++;
-			for (int i = 0; i < con; i++) {
-				boolean oneCraft = true;
-				for (FilterItem f : getIngredients(s)) {
-					if (!oneCraft)
-						break;
-
-					boolean found = consume(stacks, f, 1) == 1;
-					System.out.println(f.getStack() + " found: " + found);
-					if (!found) {
-						int t = getMissing(stacks, f, 1, false, missing);
-						if (t != 0) {
-							addToList(stacks, f.getStack(), t);
-						} else {
-							oneCraft = false;
-							missing.add(f);
-						}
-					}
-				}
-				if (oneCraft)
-					result += output.stackSize;
-				System.out.println(fil.getStack() + "i: " + i + " res: " + result);
-			}
-
-		}
-		return result;
-	}
-
-	private int consume(List<StackWrapper> wraps, FilterItem fil, int num) {
-		// System.out.println(fil.getStack()+" "+num);
-		int rest = num;
-		for (StackWrapper w : wraps) {
-			if (fil.match(w.getStack())) {
-				if (w.getSize() >= rest) {
-					w.setSize(w.getSize() - rest);
-					if (w.getSize() == 0) {
-						// w = null;
-						wraps.remove(w);
-						// wraps.removeAll(Collections.singleton(null));
-					}
-					return num;
-				} else {
-					rest = rest - w.getSize();
-					// w = null;
-					wraps.remove(w);
-					// wraps.removeAll(Collections.singleton(null));
-				}
-			}
-
-		}
-		return num - rest;
-	}
-
 	@Override
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
@@ -355,8 +293,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (pos == null || worldObj == null)
 			return;
 		for (BlockPos bl : Util.getSides(pos)) {
-			if (bl == null)
-				return;
 			Chunk chunk = worldObj.getChunkFromBlockCoords(bl);
 			if (chunk == null || !chunk.isLoaded())
 				continue;

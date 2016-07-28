@@ -51,9 +51,8 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 							PacketHandler.INSTANCE.sendTo(new StackMessage(stack), ctx.getServerHandler().playerEntity);
 						}
 					}
-
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
-
+					ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerRemote) {
 					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
 					if (tile == null)
@@ -69,6 +68,7 @@ public class RequestMessage implements IMessage, IMessageHandler<RequestMessage,
 						}
 					}
 					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
+					ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
 				}
 
 			}

@@ -3,7 +3,6 @@ package mrriegel.storagenetwork.network;
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
 import mrriegel.storagenetwork.gui.frequest.ContainerFRequest;
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
@@ -92,7 +91,8 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 					 * con.inv.setInventorySlotContents(0, fill);
 					 * con.slotChanged(); } } } }
 					 */
-					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids(), GuiHandler.FREQUEST), ctx.getServerHandler().playerEntity);
+					con.detectAndSendChanges();
+					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids()), ctx.getServerHandler().playerEntity);
 
 				} else if (ctx.getServerHandler().playerEntity.openContainer instanceof ContainerFRemote) {
 					TileMaster tile = ItemRemote.getTile(ctx.getServerHandler().playerEntity.inventory.getCurrentItem());
@@ -127,7 +127,8 @@ public class FRequestMessage implements IMessage, IMessageHandler<FRequestMessag
 							}
 						}
 					}
-					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids(), GuiHandler.FREMOTE), ctx.getServerHandler().playerEntity);
+					con.detectAndSendChanges();
+					PacketHandler.INSTANCE.sendTo(new FluidsMessage(tile.getFluids()), ctx.getServerHandler().playerEntity);
 
 				}
 

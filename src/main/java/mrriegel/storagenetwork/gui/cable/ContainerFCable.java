@@ -7,7 +7,6 @@ import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileKabel;
-import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -62,11 +61,11 @@ public class ContainerFCable extends Container {
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 - 39 + 10 + i * 18));
+				this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 55 + 34 + i * 18));
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 142 - 39 + 10));
+			this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 113 + 34));
 		}
 	}
 
@@ -90,23 +89,18 @@ public class ContainerFCable extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			if (itemstack1 == null || Util.getFluid(itemstack1) == null)
 				return null;
-			for (int i = 0; i < 9; i++) {
-				if (!(tile instanceof TileKabel) || ((TileKabel) tile).getKind() == Kind.fstorageKabel)
-					i = 4;
+			for (int i = 0; i < 18; i++) {
 				if (tile.getFilter().get(i) == null && !in(new StackWrapper(itemstack1, 1))) {
-					tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), 1));
-					slotChanged();
+					tile.getFilter().put(i, new StackWrapper(itemstack1.copy(), itemstack1.stackSize));
 					break;
 				}
-				if (!(tile instanceof TileKabel) || ((TileKabel) tile).getKind() == Kind.fstorageKabel)
-					break;
 			}
 		}
 		return null;
 	}
 
 	boolean in(StackWrapper stack) {
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 18; i++) {
 			if (tile.getFilter().get(i) != null && sameFluid(tile.getFilter().get(i).getStack(), stack.getStack()))
 				return true;
 		}
@@ -116,7 +110,6 @@ public class ContainerFCable extends Container {
 	private boolean sameFluid(ItemStack s1, ItemStack s2) {
 		FluidStack f1 = Util.getFluid(s1);
 		FluidStack f2 = Util.getFluid(s2);
-		// System.out.println(f1.getFluid() +" "+ f2.getFluid());
 		if (f1 == null || f2 == null)
 			return false;
 		return f1.getFluid() == f2.getFluid();

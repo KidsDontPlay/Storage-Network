@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.gui.fremote;
 
-import mrriegel.storagenetwork.handler.GuiHandler;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.FluidsMessage;
@@ -130,7 +129,8 @@ public class ContainerFRemote extends Container {
 					inv.setInventorySlotContents(1, drain);
 				}
 			}
-			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids(), GuiHandler.FREMOTE), (EntityPlayerMP) playerIn);
+			detectAndSendChanges();
+			PacketHandler.INSTANCE.sendTo(new FluidsMessage(mas.getFluids()), (EntityPlayerMP) playerIn);
 		}
 		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.fremote;
 	}

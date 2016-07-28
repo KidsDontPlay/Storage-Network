@@ -17,6 +17,7 @@ import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
 import mrriegel.storagenetwork.tile.TileFluidBox;
+import mrriegel.storagenetwork.tile.TileItemBox;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
 import net.minecraft.client.Minecraft;
@@ -24,8 +25,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -34,7 +33,6 @@ import net.minecraftforge.fluids.Fluid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
@@ -45,18 +43,18 @@ public class GuiFCable extends MyGuiContainer {
 	Button pPlus, pMinus, white, acti, way;
 	AbstractFilterTile tile;
 	private GuiTextField searchBar;
-	ItemStack stack;
-	List<FluidSlot> list = Lists.newArrayList();
+	List<FluidSlot> list;
+	FluidSlot operation;
 
 	public GuiFCable(Container inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = 176;
+		this.ySize = 171;
 		this.tile = ((ContainerFCable) inventorySlots).tile;
-		this.ySize = 137;
 		if (tile instanceof TileKabel) {
 			this.kind = ((TileKabel) tile).getKind();
-			stack = ((TileKabel) tile).getStack();
 		}
+		list = Lists.newArrayList();
 	}
 
 	@Override
@@ -67,8 +65,8 @@ public class GuiFCable extends MyGuiContainer {
 		int j = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 		for (int ii = 0; ii < 9; ii++) {
-			if (!storage() || ii == 4)
-				this.drawTexturedModalRect(i + 7 + ii * 18, j + 25, 176, 34, 18, 18);
+			for (int jj = 0; jj < 2; jj++)
+				this.drawTexturedModalRect(i + 7 + ii * 18, j + 25 + 18 * jj, 176, 34, 18, 18);
 		}
 		if (tile instanceof TileKabel) {
 			if (((TileKabel) tile).isUpgradeable())
@@ -76,81 +74,34 @@ public class GuiFCable extends MyGuiContainer {
 					this.drawTexturedModalRect(i + 97 + ii * 18, j + 5, 176, 34, 18, 18);
 				}
 			if (((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
-				this.drawTexturedModalRect(i, j - 26, 0, 137, this.xSize, 30);
 				acti.enabled = true;
 				acti.visible = true;
+				this.mc.getTextureManager().bindTexture(texture);
+				this.drawTexturedModalRect(i + 7, j + 65, 176, 34, 18, 18);
+				this.drawTexturedModalRect(i + 30, j + 67, 0, 171, 90, 12);
+				searchBar.drawTextBox();
 			} else {
 				acti.enabled = false;
 				acti.visible = false;
 			}
-			if (((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
-				searchBar.drawTextBox();
-				if (stack != null) {
-					TextureAtlasSprite fluidIcon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(Util.getFluid(stack).getFluid().getStill().toString());
-					if (fluidIcon != null) {
-						int color = Util.getFluid(stack).getFluid().getColor(Util.getFluid(stack));
-						float a = ((color >> 24) & 0xFF) / 255.0F;
-						float r = ((color >> 16) & 0xFF) / 255.0F;
-						float g = ((color >> 8) & 0xFF) / 255.0F;
-						float b = ((color >> 0) & 0xFF) / 255.0F;
-						GlStateManager.color(r, g, b, a);
-						this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-						drawTexturedModalRect(guiLeft + 8, guiTop - 18, fluidIcon, 16, 16);
-					}
-				}
-			}
 		}
 		list = Lists.newArrayList();
-		for (int ii = 0; ii < 9; ii++) {
-			if (!storage() || ii == 4) {
-				ItemStack s = tile.getFilter().get(ii) == null ? null : tile.getFilter().get(ii).getStack();
-				int num = tile.getFilter().get(ii) == null ? 0 : tile.getFilter().get(ii).getSize();
+		for (int jj = 0; jj < 2; jj++) {
+			for (int ii = 0; ii < 9; ii++) {
+				int index = ii + (9 * jj);
+				StackWrapper wrap = tile.getFilter().get(index);
+				ItemStack s = wrap == null ? null : wrap.getStack();
+				int num = wrap == null ? 0 : wrap.getSize();
 				Fluid f = Util.getFluid(s) == null ? null : Util.getFluid(s).getFluid();
-				list.add(new FluidSlot(f, guiLeft + 8 + ii * 18, guiTop + 26, num, guiLeft, guiTop, false, true, false, true));
+				list.add(new FluidSlot(f, guiLeft + 8 + ii * 18, guiTop + 26 + jj * 18, num, guiLeft, guiTop, false, true, false, true));
 			}
 		}
 		for (FluidSlot s : list)
 			s.drawSlot(mouseX, mouseY);
-		if (tile instanceof TileKabel) {
-			if (((TileKabel) tile).elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1) {
-				GlStateManager.disableLighting();
-				GlStateManager.disableDepth();
-				int j1 = guiLeft + 8;
-				int k1 = guiTop - 18;
-				GlStateManager.colorMask(true, true, true, false);
-				drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-				GlStateManager.colorMask(true, true, true, true);
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
-			}
-		}
+		if (tile instanceof TileKabel && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1)
+			operation.drawSlot(mouseX, mouseY);
 		fontRendererObj.drawString(String.valueOf(tile.getPriority()), guiLeft + 34 - fontRendererObj.getStringWidth(String.valueOf(tile.getPriority())) / 2, guiTop + 10, 4210752);
 
-	}
-
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		int mx = Mouse.getX() * this.width / this.mc.displayWidth;
-		int my = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-		if (mx > guiLeft + 29 && mx < guiLeft + 37 && my > guiTop + 10 && my < guiTop + 20) {
-			List<String> list = Lists.newArrayList();
-			list.add("Priority");
-			GlStateManager.pushMatrix();
-			GlStateManager.disableLighting();
-			this.drawHoveringText(list, mx, my, fontRendererObj);
-			GlStateManager.popMatrix();
-			GlStateManager.enableLighting();
-		}
-		if (white != null && white.isMouseOver()) {
-			List<String> list = Lists.newArrayList();
-			list.add(tile.isWhite() ? "Whitelist" : "Blacklist");
-			GlStateManager.pushMatrix();
-			GlStateManager.disableLighting();
-			this.drawHoveringText(list, mx, my, fontRendererObj);
-			GlStateManager.popMatrix();
-			GlStateManager.enableLighting();
-		}
 	}
 
 	@Override
@@ -158,8 +109,14 @@ public class GuiFCable extends MyGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (FluidSlot s : list)
 			s.drawTooltip(mouseX, mouseY);
+		if (tile instanceof TileKabel && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1)
+			operation.drawTooltip(mouseX, mouseY);
 		if (way != null && way.isMouseOver())
 			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
+		if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
+			this.drawHoveringText(Lists.newArrayList("Priority"), mouseX, mouseY, fontRendererObj);
+		if (white != null && white.isMouseOver())
+			this.drawHoveringText(Lists.newArrayList(tile.isWhite() ? "Whitelist" : "Blacklist"), mouseX, mouseY, fontRendererObj);
 	}
 
 	@Override
@@ -169,17 +126,18 @@ public class GuiFCable extends MyGuiContainer {
 		buttonList.add(pMinus);
 		pPlus = new Button(1, guiLeft + 45, guiTop + 5, "+");
 		buttonList.add(pPlus);
-		if (storage() || kind == Kind.fimKabel) {
-			white = new Button(3, guiLeft + 70, guiTop + 5, "");
-			buttonList.add(white);
-		}
 		if (tile.isStorage()) {
 			way = new Button(6, guiLeft + 115, guiTop + 5, "");
 			buttonList.add(way);
 		}
+
+		if (tile instanceof TileItemBox || kind == Kind.imKabel || kind == Kind.storageKabel) {
+			white = new Button(3, guiLeft + 70, guiTop + 5, "");
+			buttonList.add(white);
+		}
 		if (tile instanceof TileKabel) {
 			Keyboard.enableRepeatEvents(true);
-			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 36, guiTop - 14, 85, fontRendererObj.FONT_HEIGHT);
+			searchBar = new GuiTextField(0, fontRendererObj, guiLeft + 34, guiTop + 69, 85, fontRendererObj.FONT_HEIGHT);
 			searchBar.setMaxStringLength(30);
 			searchBar.setEnableBackgroundDrawing(false);
 			searchBar.setVisible(true);
@@ -187,29 +145,25 @@ public class GuiFCable extends MyGuiContainer {
 			searchBar.setCanLoseFocus(false);
 			searchBar.setFocused(true);
 			searchBar.setText(((TileKabel) tile).getLimit() + "");
-			acti = new Button(4, guiLeft + 127, guiTop - 18, "");
+			acti = new Button(4, guiLeft + 127, guiTop + 65, "");
 			buttonList.add(acti);
+			Fluid f = Util.getFluid(((TileKabel) tile).getStack()) == null ? null : Util.getFluid(((TileKabel) tile).getStack()).getFluid();
+			operation = new FluidSlot(f, guiLeft + 8, guiTop + 66, 1, guiLeft, guiTop, false, true, false, true);
 		}
-	}
-
-	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		if (tile instanceof TileKabel && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1 && mouseX > guiLeft + 7 && mouseX < guiLeft + 25 && mouseY > guiTop + -19 && mouseY < guiTop + -1 && (Util.getFluid(mc.thePlayer.inventory.getItemStack()) != null || mc.thePlayer.inventory.getItemStack() == null)) {
-			stack = mc.thePlayer.inventory.getItemStack();
-			((TileKabel) tile).setStack(stack);
-			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
-			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), stack));
-		} else
-			super.mouseReleased(mouseX, mouseY, state);
 	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		for (int i = 0; i < 9; i++) {
-			FluidSlot e = list.get(storage() ? 0 : i);
-			if (storage())
-				i = 4;
+		if (operation.isMouseOverSlot(mouseX, mouseY) && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
+			((TileKabel) tile).setStack(mc.thePlayer.inventory.getItemStack());
+			operation.fluid = Util.getFluid(mc.thePlayer.inventory.getItemStack()) == null ? null : Util.getFluid(mc.thePlayer.inventory.getItemStack()).getFluid();
+			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());
+			PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), mc.thePlayer.inventory.getItemStack()));
+			return;
+		}
+		for (int i = 0; i < list.size(); i++) {
+			FluidSlot e = list.get(i);
 			if (e.isMouseOverSlot(mouseX, mouseY)) {
 				ContainerFCable con = (ContainerFCable) inventorySlots;
 				StackWrapper x = con.tile.getFilter().get(i);
@@ -225,8 +179,6 @@ public class GuiFCable extends MyGuiContainer {
 				PacketHandler.INSTANCE.sendToServer(new FilterMessage(i, tile.getFilter().get(i), tile.getOre(i), tile.getMeta(i)));
 				break;
 			}
-			if (storage())
-				break;
 		}
 	}
 
@@ -273,7 +225,7 @@ public class GuiFCable extends MyGuiContainer {
 					searchBar.setText("0");
 				}
 				((TileKabel) tile).setLimit(num);
-				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), stack));
+				PacketHandler.INSTANCE.sendToServer(new LimitMessage(num, tile.getPos(), ((TileKabel) tile).getStack()));
 			} else {
 				super.keyTyped(typedChar, keyCode);
 			}
@@ -284,10 +236,6 @@ public class GuiFCable extends MyGuiContainer {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
-	}
-
-	private boolean storage() {
-		return tile instanceof TileFluidBox || (tile instanceof TileKabel && ((TileKabel) tile).getKind() == Kind.fstorageKabel);
 	}
 
 	class Button extends GuiButton {

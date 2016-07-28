@@ -4,9 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
-import mrriegel.storagenetwork.gui.fremote.GuiFRemote;
-import mrriegel.storagenetwork.gui.frequest.GuiFRequest;
-import mrriegel.storagenetwork.handler.GuiHandler;
+import mrriegel.storagenetwork.gui.AbstractGuiFRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
@@ -19,17 +17,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import com.google.common.collect.Lists;
 
 public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, IMessage> {
-	int size, id;
+	int size;
 	List<FluidStack> stacks;
 
 	public FluidsMessage() {
 	}
 
-	public FluidsMessage(List<FluidStack> stacks, int id) {
+	public FluidsMessage(List<FluidStack> stacks) {
 		super();
 		this.stacks = stacks;
 		this.size = stacks.size();
-		this.id = id;
 	}
 
 	@Override
@@ -38,11 +35,8 @@ public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, I
 		mainThread.addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (message.id == GuiHandler.FREMOTE && Minecraft.getMinecraft().currentScreen instanceof GuiFRemote) {
-					GuiFRemote gui = (GuiFRemote) Minecraft.getMinecraft().currentScreen;
-					gui.fluids = message.stacks;
-				} else if (message.id == GuiHandler.FREQUEST && Minecraft.getMinecraft().currentScreen instanceof GuiFRequest) {
-					GuiFRequest gui = (GuiFRequest) Minecraft.getMinecraft().currentScreen;
+				if (Minecraft.getMinecraft().currentScreen instanceof AbstractGuiFRequest) {
+					AbstractGuiFRequest gui = (AbstractGuiFRequest) Minecraft.getMinecraft().currentScreen;
 					gui.fluids = message.stacks;
 				}
 
@@ -54,7 +48,6 @@ public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, I
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.size = buf.readInt();
-		this.id = buf.readInt();
 		stacks = Lists.newArrayList();
 		for (int i = 0; i < size; i++) {
 			NBTTagCompound compound = ByteBufUtils.readTag(buf);
@@ -66,7 +59,6 @@ public class FluidsMessage implements IMessage, IMessageHandler<FluidsMessage, I
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.size);
-		buf.writeInt(this.id);
 		for (FluidStack w : stacks) {
 			NBTTagCompound compound = new NBTTagCompound();
 			w.writeToNBT(compound);
