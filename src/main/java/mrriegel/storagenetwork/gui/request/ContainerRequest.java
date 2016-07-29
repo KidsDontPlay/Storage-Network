@@ -182,8 +182,10 @@ public class ContainerRequest extends Container {
 					craftMatrix.setInventorySlotContents(i, req);
 				}
 			onCraftMatrixChanged(craftMatrix);
-			if (!(res.isItemEqual(result.getStackInSlot(0)) && ItemStack.areItemStackTagsEqual(res, result.getStackInSlot(0))))
+			if (!ItemHandlerHelper.canItemStacksStack(res, result.getStackInSlot(0)))
 				break;
+			else
+				res = result.getStackInSlot(0);
 		}
 
 		PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) player);

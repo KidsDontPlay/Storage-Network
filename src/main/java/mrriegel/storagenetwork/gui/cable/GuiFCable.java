@@ -16,7 +16,6 @@ import mrriegel.storagenetwork.network.FilterMessage;
 import mrriegel.storagenetwork.network.LimitMessage;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.tile.AbstractFilterTile;
-import mrriegel.storagenetwork.tile.TileFluidBox;
 import mrriegel.storagenetwork.tile.TileItemBox;
 import mrriegel.storagenetwork.tile.TileKabel;
 import mrriegel.storagenetwork.tile.TileKabel.Kind;
@@ -114,9 +113,9 @@ public class GuiFCable extends MyGuiContainer {
 		if (way != null && way.isMouseOver())
 			drawHoveringText(Lists.newArrayList(I18n.format("gui.storagenetwork.fil.tooltip_" + tile.getWay().toString())), mouseX - guiLeft, mouseY - guiTop);
 		if (mouseX > guiLeft + 29 && mouseX < guiLeft + 37 && mouseY > guiTop + 10 && mouseY < guiTop + 20)
-			this.drawHoveringText(Lists.newArrayList("Priority"), mouseX, mouseY, fontRendererObj);
+			this.drawHoveringText(Lists.newArrayList("Priority"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
 		if (white != null && white.isMouseOver())
-			this.drawHoveringText(Lists.newArrayList(tile.isWhite() ? "Whitelist" : "Blacklist"), mouseX, mouseY, fontRendererObj);
+			this.drawHoveringText(Lists.newArrayList(tile.isWhite() ? "Whitelist" : "Blacklist"), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
 	}
 
 	@Override
