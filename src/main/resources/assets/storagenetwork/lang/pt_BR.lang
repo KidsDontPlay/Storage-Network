@@ -1,0 +1,79 @@
+tile.storagenetwork:kabel.name=Cabo de Ligação
+tile.storagenetwork:storageKabel.name=Cabo de Armazenamento de Itens
+tile.storagenetwork:exKabel.name=Cabo de Exportação de Itens
+tile.storagenetwork:imKabel.name=Cabo de Importação de Itens
+tile.storagenetwork:vacuumKabel.name=Cabo Aspirador de Itens
+tile.storagenetwork:fstorageKabel.name=Cabo de Armazenamento de Fluídos
+tile.storagenetwork:fexKabel.name=Cabo de Exportação de Fluídos
+tile.storagenetwork:fimKabel.name=Cabo de Importação de Fluídos
+
+tile.storagenetwork:master.name=Cabo Mestre
+tile.storagenetwork:request.name=Mesa de Pedidos de Itens
+tile.storagenetwork:frequest.name=Mesa de Pedidos de Fluídos
+tile.storagenetwork:cover.name=Cobertura de Cabo
+tile.storagenetwork:indicator.name=Indicador de Itens
+tile.storagenetwork:annexer.name=Limpador de Blocos
+tile.storagenetwork:fannexer.name=Limpador de Fluídos
+tile.storagenetwork:itemBox.name=Caixa de Itens
+tile.storagenetwork:fluidBox.name=Caixa de Fluídos
+tile.storagenetwork:toggler.name=Unidade de Alternância
+
+item.storagenetwork:upgrade_0.name=Melhoria de Velocidade
+item.storagenetwork:upgrade_1.name=Melhoria de Operação
+item.storagenetwork:upgrade_2.name=Melhoria de Stacks
+item.storagenetwork:upgrade_3.name=Melhoria de Estoque
+
+item.storagenetwork:remote_0.name=Acessador de Itens Remoto
+item.storagenetwork:remote_1.name=Acessador de Itens Remoto Avançado
+item.storagenetwork:fremote_0.name=Acessador de Fluídos Remoto
+item.storagenetwork:fremote_1.name=Acessador de Fluídos Remoto Avançado
+
+item.storagenetwork:coverstick.name=Varinha de Coberturas
+item.storagenetwork:toggler.name=Varinha de Alternância
+item.storagenetwork:duplicator.name=Duplicador de Configuração
+
+gui.storagenetwork.operate.tooltip=%s é ativo se %s do que %d %s estão na rede.
+gui.storagenetwork.operate.tooltip.more=mais
+gui.storagenetwork.operate.tooltip.less=menos
+
+gui.storagenetwork.indi.tooltip=%s dá um sinal de redstone se %s do que %d %s estão na rede.
+
+gui.storagenetwork.req.tooltip_NAME=Organizar por nome
+gui.storagenetwork.req.tooltip_MOD=Organizar por mod
+gui.storagenetwork.req.tooltip_AMOUNT=Organizar por quantidade
+
+gui.storagenetwork.fil.tooltip_IN=Só entrada
+gui.storagenetwork.fil.tooltip_OUT=Só saída
+gui.storagenetwork.fil.tooltip_BOTH=Entrada e saída
+
+tooltip.storagenetwork.networkNeeded=Precisa estar conectado à rede.
+tooltip.storagenetwork.RFNeeded=Precisa de RF pra funcionar.
+tooltip.storagenetwork.annexer=Quebra o bloco à sua frente e o coloca na rede.
+tooltip.storagenetwork.cover=Usado para cobrir cabos (A Varinha de Coberturas é necessária).
+tooltip.storagenetwork.crafter=Constrói itens automaticamente.
+tooltip.storagenetwork.fannexer=Pega o líquido à sua frente e o coloca na rede.
+tooltip.storagenetwork.fkabel_S=Usado para conectar tanques de fluídos à rede.
+tooltip.storagenetwork.fkabel_E=Exporta fluídos da rede a um tanque conectado.
+tooltip.storagenetwork.fkabel_I=Importa fluídos de um tanque conectado à rede.
+tooltip.storagenetwork.fluidbox=Guarda fluídos.
+tooltip.storagenetwork.frequest=Usado para ver e pedir fluídos da rede.
+tooltip.storagenetwork.indicator=Dá um sinal de redstone se há mais ou menos itens de algo na rede.
+tooltip.storagenetwork.itembox=Guarda itens.
+tooltip.storagenetwork.kabel_S=Usado para conectar inventários à rede.
+tooltip.storagenetwork.kabel_E=Exporta itens da rede para um inventário conectado.
+tooltip.storagenetwork.kabel_I=Importa itens de um inventário conectado para a rede.
+tooltip.storagenetwork.kabel_L=O cabo usado para conectar partes da sua rede.
+tooltip.storagenetwork.kabel_V=Pega itens por perto e os coloca na rede.
+tooltip.storagenetwork.master=O coração da rede. Apenas UM por rede.
+tooltip.storagenetwork.request=Usado para ver e pedir itens da rede.
+tooltip.storagenetwork.coverstaff=Usado para cobrir cabos com o bloco à direita do selecionado na hotbar.
+tooltip.storagenetwork.fremote_0=Usado para ver e pedir fluídos da rede de uma distância curta.
+tooltip.storagenetwork.remote_0=Usado para ver e pedir itens da rede de uma distância curta.
+tooltip.storagenetwork.fremote_1=Usado para ver e pedir fluídos da rede de uma distância grande.
+tooltip.storagenetwork.remote_1=Usado para ver e pedir itens da rede de uma distância grande.
+tooltip.storagenetwork.toggler=Pode desativar partes da rede quando alimentado com um sinal de redstone.
+tooltip.storagenetwork.upgrade_0=Aumenta a velocidade de importação ou de exportação.
+tooltip.storagenetwork.upgrade_1=O funcionamento do cabo depende da quantidade de itens.
+tooltip.storagenetwork.upgrade_2=Aumenta o tamanho das stacks da tarefa.
+tooltip.storagenetwork.upgrade_3=Mantém uma quantidade específica de itens no invetário conectado (somente no Cabo de Exportação.)
+tooltip.storagenetwork.duplicator=Shift e clique com o  direito num cabo para salvar as configurações. Clique com o direito em outro cabo para copiá-las.
