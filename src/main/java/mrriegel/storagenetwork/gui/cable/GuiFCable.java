@@ -154,7 +154,7 @@ public class GuiFCable extends MyGuiContainer {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (operation.isMouseOverSlot(mouseX, mouseY) && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
+		if (operation!=null&&operation.isMouseOverSlot(mouseX, mouseY) && ((TileKabel) tile).elements(ItemUpgrade.OP) >= 1) {
 			((TileKabel) tile).setStack(mc.thePlayer.inventory.getItemStack());
 			operation.fluid = Util.getFluid(mc.thePlayer.inventory.getItemStack()) == null ? null : Util.getFluid(mc.thePlayer.inventory.getItemStack()).getFluid();
 			int num = searchBar.getText().isEmpty() ? 0 : Integer.valueOf(searchBar.getText());

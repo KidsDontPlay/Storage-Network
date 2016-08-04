@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.gui.template.ContainerTemplate;
 import mrriegel.storagenetwork.helper.FilterItem;
 import mrriegel.storagenetwork.helper.InvHelper;
+import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -92,7 +93,8 @@ public class RecipeMessage implements IMessage, IMessageHandler<RecipeMessage, I
 						}
 					}
 					con.slotChanged();
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
+					List<StackWrapper> list = tile.getStacks();
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
 				} else if (message.index == 1) {
 					if (!(ctx.getServerHandler().playerEntity.openContainer instanceof ContainerTemplate))
 						return;

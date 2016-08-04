@@ -29,7 +29,6 @@ item.storagenetwork:fremote_0.name=Fluid Wireless Accessor
 item.storagenetwork:fremote_1.name=Fluid Advanced Wireless Accessor
 
 item.storagenetwork:coverstick.name=Cover Staff
-item.storagenetwork:toggler.name=Toggle Staff
 item.storagenetwork:duplicator.name=Setting Duplicator
 
 gui.storagenetwork.operate.tooltip=%s is active if %s than %d %s are in the network.

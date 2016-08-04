@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.gui.request;
 import java.util.List;
 
 import mrriegel.storagenetwork.helper.FilterItem;
+import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.helper.Util;
 import mrriegel.storagenetwork.network.PacketHandler;
 import mrriegel.storagenetwork.network.StacksMessage;
@@ -63,7 +64,8 @@ public class ContainerRequest extends Container {
 						// false);
 						craftMatrix.setInventorySlotContents(i, req);
 					}
-				PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerIn);
+				List<StackWrapper> list = t.getStacks();
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 				detectAndSendChanges();
 			}
 		};
@@ -133,7 +135,8 @@ public class ContainerRequest extends Container {
 					ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
 					slot.putStack(stack);
 					detectAndSendChanges();
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
+					List<StackWrapper> list = tile.getStacks();
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 					if (stack == null)
 						return null;
 					slot.onPickupFromSlot(playerIn, itemstack1);
@@ -188,7 +191,8 @@ public class ContainerRequest extends Container {
 				res = result.getStackInSlot(0);
 		}
 
-		PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) player);
+		List<StackWrapper> list = tile.getStacks();
+		PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) player);
 		detectAndSendChanges();
 	}
 
@@ -198,7 +202,8 @@ public class ContainerRequest extends Container {
 			return false;
 		TileMaster t = (TileMaster) tile.getWorld().getTileEntity(tile.getMaster());
 		if (!tile.getWorld().isRemote && tile.getWorld().getTotalWorldTime() % 40 == 0) {
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(t.getStacks(), t.getCraftableStacks()), (EntityPlayerMP) playerInv.player);
+			List<StackWrapper> list = t.getStacks();
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(list, t.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 		}
 		return playerIn.getDistanceSq(tile.getPos().getX() + 0.5D, tile.getPos().getY() + 0.5D, tile.getPos().getZ() + 0.5D) <= 64.0D;
 	}

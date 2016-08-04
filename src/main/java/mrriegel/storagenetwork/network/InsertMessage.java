@@ -1,8 +1,11 @@
 package mrriegel.storagenetwork.network;
 
+import java.util.List;
+
 import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.remote.ContainerRemote;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
+import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.tile.TileMaster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -60,7 +63,8 @@ public class InsertMessage implements IMessage, IMessageHandler<InsertMessage, I
 					}
 					ctx.getServerHandler().playerEntity.inventory.setItemStack(send);
 					PacketHandler.INSTANCE.sendTo(new StackMessage(send), ctx.getServerHandler().playerEntity);
-					PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), ctx.getServerHandler().playerEntity);
+					List<StackWrapper> list = tile.getStacks();
+					PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), ctx.getServerHandler().playerEntity);
 					ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
 				}
 

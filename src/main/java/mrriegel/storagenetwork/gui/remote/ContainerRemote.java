@@ -1,5 +1,8 @@
 package mrriegel.storagenetwork.gui.remote;
 
+import java.util.List;
+
+import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.init.ModItems;
 import mrriegel.storagenetwork.items.ItemRemote;
 import mrriegel.storagenetwork.network.PacketHandler;
@@ -60,7 +63,8 @@ public class ContainerRemote extends Container {
 				ItemStack stack = rest == 0 ? null : ItemHandlerHelper.copyStackWithSize(itemstack1, rest);
 				slot.putStack(stack);
 				detectAndSendChanges();
-				PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
+				List<StackWrapper> list = tile.getStacks();
+				PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
 				return null;
 			}
 		}
@@ -72,8 +76,10 @@ public class ContainerRemote extends Container {
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		if (tile == null)
 			return false;
-		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 40 == 0)
-			PacketHandler.INSTANCE.sendTo(new StacksMessage(tile.getStacks(), tile.getCraftableStacks()), (EntityPlayerMP) playerIn);
+		if (!playerIn.worldObj.isRemote && playerIn.worldObj.getTotalWorldTime() % 40 == 0) {
+			List<StackWrapper> list = tile.getStacks();
+			PacketHandler.INSTANCE.sendTo(new StacksMessage(list, tile.getCraftableStacks(list)), (EntityPlayerMP) playerIn);
+		}
 		return playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() == ModItems.remote;
 	}
 

@@ -129,7 +129,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		return res;
 	}
 
-	public List<StackWrapper> getCraftableStacks() {
+	public List<StackWrapper> getCraftableStacks(List<StackWrapper> stacks) {
 		List<StackWrapper> craftableStacks = Lists.newArrayList();
 		List<TileContainer> invs = Lists.newArrayList();
 		for (BlockPos p : connectables) {
@@ -138,7 +138,6 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			TileContainer tile = (TileContainer) worldObj.getTileEntity(p);
 			invs.add(tile);
 		}
-		List<StackWrapper> stacks = getStacks();
 		for (TileContainer t : invs) {
 			for (int i = 0; i < t.getSizeInventory(); i++) {
 				if (t.getStackInSlot(i) != null) {
@@ -380,6 +379,8 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (stack == null)
 			return 0;
 		List<AbstractFilterTile> invs = Lists.newArrayList();
+		if (connectables == null)
+			refreshNetwork();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
@@ -431,10 +432,12 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		if (stack == null)
 			return 0;
 		List<AbstractFilterTile> invs = Lists.newArrayList();
+		if (connectables == null)
+			refreshNetwork();
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
-				if (tile.getFluidTank() != null) {
+				if (tile.isStorage() && tile.getFluidTank() != null) {
 					invs.add(tile);
 				}
 			}
@@ -739,7 +742,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
-				if (tile.getFluidTank() != null) {
+				if (tile.isStorage()&&tile.getFluidTank() != null) {
 					invs.add(tile);
 				}
 			}

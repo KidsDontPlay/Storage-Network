@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +26,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -104,22 +106,19 @@ public class Util {
 	public static FluidStack getFluid(ItemStack s) {
 		if (s == null || s.getItem() == null)
 			return null;
+		if (FluidUtil.getFluidContained(s) != null)
+			return FluidUtil.getFluidContained(s);
 		FluidStack a = null;
 		IFluidHandler f = s.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-		if (f != null && f.getTankProperties() != null && f.getTankProperties().length > 1) {
+		if (f != null && f.getTankProperties() != null) {
 			for (IFluidTankProperties p : f.getTankProperties())
-				if (p.getContents() != null)
-					return p.getContents();
-		}
-		a = FluidContainerRegistry.getFluidForFilledItem(s);
-		if (a != null)
-			return a;
-		IFluidHandler handler = s.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-		if (handler != null) {
-			for (IFluidTankProperties p : handler.getTankProperties())
 				if (p.getContents() != null)
 					return p.getContents().copy();
 		}
+
+		a = FluidContainerRegistry.getFluidForFilledItem(s);
+		if (a != null)
+			return a;
 		if (s.getItem() instanceof IFluidContainerItem)
 			a = ((IFluidContainerItem) s.getItem()).getFluid(s);
 		return a;
