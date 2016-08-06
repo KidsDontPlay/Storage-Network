@@ -39,6 +39,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();
