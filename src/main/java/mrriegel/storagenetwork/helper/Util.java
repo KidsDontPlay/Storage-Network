@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
 
@@ -39,7 +38,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class Util {
 	private static final Map<String, String> modNamesForIds = new HashMap<String, String>();

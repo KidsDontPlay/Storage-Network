@@ -350,11 +350,11 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			return;
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) != null && worldObj.getTileEntity(p) instanceof TileKabel && ((TileKabel) worldObj.getTileEntity(p)).getKind() == Kind.vacuumKabel) {
-				int range = 2;
+				double range = 2.5;
 
-				int x = p.getX();
-				int y = p.getY();
-				int z = p.getZ();
+				double x = p.getX() + .5;
+				double y = p.getY();
+				double z = p.getZ() + .5;
 
 				List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
 				for (EntityItem item : items) {
@@ -598,7 +598,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			IItemHandler inv = t.getInventory();
 			if ((worldObj.getTotalWorldTime() + 20) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 				continue;
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 18; i++) {
 				if (t.getFilter().get(i) == null)
 					continue;
 				boolean ore = t.getOre(i);
@@ -656,7 +656,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 			IFluidHandler inv = t.getFluidTank();
 			if ((worldObj.getTotalWorldTime() + 20) % (30 / (t.elements(ItemUpgrade.SPEED) + 1)) != 0)
 				continue;
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 18; i++) {
 				if (t.getFilter().get(i) == null)
 					continue;
 				ItemStack fil = t.getFilter().get(i).getStack();
@@ -742,7 +742,7 @@ public class TileMaster extends TileEntity implements ITickable, IEnergyReceiver
 		for (BlockPos p : connectables) {
 			if (worldObj.getTileEntity(p) instanceof AbstractFilterTile) {
 				AbstractFilterTile tile = (AbstractFilterTile) worldObj.getTileEntity(p);
-				if (tile.isStorage()&&tile.getFluidTank() != null) {
+				if (tile.isStorage() && tile.getFluidTank() != null) {
 					invs.add(tile);
 				}
 			}

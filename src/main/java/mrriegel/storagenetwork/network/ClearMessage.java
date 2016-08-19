@@ -1,12 +1,12 @@
 package mrriegel.storagenetwork.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.List;
 
-import io.netty.buffer.ByteBuf;
 import mrriegel.storagenetwork.gui.request.ContainerRequest;
 import mrriegel.storagenetwork.helper.StackWrapper;
 import mrriegel.storagenetwork.tile.TileMaster;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
