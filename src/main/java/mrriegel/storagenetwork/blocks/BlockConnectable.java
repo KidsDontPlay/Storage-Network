@@ -20,7 +20,13 @@ public abstract class BlockConnectable extends BlockContainer {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !blockIn.isReplaceable(worldIn, pos.up()))
+		boolean replaceable = false;
+		try {
+			replaceable = blockIn.isReplaceable(worldIn, pos.up());
+		} catch (Exception e) {
+			replaceable = false;
+		}
+		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !replaceable)
 			return;
 		for (BlockPos p : Util.getSides(pos)) {
 			if (worldIn.getTileEntity(p) instanceof IConnectable) {
