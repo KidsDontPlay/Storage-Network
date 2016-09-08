@@ -24,7 +24,7 @@ public abstract class BlockConnectable extends BlockContainer {
 		try {
 			replaceable = blockIn.isReplaceable(worldIn, pos.up());
 		} catch (Exception e) {
-			replaceable = false;
+			replaceable = true;
 		}
 		if (!blockIn.hasTileEntity() && blockIn != Blocks.AIR && !replaceable)
 			return;
