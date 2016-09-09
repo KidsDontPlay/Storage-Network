@@ -5,7 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * Reference implementation of {@link IEnergyContainerItem}. Use/extend this or implement your own.
+ * Reference implementation of {@link IEnergyContainerItem}. Use/extend this or
+ * implement your own.
  *
  * @author King Lemming
  *
@@ -43,20 +44,20 @@ public class ItemEnergyContainer extends Item implements IEnergyContainerItem {
 		return this;
 	}
 
-	public ItemEnergyContainer  setMaxTransfer(int maxTransfer) {
+	public ItemEnergyContainer setMaxTransfer(int maxTransfer) {
 
 		setMaxReceive(maxTransfer);
 		setMaxExtract(maxTransfer);
 		return this;
 	}
 
-	public ItemEnergyContainer  setMaxReceive(int maxReceive) {
+	public ItemEnergyContainer setMaxReceive(int maxReceive) {
 
 		this.maxReceive = maxReceive;
 		return this;
 	}
 
-	public ItemEnergyContainer  setMaxExtract(int maxExtract) {
+	public ItemEnergyContainer setMaxExtract(int maxExtract) {
 
 		this.maxExtract = maxExtract;
 		return this;
