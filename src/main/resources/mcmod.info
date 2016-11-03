@@ -1,0 +1,19 @@
+[
+{
+  "modid": "storagenetwork",
+  "name": "StorageNetwork",
+  "description": "",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/MrRiegel/Storage-Network",
+  "updateUrl": "",
+  "authorList": [ "MrRiegel", "canitzp" ],
+  "credits": "Author: MrRiegel; Contributer: canitzp",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]

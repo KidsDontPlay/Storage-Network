@@ -1,0 +1,50 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = "2.0.0"
+group= "mrriegel.storagenetwork"
+archivesBaseName = "storagenetwork"
+
+minecraft {
+    version = "1.10.2-12.18.2.2099"
+    runDir = "run"
+    mappings = "snapshot_20160518"
+    replaceIn "StorageNetowrk.java"
+    replace "@VERSION@", project.version.toString()
+}
+
+dependencies {
+    compile project(":LimeLib")
+}
+
+processResources{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'   
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
