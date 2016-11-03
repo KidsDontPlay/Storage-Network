@@ -19,6 +19,8 @@ public class StorageNetwork {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
         logger.info("Start " + MODNAME + " version " + MODVERSION + (MODVERSION.equals("@VERSION@") ? ". Detected a development environment." : ""));
+        logger.info("[PreInitialize] Loading Blocks and Items");
+        Registry.preInit();
     }
 
 }
