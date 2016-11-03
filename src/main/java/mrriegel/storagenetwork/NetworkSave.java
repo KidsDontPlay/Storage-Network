@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.limelib.util.GlobalBlockPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -64,7 +65,7 @@ public class NetworkSave extends WorldSavedData{
         return nbt;
     }
 
-    public static Network getNetwork(BlockPos pos){
+    public static Network getNetwork(GlobalBlockPos pos){
         for(Network network : networks){
             if(network != null && network.corePosition != null){
                 if(network.corePosition.equals(pos)){
@@ -75,7 +76,7 @@ public class NetworkSave extends WorldSavedData{
         return null;
     }
 
-    public static void removeNetwork(BlockPos pos){
+    public static void removeNetwork(GlobalBlockPos pos){
         Network network = getNetwork(pos);
         if(network != null){
             networks.remove(network);

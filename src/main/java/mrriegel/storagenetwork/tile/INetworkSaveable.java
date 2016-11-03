@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.tile;
 
+import mrriegel.limelib.util.GlobalBlockPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -10,6 +11,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 //TODO add specific methods
 public interface INetworkSaveable extends INBTSerializable<NBTTagCompound>{
 
-    BlockPos getPosition();
+    GlobalBlockPos getPosition();
 
 }
