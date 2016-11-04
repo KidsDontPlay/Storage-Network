@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 /**
  * @author canitzp
  */
-public class TileEntityNetworkCore extends CommonTile{
+public class TileNetworkCore extends CommonTile{
 
 	public Network network;
 

@@ -1,10 +1,10 @@
 package mrriegel.storagenetwork;
 
-import mrriegel.limelib.util.GlobalBlockPos;
-import mrriegel.storagenetwork.tile.INetworkPart;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import mrriegel.limelib.util.GlobalBlockPos;
+import mrriegel.storagenetwork.tile.INetworkPart;
 
 /**
  * @author canitzp
