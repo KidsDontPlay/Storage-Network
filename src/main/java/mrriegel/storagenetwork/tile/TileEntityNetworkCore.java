@@ -19,19 +19,19 @@ public class TileEntityNetworkCore extends CommonTile{
 	public void initializeNetwork() {
 		Network network = new Network();
 		network.corePosition = new GlobalBlockPos(pos, worldObj.provider.getDimension());
-        for(EnumFacing facing : EnumFacing.values()){
-            BlockPos searchPos = this.getPos().offset(facing);
-            if(!getWorld().isAirBlock(searchPos)){
-                TileEntity tile = getWorld().getTileEntity(searchPos);
-                if(tile != null){
-					if(tile instanceof INetworkPart){
+		for (EnumFacing facing : EnumFacing.values()) {
+			BlockPos searchPos = this.getPos().offset(facing);
+			if (!getWorld().isAirBlock(searchPos)) {
+				TileEntity tile = getWorld().getTileEntity(searchPos);
+				if (tile != null) {
+					if (tile instanceof INetworkPart) {
 						network.addPart((INetworkPart) tile);
-					} else if(tile instanceof IInventory){
+					} else if (tile instanceof IInventory) {
 						network.addPart(new InventoryNetworkPart(tile.getWorld(), searchPos, (IInventory) tile));
 					}
-                }
-            }
-        }
+				}
+			}
+		}
 		this.network = network;
 	}
 
