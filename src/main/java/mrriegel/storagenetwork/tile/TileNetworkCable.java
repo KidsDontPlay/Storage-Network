@@ -1,25 +1,35 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.Map;
-
 import mrriegel.limelib.tile.CommonTile;
 import mrriegel.limelib.util.GlobalBlockPos;
 import net.minecraft.util.EnumFacing;
 
-import com.google.common.collect.Maps;
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TileNetworkCable extends CommonTile implements INetworkPart{
 	
-	protected Map<EnumFacing, Boolean> valids = Maps.newHashMap();
+	private Map<EnumFacing, Boolean> validSides = new HashMap<>();
 	
-	{
+	public TileNetworkCable(){
 		for (EnumFacing f : EnumFacing.VALUES) {
-			valids.put(f, true);
+			validSides.put(f, true);
 		}
 	}
 
-	public Map<EnumFacing, Boolean> getValids() {
-		return valids;
+	@Nonnull
+	public Map<EnumFacing, Boolean> getValidSides() {
+		return validSides;
+	}
+
+	public void setSide(EnumFacing side, boolean state){
+		this.validSides.put(side, state);
+		this.markForSync();
+	}
+
+	public boolean isSideValid(EnumFacing side){
+		return this.validSides.get(side);
 	}
 
 	@Override

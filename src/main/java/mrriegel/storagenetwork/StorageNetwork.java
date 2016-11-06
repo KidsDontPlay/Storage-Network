@@ -7,11 +7,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,6 +37,7 @@ public class StorageNetwork implements IGuiHandler {
 		logger.info("[PreInitialize] Loading Blocks and Items");
 		Registry.preInit();
 		if(event.getSide().isClient()){
+			logger.info("[PreInitialize] Registering Renderer");
 			Registry.preInitClient();
 		}
 	}
@@ -46,10 +45,6 @@ public class StorageNetwork implements IGuiHandler {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, this);
-	}
-
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
 	}
 
 	@Override

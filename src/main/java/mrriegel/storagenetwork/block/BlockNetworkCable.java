@@ -1,10 +1,6 @@
 package mrriegel.storagenetwork.block;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
+import com.google.common.collect.Maps;
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.InvHelper;
 import mrriegel.storagenetwork.CreativeTab;
@@ -31,7 +27,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.collect.Maps;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
@@ -42,24 +40,18 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 	public static final IProperty<Connect> UP = PropertyEnum.<Connect> create("up", Connect.class);
 	public static final IProperty<Connect> DOWN = PropertyEnum.<Connect> create("down", Connect.class);
 
-	public static enum Connect implements IStringSerializable {
-		NULL("null"), CABLE("cable"), TILE("tile");
-		String name;
-
-		private Connect(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-	}
+	private Map<EnumFacing, IProperty<Connect>> map = Maps.newHashMap();
 
 	public BlockNetworkCable() {
 		super(Material.IRON, "block_network_cable");
 		setHardness(1.0F);
 		setCreativeTab(CreativeTab.TAB);
+		map.put(EnumFacing.NORTH, NORTH);
+		map.put(EnumFacing.SOUTH, SOUTH);
+		map.put(EnumFacing.WEST, WEST);
+		map.put(EnumFacing.EAST, EAST);
+		map.put(EnumFacing.UP, UP);
+		map.put(EnumFacing.DOWN, DOWN);
 	}
 
 	@Override
@@ -88,13 +80,8 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		return false;
 	}
 
-	//	@Override
-	//	public BlockRenderLayer getBlockLayer() {
-	//		return BlockRenderLayer.CUTOUT;
-	//	}
-
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.TRANSLUCENT;
 	}
 
@@ -120,11 +107,12 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
 	public Connect getConnect(IBlockAccess worldIn, BlockPos pos, EnumFacing facing) {
 		TileNetworkCable tile = (TileNetworkCable) worldIn.getTileEntity(pos);
-		if (tile != null && !tile.getValids().get(facing))
+		TileEntity tileSide = worldIn.getTileEntity(pos.offset(facing));
+		if (tile != null && !tile.getValidSides().get(facing))
 			return Connect.NULL;
-		if (isNetworkPart(worldIn.getTileEntity(pos.offset(facing))) && /*TODO maybe?*/tile.getValids().get(facing) && ((TileNetworkCable) worldIn.getTileEntity(pos.offset(facing))).getValids().get(facing.getOpposite()))
+		if (isNetworkPart(worldIn.getTileEntity(pos.offset(facing))) && tile != null && tile.isSideValid(facing) && tileSide != null && ((TileNetworkCable) tileSide).isSideValid(facing.getOpposite()))
 			return Connect.CABLE;
-		else if (/*TODO maybe?*/tile.getValids().get(facing) && validTile(worldIn, pos.offset(facing), facing.getOpposite()))
+		else if (tile != null && tile.isSideValid(facing) && validTile(worldIn, pos.offset(facing), facing.getOpposite()))
 			return Connect.TILE;
 		return Connect.NULL;
 	}
@@ -138,44 +126,34 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		return InvHelper.hasItemHandler(worldIn, pos, facing);
 	}
 
-	private Map<EnumFacing, IProperty<Connect>> map = Maps.newHashMap();
-	
-	{
-		map.put(EnumFacing.NORTH, NORTH);
-		map.put(EnumFacing.SOUTH, SOUTH);
-		map.put(EnumFacing.WEST, WEST);
-		map.put(EnumFacing.EAST, EAST);
-		map.put(EnumFacing.UP, UP);
-		map.put(EnumFacing.DOWN, DOWN);
-	}
-
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		EnumFacing f = getFace(hitX, hitY, hitZ);
-		TileNetworkCable tile = (TileNetworkCable) worldIn.getTileEntity(pos);
-		if (new ItemStack(Items.STICK).isItemEqual(playerIn.inventory.getCurrentItem())) {
-			if (f != null) {
-				tile.getValids().put(f, false);
-				if (worldIn.getTileEntity(pos.offset(f)) instanceof TileNetworkCable) {
-					((TileNetworkCable) worldIn.getTileEntity(pos.offset(f))).getValids().put(f.getOpposite(), false);
-					((TileNetworkCable) worldIn.getTileEntity(pos.offset(f))).markForSync();
-				}
-				tile.markForSync();
-			} else {
-				if (state.getValue(map.get(side)) == Connect.NULL && !((TileNetworkCable) worldIn.getTileEntity(pos)).getValids().get(side)) {
-					tile.getValids().put(side, true);
-					if (worldIn.getTileEntity(pos.offset(side)) instanceof TileNetworkCable) {
-						((TileNetworkCable) worldIn.getTileEntity(pos.offset(side))).getValids().put(side.getOpposite(), true);
-						((TileNetworkCable) worldIn.getTileEntity(pos.offset(side))).markForSync();
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if(!world.isRemote){
+			EnumFacing f = getFace(hitX, hitY, hitZ);
+			TileNetworkCable tile = (TileNetworkCable) world.getTileEntity(pos);
+			if (tile != null && new ItemStack(Items.STICK).isItemEqual(player.inventory.getCurrentItem())) {
+				if (f != null) {
+					tile.setSide(f, false);
+					TileEntity newTile = world.getTileEntity(pos.offset(f));
+					if (newTile != null && newTile instanceof TileNetworkCable) {
+						((TileNetworkCable) newTile).setSide(f.getOpposite(), false);
 					}
 					tile.markForSync();
+				} else {
+					if (state.getValue(map.get(side)) == Connect.NULL && !tile.isSideValid(side)) {
+						tile.setSide(side, true);
+						TileEntity newTile = world.getTileEntity(pos.offset(side));
+						if (newTile != null && newTile instanceof TileNetworkCable) {
+							((TileNetworkCable) newTile).setSide(side.getOpposite(), true);
+						}
+						tile.markForSync();
+					}
 				}
 			}
-		} else
-			//			System.out.println(tile.getValids())
-			;
-		worldIn.markBlockRangeForRenderUpdate(pos.add(1, 1, 1), pos.add(-1, -1, -1));
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+		} else {
+			world.markBlockRangeForRenderUpdate(pos.add(1, 1, 1), pos.add(-1, -1, -1));
+		}
+		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
 	}
 
 	protected EnumFacing getFace(float hitX, float hitY, float hitZ) {
@@ -243,6 +221,22 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		if (state.getValue(UP) != Connect.NULL)
 			f5 = 1;
 		return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
+	}
+
+	public enum Connect implements IStringSerializable {
+		NULL("null"),
+		CABLE("cable"),
+		TILE("tile");
+
+		String name;
+		Connect(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
 	}
 
 }
