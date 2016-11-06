@@ -1,10 +1,10 @@
 package mrriegel.storagenetwork.tile;
 
+import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.tile.CommonTile;
 import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.Network;
 import mrriegel.storagenetwork.network.InventoryNetworkPart;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -26,8 +26,8 @@ public class TileNetworkCore extends CommonTile{
 				if (tile != null) {
 					if (tile instanceof INetworkPart) {
 						network.addPart((INetworkPart) tile);
-					} else if (tile instanceof IInventory) {
-						network.addPart(new InventoryNetworkPart(tile.getWorld(), searchPos, (IInventory) tile));
+					} else if (InvHelper.hasItemHandler(tile, facing.getOpposite())) {
+						network.addPart(new InventoryNetworkPart(tile.getWorld(), searchPos, InvHelper.getItemHandler(tile, facing.getOpposite())));
 					}
 				}
 			}

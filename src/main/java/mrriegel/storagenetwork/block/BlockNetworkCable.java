@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.InvHelper;
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -130,7 +131,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
 	private boolean isNetworkPart(TileEntity tile) {
 		//TODO
-		return tile instanceof TileNetworkCable;
+		return tile instanceof INetworkPart;
 	}
 
 	protected boolean validTile(IBlockAccess worldIn, BlockPos pos, EnumFacing facing) {
@@ -138,6 +139,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 	}
 
 	private Map<EnumFacing, IProperty<Connect>> map = Maps.newHashMap();
+	
 	{
 		map.put(EnumFacing.NORTH, NORTH);
 		map.put(EnumFacing.SOUTH, SOUTH);

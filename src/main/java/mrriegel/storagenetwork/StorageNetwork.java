@@ -38,8 +38,9 @@ public class StorageNetwork implements IGuiHandler {
 		ModConfig.refreshConfig(event.getSuggestedConfigurationFile());
 		logger.info("[PreInitialize] Loading Blocks and Items");
 		Registry.preInit();
-		if(event.getSide().isClient())
+		if(event.getSide().isClient()){
 			Registry.preInitClient();
+		}
 	}
 
 	@Mod.EventHandler
