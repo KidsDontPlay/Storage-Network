@@ -37,7 +37,6 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(!worldIn.isRemote){
-            //TODO open a network overview gui
             System.out.println(((TileNetworkCore)worldIn.getTileEntity(pos)).network);
         }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);

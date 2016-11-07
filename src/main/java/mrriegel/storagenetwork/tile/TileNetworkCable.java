@@ -2,9 +2,11 @@ package mrriegel.storagenetwork.tile;
 
 import mrriegel.limelib.tile.CommonTile;
 import mrriegel.limelib.util.GlobalBlockPos;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,5 +38,23 @@ public class TileNetworkCable extends CommonTile implements INetworkPart{
 	public GlobalBlockPos getPosition() {
 		return new GlobalBlockPos(pos, worldObj);
 	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		for (EnumFacing f : EnumFacing.VALUES) {
+			validSides.put(f, compound.hasKey(f.toString() + "valid") ? compound.getBoolean(f.toString() + "valid") : true);
+		}
+		super.readFromNBT(compound);
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		for (EnumFacing f : EnumFacing.VALUES) {
+			compound.setBoolean(f.toString() + "valid", validSides.get(f));
+		}
+		return super.writeToNBT(compound);
+	}
+	
+	
 
 }

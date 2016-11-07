@@ -1,11 +1,13 @@
 package mrriegel.storagenetwork.block;
 
 import com.google.common.collect.Maps;
+
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.InvHelper;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
+import mrriegel.storagenetwork.tile.TileNetworkCore;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -107,22 +110,22 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
 	public Connect getConnect(IBlockAccess worldIn, BlockPos pos, EnumFacing facing) {
 		TileNetworkCable tile = (TileNetworkCable) worldIn.getTileEntity(pos);
-		TileEntity tileSide = worldIn.getTileEntity(pos.offset(facing));
-		if (tile != null && !tile.getValidSides().get(facing))
+		if(tile==null||!tile.getValidSides().get(facing))
 			return Connect.NULL;
-		if (isNetworkPart(worldIn.getTileEntity(pos.offset(facing))) && tile != null && tile.isSideValid(facing) && tileSide != null && ((TileNetworkCable) tileSide).isSideValid(facing.getOpposite()))
+		TileEntity tileSide = worldIn.getTileEntity(pos.offset(facing));
+		if (isNetworkPart(tileSide) && tile.isSideValid(facing) && tileSide != null && (!(tileSide instanceof TileNetworkCable)||((TileNetworkCable) tileSide).isSideValid(facing.getOpposite())))
 			return Connect.CABLE;
-		else if (tile != null && tile.isSideValid(facing) && validTile(worldIn, pos.offset(facing), facing.getOpposite()))
+		else if (tile.isSideValid(facing) && validTile(worldIn, pos.offset(facing), facing.getOpposite()))
 			return Connect.TILE;
 		return Connect.NULL;
 	}
 
 	private boolean isNetworkPart(TileEntity tile) {
-		//TODO
-		return tile instanceof INetworkPart;
+		return tile instanceof INetworkPart||tile instanceof TileNetworkCore;
 	}
 
 	protected boolean validTile(IBlockAccess worldIn, BlockPos pos, EnumFacing facing) {
+		//TODO what is a valid tile? itemhandler is just a placeholder
 		return InvHelper.hasItemHandler(worldIn, pos, facing);
 	}
 
