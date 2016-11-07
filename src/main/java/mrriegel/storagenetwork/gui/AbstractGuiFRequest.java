@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import mezz.jei.Internal;
+import mezz.jei.api.recipe.IFocus.Mode;
+import mezz.jei.gui.Focus;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.config.ConfigHandler;
 import mrriegel.storagenetwork.gui.fremote.ContainerFRemote;
@@ -241,9 +243,9 @@ public abstract class AbstractGuiFRequest extends MyGuiContainer {
 			Keyboard.enableRepeatEvents(true);
 			if (over != null && ConfigHandler.jeiLoaded && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
 				if (keyCode == Keyboard.KEY_R)
-					Internal.getRuntime().getRecipesGui().showRecipes(over);
+					Internal.getRuntime().getRecipesGui().show(new Focus<FluidStack>(Mode.OUTPUT, new FluidStack(over, 1)));
 				else
-					Internal.getRuntime().getRecipesGui().showUses(over);
+					Internal.getRuntime().getRecipesGui().show(new Focus<FluidStack>(Mode.INPUT, new FluidStack(over, 1)));
 			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				PacketHandler.INSTANCE.sendToServer(new FRequestMessage(0, null));
 			} else {

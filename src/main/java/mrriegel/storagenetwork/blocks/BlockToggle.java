@@ -35,7 +35,7 @@ public class BlockToggle extends BlockConnectable {
 			boolean changed = x != tile.isDisabled();
 			if (changed) {
 				tile.setDisabled(x);
-				tile.markDirty();
+				worldIn.markChunkDirty(tile.getPos(), tile);
 				BlockPos master = tile.getMaster();
 				if (master != null && worldIn.getChunkFromBlockCoords(master).isLoaded() && worldIn.getTileEntity(master) instanceof TileMaster) {
 					((TileMaster) worldIn.getTileEntity(master)).refreshNetwork();

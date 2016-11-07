@@ -52,7 +52,6 @@ public class CableRenderer extends TileEntitySpecialRenderer<TileKabel> {
 			World world = te.getWorld();
 			BlockPos blockpos = te.getPos();
 			IBlockState iblockstate = te.getCover().getStateFromMeta(te.getCoverMeta());
-
 			GlStateManager.pushMatrix();
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.translate((float) x, (float) y, (float) z);

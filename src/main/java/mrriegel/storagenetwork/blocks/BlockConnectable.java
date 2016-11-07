@@ -54,7 +54,7 @@ public abstract class BlockConnectable extends BlockContainer {
 		if (tile.getMaster() != null) {
 			TileEntity mas = worldIn.getTileEntity(tile.getMaster());
 			tile.setMaster(null);
-			((TileEntity) tile).markDirty();
+			worldIn.markChunkDirty(((TileEntity) tile).getPos(), ((TileEntity) tile));
 			try {
 				setAllMastersNull(worldIn, pos);
 			} catch (Error e) {
@@ -63,14 +63,14 @@ public abstract class BlockConnectable extends BlockContainer {
 					for (BlockPos p : ((TileMaster) mas).connectables)
 						if (worldIn.getChunkFromBlockCoords(p).isLoaded() && worldIn.getTileEntity(p) instanceof IConnectable) {
 							((IConnectable) worldIn.getTileEntity(p)).setMaster(null);
-							worldIn.getTileEntity(p).markDirty();
+							worldIn.markChunkDirty(p, worldIn.getTileEntity(p));
 						}
 			}
 			if (refresh && mas instanceof TileMaster) {
 				((TileMaster) mas).refreshNetwork();
 			}
 		}
-		((TileEntity) tile).markDirty();
+		worldIn.markChunkDirty(((TileEntity) tile).getPos(), ((TileEntity) tile));
 	}
 
 	private void setAllMastersNull(World world, BlockPos pos) {
@@ -78,7 +78,7 @@ public abstract class BlockConnectable extends BlockContainer {
 		for (BlockPos bl : Util.getSides(pos)) {
 			if (world.getChunkFromBlockCoords(bl).isLoaded() && world.getTileEntity(bl) instanceof IConnectable && ((IConnectable) world.getTileEntity(bl)).getMaster() != null) {
 				((IConnectable) world.getTileEntity(bl)).setMaster(null);
-				world.getTileEntity(bl).markDirty();
+				world.markChunkDirty(bl, world.getTileEntity(bl));
 				setAllMastersNull(world, bl);
 			}
 		}

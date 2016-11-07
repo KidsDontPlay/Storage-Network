@@ -41,7 +41,7 @@ public class ItemDuplicator extends Item {
 				if (stack.getTagCompound() != null)
 					if ((NBTHelper.getBoolean(stack, "fluid") && tile.isFluid()) || (!NBTHelper.getBoolean(stack, "fluid") && !tile.isFluid())) {
 						tile.readSettings(stack.getTagCompound());
-						tile.markDirty();
+						worldIn.markChunkDirty(tile.getPos(), tile);
 						playerIn.addChatComponentMessage(new TextComponentString("Saved Data to " + worldIn.getBlockState(pos).getBlock().getLocalizedName()));
 					}
 			}

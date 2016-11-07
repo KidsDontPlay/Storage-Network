@@ -225,8 +225,6 @@ public abstract class AbstractGuiRequest extends MyGuiContainer {
 		if (jei != null && jei.isMouseOver())
 			drawHoveringText(Lists.newArrayList(Settings.jeiSearch ? "JEI search enabled" : "JEI search disabled"), mouseX - guiLeft, mouseY - guiTop);
 		if (searchBar.isFocused() && ConfigHandler.jeiLoaded && Settings.jeiSearch) {
-			if (Internal.getRuntime().getItemListOverlay().hasKeyboardFocus())
-				searchBar.setFocused(false);
 			Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 		}
 	}

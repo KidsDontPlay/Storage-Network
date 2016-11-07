@@ -142,7 +142,7 @@ public class Util {
 			EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, new ItemStack(stack.getItem(), i, stack.getMetadata()));
 
 			if (stack.hasTagCompound()) {
-				entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
+				entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
 			}
 
 			float f3 = 0.05F;
@@ -168,7 +168,7 @@ public class Util {
 			if (p.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ()) < 32) {
 				try {
 					((EntityPlayerMP) p).connection.sendPacket(world.getTileEntity(pos).getUpdatePacket());
-					world.getTileEntity(pos).markDirty();
+					world.markChunkDirty(pos, world.getTileEntity(pos));
 				} catch (Error e) {
 					System.out.println(e.getMessage());
 					e.printStackTrace();

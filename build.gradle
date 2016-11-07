@@ -20,12 +20,12 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.9.4-1.12.9"
+version = "1.10.2-1.12.10"
 group= "mrriegel.storagenetwork" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "StorageNetwork"
 
 minecraft {
-    version = "1.9.4-12.17.0.1976"
+    version = "1.10.2-12.18.2.2099"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -38,7 +38,7 @@ minecraft {
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.9.4:3.6.8.225"
+    deobfCompile "mezz.jei:jei_1.10.2:3.13.2.360"
 }
 
 processResources

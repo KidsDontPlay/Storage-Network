@@ -51,10 +51,6 @@ public class TileItemBox extends AbstractFilterTile {
 		compound.setTag("box", invList);
 	}
 
-	public IItemHandler getInv() {
-		return inv;
-	}
-
 	@Override
 	public IFluidHandler getFluidTank() {
 		return null;
@@ -62,7 +58,7 @@ public class TileItemBox extends AbstractFilterTile {
 
 	@Override
 	public IItemHandler getInventory() {
-		return getInv();
+		return inv;
 	}
 
 	@Override
