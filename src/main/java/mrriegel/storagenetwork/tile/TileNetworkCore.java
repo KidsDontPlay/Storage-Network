@@ -28,6 +28,8 @@ public class TileNetworkCore extends CommonTile{
 	private void runThroughNetwork(BlockPos pos){
 		for (EnumFacing facing : EnumFacing.values()) {
 			BlockPos searchPos = pos.offset(facing);
+			if(worldObj.getTileEntity(pos) instanceof TileNetworkCable&&!((TileNetworkCable)worldObj.getTileEntity(pos)).getValidSides().get(facing))
+				continue;
 			if (!getWorld().isAirBlock(searchPos)) {
 				TileEntity tile = getWorld().getTileEntity(searchPos);
 				if (tile != null) {

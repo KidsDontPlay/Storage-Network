@@ -153,8 +153,6 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 					}
 				}
 			}
-		} else {
-			world.markBlockRangeForRenderUpdate(pos.add(1, 1, 1), pos.add(-1, -1, -1));
 		}
 		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
 	}
