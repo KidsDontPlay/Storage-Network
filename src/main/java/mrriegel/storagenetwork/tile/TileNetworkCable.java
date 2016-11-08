@@ -1,18 +1,16 @@
 package mrriegel.storagenetwork.tile;
 
-import mrriegel.limelib.tile.CommonTile;
-import mrriegel.limelib.util.GlobalBlockPos;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
-
-import java.util.HashMap;
-import java.util.Map;
-
-public class TileNetworkCable extends CommonTile implements INetworkPart{
+public class TileNetworkCable extends TileNetworkPart{
 	
 	private Map<EnumFacing, Boolean> validSides = new HashMap<>();
 	
@@ -34,11 +32,6 @@ public class TileNetworkCable extends CommonTile implements INetworkPart{
 
 	public boolean isSideValid(EnumFacing side){
 		return this.validSides.get(side);
-	}
-
-	@Override
-	public GlobalBlockPos getPosition() {
-		return new GlobalBlockPos(pos, worldObj);
 	}
 
 	@Override

@@ -131,7 +131,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if(!world.isRemote){
+		if (!world.isRemote) {
 			EnumFacing f = getFace(hitX, hitY, hitZ);
 			TileNetworkCable tile = (TileNetworkCable) world.getTileEntity(pos);
 			if (tile != null && new ItemStack(Items.STICK).isItemEqual(player.inventory.getCurrentItem())) {
@@ -140,6 +140,8 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 					TileEntity newTile = world.getTileEntity(pos.offset(f));
 					if (newTile != null && newTile instanceof TileNetworkCable) {
 						((TileNetworkCable) newTile).setSide(f.getOpposite(), false);
+						if (((TileNetworkCable) newTile).getNetworkCore() != null)
+							((TileNetworkCable) newTile).getNetworkCore().markForNetworkInit();
 					}
 					tile.markForSync();
 				} else {
@@ -148,6 +150,8 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 						TileEntity newTile = world.getTileEntity(pos.offset(side));
 						if (newTile != null && newTile instanceof TileNetworkCable) {
 							((TileNetworkCable) newTile).setSide(side.getOpposite(), true);
+							if (((TileNetworkCable) newTile).getNetworkCore() != null)
+								((TileNetworkCable) newTile).getNetworkCore().markForNetworkInit();
 						}
 						tile.markForSync();
 					}
@@ -180,7 +184,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		return foo > .25f && foo < .25f;
 	}
 
-	private static final double start = 5. / 16., end = 1. - start;
+	private static final double start = 5.95 / 16., end = 1. - start;
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {

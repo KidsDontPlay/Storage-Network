@@ -1,8 +1,12 @@
 package mrriegel.storagenetwork.block;
 
 import mrriegel.limelib.block.CommonBlockContainer;
+import mrriegel.limelib.helper.StackHelper;
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.Registry;
+import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,10 +31,18 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if(!worldIn.isRemote){
-            TileNetworkCore tile = (TileNetworkCore) worldIn.getTileEntity(pos);
-            tile.initializeNetwork();
-        }
+		if (!worldIn.isRemote) {
+			for (EnumFacing face : EnumFacing.VALUES) {
+				if (worldIn.getTileEntity(pos.offset(face)) instanceof INetworkPart && ((INetworkPart) worldIn.getTileEntity(pos.offset(face))).getNetworkCore() != null) {
+					worldIn.setBlockToAir(pos);
+					worldIn.playEvent(2001, pos, Block.getIdFromBlock(Registry.networkCore));
+					StackHelper.spawnItemStack(worldIn, pos, new ItemStack(Registry.networkCore));
+					return;
+				}
+			}
+			TileNetworkCore tile = (TileNetworkCore) worldIn.getTileEntity(pos);
+			tile.initializeNetwork();
+		}
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 

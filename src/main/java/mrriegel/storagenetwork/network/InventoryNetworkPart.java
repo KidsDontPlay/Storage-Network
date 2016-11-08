@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.network;
 
 import mrriegel.limelib.util.GlobalBlockPos;
+import mrriegel.storagenetwork.tile.TileNetworkCore;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;

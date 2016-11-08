@@ -23,29 +23,5 @@
                     "texture" : "#connect"
                 }
             }
-        }, {
-            "__comment" : "plate", 
-            "from" : [12, 15.9, 12], 
-            "to" : [4, 13, 4], 
-            "faces" : {
-                "down" : {
-                    "texture" : "#connect"
-                }, 
-                "up" : {
-                    "texture" : "#connect"
-                }, 
-                "north" : {
-                    "texture" : "#connect"
-                }, 
-                "south" : {
-                    "texture" : "#connect"
-                }, 
-                "west" : {
-                    "texture" : "#connect"
-                }, 
-                "east" : {
-                    "texture" : "#connect"
-                }
-            }
         }]
 }

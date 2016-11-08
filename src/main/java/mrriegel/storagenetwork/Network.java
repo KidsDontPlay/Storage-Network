@@ -4,6 +4,7 @@ import java.util.Set;
 
 import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.tile.INetworkPart;
+import mrriegel.storagenetwork.tile.TileNetworkCore;
 
 import com.google.common.collect.Sets;
 
@@ -17,6 +18,12 @@ public class Network {
 
     public void addPart(INetworkPart part){
    		networkParts.add(part);
+   		part.setNetworkCore((TileNetworkCore) corePosition.getTile(null));
+    }
+    
+    public void removePart(INetworkPart part){
+   		networkParts.remove(part);
+   		part.setNetworkCore(null);
     }
 
     @Override
