@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
@@ -59,6 +60,8 @@ public class StorageNetwork {
 
 	@SubscribeEvent
 	public void place(NeighborNotifyEvent event) {
+		if (!event.getWorld().isAirBlock(event.getPos()) && !event.getState().getBlock().hasTileEntity(event.getState()))
+			return;
 		if (event.getWorld().getTileEntity(event.getPos()) instanceof INetworkPart) {
 			int tiles = 0;
 			INetworkPart part = null;
@@ -66,7 +69,7 @@ public class StorageNetwork {
 				BlockPos neighbor = event.getPos().offset(face);
 				if (event.getWorld().getTileEntity(neighbor) != null) {
 					tiles++;
-					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart)
+					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart && ((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNeighborFaces().contains(face.getOpposite()))
 						part = (INetworkPart) event.getWorld().getTileEntity(neighbor);
 				}
 			}
@@ -78,10 +81,13 @@ public class StorageNetwork {
 		for (EnumFacing face : event.getNotifiedSides()) {
 			BlockPos neighbor = event.getPos().offset(face);
 			TileEntity tile = event.getWorld().getTileEntity(neighbor);
-			if (tile instanceof INetworkPart && ((INetworkPart) tile).getNetworkCore() != null)
+			if (tile instanceof INetworkPart && ((INetworkPart) tile).getNetworkCore() != null && ((INetworkPart) tile).getNeighborFaces().contains(face.getOpposite())) {
 				((INetworkPart) tile).getNetworkCore().markForNetworkInit();
-			else if (tile instanceof TileNetworkCore)
+				BlockNetworkCable.releaseNetworkParts(event.getWorld(), tile.getPos(), ((INetworkPart) tile).getNetworkCore().getPos());
+			} else if (tile instanceof TileNetworkCore) {
 				((TileNetworkCore) tile).markForNetworkInit();
+				BlockNetworkCable.releaseNetworkParts(event.getWorld(), tile.getPos(), tile.getPos());
+			}
 		}
 	}
 

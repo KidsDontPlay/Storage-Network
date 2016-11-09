@@ -4,7 +4,7 @@ import mrriegel.limelib.tile.CommonTile;
 import mrriegel.limelib.util.GlobalBlockPos;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileNetworkPart extends CommonTile implements INetworkPart {
+public abstract class TileNetworkPart extends CommonTile implements INetworkPart {
 
 	protected GlobalBlockPos corePos;
 
@@ -16,7 +16,11 @@ public class TileNetworkPart extends CommonTile implements INetworkPart {
 	@Override
 	public TileNetworkCore getNetworkCore() {
 		if (corePos != null)
-			return (TileNetworkCore) corePos.getTile(worldObj);
+			if (corePos.getTile(worldObj) instanceof TileNetworkCore)
+				return (TileNetworkCore) corePos.getTile(worldObj);
+			else {
+				setNetworkCore(null);
+			}
 		return null;
 	}
 
@@ -25,7 +29,7 @@ public class TileNetworkPart extends CommonTile implements INetworkPart {
 		if (core == null)
 			corePos = null;
 		else
-			corePos = new GlobalBlockPos(core.getPos(), core.getWorld().provider.getDimension());
+			corePos = new GlobalBlockPos(core.getPos(), core.getWorld());
 		markDirty();
 	}
 

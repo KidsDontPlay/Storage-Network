@@ -10,20 +10,17 @@ import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.Network;
 import mrriegel.storagenetwork.Registry;
-import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.network.InventoryNetworkPart;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
  * @author canitzp
@@ -44,15 +41,18 @@ public class TileNetworkCore extends CommonTile implements ITickable,IEnergyRece
 	private void runThroughNetwork(BlockPos pos){
 		for (EnumFacing facing : EnumFacing.values()) {
 			BlockPos searchPos = pos.offset(facing);
-			if(worldObj.getTileEntity(pos) instanceof TileNetworkCable&&!((TileNetworkCable)worldObj.getTileEntity(pos)).getValidSides().get(facing))
+			if (worldObj.getTileEntity(pos) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(pos)).getNeighborFaces().contains(facing))
+				continue;
+			if (worldObj.getTileEntity(searchPos) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(searchPos)).getNeighborFaces().contains(facing.getOpposite()))
 				continue;
 			if (!getWorld().isAirBlock(searchPos)) {
 				TileEntity tile = getWorld().getTileEntity(searchPos);
 				if (tile != null) {
-					if(tile instanceof TileNetworkCore&&!tile.getPos().equals(this.pos)){
+					if (tile instanceof TileNetworkCore && !tile.getPos().equals(this.pos)) {
 						worldObj.setBlockToAir(searchPos);
 						worldObj.playEvent(2001, searchPos, Block.getIdFromBlock(Registry.networkCore));
 						StackHelper.spawnItemStack(worldObj, searchPos, new ItemStack(Registry.networkCore));
+						markForNetworkInit();
 					} else if (tile instanceof INetworkPart && !network.networkParts.contains(tile)) {
 						network.addPart((INetworkPart) tile);
 					} else if (InvHelper.hasItemHandler(tile, facing.getOpposite()) && !network.networkParts.contains(InvHelper.getItemHandler(tile, facing.getOpposite()))) {
@@ -68,18 +68,16 @@ public class TileNetworkCore extends CommonTile implements ITickable,IEnergyRece
 	public void markForNetworkInit(){
 		needsUpdate=true;
 	}
-	
-	@Override
-	public boolean openGUI(EntityPlayerMP player) {
-//		player.openGui(StorageNetwork.instance, GuiID.NETWORK_CORE.ordinal(), worldObj, getX(), getY(), getZ());
-		return false;
-	}
 
 	@Override
 	public void update() {
 		if ((needsUpdate || network == null) && onServer()) {
-			initializeNetwork();
 			needsUpdate = false;
+			try {
+				initializeNetwork();
+			} catch (StackOverflowError error) {
+				System.out.println("crash");
+			}
 		}
 	}
 
@@ -97,12 +95,12 @@ public class TileNetworkCore extends CommonTile implements ITickable,IEnergyRece
 	
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return (ModConfig.needsEnergy&&capability == CapabilityEnergy.ENERGY) || super.hasCapability(capability, facing);
+		return (ModConfig.needsEnergy && capability == CapabilityEnergy.ENERGY) || super.hasCapability(capability, facing);
 	}
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (ModConfig.needsEnergy&&capability == CapabilityEnergy.ENERGY)
+		if (ModConfig.needsEnergy && capability == CapabilityEnergy.ENERGY)
 			return (T) energy;
 		return super.getCapability(capability, facing);
 	}

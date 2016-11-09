@@ -1,6 +1,9 @@
 package mrriegel.storagenetwork.block;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.InvHelper;
@@ -15,7 +18,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -24,15 +26,19 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
@@ -47,7 +53,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 
 	public BlockNetworkCable() {
 		super(Material.IRON, "block_network_cable");
-		setHardness(1.0F);
+		setHardness(0.3F);
 		setCreativeTab(CreativeTab.TAB);
 		map.put(EnumFacing.NORTH, NORTH);
 		map.put(EnumFacing.SOUTH, SOUTH);
@@ -132,26 +138,45 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
+//			if (!new ItemStack(Items.STICK).isItemEqual(player.inventory.getCurrentItem()) && ((TileNetworkCable) world.getTileEntity(pos)).getNetworkCore() != null) {
+//				BlockPos core = ((TileNetworkCable) world.getTileEntity(pos)).getNetworkCore().getPos();
+//				world.setBlockState(core.up(), Blocks.STAINED_GLASS.getDefaultState());
+//			}
 			EnumFacing f = getFace(hitX, hitY, hitZ);
 			TileNetworkCable tile = (TileNetworkCable) world.getTileEntity(pos);
-			if (tile != null && new ItemStack(Items.STICK).isItemEqual(player.inventory.getCurrentItem())) {
+			
+			if (tile != null && heldItem!=null&&Ints.asList(OreDictionary.getOreIDs(heldItem)).contains(OreDictionary.getOreID("stickWood"))) {
 				if (f != null) {
 					tile.setSide(f, false);
+					player.addChatMessage(new TextComponentString("Cable disconnected."));
 					TileEntity newTile = world.getTileEntity(pos.offset(f));
 					if (newTile != null && newTile instanceof TileNetworkCable) {
 						((TileNetworkCable) newTile).setSide(f.getOpposite(), false);
-						if (((TileNetworkCable) newTile).getNetworkCore() != null)
+						if (((TileNetworkCable) newTile).getNetworkCore() != null) {
 							((TileNetworkCable) newTile).getNetworkCore().markForNetworkInit();
+							releaseNetworkParts(world, newTile.getPos(), ((TileNetworkCable) newTile).getNetworkCore().getPos());
+						}
+						if (tile.getNetworkCore() != null) {
+							tile.getNetworkCore().markForNetworkInit();
+							releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
+						}
 					}
 					tile.markForSync();
 				} else {
 					if (state.getValue(map.get(side)) == Connect.NULL && !tile.isSideValid(side)) {
 						tile.setSide(side, true);
+						player.addChatMessage(new TextComponentString("Cable connected."));
 						TileEntity newTile = world.getTileEntity(pos.offset(side));
 						if (newTile != null && newTile instanceof TileNetworkCable) {
 							((TileNetworkCable) newTile).setSide(side.getOpposite(), true);
-							if (((TileNetworkCable) newTile).getNetworkCore() != null)
+							if (((TileNetworkCable) newTile).getNetworkCore() != null) {
 								((TileNetworkCable) newTile).getNetworkCore().markForNetworkInit();
+								releaseNetworkParts(world, newTile.getPos(), ((TileNetworkCable) newTile).getNetworkCore().getPos());
+							}
+							if (tile.getNetworkCore() != null) {
+								tile.getNetworkCore().markForNetworkInit();
+								releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
+							}
 						}
 						tile.markForSync();
 					}
@@ -159,6 +184,24 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 			}
 		}
 		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+	}
+	
+	public static void releaseNetworkParts(World world, BlockPos pos, final BlockPos core) {
+		TileEntity current = world.getTileEntity(pos);
+		if (current instanceof INetworkPart && ((INetworkPart) current).getNetworkCore() != null &&((INetworkPart)current).getNetworkCore().getPos().equals(core)) {
+			INetworkPart part = (INetworkPart) current;
+			part.setNetworkCore(null);
+		}
+		Set<EnumFacing> f = (world.getTileEntity(pos) instanceof INetworkPart) ? ((INetworkPart) world.getTileEntity(pos)).getNeighborFaces() : Sets.newHashSet(EnumFacing.VALUES);
+		for (EnumFacing face : f) {
+			BlockPos nei = pos.offset(face);
+			if (world.getTileEntity(nei) instanceof INetworkPart) {
+				INetworkPart part = (INetworkPart) world.getTileEntity(nei);
+				if (part.getNetworkCore() != null) {
+					releaseNetworkParts(world, nei, core);
+				}
+			}
+		}
 	}
 
 	protected EnumFacing getFace(float hitX, float hitY, float hitZ) {
@@ -184,7 +227,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		return foo > .25f && foo < .25f;
 	}
 
-	private static final double start = 5.95 / 16., end = 1. - start;
+	private static final double start = 6 / 16., end = 1. - start;
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {

@@ -1,9 +1,13 @@
 package mrriegel.storagenetwork.tile;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
+
+import com.google.common.collect.Sets;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -54,6 +58,16 @@ public class TileNetworkCable extends TileNetworkPart{
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		super.onDataPacket(net, pkt);
 		worldObj.markBlockRangeForRenderUpdate(pos.add(1, 1, 1), pos.add(-1, -1, -1));
+	}
+
+	@Override
+	public EnumSet<EnumFacing> getNeighborFaces() {
+		Set<EnumFacing> set=Sets.newHashSet();
+		for (EnumFacing f : EnumFacing.VALUES) {
+			if(validSides.get(f))
+				set.add(f);
+		}
+		return EnumSet.<EnumFacing>copyOf(set);
 	}
 	
 

@@ -15,7 +15,15 @@
                 
             }], 
         "inventory" : [{
-                
+                "submodel" : {
+                    "s1" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90
+                    },"s2" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 270
+                    }
+                }
             }], 
         "north" : {
             "cable" : {
