@@ -9,9 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
-import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -28,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  * @author canitzp
  */
 @Mod(modid = StorageNetwork.MODID, name = StorageNetwork.MODNAME, version = StorageNetwork.MODVERSION, dependencies = "required-after:limelib@[1.2.0,)")
-public class StorageNetwork implements IGuiHandler {
+public class StorageNetwork {
 
 	public static final String MODID = "storagenetwork";
 	public static final String MODNAME = "StorageNetwork";
@@ -55,7 +53,7 @@ public class StorageNetwork implements IGuiHandler {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, this);
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -85,16 +83,6 @@ public class StorageNetwork implements IGuiHandler {
 			else if (tile instanceof TileNetworkCore)
 				((TileNetworkCore) tile).markForNetworkInit();
 		}
-	}
-	
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		return null;
-	}
-
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		return null;
 	}
 
 }
