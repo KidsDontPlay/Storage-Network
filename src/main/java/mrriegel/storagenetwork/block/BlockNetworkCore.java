@@ -1,10 +1,6 @@
 package mrriegel.storagenetwork.block;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
-
-import com.google.common.collect.Lists;
 
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.StackHelper;
@@ -22,7 +18,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -33,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 /**
  * @author canitzp
@@ -85,6 +79,7 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(!worldIn.isRemote){
+        	System.out.println("Network size: "+((TileNetworkCore)worldIn.getTileEntity(pos)).network.networkParts.size());
             System.out.println(((TileNetworkCore)worldIn.getTileEntity(pos)).network);
             ((TileNetworkCore)worldIn.getTileEntity(pos)).sync();
             worldIn.setBlockState(pos, state.withProperty(ACTIVE, !state.getValue(ACTIVE)), 2);

@@ -2,7 +2,7 @@
     "elements" : [{
             "__comment" : "plate", 
             "from" : [4, 13, 4], 
-            "to" : [12, 15.9, 12], 
+            "to" : [12, 16, 12], 
             "faces" : {
                 "down" : {
                     "texture" : "#connect"

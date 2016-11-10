@@ -7,16 +7,16 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Sets;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 
+import com.google.common.collect.Sets;
+
 public class TileNetworkCable extends TileNetworkPart{
 	
-	private Map<EnumFacing, Boolean> validSides = new HashMap<>();
+	protected Map<EnumFacing, Boolean> validSides = new HashMap<>();
 	
 	public TileNetworkCable(){
 		for (EnumFacing f : EnumFacing.VALUES) {
@@ -30,12 +30,12 @@ public class TileNetworkCable extends TileNetworkPart{
 	}
 
 	public void setSide(EnumFacing side, boolean state){
-		this.validSides.put(side, state);
+		this.getValidSides().put(side, state);
 		this.markForSync();
 	}
 
 	public boolean isSideValid(EnumFacing side){
-		return this.validSides.get(side);
+		return this.getValidSides().get(side);
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class TileNetworkCable extends TileNetworkPart{
 	public EnumSet<EnumFacing> getNeighborFaces() {
 		Set<EnumFacing> set=Sets.newHashSet();
 		for (EnumFacing f : EnumFacing.VALUES) {
-			if(validSides.get(f))
+			if(getValidSides().get(f))
 				set.add(f);
 		}
 		return EnumSet.<EnumFacing>copyOf(set);

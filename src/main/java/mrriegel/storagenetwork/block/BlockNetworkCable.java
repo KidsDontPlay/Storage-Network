@@ -1,12 +1,13 @@
 package mrriegel.storagenetwork.block;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.InvHelper;
+import mrriegel.limelib.tile.CommonTile;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
@@ -29,18 +30,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-import javax.annotation.Nullable;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
+public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 
 	public static final IProperty<Connect> NORTH = PropertyEnum.<Connect> create("north", Connect.class);
 	public static final IProperty<Connect> SOUTH = PropertyEnum.<Connect> create("south", Connect.class);
@@ -49,12 +48,13 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 	public static final IProperty<Connect> UP = PropertyEnum.<Connect> create("up", Connect.class);
 	public static final IProperty<Connect> DOWN = PropertyEnum.<Connect> create("down", Connect.class);
 
-	private Map<EnumFacing, IProperty<Connect>> map = Maps.newHashMap();
+	protected BiMap<EnumFacing, IProperty<Connect>> map = HashBiMap.<EnumFacing, IProperty<Connect>>create(6);
 
-	public BlockNetworkCable() {
-		super(Material.IRON, "block_network_cable");
+	public BlockNetworkCable(String name) {
+		super(Material.IRON, name);
 		setHardness(0.3F);
 		setCreativeTab(CreativeTab.TAB);
+		setDefaultState(getDefaultState().withProperty(NORTH, Connect.NULL).withProperty(SOUTH, Connect.NULL).withProperty(WEST, Connect.NULL).withProperty(EAST, Connect.NULL).withProperty(UP,Connect.NULL).withProperty(DOWN, Connect.NULL));
 		map.put(EnumFacing.NORTH, NORTH);
 		map.put(EnumFacing.SOUTH, SOUTH);
 		map.put(EnumFacing.WEST, WEST);
@@ -121,8 +121,8 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		TileEntity tileSide = worldIn.getTileEntity(pos.offset(facing));
 		if (isNetworkPart(tileSide) && tile.isSideValid(facing) && tileSide != null && (!(tileSide instanceof TileNetworkCable)||((TileNetworkCable) tileSide).isSideValid(facing.getOpposite())))
 			return Connect.CABLE;
-		else if (tile.isSideValid(facing) && validTile(worldIn, pos.offset(facing), facing.getOpposite()))
-			return Connect.TILE;
+//		else if (tile.isSideValid(facing) && validTile(worldIn, pos.offset(facing), facing.getOpposite()))
+//			return Connect.TILE;
 		return Connect.NULL;
 	}
 
@@ -142,7 +142,7 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 //				BlockPos core = ((TileNetworkCable) world.getTileEntity(pos)).getNetworkCore().getPos();
 //				world.setBlockState(core.up(), Blocks.STAINED_GLASS.getDefaultState());
 //			}
-			EnumFacing f = getFace(hitX, hitY, hitZ);
+			EnumFacing f = getFace(hitX, hitY, hitZ, state);
 			TileNetworkCable tile = (TileNetworkCable) world.getTileEntity(pos);
 			
 			if (tile != null && heldItem!=null&&Ints.asList(OreDictionary.getOreIDs(heldItem)).contains(OreDictionary.getOreID("stickWood"))) {
@@ -185,26 +185,34 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		}
 		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
 	}
-	
+
+	private static boolean TEST_RECURSIVE = true;
+
 	public static void releaseNetworkParts(World world, BlockPos pos, final BlockPos core) {
-		TileEntity current = world.getTileEntity(pos);
-		if (current instanceof INetworkPart && ((INetworkPart) current).getNetworkCore() != null &&((INetworkPart)current).getNetworkCore().getPos().equals(core)) {
-			INetworkPart part = (INetworkPart) current;
-			part.setNetworkCore(null);
-		}
-		Set<EnumFacing> f = (world.getTileEntity(pos) instanceof INetworkPart) ? ((INetworkPart) world.getTileEntity(pos)).getNeighborFaces() : Sets.newHashSet(EnumFacing.VALUES);
-		for (EnumFacing face : f) {
-			BlockPos nei = pos.offset(face);
-			if (world.getTileEntity(nei) instanceof INetworkPart) {
-				INetworkPart part = (INetworkPart) world.getTileEntity(nei);
-				if (part.getNetworkCore() != null) {
-					releaseNetworkParts(world, nei, core);
+		if (TEST_RECURSIVE || core == null || !(world.getTileEntity(core) instanceof TileNetworkCore)) {
+			TileEntity current = world.getTileEntity(pos);
+			if (current instanceof INetworkPart && ((INetworkPart) current).getNetworkCore() != null && ((INetworkPart) current).getNetworkCore().getPos().equals(core)) {
+				INetworkPart part = (INetworkPart) current;
+				part.setNetworkCore(null);
+			}
+			Set<EnumFacing> f = (world.getTileEntity(pos) instanceof INetworkPart) ? ((INetworkPart) world.getTileEntity(pos)).getNeighborFaces() : Sets.newHashSet(EnumFacing.VALUES);
+			for (EnumFacing face : f) {
+				BlockPos nei = pos.offset(face);
+				if (world.getTileEntity(nei) instanceof INetworkPart) {
+					INetworkPart part = (INetworkPart) world.getTileEntity(nei);
+					if (part.getNetworkCore() != null) {
+						releaseNetworkParts(world, nei, core);
+					}
 				}
+			}
+		} else {
+			for (INetworkPart part : ((TileNetworkCore) world.getTileEntity(core)).network.networkParts) {
+				part.setNetworkCore(null);
 			}
 		}
 	}
 
-	protected EnumFacing getFace(float hitX, float hitY, float hitZ) {
+	protected EnumFacing getFace(float hitX, float hitY, float hitZ,IBlockState state) {
 		if (!center(hitY) && !center(hitZ))
 			if (hitX < .25F)
 				return EnumFacing.WEST;
@@ -227,35 +235,41 @@ public class BlockNetworkCable extends CommonBlockContainer<TileNetworkCable> {
 		return foo > .25f && foo < .25f;
 	}
 
-	private static final double start = 6 / 16., end = 1. - start;
+	protected double getStart() {
+		return 6. / 16.;
+	}
+
+	protected double getEnd() {
+		return 1. - getStart();
+	}
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
 		state = getActualState(state, worldIn, pos);
-		addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(start, start, start, end, end, end));
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(getStart(), getStart(), getStart(),getEnd(),getEnd(),getEnd()));
 		if (state.getValue(DOWN) != Connect.NULL)
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(start, 0.0, start, end, start, end));
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(getStart(), 0.0, getStart(),getEnd(), getStart(),getEnd()));
 		if (state.getValue(UP) != Connect.NULL)
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(start, end, start, end, 1, end));
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(getStart(),getEnd(), getStart(),getEnd(), 1,getEnd()));
 		if (state.getValue(WEST) != Connect.NULL)
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0, start, start, start, end, end));
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.0, getStart(), getStart(), getStart(),getEnd(),getEnd()));
 		if (state.getValue(EAST) != Connect.NULL)
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(end, start, start, 1, end, end));
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(getEnd(), getStart(), getStart(), 1,getEnd(),getEnd()));
 		if (state.getValue(NORTH) != Connect.NULL)
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(start, start, 0, end, end, start));
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(getStart(), getStart(), 0,getEnd(),getEnd(), getStart()));
 		if (state.getValue(SOUTH) != Connect.NULL)
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(start, start, end, end, end, 1));
+			addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(getStart(), getStart(),getEnd(),getEnd(),getEnd(), 1));
 	}
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		state = getActualState(state, source, pos);
-		double f = start;
-		double f1 = end;
-		double f2 = start;
-		double f3 = end;
-		double f4 = start;
-		double f5 = end;
+		double f = getStart();
+		double f1 =getEnd();
+		double f2 = getStart();
+		double f3 =getEnd();
+		double f4 = getStart();
+		double f5 =getEnd();
 		if (state.getValue(NORTH) != Connect.NULL)
 			f2 = 0;
 		if (state.getValue(SOUTH) != Connect.NULL)

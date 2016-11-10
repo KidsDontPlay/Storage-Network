@@ -4,11 +4,10 @@ import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +16,6 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +44,7 @@ public class StorageNetwork {
 		ModConfig.refreshConfig(event.getSuggestedConfigurationFile());
 		logger.info("[PreInitialize] Loading Blocks and Items");
 		Registry.preInit();
-		if(event.getSide().isClient()){
+		if (event.getSide().isClient()) {
 			logger.info("[PreInitialize] Registering Renderer");
 			Registry.preInitClient();
 		}
@@ -56,6 +54,8 @@ public class StorageNetwork {
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		MinecraftForge.EVENT_BUS.register(this);
+		if (event.getSide().isClient()) {
+		}
 	}
 
 	@SubscribeEvent
@@ -63,18 +63,28 @@ public class StorageNetwork {
 		if (!event.getWorld().isAirBlock(event.getPos()) && !event.getState().getBlock().hasTileEntity(event.getState()))
 			return;
 		if (event.getWorld().getTileEntity(event.getPos()) instanceof INetworkPart) {
-			int tiles = 0;
-			INetworkPart part = null;
+			boolean invalid = false;
+			TileNetworkCore core = null;
 			for (EnumFacing face : event.getNotifiedSides()) {
 				BlockPos neighbor = event.getPos().offset(face);
 				if (event.getWorld().getTileEntity(neighbor) != null) {
-					tiles++;
-					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart && ((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNeighborFaces().contains(face.getOpposite()))
-						part = (INetworkPart) event.getWorld().getTileEntity(neighbor);
+					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart) {
+						if (((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNeighborFaces().contains(face.getOpposite()))
+							if (((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNetworkCore() != null) {
+								if (core == null) {
+									core = ((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNetworkCore();
+								} else {
+									if (!core.getPos().equals(((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNetworkCore().getPos()))
+										invalid = true;
+								}
+							} else
+								invalid = true;
+					} else
+						invalid = true;
 				}
 			}
-			if (tiles == 1 && part != null && part.getNetworkCore() != null) {
-				part.getNetworkCore().network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
+			if (!invalid && core != null) {
+				core.network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
 				return;
 			}
 		}

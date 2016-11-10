@@ -10,6 +10,7 @@ import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.Network;
 import mrriegel.storagenetwork.Registry;
+import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.network.InventoryNetworkPart;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 
@@ -66,21 +66,24 @@ public class TileNetworkCore extends CommonTile implements ITickable,IEnergyRece
 	}
 	
 	public void markForNetworkInit(){
-		needsUpdate=true;
+		needsUpdate = true;
 	}
 
 	@Override
 	public void update() {
+		if (worldObj.getTotalWorldTime()+(pos.hashCode()%80) % (network == null ? 80 : 300) == 0) {
+			needsUpdate = true;
+		}
 		if ((needsUpdate || network == null) && onServer()) {
 			needsUpdate = false;
 			try {
 				initializeNetwork();
 			} catch (StackOverflowError error) {
-				System.out.println("crash");
+				StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 			}
 		}
 	}
-
+	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		energy.setEnergyStored(NBTHelper.getInt(compound, "energy"));
