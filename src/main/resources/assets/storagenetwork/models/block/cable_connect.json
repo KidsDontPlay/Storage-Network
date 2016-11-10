@@ -5,22 +5,28 @@
             "to" : [12, 16, 12], 
             "faces" : {
                 "down" : {
-                    "texture" : "#connect"
+                    "texture" : "#connect", 
+                    "tintindex" : 0
                 }, 
                 "up" : {
-                    "texture" : "#connect"
+                    "texture" : "#connect", 
+                    "tintindex" : 0
                 }, 
                 "north" : {
-                    "texture" : "#connect"
+                    "texture" : "#connect", 
+                    "tintindex" : 0
                 }, 
                 "south" : {
-                    "texture" : "#connect"
+                    "texture" : "#connect", 
+                    "tintindex" : 0
                 }, 
                 "west" : {
-                    "texture" : "#connect"
+                    "texture" : "#connect", 
+                    "tintindex" : 0
                 }, 
                 "east" : {
-                    "texture" : "#connect"
+                    "texture" : "#connect", 
+                    "tintindex" : 0
                 }
             }
         }]

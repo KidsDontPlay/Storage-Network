@@ -12,16 +12,19 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
@@ -78,6 +81,10 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
 		return false;
 	}
+	
+	public static boolean renderCover(IBlockState state){
+		return true;
+	}
 
 	@Override
 	public boolean isFullCube(IBlockState state) {
@@ -110,6 +117,12 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 	}
 
 	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+		worldIn.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
+	}
+
+	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		return state.withProperty(NORTH, getConnect(worldIn, pos, EnumFacing.NORTH)).withProperty(SOUTH, getConnect(worldIn, pos, EnumFacing.SOUTH)).withProperty(WEST, getConnect(worldIn, pos, EnumFacing.WEST)).withProperty(EAST, getConnect(worldIn, pos, EnumFacing.EAST)).withProperty(UP, getConnect(worldIn, pos, EnumFacing.UP)).withProperty(DOWN, getConnect(worldIn, pos, EnumFacing.DOWN));
 	}
@@ -128,11 +141,6 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 
 	private boolean isNetworkPart(TileEntity tile) {
 		return tile instanceof INetworkPart||tile instanceof TileNetworkCore;
-	}
-
-	protected boolean validTile(IBlockAccess worldIn, BlockPos pos, EnumFacing facing) {
-		//TODO what is a valid tile? itemhandler is just a placeholder
-		return InvHelper.hasItemHandler(worldIn, pos, facing);
 	}
 
 	@Override
@@ -186,6 +194,12 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
 	}
 
+	public static boolean isValidBlock(IBlockState state) {
+
+		final Block block = state.getBlock();
+		return (block.isOpaqueCube(state) || block.getRenderType(state) == EnumBlockRenderType.MODEL) && !block.hasTileEntity(state) && block.getMaterial(state) != Material.AIR;
+	}
+	
 	private static boolean TEST_RECURSIVE = true;
 
 	public static void releaseNetworkParts(World world, BlockPos pos, final BlockPos core) {

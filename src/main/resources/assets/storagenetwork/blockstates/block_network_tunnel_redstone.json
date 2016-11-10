@@ -19,10 +19,12 @@
                     "s1" : {
                         "model" : "storagenetwork:cable_pin", 
                         "x" : 90
-                    }, 
-                    "s2" : {
+                    },"s2" : {
                         "model" : "storagenetwork:cable_pin", 
                         "x" : 270
+                    },"s3" : {
+                        "model" : "storagenetwork:cable_connect", 
+                        "x" : 90
                     }
                 }
             }], 
@@ -35,10 +37,19 @@
                     }
                 }
             }, 
-            "null" : {
-                
-            }, 
             "tile" : {
+                "submodel" : {
+                    "s1" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90
+                    }, 
+                    "s1s" : {
+                        "model" : "storagenetwork:cable_connect", 
+                        "x" : 90
+                    }
+                }
+            }, 
+            "null" : {
                 
             }
         }, 
@@ -51,10 +62,19 @@
                     }
                 }
             }, 
-            "null" : {
-                
-            }, 
             "tile" : {
+                "submodel" : {
+                    "s2" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 270
+                    }, 
+                    "s2s" : {
+                        "model" : "storagenetwork:cable_connect", 
+                        "x" : 270
+                    }
+                }
+            }, 
+            "null" : {
                 
             }
         }, 
@@ -68,10 +88,21 @@
                     }
                 }
             }, 
-            "null" : {
-                
-            }, 
             "tile" : {
+                "submodel" : {
+                    "s3" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90, 
+                        "y" : 270
+                    }, 
+                    "s3s" : {
+                        "model" : "storagenetwork:cable_connect", 
+                        "x" : 90, 
+                        "y" : 270
+                    }
+                }
+            }, 
+            "null" : {
                 
             }
         }, 
@@ -85,10 +116,21 @@
                     }
                 }
             }, 
-            "null" : {
-                
-            }, 
             "tile" : {
+                "submodel" : {
+                    "s4" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90, 
+                        "y" : 90
+                    }, 
+                    "s4s" : {
+                        "model" : "storagenetwork:cable_connect", 
+                        "x" : 90, 
+                        "y" : 90
+                    }
+                }
+            }, 
+            "null" : {
                 
             }
         }, 
@@ -100,10 +142,17 @@
                     }
                 }
             }, 
-            "null" : {
-                
-            }, 
             "tile" : {
+                "submodel" : {
+                    "s5" : {
+                        "model" : "storagenetwork:cable_pin"
+                    }, 
+                    "s5s" : {
+                        "model" : "storagenetwork:cable_connect"
+                    }
+                }
+            }, 
+            "null" : {
                 
             }
         }, 
@@ -116,10 +165,19 @@
                     }
                 }
             }, 
-            "null" : {
-                
-            }, 
             "tile" : {
+                "submodel" : {
+                    "s6" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 180
+                    }, 
+                    "s6s" : {
+                        "model" : "storagenetwork:cable_connect", 
+                        "x" : 180
+                    }
+                }
+            }, 
+            "null" : {
                 
             }
         }
