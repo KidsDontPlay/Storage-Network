@@ -6,7 +6,8 @@
             "particle" : "storagenetwork:blocks/network_cable", 
             "center" : "storagenetwork:blocks/network_cable", 
             "pin" : "storagenetwork:blocks/network_cable", 
-            "connect" : "storagenetwork:blocks/network_cable_connect"
+            "connect" : "storagenetwork:blocks/connect", 
+            "connect_side" : "blocks/hopper_inside"
         }, 
         "transform" : "forge:default-block"
     }, 
@@ -19,11 +20,13 @@
                     "s1" : {
                         "model" : "storagenetwork:cable_pin", 
                         "x" : 90
-                    },"s2" : {
+                    }, 
+                    "s2" : {
                         "model" : "storagenetwork:cable_pin", 
                         "x" : 270
-                    },"s3" : {
-                        "model" : "storagenetwork:cable_connect", 
+                    }, 
+                    "s3" : {
+                        "model" : "storagenetwork:cable_export", 
                         "x" : 90
                     }
                 }
@@ -40,11 +43,11 @@
             "tile" : {
                 "submodel" : {
                     "s1" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 90
                     }, 
                     "s1s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_export", 
                         "x" : 90
                     }
                 }
@@ -65,11 +68,11 @@
             "tile" : {
                 "submodel" : {
                     "s2" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 270
                     }, 
                     "s2s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_export", 
                         "x" : 270
                     }
                 }
@@ -91,12 +94,12 @@
             "tile" : {
                 "submodel" : {
                     "s3" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 90, 
                         "y" : 270
                     }, 
                     "s3s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_export", 
                         "x" : 90, 
                         "y" : 270
                     }
@@ -119,12 +122,12 @@
             "tile" : {
                 "submodel" : {
                     "s4" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 90, 
                         "y" : 90
                     }, 
                     "s4s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_export", 
                         "x" : 90, 
                         "y" : 90
                     }
@@ -145,10 +148,10 @@
             "tile" : {
                 "submodel" : {
                     "s5" : {
-                        "model" : "storagenetwork:cable_pin"
+                        "model" : "storagenetwork:cable_pin_connect"
                     }, 
                     "s5s" : {
-                        "model" : "storagenetwork:cable_connect"
+                        "model" : "storagenetwork:cable_export"
                     }
                 }
             }, 
@@ -168,11 +171,11 @@
             "tile" : {
                 "submodel" : {
                     "s6" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 180
                     }, 
                     "s6s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_export", 
                         "x" : 180
                     }
                 }

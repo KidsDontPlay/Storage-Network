@@ -40,7 +40,7 @@
             "tile" : {
                 "submodel" : {
                     "s1" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 90
                     }, 
                     "s1s" : {
@@ -65,7 +65,7 @@
             "tile" : {
                 "submodel" : {
                     "s2" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 270
                     }, 
                     "s2s" : {
@@ -91,7 +91,7 @@
             "tile" : {
                 "submodel" : {
                     "s3" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 90, 
                         "y" : 270
                     }, 
@@ -119,7 +119,7 @@
             "tile" : {
                 "submodel" : {
                     "s4" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 90, 
                         "y" : 90
                     }, 
@@ -145,7 +145,7 @@
             "tile" : {
                 "submodel" : {
                     "s5" : {
-                        "model" : "storagenetwork:cable_pin"
+                        "model" : "storagenetwork:cable_pin_connect"
                     }, 
                     "s5s" : {
                         "model" : "storagenetwork:cable_connect"
@@ -168,7 +168,7 @@
             "tile" : {
                 "submodel" : {
                     "s6" : {
-                        "model" : "storagenetwork:cable_pin", 
+                        "model" : "storagenetwork:cable_pin_connect", 
                         "x" : 180
                     }, 
                     "s6s" : {

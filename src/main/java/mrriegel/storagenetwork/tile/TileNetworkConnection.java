@@ -20,7 +20,7 @@ public class TileNetworkConnection<T> extends TileNetworkCable {
 			return null;
 		return getTile().getCapability(capa, tileFace.getOpposite());
 	}
-
+	
 	@Override
 	public Map<EnumFacing, Boolean> getValidSides() {
 		Map<EnumFacing, Boolean> map = super.getValidSides();

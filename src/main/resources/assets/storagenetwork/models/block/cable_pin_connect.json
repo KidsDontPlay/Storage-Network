@@ -1,0 +1,27 @@
+{
+    "elements" : [{
+            "__comment" : "pin", 
+            "from" : [6, 10, 6], 
+            "to" : [10, 13, 10], 
+            "faces" : {
+                "down" : {
+                    "texture" : "#pin"
+                }, 
+                "up" : {
+                    "texture" : "#pin"
+                }, 
+                "north" : {
+                    "texture" : "#pin"
+                }, 
+                "south" : {
+                    "texture" : "#pin"
+                }, 
+                "west" : {
+                    "texture" : "#pin"
+                }, 
+                "east" : {
+                    "texture" : "#pin"
+                }
+            }
+        }]
+}

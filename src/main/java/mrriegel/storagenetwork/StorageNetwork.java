@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.block.BlockNetworkTunnel;
 import mrriegel.storagenetwork.proxy.CommonProxy;
@@ -84,7 +85,7 @@ public class StorageNetwork {
 				@Override
 				public int getColorFromItemstack(ItemStack stack, int tintIndex) {
 					if (stack != null)
-						return ((BlockNetworkTunnel) Block.getBlockFromItem(stack.getItem())).getMode().color;
+						return ColorHelper.brighter(((BlockNetworkTunnel) Block.getBlockFromItem(stack.getItem())).getMode().color, 0.3);
 					return 0;
 				}
 			};
@@ -106,12 +107,13 @@ public class StorageNetwork {
 				BlockPos neighbor = event.getPos().offset(face);
 				if (event.getWorld().getTileEntity(neighbor) != null) {
 					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart) {
-						if (((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNeighborFaces().contains(face.getOpposite()))
-							if (((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNetworkCore() != null) {
+						INetworkPart part=(INetworkPart) event.getWorld().getTileEntity(neighbor);
+						if (part.getNeighborFaces().contains(face.getOpposite()))
+							if (part.getNetworkCore() != null) {
 								if (core == null) {
-									core = ((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNetworkCore();
+									core = part.getNetworkCore();
 								} else {
-									if (!core.getPos().equals(((INetworkPart) event.getWorld().getTileEntity(neighbor)).getNetworkCore().getPos()))
+									if (!core.getPos().equals(part.getNetworkCore().getPos()))
 										invalid = true;
 								}
 							} else

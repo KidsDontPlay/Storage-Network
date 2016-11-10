@@ -6,7 +6,8 @@
             "particle" : "storagenetwork:blocks/network_cable", 
             "center" : "storagenetwork:blocks/network_cable", 
             "pin" : "storagenetwork:blocks/network_cable", 
-            "connect" : "storagenetwork:blocks/network_cable_connect"
+            "connect" : "storagenetwork:blocks/connect", 
+            "connect_side" : "blocks/hopper_inside"
         }, 
         "transform" : "forge:default-block"
     }, 
@@ -19,11 +20,13 @@
                     "s1" : {
                         "model" : "storagenetwork:cable_pin", 
                         "x" : 90
-                    },"s2" : {
+                    }, 
+                    "s2" : {
                         "model" : "storagenetwork:cable_pin", 
                         "x" : 270
-                    },"s3" : {
-                        "model" : "storagenetwork:cable_connect", 
+                    }, 
+                    "s3" : {
+                        "model" : "storagenetwork:cable_import", 
                         "x" : 90
                     }
                 }
@@ -44,7 +47,7 @@
                         "x" : 90
                     }, 
                     "s1s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_import", 
                         "x" : 90
                     }
                 }
@@ -69,7 +72,7 @@
                         "x" : 270
                     }, 
                     "s2s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_import", 
                         "x" : 270
                     }
                 }
@@ -96,7 +99,7 @@
                         "y" : 270
                     }, 
                     "s3s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_import", 
                         "x" : 90, 
                         "y" : 270
                     }
@@ -124,7 +127,7 @@
                         "y" : 90
                     }, 
                     "s4s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_import", 
                         "x" : 90, 
                         "y" : 90
                     }
@@ -148,7 +151,7 @@
                         "model" : "storagenetwork:cable_pin_connect"
                     }, 
                     "s5s" : {
-                        "model" : "storagenetwork:cable_connect"
+                        "model" : "storagenetwork:cable_import"
                     }
                 }
             }, 
@@ -172,7 +175,7 @@
                         "x" : 180
                     }, 
                     "s6s" : {
-                        "model" : "storagenetwork:cable_connect", 
+                        "model" : "storagenetwork:cable_import", 
                         "x" : 180
                     }
                 }

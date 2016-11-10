@@ -1,12 +1,10 @@
 package mrriegel.storagenetwork.block;
 
-import mrriegel.limelib.item.CommonItemBlock;
 import mrriegel.storagenetwork.tile.TileNetworkConnection;
 import mrriegel.storagenetwork.tile.TileNetworkTunnel;
 import mrriegel.storagenetwork.tile.TileNetworkTunnel.Mode;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
