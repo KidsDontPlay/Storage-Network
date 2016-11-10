@@ -77,10 +77,10 @@ public class StorageNetwork {
 					return 0;
 				}
 			};
-			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelE);
-			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelI);
-			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelF);
-			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelR);
+//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelE);
+//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelI);
+//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelF);
+//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelR);
 			IItemColor item = new IItemColor() {
 				@Override
 				public int getColorFromItemstack(ItemStack stack, int tintIndex) {
@@ -89,10 +89,10 @@ public class StorageNetwork {
 					return 0;
 				}
 			};
-			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelE);
-			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelI);
-			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelF);
-			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelR);
+//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelE);
+//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelI);
+//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelF);
+//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelR);
 		}
 	}
 

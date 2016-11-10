@@ -1,0 +1,26 @@
+{
+    "elements" : [{
+            "from" : [2, 13, 2], 
+            "to" : [14, 16, 14], 
+            "faces" : {
+                "down" : {
+                    "texture" : "#connect_back"
+                }, 
+                "up" : {
+                    "texture" : "#connect_front"
+                }, 
+                "north" : {
+                    "texture" : "#connect_side"
+                }, 
+                "south" : {
+                    "texture" : "#connect_side"
+                }, 
+                "west" : {
+                    "texture" : "#connect_side"
+                }, 
+                "east" : {
+                    "texture" : "#connect_side"
+                }
+            }
+        }]
+}
