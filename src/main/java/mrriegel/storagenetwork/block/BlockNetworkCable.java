@@ -6,9 +6,9 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import mrriegel.limelib.block.CommonBlockContainer;
-import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.tile.CommonTile;
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.Enums.Connect;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
@@ -27,7 +27,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -297,22 +296,6 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		if (state.getValue(UP) != Connect.NULL)
 			f5 = 1;
 		return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
-	}
-
-	public enum Connect implements IStringSerializable {
-		NULL("null"),
-		CABLE("cable"),
-		TILE("tile");
-
-		String name;
-		Connect(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
 	}
 
 }

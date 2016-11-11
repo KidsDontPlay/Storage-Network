@@ -1,12 +1,14 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.limelib.block.CommonBlock;
+import mrriegel.limelib.item.CommonItem;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyInterface;
 import mrriegel.storagenetwork.block.BlockNetworkExporter;
 import mrriegel.storagenetwork.block.BlockNetworkImporter;
+import mrriegel.storagenetwork.item.ItemItemFilter;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -19,26 +21,22 @@ public class Registry {
 
 	public static final CommonBlock networkCore = new BlockNetworkCore();
 	public static final CommonBlock networkCable = new BlockNetworkCable("block_network_cable");
-//	public static final CommonBlock networkTunnelE=new BlockNetworkTunnel("block_network_tunnel_"+Mode.ENERGY.name().toLowerCase());
-//	public static final CommonBlock networkTunnelI=new BlockNetworkTunnel("block_network_tunnel_"+Mode.ITEM.name().toLowerCase());
-//	public static final CommonBlock networkTunnelF = new BlockNetworkTunnel("block_network_tunnel_" + Mode.FLUID.name().toLowerCase());
-//	public static final CommonBlock networkTunnelR = new BlockNetworkTunnel("block_network_tunnel_" + Mode.REDSTONE.name().toLowerCase());
 	public static final CommonBlock networkExporter = new BlockNetworkExporter();
 	public static final CommonBlock networkImporter = new BlockNetworkImporter();
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
 	
+	public static final CommonItem itemFilter = new ItemItemFilter();
+	
 	public static void preInit() {
 		networkCore.registerBlock();
 		networkCable.registerBlock();
-//		networkTunnelE.registerBlock();
-//		networkTunnelI.registerBlock();
-//		networkTunnelF.registerBlock();
-//		networkTunnelR.registerBlock();
 		networkExporter.registerBlock();
 		networkImporter.registerBlock();
 		networkEnergyInterface.registerBlock();
 		networkEnergyCell.registerBlock();
+		
+		itemFilter.registerItem();
 		
 		initRecipes();
 	}
@@ -46,14 +44,12 @@ public class Registry {
 	public static void preInitClient() {
 		networkCore.initModel();
 		networkCable.initModel();
-//		networkTunnelE.initModel();
-//		networkTunnelI.initModel();
-//		networkTunnelF.initModel();
-//		networkTunnelR.initModel();
 		networkExporter.initModel();
 		networkImporter.initModel();
 		networkEnergyInterface.initModel();
 		networkEnergyCell.initModel();
+		
+		itemFilter.initModel();
 
 	}
 

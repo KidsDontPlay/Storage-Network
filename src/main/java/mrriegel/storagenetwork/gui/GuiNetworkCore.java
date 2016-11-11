@@ -10,7 +10,6 @@ public class GuiNetworkCore extends CommonGuiScreen{
 	TileNetworkCore core;
 
 	public GuiNetworkCore(TileNetworkCore core) {
-		super();
 		this.core = core;
 		
 	}

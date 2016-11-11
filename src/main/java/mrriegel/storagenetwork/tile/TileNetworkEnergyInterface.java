@@ -1,5 +1,8 @@
 package mrriegel.storagenetwork.tile;
 
+import mrriegel.storagenetwork.Enums.IOMODE;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -8,6 +11,8 @@ import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 
 public class TileNetworkEnergyInterface extends TileNetworkConnection<IEnergyStorage> implements IEnergyReceiver, IEnergyProvider {
+
+	public IOMODE iomode = IOMODE.INOUT;
 
 	@Override
 	public int getEnergyStored(EnumFacing from) {
@@ -30,30 +35,53 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection<IEnergySto
 
 	@Override
 	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-		if (getNetworkCore() != null)
-			return getNetworkCore().energy.extractEnergy(maxExtract, simulate);
+		if (getNetworkCore() != null && iomode.canExtract())
+			return getNetworkCore().extractor.extractEnergy(maxExtract, simulate);
 		return 0;
 	}
 
 	@Override
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-		if (getNetworkCore() != null)
-			return getNetworkCore().receiveEnergy(from,maxReceive, simulate);
+		if (getNetworkCore() != null && iomode.canInsert())
+			return getNetworkCore().receiveEnergy(from, maxReceive, simulate);
 		return 0;
 	}
 
 	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		iomode = IOMODE.values()[compound.getInteger("iomode")];
+		super.readFromNBT(compound);
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		compound.setInteger("iomode", iomode.ordinal());
+		return super.writeToNBT(compound);
+	}
+
+	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null)
-			return getNetworkCore().getCapability(capability, facing);
+		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null) {
+			if (iomode.canExtract() && iomode.canInsert())
+				return getNetworkCore().getCapability(capability, facing);
+			else if (iomode.canExtract())
+				return (T) getNetworkCore().extractor;
+			else if (iomode.canInsert())
+				return (T) getNetworkCore().receiver;
+		}
 		return super.getCapability(capability, facing);
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null)
-			return getNetworkCore().hasCapability(capability, facing);
+			return true;
 		return super.hasCapability(capability, facing);
+	}
+
+	@Override
+	public void handleMessage(EntityPlayer player, NBTTagCompound nbt) {
+		iomode = iomode.next();
 	}
 
 }
