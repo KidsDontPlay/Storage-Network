@@ -2,17 +2,11 @@ package mrriegel.storagenetwork;
 
 import mrriegel.limelib.block.CommonBlock;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
-import mrriegel.storagenetwork.block.BlockNetworkCable.Connect;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
+import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyInterface;
 import mrriegel.storagenetwork.block.BlockNetworkExporter;
 import mrriegel.storagenetwork.block.BlockNetworkImporter;
-import mrriegel.storagenetwork.block.BlockNetworkTunnel;
-import mrriegel.storagenetwork.tile.TileNetworkTunnel.Mode;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -32,6 +26,7 @@ public class Registry {
 	public static final CommonBlock networkExporter = new BlockNetworkExporter();
 	public static final CommonBlock networkImporter = new BlockNetworkImporter();
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
+	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
 	
 	public static void preInit() {
 		networkCore.registerBlock();
@@ -43,7 +38,8 @@ public class Registry {
 		networkExporter.registerBlock();
 		networkImporter.registerBlock();
 		networkEnergyInterface.registerBlock();
-
+		networkEnergyCell.registerBlock();
+		
 		initRecipes();
 	}
 
@@ -57,17 +53,8 @@ public class Registry {
 		networkExporter.initModel();
 		networkImporter.initModel();
 		networkEnergyInterface.initModel();
+		networkEnergyCell.initModel();
 
-		StateMapperBase ignoreState = new StateMapperBase() {
-			@Override
-			protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-				ModelResourceLocation mrl=Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getBlockStateMapper().putAllStateModelLocations().get(iBlockState);
-				if(iBlockState.getValue(BlockNetworkCable.DOWN)==Connect.CABLE)
-					return new ModelResourceLocation(networkCore.getRegistryName(), "normal");
-				return ModelCover.variantTag;
-			}
-		};
-//		ModelLoader.setCustomStateMapper(Registry.networkCable, ignoreState);
 	}
 
 	private static void initRecipes() {

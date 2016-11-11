@@ -1,25 +1,12 @@
 package mrriegel.storagenetwork;
 
-import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
-import mrriegel.storagenetwork.block.BlockNetworkTunnel;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -68,31 +55,6 @@ public class StorageNetwork {
 		MinecraftForge.EVENT_BUS.register(this);
 		if (event.getSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(ModelCover.class);
-			IBlockColor color = new IBlockColor() {
-				@Override
-				public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
-					if (worldIn != null && pos != null && worldIn.getTileEntity(pos) != null) {
-						return ((BlockNetworkTunnel) state.getBlock()).getMode().color;
-					}
-					return 0;
-				}
-			};
-//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelE);
-//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelI);
-//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelF);
-//			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(color, Registry.networkTunnelR);
-			IItemColor item = new IItemColor() {
-				@Override
-				public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-					if (stack != null)
-						return ColorHelper.brighter(((BlockNetworkTunnel) Block.getBlockFromItem(stack.getItem())).getMode().color, 0.3);
-					return 0;
-				}
-			};
-//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelE);
-//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelI);
-//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelF);
-//			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item, Registry.networkTunnelR);
 		}
 	}
 

@@ -1,10 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
-import cofh.api.energy.IEnergyReceiver;
 import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.helper.StackHelper;
@@ -25,6 +20,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import cofh.api.energy.IEnergyReceiver;
 
 /**
  * @author canitzp
@@ -33,14 +29,23 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	public Network network;
 	protected boolean needsUpdate;
-	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 2000) {
+	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 1000) {
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
+			this.maxExtract = getTotalTransfer();
+			this.maxReceive = getTotalTransfer();
 			if (worldObj.getTotalWorldTime() % 4 == 0)
 				markForSync();
 			if ((double) getEnergyStored() / (double) getMaxEnergyStored() > 0.75)
 				return super.extractEnergy(Math.min(maxExtract, getMaxEnergyStored() / 10), simulate);
 			return 0;
+		};
+
+		@Override
+		public int receiveEnergy(int maxReceive, boolean simulate) {
+			this.maxExtract = getTotalTransfer();
+			this.maxReceive = getTotalTransfer();
+			return super.receiveEnergy(maxReceive, simulate);
 		};
 	};
 
@@ -100,18 +105,53 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	}
 
 	private void distributeEnergy() {
+		int maxTransfer = getTotalTransfer();
 		for (INetworkPart part : network.networkParts)
 			if (part instanceof TileNetworkEnergyInterface) {
 				TileNetworkEnergyInterface tile = (TileNetworkEnergyInterface) part;
 				boolean simulate = false;
 				if (tile.getTile() instanceof IEnergyReceiver) {
-					int maxReceive = ((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), 1000, true);
+					int maxReceive = ((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), maxTransfer, true);
 					((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), energy.extractEnergy(maxReceive, simulate), simulate);
 				} else if (tile.getTile() != null && tile.getTile().hasCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite())) {
-					int maxReceive = tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(1000, true);
+					int maxReceive = tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(maxTransfer, true);
 					tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(energy.extractEnergy(maxReceive, simulate), simulate);
 				}
 			}
+		for (INetworkPart part : network.networkParts)
+			if (part instanceof TileNetworkEnergyCell) {
+				if ((double) getEnergyStored(null) / (double) getMaxEnergyStored(null) < .9) {
+					int maxReceive = receiveEnergy(null, maxTransfer, true);
+					receiveEnergy(null, ((TileNetworkEnergyCell) part).getEnergy().extractEnergy(maxReceive, false), false);
+				} else if ((double) getEnergyStored(null) / (double) getMaxEnergyStored(null) > .6) {
+					int maxReceive = ((TileNetworkEnergyCell) part).getEnergy().receiveEnergy(maxTransfer, true);
+					((TileNetworkEnergyCell) part).getEnergy().receiveEnergy(energy.extractEnergy(maxReceive, false), false);
+				}
+			}
+	}
+	
+	public int getTotalTransfer() {
+		int max = 1000;
+		for (INetworkPart part : network.networkParts)
+			if (part instanceof TileNetworkEnergyCell)
+				max += 1000;
+		return max;
+	}
+
+	public int getTotalEnergy() {
+		int max = getEnergyStored(null);
+		for (INetworkPart part : network.networkParts)
+			if (part instanceof TileNetworkEnergyCell)
+				max += ((TileNetworkEnergyCell) part).getEnergy().getEnergyStored();
+		return max;
+	}
+
+	public int getTotalMaxEnergy() {
+		int max = getMaxEnergyStored(null);
+		for (INetworkPart part : network.networkParts)
+			if (part instanceof TileNetworkEnergyCell)
+				max += ((TileNetworkEnergyCell) part).getEnergy().getMaxEnergyStored();
+		return max;
 	}
 
 	@Override
