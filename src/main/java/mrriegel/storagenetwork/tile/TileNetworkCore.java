@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.Network;
 import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.block.BlockNetworkCore;
 import mrriegel.storagenetwork.network.InventoryNetworkPart;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -109,12 +110,17 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 				StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 			}
 		}
-		if (onServer() && network != null){
+		if (onServer() && network != null) {
+			if (ModConfig.needsEnergy && worldObj.getTotalWorldTime() % 15 == 0) {
+				if (getEnergyStorage().getEnergyStored() == 0 && worldObj.getBlockState(pos).getValue(BlockNetworkCore.ACTIVE))
+					worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockNetworkCore.ACTIVE, false), 2);
+				else if (getEnergyStorage().getEnergyStored() > 0 && !worldObj.getBlockState(pos).getValue(BlockNetworkCore.ACTIVE))
+					worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockNetworkCore.ACTIVE, true), 2);
+			}
 			distributeEnergy();
-			if(worldObj.getTotalWorldTime()%30==0)
 			network.importItems();
-			if((worldObj.getTotalWorldTime()+15)%30==0)
-			network.exportItems();}
+			network.exportItems();
+		}
 	}
 
 	private void distributeEnergy() {

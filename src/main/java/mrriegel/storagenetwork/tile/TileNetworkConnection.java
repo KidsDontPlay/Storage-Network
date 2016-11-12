@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileNetworkConnection extends TileNetworkCable {
+public class TileNetworkConnection extends TileNetworkCable implements IRedstoneActive{
 
 	public EnumFacing tileFace = EnumFacing.DOWN;
 
@@ -44,6 +44,11 @@ public class TileNetworkConnection extends TileNetworkCable {
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger("face", tileFace.ordinal());
 		return super.writeToNBT(compound);
+	}
+
+	@Override
+	public boolean isDisabled() {
+		return worldObj.isBlockPowered(pos);
 	}
 
 }

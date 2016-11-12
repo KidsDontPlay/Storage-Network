@@ -9,13 +9,16 @@ import mrriegel.limelib.util.FilterItem;
 import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.item.ItemItemFilter;
 import mrriegel.storagenetwork.tile.INetworkPart;
+import mrriegel.storagenetwork.tile.INetworkStorage;
 import mrriegel.storagenetwork.tile.IPriority;
+import mrriegel.storagenetwork.tile.IRedstoneActive;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
-import mrriegel.storagenetwork.tile.TileNetworkStorage;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -49,7 +52,7 @@ public class Network {
 
 	//item start
 
-	Comparator<INetworkPart> itemComparator = new Comparator<INetworkPart>() {
+	Comparator<INetworkPart> comparator = new Comparator<INetworkPart>() {
 		@Override
 		public int compare(INetworkPart o1, INetworkPart o2) {
 			if (o1 instanceof IPriority && o2 instanceof IPriority)
@@ -69,15 +72,19 @@ public class Network {
 		ItemStack result = null;
 		int need = size;
 		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
-		Collections.sort(networkParts, itemComparator);
+		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
-			if (part instanceof TileNetworkStorage) {
-				TileNetworkStorage tile = (TileNetworkStorage) part;
-				if (tile.iomode.canInsert()&&tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) != null) {
-					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+			if (part instanceof INetworkStorage) {
+				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+					continue;
+				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
+					continue;
+				if (tile.canInsert()) {
+					IItemHandler inv = tile.getStorage();
 					for (int i = 0; i < inv.getSlots(); i++) {
 						ItemStack stack = inv.getStackInSlot(i);
-						if (ItemItemFilter.canTransferItem(tile.filter, stack) && fil.match(stack)) {
+						if (tile.canTransferItem(stack) && fil.match(stack)) {
 							if (result == null) {
 								result = inv.extractItem(i, need, simulate);
 								need -= result.stackSize;
@@ -107,13 +114,17 @@ public class Network {
 			return 0;
 		int rest = stack.stackSize;
 		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
-		Collections.sort(networkParts, itemComparator);
+		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
-			if (part instanceof TileNetworkStorage) {
-				TileNetworkStorage tile = (TileNetworkStorage) part;
-				if (tile.iomode.canExtract()&&tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) != null && !new GlobalBlockPos(tile.getTile().getPos(), tile.getTile().getWorld()).equals(source)) {
-					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-					if (ItemItemFilter.canTransferItem(tile.filter, stack)) {
+			if (part instanceof INetworkStorage) {
+				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+					continue;
+				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
+					continue;
+				if (tile.canExtract() && !tile.getStoragePosition().equals(source)) {
+					IItemHandler inv = tile.getStorage();
+					if (tile.canTransferItem(stack)) {
 						ItemStack restStack = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(stack, rest), simulate);
 						if (restStack == null)
 							return 0;
@@ -127,21 +138,19 @@ public class Network {
 
 	public void exportItems() {
 		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
-		Collections.sort(networkParts, itemComparator);
+		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkExporter) {
 				TileNetworkExporter tile = (TileNetworkExporter) part;
-				if (tile.filter == null)
+				if (tile.filter == null || tile.isDisabled() || (tile.getWorld().getTotalWorldTime() + 15) % (Math.max(1, 30 / tile.getSpeed())) != 0)
 					continue;
 				if (tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) != null) {
 					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 					for (FilterItem item : ItemItemFilter.getFilterItems(tile.filter)) {
-						//						System.out.println(item.getStack());
-						int maxStacksize = item.getStack().getMaxStackSize();
+						int maxStacksize = Math.min(item.getStack().getMaxStackSize(), tile.getTransferAmount(Item.class));
 						ItemStack rest = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(item.getStack(), maxStacksize), true);
 						int maxInsert = maxStacksize - (rest == null ? 0 : rest.stackSize);
 						ItemStack req = requestItem(item, maxInsert, false);
-						//						System.out.println(req);
 						if (req == null)
 							continue;
 						ItemHandlerHelper.insertItemStacked(inv, req, false);
@@ -156,10 +165,12 @@ public class Network {
 
 	public void importItems() {
 		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
-		Collections.sort(networkParts, itemComparator);
+		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkImporter) {
 				TileNetworkImporter tile = (TileNetworkImporter) part;
+				if (tile.isDisabled() || tile.getWorld().getTotalWorldTime() % (Math.max(1, 30 / tile.getSpeed())) != 0)
+					continue;
 				if (tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) != null) {
 					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 					for (int i = 0; i < inv.getSlots(); i++) {
@@ -168,7 +179,7 @@ public class Network {
 							continue;
 						if (!ItemItemFilter.canTransferItem(tile.filter, stack))
 							continue;
-						int maxInsert = stack.stackSize - insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
+						int maxInsert = Math.min(stack.stackSize, tile.getTransferAmount(Item.class)) - insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
 						ItemStack ext = inv.extractItem(i, maxInsert, true);
 						int ex = ext != null ? ext.stackSize : 0;
 						ex = Math.min(ex, maxInsert);
@@ -186,13 +197,17 @@ public class Network {
 	public List<ItemStack> getItemstacks() {
 		List<ItemStack> lis = Lists.newArrayList();
 		for (INetworkPart part : networkParts) {
-			if (part instanceof TileNetworkStorage) {
-				TileNetworkStorage tile = (TileNetworkStorage) part;
-				if (tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) != null) {
-					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+			if (part instanceof INetworkStorage) {
+				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+					continue;
+				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
+					continue;
+				if (tile.canInsert()) {
+					IItemHandler inv = tile.getStorage();
 					for (int i = 0; i < inv.getSlots(); i++) {
 						ItemStack stack = inv.getStackInSlot(i);
-						if (ItemItemFilter.canTransferItem(tile.filter, stack))
+						if (tile.canTransferItem(stack))
 							lis.add(stack);
 					}
 				}
@@ -221,6 +236,12 @@ public class Network {
 
 	public void importFluids() {
 
+	}
+
+	public List<FluidStack> getFluidstacks() {
+		List<FluidStack> lis = Lists.newArrayList();
+
+		return lis;
 	}
 
 	//fluid end

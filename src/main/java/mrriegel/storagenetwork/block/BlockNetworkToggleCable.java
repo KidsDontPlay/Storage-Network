@@ -30,11 +30,10 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-//		((TileNetworkToggleCable) worldIn.getTileEntity(pos)).setPowered(worldIn.isBlockPowered(pos));
 		((TileNetworkToggleCable) worldIn.getTileEntity(pos)).markForSync();
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
-	
+
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return true;
@@ -42,14 +41,11 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-		TileNetworkToggleCable tile=(TileNetworkToggleCable) worldIn.getTileEntity(pos);
-//		boolean old = tile.isPowered(), neu = worldIn.isBlockPowered(pos);
-//		tile.setPowered(neu);
-		tile.markForSync();
-		if(tile.getNetworkCore()!=null/*&&neu!=old*/){
+		TileNetworkToggleCable tile = (TileNetworkToggleCable) worldIn.getTileEntity(pos);
+//		tile.markForSync();
+		if (tile.getNetworkCore() != null) {
 			tile.getNetworkCore().markForNetworkInit();
 		}
-//		System.out.println(tile.isPowered()+" power");
 		super.neighborChanged(state, worldIn, pos, blockIn);
 	}
 
