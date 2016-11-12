@@ -5,22 +5,22 @@
             "to" : [10, 10, 10], 
             "faces" : {
                 "down" : {
-                    "texture" : "#center"
+                    "texture" : "#center","tintindex":0
                 }, 
                 "up" : {
-                    "texture" : "#center"
+                    "texture" : "#center","tintindex":0
                 }, 
                 "north" : {
-                    "texture" : "#center"
+                    "texture" : "#center","tintindex":0
                 }, 
                 "south" : {
-                    "texture" : "#center"
+                    "texture" : "#center","tintindex":0
                 }, 
                 "west" : {
-                    "texture" : "#center"
+                    "texture" : "#center","tintindex":0
                 }, 
                 "east" : {
-                    "texture" : "#center"
+                    "texture" : "#center","tintindex":0
                 }
             }
         }]

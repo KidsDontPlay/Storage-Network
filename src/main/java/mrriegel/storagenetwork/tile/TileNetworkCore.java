@@ -34,24 +34,16 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	//	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 1000) {
 	//		@Override
 	//		public int extractEnergy(int maxExtract, boolean simulate) {
-	//			this.maxExtract = getTotalTransfer();
-	//			this.maxReceive = getTotalTransfer();
 	//			if (worldObj.getTotalWorldTime() % 4 == 0)
 	//				markForSync();
 	//			if ((double) getEnergyStored() / (double) getMaxEnergyStored() > 0.75)
 	//				return super.extractEnergy(Math.min(maxExtract, getMaxEnergyStored() / 10), simulate);
 	//			return 0;
 	//		};
-	//
-	//		@Override
-	//		public int receiveEnergy(int maxReceive, boolean simulate) {
-	//			this.maxExtract = getTotalTransfer();
-	//			this.maxReceive = getTotalTransfer();
-	//			return super.receiveEnergy(maxReceive, simulate);
-	//		};
 	//	};
 
-	protected EnergyStorageExt receiver = new EnergyStorageExt(100000, 1000);
+	protected EnergyStorageExt receiver = new EnergyStorageExt(100000, 1000) {
+	};
 
 	protected EnergyStorageExt extractor = new EnergyStorageExt(100000, 1000) {
 		@Override
@@ -74,6 +66,8 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	private void runThroughNetwork(BlockPos pos) {
 		for (EnumFacing facing : EnumFacing.values()) {
 			BlockPos searchPos = pos.offset(facing);
+			if (worldObj.getTileEntity(pos) instanceof IToggleable && !((IToggleable) worldObj.getTileEntity(pos)).isActive())
+				return;
 			if (worldObj.getTileEntity(pos) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(pos)).getNeighborFaces().contains(facing))
 				continue;
 			if (worldObj.getTileEntity(searchPos) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(searchPos)).getNeighborFaces().contains(facing.getOpposite()))
@@ -115,12 +109,16 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 				StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 			}
 		}
-		if (onServer() && network != null)
+		if (onServer() && network != null){
 			distributeEnergy();
+			if(worldObj.getTotalWorldTime()%30==0)
+			network.importItems();
+			if((worldObj.getTotalWorldTime()+15)%30==0)
+			network.exportItems();}
 	}
 
 	private void distributeEnergy() {
-		if (worldObj.getTotalWorldTime() % 5 == 0) {
+		if (worldObj.getTotalWorldTime() % 20 == 0) {
 			extractor.setMaxExtract(getTotalTransfer());
 			extractor.setMaxReceive(getTotalTransfer());
 			receiver.setMaxExtract(getTotalTransfer());

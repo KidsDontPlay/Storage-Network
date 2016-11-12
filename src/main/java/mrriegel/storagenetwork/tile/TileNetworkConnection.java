@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileNetworkConnection<T> extends TileNetworkCable {
+public class TileNetworkConnection extends TileNetworkCable {
 
 	public EnumFacing tileFace = EnumFacing.DOWN;
 
@@ -15,7 +15,7 @@ public class TileNetworkConnection<T> extends TileNetworkCable {
 		return worldObj.getTileEntity(pos.offset(tileFace));
 	}
 
-	public T getCapability(Capability<T> capa) {
+	public <T> T getCapability(Capability<T> capa) {
 		if (getTile() == null || !getTile().hasCapability(capa, tileFace.getOpposite()))
 			return null;
 		return getTile().getCapability(capa, tileFace.getOpposite());

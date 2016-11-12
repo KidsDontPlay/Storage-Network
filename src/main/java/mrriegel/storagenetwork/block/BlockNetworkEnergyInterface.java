@@ -4,7 +4,6 @@ import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.tile.TileNetworkConnection;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
-import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

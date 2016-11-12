@@ -8,6 +8,8 @@ import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyInterface;
 import mrriegel.storagenetwork.block.BlockNetworkExporter;
 import mrriegel.storagenetwork.block.BlockNetworkImporter;
+import mrriegel.storagenetwork.block.BlockNetworkStorage;
+import mrriegel.storagenetwork.block.BlockNetworkToggleCable;
 import mrriegel.storagenetwork.item.ItemItemFilter;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -23,8 +25,10 @@ public class Registry {
 	public static final CommonBlock networkCable = new BlockNetworkCable("block_network_cable");
 	public static final CommonBlock networkExporter = new BlockNetworkExporter();
 	public static final CommonBlock networkImporter = new BlockNetworkImporter();
+	public static final CommonBlock networkStorage =new BlockNetworkStorage();
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
+	public static final CommonBlock networkToggleCable=new BlockNetworkToggleCable();
 	
 	public static final CommonItem itemFilter = new ItemItemFilter();
 	
@@ -33,8 +37,10 @@ public class Registry {
 		networkCable.registerBlock();
 		networkExporter.registerBlock();
 		networkImporter.registerBlock();
+		networkStorage.registerBlock();
 		networkEnergyInterface.registerBlock();
 		networkEnergyCell.registerBlock();
+		networkToggleCable.registerBlock();
 		
 		itemFilter.registerItem();
 		
@@ -46,15 +52,20 @@ public class Registry {
 		networkCable.initModel();
 		networkExporter.initModel();
 		networkImporter.initModel();
+		networkStorage.initModel();
 		networkEnergyInterface.initModel();
 		networkEnergyCell.initModel();
+		networkToggleCable.initModel();
 		
 		itemFilter.initModel();
 
 	}
 
 	private static void initRecipes() {
-		GameRegistry.addShapedRecipe(new ItemStack(networkCable, 8), "sss", "i i", "sss", 's', new ItemStack(Blocks.STONE_SLAB), 'i', Items.IRON_INGOT);
+		GameRegistry.addShapedRecipe(new ItemStack(networkCable, 6), "sss", "i i", "sss", 's', new ItemStack(Blocks.STONE_SLAB), 'i', Items.IRON_INGOT);
+		GameRegistry.addShapelessRecipe(new ItemStack(networkToggleCable), networkCable,Blocks.REDSTONE_TORCH);
+
+		GameRegistry.addShapedRecipe(new ItemStack(itemFilter, 4), " i ", "isi", " i ", 'i', Blocks.IRON_BARS, 's', Items.STRING);
 	}
 
 }

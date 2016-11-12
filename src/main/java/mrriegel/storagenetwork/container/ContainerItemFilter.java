@@ -41,7 +41,6 @@ public class ContainerItemFilter extends CommonContainer {
 						inventoryChanged();
 					}
 				});
-
 		initPlayerSlots(8, 84);
 	}
 
@@ -53,7 +52,7 @@ public class ContainerItemFilter extends CommonContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return stack != null;
+		return stack != null && stack.isItemEqual(playerIn.getHeldItemMainhand());
 	}
 
 	@Override

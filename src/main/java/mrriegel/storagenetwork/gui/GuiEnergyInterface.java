@@ -10,8 +10,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class GuiEnergyInterface extends CommonGuiScreen {
+	
 	TileNetworkEnergyInterface tile;
-
 	GuiButtonSimple button;
 
 	public GuiEnergyInterface(TileNetworkEnergyInterface tile) {
@@ -30,7 +30,7 @@ public class GuiEnergyInterface extends CommonGuiScreen {
 	public void updateScreen() {
 		super.updateScreen();
 		button.displayString = tile.iomode == IOMODE.IN ? "IN" : tile.iomode == IOMODE.OUT ? "OUT" : "IO";
-		button.setTooltip(tile.iomode == IOMODE.IN ? "Energy will only be inserted into the network." : tile.iomode == IOMODE.OUT ? "Energy will only be extracted into the network." : "Energy will be inserted and extracted.");
+		button.setTooltip(tile.iomode == IOMODE.IN ? "Energy will only be inserted into the network." : tile.iomode == IOMODE.OUT ? "Energy will only be extracted from the network." : "Energy will be inserted and extracted.");
 	}
 
 	@Override

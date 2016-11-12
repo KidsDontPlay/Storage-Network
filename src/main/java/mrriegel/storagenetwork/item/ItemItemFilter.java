@@ -9,12 +9,14 @@ import mrriegel.limelib.util.Utils;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.StorageNetwork;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import com.google.common.collect.Lists;
@@ -24,6 +26,7 @@ public class ItemItemFilter extends CommonItem {
 	public ItemItemFilter() {
 		super("item_item_filter");
 		setCreativeTab(CreativeTab.TAB);
+		setMaxStackSize(1);
 	}
 
 	@Override
@@ -49,6 +52,19 @@ public class ItemItemFilter extends CommonItem {
 		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}
 
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+		super.addInformation(stack, playerIn, tooltip, advanced);
+		if (!GuiScreen.isShiftKeyDown())
+			tooltip.add(TextFormatting.ITALIC + "Press shift for more information");
+		else {
+			tooltip.add(TextFormatting.DARK_PURPLE + (NBTStackHelper.getBoolean(stack, "white") ? "Whitelist" : "Blacklist"));
+			for (ItemStack s : getItems(stack))
+				if (s != null)
+					tooltip.add("  -" + s.getRarity().rarityColor + s.getDisplayName());
+		}
+	}
+
 	public static boolean match(ItemStack filter, ItemStack item) {
 		List<ItemStack> stacks = NBTStackHelper.getItemStackList(filter, "inv");
 		boolean meta = NBTStackHelper.getBoolean(filter, "meta");
@@ -66,7 +82,23 @@ public class ItemItemFilter extends CommonItem {
 		return false;
 	}
 
+	public static List<ItemStack> getItems(ItemStack filter) {
+		return NBTStackHelper.getItemStackList(filter, "inv");
+	}
+
+	public static List<FilterItem> getFilterItems(ItemStack filter) {
+		List<FilterItem> lis = Lists.newArrayList();
+		for (ItemStack s : NBTStackHelper.getItemStackList(filter, "inv"))
+			if (s != null)
+				lis.add(new FilterItem(s, NBTStackHelper.getBoolean(filter, "meta"), NBTStackHelper.getBoolean(filter, "ore"), NBTStackHelper.getBoolean(filter, "nbt")));
+		return lis;
+	}
+
 	public static boolean canTransferItem(ItemStack filter, ItemStack item) {
+		if (item == null)
+			return false;
+		if (filter == null)
+			return true;
 		if (whiteList(filter))
 			return match(filter, item);
 		else

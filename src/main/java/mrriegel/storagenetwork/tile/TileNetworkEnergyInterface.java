@@ -6,11 +6,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 
-public class TileNetworkEnergyInterface extends TileNetworkConnection<IEnergyStorage> implements IEnergyReceiver, IEnergyProvider {
+public class TileNetworkEnergyInterface extends TileNetworkConnection implements IEnergyReceiver, IEnergyProvider {
 
 	public IOMODE iomode = IOMODE.INOUT;
 
@@ -62,6 +61,7 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection<IEnergySto
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null) {
+			//TODO untested
 			if (iomode.canExtract() && iomode.canInsert())
 				return getNetworkCore().getCapability(capability, facing);
 			else if (iomode.canExtract())

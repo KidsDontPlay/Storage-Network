@@ -1,14 +1,24 @@
 package mrriegel.storagenetwork;
 
+import java.awt.Color;
+
+import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.limelib.network.PacketHandler;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.message.MessageItemFilter;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
+import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -59,6 +69,23 @@ public class StorageNetwork {
 		PacketHandler.registerMessage(MessageItemFilter.class, Side.SERVER);
 		if (event.getSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(ModelCover.class);
+
+			Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
+				@Override
+				public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
+					if (worldIn != null && pos != null && worldIn.getTileEntity(pos) instanceof TileNetworkToggleCable) {
+						return !((TileNetworkToggleCable) worldIn.getTileEntity(pos)).isActive() ? ColorHelper.brighter(Color.red.getRGB(), 0.4) : ColorHelper.brighter(Color.green.getRGB(), 0.5);
+					}
+					return 0xffffff;
+				}
+			}, Registry.networkToggleCable);
+
+			Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
+				@Override
+				public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+					return ColorHelper.brighter(Color.green.getRGB(), 0.5);
+				}
+			}, Registry.networkToggleCable);
 		}
 	}
 
@@ -73,7 +100,7 @@ public class StorageNetwork {
 				BlockPos neighbor = event.getPos().offset(face);
 				if (event.getWorld().getTileEntity(neighbor) != null) {
 					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart) {
-						INetworkPart part=(INetworkPart) event.getWorld().getTileEntity(neighbor);
+						INetworkPart part = (INetworkPart) event.getWorld().getTileEntity(neighbor);
 						if (part.getNeighborFaces().contains(face.getOpposite()))
 							if (part.getNetworkCore() != null) {
 								if (core == null) {

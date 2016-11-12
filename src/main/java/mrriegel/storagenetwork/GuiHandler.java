@@ -1,11 +1,14 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.storagenetwork.container.ContainerItemConnect;
 import mrriegel.storagenetwork.container.ContainerItemFilter;
 import mrriegel.storagenetwork.gui.GuiEnergyInterface;
+import mrriegel.storagenetwork.gui.GuiItemConnect;
 import mrriegel.storagenetwork.gui.GuiItemFilter;
 import mrriegel.storagenetwork.gui.GuiNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
+import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +25,8 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerItemFilter(player.inventory, player.getHeldItemMainhand());
 		case ENERGY_INTERFACE:
 			return null;
+		case ITEM_CONNECTOR:
+			return new ContainerItemConnect(player.inventory, (TileNetworkItemConnection) world.getTileEntity(new BlockPos(x, y, z)));
 		default:
 			return null;
 		}
@@ -36,13 +41,15 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiItemFilter(new ContainerItemFilter(player.inventory, player.getHeldItemMainhand()));
 		case ENERGY_INTERFACE:
 			return new GuiEnergyInterface((TileNetworkEnergyInterface) world.getTileEntity(new BlockPos(x, y, z)));
+		case ITEM_CONNECTOR:
+			return new GuiItemConnect(new ContainerItemConnect(player.inventory, (TileNetworkItemConnection) world.getTileEntity(new BlockPos(x, y, z))));
 		default:
 			return null;
 		}
 	}
 
 	public enum GuiID {
-		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE;
+		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR;
 	}
 
 }

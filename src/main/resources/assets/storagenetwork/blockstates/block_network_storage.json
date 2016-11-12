@@ -1,0 +1,189 @@
+{
+    "forge_marker" : 1, 
+    "defaults" : {
+        "model" : "storagenetwork:cable_center", 
+        "textures" : {
+            "particle" : "storagenetwork:blocks/network_cable", 
+            "center" : "storagenetwork:blocks/network_cable", 
+            "pin" : "storagenetwork:blocks/network_cable", 
+            "connect_front" : "storagenetwork:blocks/connect", 
+            "connect_side" : "blocks/hopper_inside", 
+            "connect_back" : "storagenetwork:blocks/connect"
+        }, 
+        "transform" : "forge:default-block"
+    }, 
+    "variants" : {
+        "normal" : [{
+                
+            }], 
+        "inventory" : [{
+                "submodel" : {
+                    "s1" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90
+                    }, 
+                    "s2" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 270
+                    }, 
+                    "s3" : {
+                        "model" : "storagenetwork:cable_interface", 
+                        "x" : 90
+                    }
+                }
+            }], 
+        "north" : {
+            "cable" : {
+                "submodel" : {
+                    "s1" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90
+                    }
+                }
+            }, 
+            "tile" : {
+                "submodel" : {
+                    "s1" : {
+                        "model" : "storagenetwork:cable_pin_connect", 
+                        "x" : 90
+                    }, 
+                    "s1s" : {
+                        "model" : "storagenetwork:cable_interface", 
+                        "x" : 90
+                    }
+                }
+            }, 
+            "null" : {
+                
+            }
+        }, 
+        "south" : {
+            "cable" : {
+                "submodel" : {
+                    "s2" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 270
+                    }
+                }
+            }, 
+            "tile" : {
+                "submodel" : {
+                    "s2" : {
+                        "model" : "storagenetwork:cable_pin_connect", 
+                        "x" : 270
+                    }, 
+                    "s2s" : {
+                        "model" : "storagenetwork:cable_interface", 
+                        "x" : 270
+                    }
+                }
+            }, 
+            "null" : {
+                
+            }
+        }, 
+        "west" : {
+            "cable" : {
+                "submodel" : {
+                    "s3" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90, 
+                        "y" : 270
+                    }
+                }
+            }, 
+            "tile" : {
+                "submodel" : {
+                    "s3" : {
+                        "model" : "storagenetwork:cable_pin_connect", 
+                        "x" : 90, 
+                        "y" : 270
+                    }, 
+                    "s3s" : {
+                        "model" : "storagenetwork:cable_interface", 
+                        "x" : 90, 
+                        "y" : 270
+                    }
+                }
+            }, 
+            "null" : {
+                
+            }
+        }, 
+        "east" : {
+            "cable" : {
+                "submodel" : {
+                    "s4" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 90, 
+                        "y" : 90
+                    }
+                }
+            }, 
+            "tile" : {
+                "submodel" : {
+                    "s4" : {
+                        "model" : "storagenetwork:cable_pin_connect", 
+                        "x" : 90, 
+                        "y" : 90
+                    }, 
+                    "s4s" : {
+                        "model" : "storagenetwork:cable_interface", 
+                        "x" : 90, 
+                        "y" : 90
+                    }
+                }
+            }, 
+            "null" : {
+                
+            }
+        }, 
+        "up" : {
+            "cable" : {
+                "submodel" : {
+                    "s5" : {
+                        "model" : "storagenetwork:cable_pin"
+                    }
+                }
+            }, 
+            "tile" : {
+                "submodel" : {
+                    "s5" : {
+                        "model" : "storagenetwork:cable_pin_connect"
+                    }, 
+                    "s5s" : {
+                        "model" : "storagenetwork:cable_interface"
+                    }
+                }
+            }, 
+            "null" : {
+                
+            }
+        }, 
+        "down" : {
+            "cable" : {
+                "submodel" : {
+                    "s6" : {
+                        "model" : "storagenetwork:cable_pin", 
+                        "x" : 180
+                    }
+                }
+            }, 
+            "tile" : {
+                "submodel" : {
+                    "s6" : {
+                        "model" : "storagenetwork:cable_pin_connect", 
+                        "x" : 180
+                    }, 
+                    "s6s" : {
+                        "model" : "storagenetwork:cable_interface", 
+                        "x" : 180
+                    }
+                }
+            }, 
+            "null" : {
+                
+            }
+        }
+    }
+}

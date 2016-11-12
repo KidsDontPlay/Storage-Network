@@ -5,10 +5,11 @@ import java.util.Random;
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.StackHelper;
 import mrriegel.limelib.item.CommonItemBlock;
+import mrriegel.limelib.util.StackWrapper;
 import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
-import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import net.minecraft.block.Block;
@@ -79,10 +80,11 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(!worldIn.isRemote){
-        	System.out.println("Network size: "+((TileNetworkCore)worldIn.getTileEntity(pos)).network.networkParts.size());
-            System.out.println(((TileNetworkCore)worldIn.getTileEntity(pos)).network);
+//        	System.out.println("Network size: "+((TileNetworkCore)worldIn.getTileEntity(pos)).network.networkParts.size());
+//            System.out.println(((TileNetworkCore)worldIn.getTileEntity(pos)).network);
             ((TileNetworkCore)worldIn.getTileEntity(pos)).sync();
             worldIn.setBlockState(pos, state.withProperty(ACTIVE, !state.getValue(ACTIVE)), 2);
+            System.out.println(StackWrapper.toWrapperList(((TileNetworkCore)worldIn.getTileEntity(pos)).network.getItemstacks()));
         }
         playerIn.openGui(StorageNetwork.instance, GuiID.NETWORK_CORE.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
         return true;
