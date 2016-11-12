@@ -10,6 +10,7 @@ import mrriegel.storagenetwork.block.BlockNetworkExporter;
 import mrriegel.storagenetwork.block.BlockNetworkImporter;
 import mrriegel.storagenetwork.block.BlockNetworkStorage;
 import mrriegel.storagenetwork.block.BlockNetworkToggleCable;
+import mrriegel.storagenetwork.block.BlockRequestTable;
 import mrriegel.storagenetwork.item.ItemItemFilter;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import net.minecraft.init.Blocks;
@@ -30,6 +31,8 @@ public class Registry {
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
 	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
+	public static final CommonBlock blockRequestTable = new BlockRequestTable("block_request_table");
+	public static final CommonBlock blockRequestCraftingTable = new BlockRequestTable("block_request_crafting_table");
 
 	public static final CommonItem itemFilter = new ItemItemFilter();
 	public static final CommonItem itemUpgrade = new ItemUpgrade();
@@ -43,6 +46,8 @@ public class Registry {
 		networkEnergyInterface.registerBlock();
 		networkEnergyCell.registerBlock();
 		networkToggleCable.registerBlock();
+		blockRequestTable.registerBlock();
+		blockRequestCraftingTable.registerBlock();
 
 		itemFilter.registerItem();
 		itemUpgrade.registerItem();
@@ -59,9 +64,12 @@ public class Registry {
 		networkEnergyInterface.initModel();
 		networkEnergyCell.initModel();
 		networkToggleCable.initModel();
+		blockRequestTable.initModel();
+		blockRequestCraftingTable.initModel();
 
 		itemFilter.initModel();
-		itemUpgrade.initModel();;
+		itemUpgrade.initModel();
+		;
 
 	}
 

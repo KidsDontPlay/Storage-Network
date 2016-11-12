@@ -6,6 +6,7 @@ import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.limelib.network.PacketHandler;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.message.MessageItemFilter;
+import mrriegel.storagenetwork.message.MessageItemListRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
@@ -67,6 +68,7 @@ public class StorageNetwork {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		MinecraftForge.EVENT_BUS.register(this);
 		PacketHandler.registerMessage(MessageItemFilter.class, Side.SERVER);
+		PacketHandler.registerMessage(MessageItemListRequest.class, Side.CLIENT);
 		if (event.getSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(ModelCover.class);
 
