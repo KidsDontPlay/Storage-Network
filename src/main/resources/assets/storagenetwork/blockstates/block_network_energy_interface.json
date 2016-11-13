@@ -6,9 +6,9 @@
             "particle" : "storagenetwork:blocks/network_cable", 
             "center" : "storagenetwork:blocks/network_cable", 
             "pin" : "storagenetwork:blocks/network_cable", 
-            "connect_front" : "blocks/hardened_clay_stained_red", 
-            "connect_side" : "blocks/hopper_inside", 
-            "connect_back" : "storagenetwork:blocks/connect"
+            "connect_front" : "storagenetwork:blocks/energy_interface", 
+            "connect_side" : "storagenetwork:blocks/base", 
+            "connect_back" : "storagenetwork:blocks/base"
         }, 
         "transform" : "forge:default-block"
     }, 

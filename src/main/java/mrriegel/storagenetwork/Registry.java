@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.limelib.block.CommonBlock;
+import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.item.CommonItem;
 import mrriegel.storagenetwork.block.BlockItemAttractor;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
@@ -16,8 +17,13 @@ import mrriegel.storagenetwork.item.ItemItemFilter;
 import mrriegel.storagenetwork.item.ItemUpgrade;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.ItemHandlerHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author canitzp
@@ -33,8 +39,7 @@ public class Registry {
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
 	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
 	public static final CommonBlock requestTable = new BlockRequestTable();
-	public static final CommonBlock itemAttractor =new BlockItemAttractor();
-	
+	public static final CommonBlock itemAttractor = new BlockItemAttractor();
 
 	public static final CommonItem itemFilter = new ItemItemFilter();
 	public static final CommonItem upgrade = new ItemUpgrade();
@@ -80,6 +85,20 @@ public class Registry {
 		GameRegistry.addShapelessRecipe(new ItemStack(networkToggleCable), networkCable, Blocks.REDSTONE_TORCH);
 
 		GameRegistry.addShapedRecipe(new ItemStack(itemFilter, 4), " i ", "isi", " i ", 'i', Blocks.IRON_BARS, 's', Items.STRING);
+		ItemStack filter=new ItemStack(itemFilter, 2);
+		NBTStackHelper.setBoolean(filter, "copy", true);
+		GameRegistry.addRecipe(new ShapelessRecipes(filter, Lists.newArrayList(new ItemStack(itemFilter), new ItemStack(itemFilter))) {
+			@Override
+			public ItemStack getCraftingResult(InventoryCrafting inv) {
+				for (int i = 0; i < inv.getSizeInventory(); i++) {
+					ItemStack s = inv.getStackInSlot(i);
+					if (s != null && s.hasTagCompound())
+						return ItemHandlerHelper.copyStackWithSize(s, 2);
+
+				}
+				return super.getCraftingResult(inv);
+			}
+		});
 	}
 
 }

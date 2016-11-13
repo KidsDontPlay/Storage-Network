@@ -25,6 +25,7 @@ public class TileRequestTable extends TileNetworkPart {
 	public List<ItemStack> matrix = new ArrayList<ItemStack>(9);
 	public Sort sort = Sort.NAME;
 	public boolean topDown = true, jei = false;
+	public ItemStack fill,empty; 
 
 	@Override
 	public List<ItemStack> getDroppingItems() {

@@ -26,12 +26,11 @@ public class ItemItemFilter extends CommonItem {
 	public ItemItemFilter() {
 		super("item_item_filter");
 		setCreativeTab(CreativeTab.TAB);
-		setMaxStackSize(1);
 	}
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (itemStackIn.getTagCompound() == null) {
+		if (itemStackIn.hasTagCompound()) {
 			NBTStackHelper.setBoolean(itemStackIn, "meta", true);
 			NBTStackHelper.setBoolean(itemStackIn, "nbt", false);
 			NBTStackHelper.setBoolean(itemStackIn, "ore", false);
@@ -44,6 +43,7 @@ public class ItemItemFilter extends CommonItem {
 		}
 		if (!worldIn.isRemote && !playerIn.isSneaking()) {
 			playerIn.openGui(StorageNetwork.instance, GuiID.ITEM_FILTER.ordinal(), worldIn, 0, 0, 0);
+//			System.out.println(NBTStackHelper.getItemStackList(itemStackIn, "inv"));
 			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 		} else if (!worldIn.isRemote && playerIn.isSneaking()) {
 			itemStackIn.setTagCompound(null);
@@ -55,6 +55,8 @@ public class ItemItemFilter extends CommonItem {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		super.addInformation(stack, playerIn, tooltip, advanced);
+		if (NBTStackHelper.getBoolean(stack, "copy"))
+			tooltip.add(TextFormatting.YELLOW + "Copy settings");
 		if (!GuiScreen.isShiftKeyDown())
 			tooltip.add(TextFormatting.ITALIC + "Press shift for more information");
 		else {

@@ -3,7 +3,7 @@
     "defaults" : {
         "model" : "minecraft:cube_all", 
         "textures" : {
-            "all" : "blocks/hopper_inside"
+            "all" : "storagenetwork:blocks/item_attractor"
         }, 
         "transform" : "forge:default-block"
     }, 

@@ -27,6 +27,8 @@ public class ContainerItemFilter extends CommonContainer {
 			for (int i = 0; i < inv.getSizeInventory(); i++) {
 				inv.setInventorySlotContents(i, NBTStackHelper.getItemStackList(stack, "inv").get(i));
 			}
+//		System.out.println("2");
+//		System.out.println(NBTStackHelper.getItemStackList(stack, "inv"));
 
 	}
 

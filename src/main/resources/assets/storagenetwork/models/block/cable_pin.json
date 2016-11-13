@@ -5,22 +5,28 @@
             "to" : [10, 16, 10], 
             "faces" : {
                 "down" : {
-                    "texture" : "#pin","tintindex":0
+                    "texture" : "#pin", 
+                    "tintindex" : 0
                 }, 
                 "up" : {
-                    "texture" : "#pin","tintindex":0
+                    "texture" : "#pin", 
+                    "tintindex" : 0
                 }, 
                 "north" : {
-                    "texture" : "#pin","tintindex":0
+                    "texture" : "#pin", 
+                    "tintindex" : 0
                 }, 
                 "south" : {
-                    "texture" : "#pin","tintindex":0
+                    "texture" : "#pin", 
+                    "tintindex" : 0
                 }, 
                 "west" : {
-                    "texture" : "#pin","tintindex":0
+                    "texture" : "#pin", 
+                    "tintindex" : 0
                 }, 
                 "east" : {
-                    "texture" : "#pin","tintindex":0
+                    "texture" : "#pin", 
+                    "tintindex" : 0
                 }
             }
         }]

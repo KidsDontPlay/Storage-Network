@@ -1,9 +1,15 @@
 {
     "forge_marker" : 1, 
     "defaults" : {
-        "model" : "minecraft:cube_all", 
+        "model" : "minecraft:cube", 
         "textures" : {
-            "all" : "blocks/repeater_on"
+            "particle" : "blocks/hopper_inside", 
+            "down" : "storagenetwork:blocks/base", 
+            "up" : "storagenetwork:blocks/base", 
+            "north" : "storagenetwork:blocks/energy_cell", 
+            "east" : "storagenetwork:blocks/energy_cell", 
+            "south" : "storagenetwork:blocks/energy_cell", 
+            "west" : "storagenetwork:blocks/energy_cell"
         }, 
         "transform" : "forge:default-block"
     }, 

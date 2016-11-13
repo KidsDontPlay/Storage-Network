@@ -19,6 +19,8 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 				if (ei.isDead || ei.ticksExisted < 10)
 					continue;
 				Vec3d vec = new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).normalize().scale(0.12);
+				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01)
+					ei.motionY = 0.1;
 				ei.motionX = vec.xCoord;
 				ei.motionZ = vec.zCoord;
 				if (!worldObj.isRemote && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
