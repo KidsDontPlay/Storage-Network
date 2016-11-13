@@ -108,9 +108,9 @@ public class Network {
 		return result;
 	}
 
-	public int insertItem(ItemStack stack, GlobalBlockPos source, boolean simulate) {
+	public ItemStack insertItem(ItemStack stack, GlobalBlockPos source, boolean simulate) {
 		if (stack == null)
-			return 0;
+			return null;
 		int rest = stack.stackSize;
 		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
 		Collections.sort(networkParts, comparator);
@@ -126,13 +126,13 @@ public class Network {
 					if (tile.canTransferItem(stack)) {
 						ItemStack restStack = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(stack, rest), simulate);
 						if (restStack == null)
-							return 0;
+							return null;
 						rest = restStack.stackSize;
 					}
 				}
 			}
 		}
-		return rest;
+		return ItemHandlerHelper.copyStackWithSize(stack, rest);
 	}
 
 	public void exportItems() {
@@ -178,7 +178,8 @@ public class Network {
 							continue;
 						if (!ItemItemFilter.canTransferItem(tile.filter, stack))
 							continue;
-						int maxInsert = Math.min(stack.stackSize, tile.getTransferAmount(Item.class)) - insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
+						ItemStack ins = insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
+						int maxInsert = Math.min(stack.stackSize, tile.getTransferAmount(Item.class)) - (ins == null ? 0 : ins.stackSize);
 						ItemStack ext = inv.extractItem(i, maxInsert, true);
 						int ex = ext != null ? ext.stackSize : 0;
 						ex = Math.min(ex, maxInsert);

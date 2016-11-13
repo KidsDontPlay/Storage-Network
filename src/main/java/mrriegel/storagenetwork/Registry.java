@@ -32,7 +32,6 @@ public class Registry {
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
 	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
 	public static final CommonBlock blockRequestTable = new BlockRequestTable("block_request_table");
-	public static final CommonBlock blockRequestCraftingTable = new BlockRequestTable("block_request_crafting_table");
 
 	public static final CommonItem itemFilter = new ItemItemFilter();
 	public static final CommonItem itemUpgrade = new ItemUpgrade();
@@ -47,7 +46,6 @@ public class Registry {
 		networkEnergyCell.registerBlock();
 		networkToggleCable.registerBlock();
 		blockRequestTable.registerBlock();
-		blockRequestCraftingTable.registerBlock();
 
 		itemFilter.registerItem();
 		itemUpgrade.registerItem();
@@ -65,7 +63,6 @@ public class Registry {
 		networkEnergyCell.initModel();
 		networkToggleCable.initModel();
 		blockRequestTable.initModel();
-		blockRequestCraftingTable.initModel();
 
 		itemFilter.initModel();
 		itemUpgrade.initModel();
