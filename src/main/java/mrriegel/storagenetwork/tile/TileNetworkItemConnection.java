@@ -84,7 +84,7 @@ public class TileNetworkItemConnection extends TileNetworkConnection implements 
 	public int getUpgradeAmount(UpgradeType type) {
 		int result = 0;
 		for (ItemStack stack : upgrades)
-			if (stack != null && stack.getItem() == Registry.itemUpgrade && stack.getItemDamage() == type.ordinal())
+			if (stack != null && stack.getItem() == Registry.upgrade && stack.getItemDamage() == type.ordinal())
 				result++;
 		return result;
 

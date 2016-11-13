@@ -51,7 +51,7 @@ public class ContainerItemConnect extends CommonContainer {
 
 					@Override
 					public boolean isItemValid(ItemStack stack) {
-						return stack.getItem() == Registry.itemUpgrade;
+						return stack.getItem() == Registry.upgrade;
 					}
 				});
 		initPlayerSlots(8, 32);
@@ -65,7 +65,7 @@ public class ContainerItemConnect extends CommonContainer {
 	protected List<Area> allowedSlots(ItemStack stack, IInventory inv, int index) {
 		if (inv instanceof InventoryPlayer && stack.getItem() == Registry.itemFilter)
 			return Lists.newArrayList(getAreaForEntireInv(invs.get("filter")));
-		else if (inv instanceof InventoryPlayer && stack.getItem() == Registry.itemUpgrade)
+		else if (inv instanceof InventoryPlayer && stack.getItem() == Registry.upgrade)
 			return Lists.newArrayList(getAreaForEntireInv(invs.get("upgrades")));
 		else
 			return Lists.newArrayList(getAreaForEntireInv(invPlayer));

@@ -15,7 +15,6 @@ import mrriegel.limelib.gui.GuiDrawer.Direction;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
 import mrriegel.limelib.gui.element.AbstractSlot.ItemSlot;
 import mrriegel.limelib.helper.ColorHelper;
-import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.util.StackWrapper;
 import mrriegel.limelib.util.Utils;
 import mrriegel.storagenetwork.container.ContainerRequestTable;
@@ -43,10 +42,10 @@ public class GuiRequestTable extends CommonGuiContainer {
 	protected GuiButtonSimple sort, direction, clear, jei;
 	protected GuiTextField searchBar;
 	protected int currentPos = 0, maxPos = 0;
-	protected ItemStack over;
+	protected ItemSlot over;
 
 	protected boolean canClick() {
-		return System.currentTimeMillis() > lastClick + 400L;
+		return System.currentTimeMillis() > lastClick + 300L;
 	}
 
 	public GuiRequestTable(ContainerRequestTable inventorySlotsIn) {
@@ -67,11 +66,11 @@ public class GuiRequestTable extends CommonGuiContainer {
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
 		searchBar.setFocused(true);
-		buttonList.add(sort = new GuiButtonSimple(0, guiLeft + 20, 126, 24, 12, "sort", null));
-		buttonList.add(direction = new GuiButtonSimple(1, guiLeft + 50, 126, 24, 12, "direct", null));
+		buttonList.add(sort = new GuiButtonSimple(0, guiLeft + 7, guiTop +116, 45, 12, "sort", null));
+		buttonList.add(direction = new GuiButtonSimple(1, guiLeft + 55, guiTop+116, 20, 12, "direct", null));
 		buttonList.add(clear = new GuiButtonSimple(2, guiLeft + 62, guiTop + 137, 11, 11, "x", Lists.newArrayList("Clear grid")));
 		if (Loader.isModLoaded("JEI"))
-			buttonList.add(jei = new GuiButtonSimple(3, guiLeft + 80, guiTop + 126, 24, 12, "", null));
+			buttonList.add(jei = new GuiButtonSimple(3, guiLeft + 125, guiTop + 116, 24, 12, "", null));
 	}
 
 	@Override
@@ -99,7 +98,8 @@ public class GuiRequestTable extends CommonGuiContainer {
 			if (currentPos > maxPos)
 				currentPos = maxPos;
 			int percent = (int) ((currentPos / (double) maxPos) * 100);
-			drawer.drawColoredRectangle(3, 7 + percent, 4, 8, ColorHelper.darker(Color.DARK_GRAY.getRGB(), 0.1));
+			drawer.drawFrame(3, 7 + percent, 4, 7, 1, Color.BLACK.getRGB());
+			drawer.drawColoredRectangle(4, 8 + percent, 3, 6, ColorHelper.darker(Color.GRAY.getRGB(), 0.1));
 			items.clear();
 			List<StackWrapper> tmp = getFilteredList();
 			int index = currentPos * 13;
@@ -116,7 +116,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 			for (ItemSlot slot : items) {
 				slot.draw(mouseX, mouseY);
 				if (slot.isMouseOver(mouseX, mouseY)) {
-					over = slot.stack;
+					over = slot;
 				}
 			}
 		}
@@ -138,7 +138,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 			searchBar.setFocused(false);
 		}
 		sort.setTooltip("Sort by " + tile.sort.name().toLowerCase());
-		sort.displayString = tile.sort.name().substring(0, 2);
+		sort.displayString = tile.sort.name();
 		direction.setTooltip("Sort direction: " + (tile.topDown ? "top-down" : "bottom-up"));
 		direction.displayString = tile.topDown ? "TD" : "BU";
 		if (jei != null)
@@ -155,37 +155,39 @@ public class GuiRequestTable extends CommonGuiContainer {
 		tile.handleMessage(mc.thePlayer, nbt);
 	}
 
-	protected void sendRequest(ItemStack stack, int mouseButton) {
+	protected void sendRequest(ItemSlot slot, int mouseButton) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		if (stack != null)
-			stack.writeToNBT(nbt);
+		if (slot != null)
+			slot.stack.writeToNBT(nbt);
 		nbt.setInteger("button", 1000);
 		nbt.setInteger("mouse", mouseButton);
 		nbt.setBoolean("shift", isShiftKeyDown());
 		nbt.setBoolean("ctrl", isCtrlKeyDown());
+		nbt.setInteger("SIZE", slot!=null?slot.amount:0);
 		tile.sendMessage(nbt);
 	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-
 		searchBar.setFocused(isPointInRegion(searchBar.xPosition, searchBar.yPosition, searchBar.width, searchBar.height, mouseX + guiLeft, mouseY + guiTop));
 		if (searchBar.isFocused() && mouseButton == 1) {
 			searchBar.setText("");
 			if (tile.jei && Loader.isModLoaded("JEI"))
 				Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 		}
-		if (over != null && mc.thePlayer.inventory.getItemStack() == null)
-			sendRequest(over, mouseButton);
-		else if (mc.thePlayer.inventory.getItemStack() != null&&isPointInRegion(7, 7, 18 * 13, 18 * 6, GuiDrawer.getMouseX(), GuiDrawer.getMouseY())) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			mc.thePlayer.inventory.getItemStack().writeToNBT(nbt);
-			nbt.setInteger("button", 1001);
-			nbt.setInteger("mouse", mouseButton);
-			tile.sendMessage(nbt);
+		if (canClick()) {
+			if (over != null && mc.thePlayer.inventory.getItemStack() == null)
+				sendRequest(over, mouseButton);
+			else if (mc.thePlayer.inventory.getItemStack() != null && isPointInRegion(7, 7, 18 * 13, 18 * 6, GuiDrawer.getMouseX(), GuiDrawer.getMouseY())) {
+				NBTTagCompound nbt = new NBTTagCompound();
+				mc.thePlayer.inventory.getItemStack().writeToNBT(nbt);
+				nbt.setInteger("button", 1001);
+				nbt.setInteger("mouse", mouseButton);
+				tile.sendMessage(nbt);
+			}
+			lastClick = System.currentTimeMillis();
 		}
-		lastClick = System.currentTimeMillis();
 	}
 
 	@Override
@@ -207,13 +209,13 @@ public class GuiRequestTable extends CommonGuiContainer {
 		if (!this.checkHotbarKeys(keyCode)) {
 			if (over != null && Loader.isModLoaded("JEI") && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
 				if (keyCode == Keyboard.KEY_R)
-					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.OUTPUT, over));
+					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.OUTPUT, over.stack));
 				else
-					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.INPUT, over));
+					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.INPUT, over.stack));
 			} else
 
 			if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
-				System.out.println(searchBar.getText());
+				//				System.out.println(searchBar.getText());
 				if (tile.jei && Loader.isModLoaded("JEI"))
 					Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 				sendRequest(null, 0);

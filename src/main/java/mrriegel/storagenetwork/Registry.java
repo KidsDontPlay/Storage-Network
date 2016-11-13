@@ -2,6 +2,7 @@ package mrriegel.storagenetwork;
 
 import mrriegel.limelib.block.CommonBlock;
 import mrriegel.limelib.item.CommonItem;
+import mrriegel.storagenetwork.block.BlockItemAttractor;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
@@ -31,10 +32,12 @@ public class Registry {
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
 	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
-	public static final CommonBlock blockRequestTable = new BlockRequestTable("block_request_table");
+	public static final CommonBlock requestTable = new BlockRequestTable();
+	public static final CommonBlock itemAttractor =new BlockItemAttractor();
+	
 
 	public static final CommonItem itemFilter = new ItemItemFilter();
-	public static final CommonItem itemUpgrade = new ItemUpgrade();
+	public static final CommonItem upgrade = new ItemUpgrade();
 
 	public static void preInit() {
 		networkCore.registerBlock();
@@ -45,10 +48,11 @@ public class Registry {
 		networkEnergyInterface.registerBlock();
 		networkEnergyCell.registerBlock();
 		networkToggleCable.registerBlock();
-		blockRequestTable.registerBlock();
+		requestTable.registerBlock();
+		itemAttractor.registerBlock();
 
 		itemFilter.registerItem();
-		itemUpgrade.registerItem();
+		upgrade.registerItem();
 
 		initRecipes();
 	}
@@ -62,10 +66,11 @@ public class Registry {
 		networkEnergyInterface.initModel();
 		networkEnergyCell.initModel();
 		networkToggleCable.initModel();
-		blockRequestTable.initModel();
+		requestTable.initModel();
+		itemAttractor.initModel();
 
 		itemFilter.initModel();
-		itemUpgrade.initModel();
+		upgrade.initModel();
 		;
 
 	}

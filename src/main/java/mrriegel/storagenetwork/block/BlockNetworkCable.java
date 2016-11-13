@@ -188,6 +188,7 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 						tile.markForSync();
 					}
 				}
+				return false;
 			}
 		}
 		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);

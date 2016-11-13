@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork;
 
-import mrriegel.limelib.gui.ContainerNull;
 import mrriegel.storagenetwork.container.ContainerItemConnect;
 import mrriegel.storagenetwork.container.ContainerItemFilter;
 import mrriegel.storagenetwork.container.ContainerRequestTable;

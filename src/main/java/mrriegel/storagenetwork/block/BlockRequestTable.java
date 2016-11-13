@@ -18,8 +18,8 @@ import net.minecraft.world.World;
 
 public class BlockRequestTable extends CommonBlockContainer<TileRequestTable> {
 
-	public BlockRequestTable(String name) {
-		super(Material.IRON, name);
+	public BlockRequestTable() {
+		super(Material.IRON, "block_request_table");
 		setHardness(2.5F);
 		setCreativeTab(CreativeTab.TAB);
 		setDefaultState(getDefaultState().withProperty(FACING, EnumFacing.NORTH));

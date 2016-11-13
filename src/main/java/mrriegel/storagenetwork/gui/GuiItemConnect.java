@@ -3,19 +3,16 @@ package mrriegel.storagenetwork.gui;
 import java.awt.Color;
 import java.io.IOException;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.FluidRegistry;
 import mrriegel.limelib.gui.CommonGuiContainer;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
-import mrriegel.limelib.gui.element.AbstractSlot;
-import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.storagenetwork.Enums.IOMODE;
 import mrriegel.storagenetwork.container.ContainerItemConnect;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
 import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
 import mrriegel.storagenetwork.tile.TileNetworkStorage;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.nbt.NBTTagCompound;
 
 import com.google.common.collect.Lists;
 

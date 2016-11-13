@@ -3,7 +3,7 @@
     "defaults" : {
         "model" : "minecraft:cube_all", 
         "textures" : {
-            "all" : "blocks/repeater_on"
+            "all" : "blocks/hopper_inside"
         }, 
         "transform" : "forge:default-block"
     }, 

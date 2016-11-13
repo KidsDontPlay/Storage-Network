@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.util.FilterItem;
 import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.item.ItemItemFilter;
@@ -87,6 +88,8 @@ public class Network {
 							if (result == null) {
 								result = inv.extractItem(i, need, simulate);
 								need -= result.stackSize;
+								if (((INetworkStorage<?>) part).getStoragePosition().getTile(null) != null)
+									((INetworkStorage<?>) part).getStoragePosition().getTile(null).markDirty();
 								if (need == 0)
 									return result;
 							} else {
@@ -95,6 +98,8 @@ public class Network {
 									int ex = ext.stackSize;
 									need -= ex;
 									result.stackSize += ex;
+									if (((INetworkStorage<?>) part).getStoragePosition().getTile(null) != null)
+										((INetworkStorage<?>) part).getStoragePosition().getTile(null).markDirty();
 									if (need == 0)
 										return result;
 								}
@@ -119,6 +124,30 @@ public class Network {
 				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
 					continue;
 				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				if (InvHelper.getAmount(tile.getStorage(), new FilterItem(stack, true, false, true)) <= 0)
+					continue;
+				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
+					continue;
+				if (tile.canExtract() && !tile.getStoragePosition().equals(source)) {
+					IItemHandler inv = tile.getStorage();
+					if (tile.canTransferItem(stack)) {
+						ItemStack restStack = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(stack, rest), simulate);
+						if (((INetworkStorage<?>) part).getStoragePosition().getTile(null) != null)
+							((INetworkStorage<?>) part).getStoragePosition().getTile(null).markDirty();
+						if (restStack == null)
+							return null;
+						rest = restStack.stackSize;
+					}
+				}
+			}
+		}
+		for (INetworkPart part : networkParts) {
+			if (part instanceof INetworkStorage) {
+				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+					continue;
+				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				if (InvHelper.getAmount(tile.getStorage(), new FilterItem(stack, true, false, true)) > 0)
+					continue;
 				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
 					continue;
 				if (tile.canExtract() && !tile.getStoragePosition().equals(source)) {
@@ -153,6 +182,8 @@ public class Network {
 						if (req == null)
 							continue;
 						ItemHandlerHelper.insertItemStacked(inv, req, false);
+						if (tile.getTile() != null)
+							tile.getTile().markDirty();
 						break;
 
 					}
@@ -186,6 +217,8 @@ public class Network {
 						if (ex == 0)
 							continue;
 						insertItem(inv.extractItem(i, ex, false), new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), false);
+						if (tile.getTile() != null)
+							tile.getTile().markDirty();
 						break;
 
 					}

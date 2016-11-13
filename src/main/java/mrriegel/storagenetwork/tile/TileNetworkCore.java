@@ -60,7 +60,11 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	public void initializeNetwork() {
 		this.network = new Network();
 		network.corePosition = new GlobalBlockPos(pos, worldObj);
-		runThroughNetwork(pos);
+		try {
+			runThroughNetwork(pos);
+		} catch (StackOverflowError error) {
+			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
+		}
 		System.out.println("network size: " + network.networkParts.size());
 	}
 
@@ -104,11 +108,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		}
 		if ((needsUpdate || network == null) && onServer()) {
 			needsUpdate = false;
-			try {
-				initializeNetwork();
-			} catch (StackOverflowError error) {
-				StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
-			}
+			initializeNetwork();
 		}
 		if (onServer() && network != null) {
 			if (ModConfig.needsEnergy && worldObj.getTotalWorldTime() % 15 == 0) {

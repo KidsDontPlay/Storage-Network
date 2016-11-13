@@ -8,16 +8,17 @@ import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.util.FilterItem;
 import mrriegel.storagenetwork.Enums.Sort;
 import mrriegel.storagenetwork.GuiHandler.GuiID;
-import mrriegel.storagenetwork.container.ContainerRequestTable;
-import mrriegel.storagenetwork.message.MessageItemListRequest;
 import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.container.ContainerRequestTable;
+import mrriegel.storagenetwork.message.MessageItemListRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class TileRequestTable extends TileNetworkPart {
 
@@ -33,7 +34,7 @@ public class TileRequestTable extends TileNetworkPart {
 	@Override
 	public boolean openGUI(EntityPlayerMP player) {
 		if (getNetworkCore() != null) {
-			if (worldObj.getBlockState(pos).getBlock() == Registry.blockRequestTable)
+			if (worldObj.getBlockState(pos).getBlock() == Registry.requestTable)
 				player.openGui(StorageNetwork.instance, GuiID.REQUEST_TABLE.ordinal(), worldObj, getX(), getY(), getZ());
 			return true;
 		}
@@ -90,7 +91,7 @@ public class TileRequestTable extends TileNetworkPart {
 				ItemStack stack = ItemStack.loadItemStackFromNBT(nbt);
 				if (stack != null) {
 					int mouse = nbt.getInteger("mouse");
-					int size = nbt.getBoolean("ctrl") ? 1 : mouse == 1 ? stack.getMaxStackSize() / 2 : mouse == 0 ? stack.getMaxStackSize() : 0;
+					int size = nbt.getBoolean("ctrl") ? 1 : mouse == 1 ? (nbt.getInteger("SIZE") < stack.getMaxStackSize() ? nbt.getInteger("SIZE") / 2 : stack.getMaxStackSize() / 2) : mouse == 0 ? stack.getMaxStackSize() : 0;
 					ItemStack req = core.network.requestItem(new FilterItem(stack, true, false, true), size, false);
 					if (req != null) {
 						if (nbt.getBoolean("shift")) {
@@ -131,11 +132,42 @@ public class TileRequestTable extends TileNetworkPart {
 				}
 			}
 			break;
+		case 2000:
+			NBTTagCompound n = new NBTTagCompound();
+			n.setInteger("button", 2);
+			handleMessage(player, n);
+			boolean isempty = true;
+			for (ItemStack s : matrix) {
+				if (s != null) {
+					isempty = false;
+					break;
+				}
+			}
+			if (isempty && getNetworkCore() != null && player.openContainer instanceof ContainerRequestTable) {
+				for (int i = 0; i < 9; i++) {
+					boolean ore = false;
+					List<ItemStack> stacks = NBTHelper.getItemStackList(nbt, i + "l");
+					if (stacks.isEmpty()) {
+						stacks = OreDictionary.getOres(NBTHelper.getString(nbt, i + "s"));
+						ore = true;
+					}
+					ItemStack stack = null;
+					for (ItemStack s : stacks) {
+						stack = getNetworkCore().network.requestItem(new FilterItem(s, true, ore, true), 1, false);
+						if (stack != null)
+							break;
+					}
+					if (stack != null) {
+						((ContainerRequestTable) player.openContainer).inventorySlots.get(i + 1).putStack(stack);
+						player.openContainer.detectAndSendChanges();
+					}
+				}
+			}
+			break;
 		default:
 			break;
 		}
 		if (!player.worldObj.isRemote)
 			PacketHandler.sendTo(new MessageItemListRequest(getNetworkCore().network.getItemstacks()), (EntityPlayerMP) player);
 	}
-
 }
