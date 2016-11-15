@@ -6,7 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockNetworkStorage extends BlockNetworkConnection{
+public class BlockNetworkStorage extends BlockNetworkConnection {
 
 	public BlockNetworkStorage() {
 		super("block_network_storage");

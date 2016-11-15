@@ -46,6 +46,7 @@ public class TileNetworkItemConnection extends TileNetworkConnection implements 
 		return super.writeToNBT(compound);
 	}
 
+	@Override
 	public int getPriority() {
 		return priority;
 	}
@@ -58,7 +59,7 @@ public class TileNetworkItemConnection extends TileNetworkConnection implements 
 
 	@Override
 	public List<ItemStack> getDroppingItems() {
-		List<ItemStack> lis=Lists.newArrayList(upgrades);
+		List<ItemStack> lis = Lists.newArrayList(upgrades);
 		lis.add(filter);
 		return lis;
 	}
@@ -94,7 +95,7 @@ public class TileNetworkItemConnection extends TileNetworkConnection implements 
 		if (clazz == Item.class || clazz == ItemStack.class) {
 			return (int) Math.pow(4, getUpgradeAmount(UpgradeType.STACK));
 		} else if (clazz == Fluid.class || clazz == FluidStack.class) {
-			return (int) Math.pow(4, getUpgradeAmount(UpgradeType.STACK))*100;
+			return (int) Math.pow(4, getUpgradeAmount(UpgradeType.STACK)) * 100;
 		}
 		return 0;
 	}

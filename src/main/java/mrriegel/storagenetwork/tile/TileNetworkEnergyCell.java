@@ -3,12 +3,13 @@ package mrriegel.storagenetwork.tile;
 import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.tile.IDataKeeper;
 import mrriegel.limelib.util.EnergyStorageExt;
+import mrriegel.storagenetwork.ModConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileNetworkEnergyCell extends TileNetworkPart implements IDataKeeper{
+public class TileNetworkEnergyCell extends TileNetworkPart implements IDataKeeper {
 
-	private EnergyStorageExt energy = new EnergyStorageExt(500000, Integer.MAX_VALUE);
+	private EnergyStorageExt energy = new EnergyStorageExt(ModConfig.energycellCapacity, Integer.MAX_VALUE);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {

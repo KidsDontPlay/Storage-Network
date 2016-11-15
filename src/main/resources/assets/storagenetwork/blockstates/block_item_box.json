@@ -3,13 +3,13 @@
     "defaults" : {
         "model" : "minecraft:cube", 
         "textures" : {
-            "particle" : "storagenetwork:blocks/energy_cell", 
+            "particle" : "storagenetwork:blocks/item_box", 
             "down" : "storagenetwork:blocks/base", 
             "up" : "storagenetwork:blocks/base", 
-            "north" : "storagenetwork:blocks/energy_cell", 
-            "east" : "storagenetwork:blocks/energy_cell", 
-            "south" : "storagenetwork:blocks/energy_cell", 
-            "west" : "storagenetwork:blocks/energy_cell"
+            "north" : "storagenetwork:blocks/item_box", 
+            "east" : "storagenetwork:blocks/item_box", 
+            "south" : "storagenetwork:blocks/item_box", 
+            "west" : "storagenetwork:blocks/item_box"
         }, 
         "transform" : "forge:default-block"
     }, 

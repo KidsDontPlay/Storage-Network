@@ -16,11 +16,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class RequestRecipeTransferHandler implements IRecipeTransferHandler<ContainerAbstractRequest> {
+public class RequestRecipeTransferHandler<T extends ContainerAbstractRequest<?>> implements IRecipeTransferHandler<T> {
+
+	Class<T> clazz;
+
+	public RequestRecipeTransferHandler(Class<T> clazz) {
+		super();
+		this.clazz = clazz;
+	}
 
 	@Override
-	public Class<ContainerAbstractRequest> getContainerClass() {
-		return ContainerAbstractRequest.class;
+	public Class<T> getContainerClass() {
+		return clazz;
 	}
 
 	@Override
@@ -29,7 +36,7 @@ public class RequestRecipeTransferHandler implements IRecipeTransferHandler<Cont
 	}
 
 	@Override
-	public IRecipeTransferError transferRecipe(ContainerAbstractRequest container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+	public IRecipeTransferError transferRecipe(T container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
 		if (doTransfer) {
 			Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
 			NBTTagCompound nbt = new NBTTagCompound();

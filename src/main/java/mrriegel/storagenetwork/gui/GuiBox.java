@@ -6,22 +6,19 @@ import java.io.IOException;
 import mrriegel.limelib.gui.CommonGuiContainer;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
 import mrriegel.storagenetwork.Enums.IOMODE;
-import mrriegel.storagenetwork.container.ContainerItemConnect;
-import mrriegel.storagenetwork.tile.TileNetworkExporter;
-import mrriegel.storagenetwork.tile.TileNetworkImporter;
-import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
-import mrriegel.storagenetwork.tile.TileNetworkStorage;
+import mrriegel.storagenetwork.container.ContainerBox;
+import mrriegel.storagenetwork.tile.TileBox;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.google.common.collect.Lists;
 
-public class GuiItemConnect extends CommonGuiContainer {
+public class GuiBox extends CommonGuiContainer {
 
 	GuiButtonSimple io;
-	TileNetworkItemConnection tile;
+	TileBox<?, ?> tile;
 
-	public GuiItemConnect(ContainerItemConnect inventorySlotsIn) {
+	public GuiBox(ContainerBox inventorySlotsIn) {
 		super(inventorySlotsIn);
 		ySize = 114;
 		tile = inventorySlotsIn.tile;
@@ -32,8 +29,7 @@ public class GuiItemConnect extends CommonGuiContainer {
 		super.initGui();
 		buttonList.add(new GuiButtonSimple(0, guiLeft + 106, guiTop + 7, 10, 20, "-", Color.BLACK.getRGB(), Color.GRAY.getRGB(), Lists.newArrayList("-Priority")));
 		buttonList.add(new GuiButtonSimple(1, guiLeft + 135, guiTop + 7, 10, 20, "+", Color.BLACK.getRGB(), Color.GRAY.getRGB(), Lists.newArrayList("+Priority")));
-		if (tile instanceof TileNetworkStorage)
-			buttonList.add(io = new GuiButtonSimple(2, guiLeft + 150, guiTop + 7, 20, 20, "", Color.BLACK.getRGB(), Color.GRAY.getRGB(), null));
+		buttonList.add(io = new GuiButtonSimple(2, guiLeft + 150, guiTop + 7, 20, 20, "", Color.BLACK.getRGB(), Color.GRAY.getRGB(), null));
 	}
 
 	@Override
@@ -42,17 +38,13 @@ public class GuiItemConnect extends CommonGuiContainer {
 		drawer.drawBackgroundTexture();
 		drawer.drawPlayerSlots(7, 31);
 		drawer.drawSlot(7, 8);
-		if (tile instanceof TileNetworkExporter || tile instanceof TileNetworkImporter)
-			drawer.drawSlots(29, 8, 4, 1);
 	}
 
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		if (io != null) {
-			io.displayString = ((TileNetworkStorage) tile).iomode == IOMODE.IN ? "IN" : ((TileNetworkStorage) tile).iomode == IOMODE.OUT ? "OUT" : "IO";
-			io.setTooltip(((TileNetworkStorage) tile).iomode == IOMODE.IN ? "Items will only be inserted into the network." : ((TileNetworkStorage) tile).iomode == IOMODE.OUT ? "Items will only be extracted from the network." : "Items will be inserted and extracted.");
-		}
+		io.displayString = tile.iomode == IOMODE.IN ? "IN" : tile.iomode == IOMODE.OUT ? "OUT" : "IO";
+		io.setTooltip(tile.iomode == IOMODE.IN ? "Items will only be inserted into the network." : tile.iomode == IOMODE.OUT ? "Items will only be extracted from the network." : "Items will be inserted and extracted.");
 	}
 
 	@Override
@@ -62,7 +54,6 @@ public class GuiItemConnect extends CommonGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		if (!inventorySlots.getSlot(0).getHasStack() && isPointInRegion(inventorySlots.getSlot(0).xDisplayPosition, inventorySlots.getSlot(0).yDisplayPosition, 16, 16, mouseX, mouseY)) {
 			drawHoveringText(Lists.newArrayList("Drop Item Filter here."), mouseX - guiLeft, mouseY - guiTop);
-			//			new AbstractSlot.FluidSlot(FluidRegistry.WATER, 0, mouseX, mouseY, 1, drawer, false, false, false, false).draw(mouseX-guiLeft, mouseY-guiTop);
 		}
 		for (int i = 1; i < 5; i++)
 			if (!inventorySlots.getSlot(i).getHasStack() && isPointInRegion(inventorySlots.getSlot(i).xDisplayPosition, inventorySlots.getSlot(i).yDisplayPosition, 16, 16, mouseX, mouseY))

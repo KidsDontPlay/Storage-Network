@@ -74,7 +74,7 @@ public class GuiRequest extends CommonGuiContainer {
 		buttonList.add(direction = new GuiButtonSimple(1, guiLeft + 55, guiTop + 116, 20, 12, "direct", null));
 		buttonList.add(clear = new GuiButtonSimple(2, guiLeft + 62, guiTop + 137, 11, 11, "x", Lists.newArrayList("Clear grid")));
 		if (Loader.isModLoaded("JEI"))
-			buttonList.add(jei = new GuiButtonSimple(3, guiLeft + 125, guiTop + 116, 24, 12, "", null));
+			buttonList.add(jei = new GuiButtonSimple(3, guiLeft + 125, guiTop + 116, 24, 12, "", Lists.newArrayList("Enable synchronized search with JEI")));
 	}
 
 	@Override
@@ -149,7 +149,6 @@ public class GuiRequest extends CommonGuiContainer {
 		direction.displayString = getContainer().isTopdown() ? "TD" : "BU";
 		if (jei != null)
 			jei.displayString = (getContainer().isJEI() ? TextFormatting.GREEN : TextFormatting.RED) + "JEI";
-
 	}
 
 	@Override

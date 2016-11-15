@@ -2,8 +2,6 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.item.ItemItemFilter;
@@ -13,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+
+import com.google.common.collect.Lists;
 
 public class TileItemAttractor extends TileNetworkPart implements ITickable {
 

@@ -1,5 +1,5 @@
 package mrriegel.storagenetwork.proxy;
 
-public class CommonProxy{
+public class CommonProxy {
 
 }

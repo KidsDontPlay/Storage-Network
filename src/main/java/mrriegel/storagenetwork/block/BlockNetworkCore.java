@@ -83,7 +83,7 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote && ((TileNetworkCore) worldIn.getTileEntity(pos)).network != null) {
-			System.out.println("Network size: " + ((TileNetworkCore) worldIn.getTileEntity(pos)).network.networkParts.size());
+			//			System.out.println("Network size: " + ((TileNetworkCore) worldIn.getTileEntity(pos)).network.networkParts.size());
 			((TileNetworkCore) worldIn.getTileEntity(pos)).sync();
 			PacketHandler.sendTo(new MessageCoreSync((TileNetworkCore) worldIn.getTileEntity(pos)), (EntityPlayerMP) playerIn);
 		}

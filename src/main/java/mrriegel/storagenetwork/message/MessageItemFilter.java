@@ -1,12 +1,12 @@
 package mrriegel.storagenetwork.message;
 
+import mrriegel.limelib.helper.NBTStackHelper;
+import mrriegel.limelib.network.AbstractMessage;
+import mrriegel.storagenetwork.Registry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
-import mrriegel.limelib.helper.NBTStackHelper;
-import mrriegel.limelib.network.AbstractMessage;
-import mrriegel.storagenetwork.Registry;
 
 public class MessageItemFilter extends AbstractMessage<MessageItemFilter> {
 

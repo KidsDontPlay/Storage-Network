@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileNetworkStorage extends TileNetworkItemConnection implements INetworkStorage<IItemHandler> {
+public class TileNetworkStorage extends TileNetworkItemConnection implements INetworkStorage<IItemHandler, ItemStack> {
 
 	public IOMODE iomode = IOMODE.INOUT;
 

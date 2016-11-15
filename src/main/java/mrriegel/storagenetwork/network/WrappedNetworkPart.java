@@ -1,16 +1,16 @@
 package mrriegel.storagenetwork.network;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public abstract class WrappedNetworkPart<T> implements INetworkPart {
 
 	public World world;
-    public BlockPos pos;
+	public BlockPos pos;
 	public T object;
-	
+
 	public WrappedNetworkPart(World world, BlockPos pos, T object) {
 		super();
 		this.world = world;
@@ -29,7 +29,7 @@ public abstract class WrappedNetworkPart<T> implements INetworkPart {
 			return true;
 		if (obj == null)
 			return false;
-		if(obj.equals(object))
+		if (obj.equals(object))
 			return true;
 		if (getClass() != obj.getClass())
 			return false;
@@ -41,7 +41,7 @@ public abstract class WrappedNetworkPart<T> implements INetworkPart {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public TileNetworkCore getNetworkCore() {
 		// TODO Auto-generated method stub
@@ -51,7 +51,7 @@ public abstract class WrappedNetworkPart<T> implements INetworkPart {
 	@Override
 	public void setNetworkCore(TileNetworkCore core) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

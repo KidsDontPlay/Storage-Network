@@ -10,18 +10,19 @@ import net.minecraft.util.EnumFacing;
  * @author canitzp
  */
 public interface INetworkPart {
-	
-    GlobalBlockPos getPosition();
-    
-    TileNetworkCore getNetworkCore();
-    
-    void setNetworkCore(TileNetworkCore core);
-    
-	default Set<EnumFacing> getNeighborFaces() {
-		return EnumSet.allOf(EnumFacing.class);}
 
-    default int getInventorySpace(){
-        return 0;
-    }
+	GlobalBlockPos getPosition();
+
+	TileNetworkCore getNetworkCore();
+
+	void setNetworkCore(TileNetworkCore core);
+
+	default Set<EnumFacing> getNeighborFaces() {
+		return EnumSet.allOf(EnumFacing.class);
+	}
+
+	default int getInventorySpace() {
+		return 0;
+	}
 
 }

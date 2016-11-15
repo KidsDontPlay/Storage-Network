@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Lists;
@@ -88,7 +89,7 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 					ItemStack req = core.network.requestItem(new FilterItem(stack, true, false, true), size, false);
 					if (req != null) {
 						if (nbt.getBoolean("shift")) {
-							player.inventory.addItemStackToInventory(req);
+							player.dropItem(ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(player.inventory), req, false), false);
 						} else {
 							((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(-1, 0, req));
 							player.inventory.setItemStack(req);

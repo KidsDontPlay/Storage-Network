@@ -10,9 +10,8 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerRequestTable extends ContainerAbstractRequest<TileRequestTable> {
 
-
 	public ContainerRequestTable(InventoryPlayer invPlayer, TileRequestTable tile) {
-		super(invPlayer,tile);
+		super(invPlayer, tile);
 	}
 
 	@Override

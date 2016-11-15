@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileNetworkConnection extends TileNetworkCable implements IRedstoneActive{
+public class TileNetworkConnection extends TileNetworkCable implements IRedstoneActive {
 
 	public EnumFacing tileFace = EnumFacing.DOWN;
 
@@ -20,7 +20,7 @@ public class TileNetworkConnection extends TileNetworkCable implements IRedstone
 			return null;
 		return getTile().getCapability(capa, tileFace.getOpposite());
 	}
-	
+
 	@Override
 	public Map<EnumFacing, Boolean> getValidSides() {
 		Map<EnumFacing, Boolean> map = super.getValidSides();

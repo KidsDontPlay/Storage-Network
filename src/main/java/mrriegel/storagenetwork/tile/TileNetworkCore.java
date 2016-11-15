@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.tile;
 
 import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.helper.StackHelper;
+import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.tile.CommonTile;
 import mrriegel.limelib.util.CombinedEnergyStorageExt;
 import mrriegel.limelib.util.EnergyStorageExt;
@@ -11,12 +12,15 @@ import mrriegel.storagenetwork.Network;
 import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
+import mrriegel.storagenetwork.message.MessageCoreSync;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -62,8 +66,10 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 			runThroughNetwork(pos);
 		} catch (StackOverflowError error) {
 			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
+		} catch (Error error) {
+			error.printStackTrace();
 		}
-		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
+		//		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
 	}
 
 	private void runThroughNetwork(BlockPos pos) {
@@ -110,15 +116,19 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 			initializeNetwork();
 		}
 		if (onServer() && network != null) {
-			if (ModConfig.needsEnergy && worldObj.getTotalWorldTime() % 15 == 0) {
-				if (getEnergyStorage().getEnergyStored() == 0 && worldObj.getBlockState(pos).getValue(BlockNetworkCore.ACTIVE))
+			if (worldObj.getTotalWorldTime() % 15 == 0) {
+				if (ModConfig.needsEnergy && getEnergyStorage().getEnergyStored() == 0 && worldObj.getBlockState(pos).getValue(BlockNetworkCore.ACTIVE))
 					worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockNetworkCore.ACTIVE, false), 2);
-				else if (getEnergyStorage().getEnergyStored() > 0 && !worldObj.getBlockState(pos).getValue(BlockNetworkCore.ACTIVE))
+				else if ((getEnergyStorage().getEnergyStored() > 0 || !ModConfig.needsEnergy) && !worldObj.getBlockState(pos).getValue(BlockNetworkCore.ACTIVE))
 					worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockNetworkCore.ACTIVE, true), 2);
 			}
 			distributeEnergy();
 			network.importItems();
 			network.exportItems();
+			if (worldObj.getTotalWorldTime() % 20 == 0)
+				for (EntityPlayerMP p : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos.add(10, 10, 10), pos.add(-10, -10, -10)))) {
+					PacketHandler.sendTo(new MessageCoreSync(this), p);
+				}
 		}
 	}
 

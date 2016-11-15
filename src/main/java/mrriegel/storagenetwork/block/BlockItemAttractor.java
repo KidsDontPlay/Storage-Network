@@ -1,12 +1,12 @@
 package mrriegel.storagenetwork.block;
 
+import mrriegel.limelib.block.CommonBlockContainer;
+import mrriegel.storagenetwork.CreativeTab;
+import mrriegel.storagenetwork.tile.TileItemAttractor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import mrriegel.limelib.block.CommonBlockContainer;
-import mrriegel.storagenetwork.CreativeTab;
-import mrriegel.storagenetwork.tile.TileItemAttractor;
 
 public class BlockItemAttractor extends CommonBlockContainer<TileItemAttractor> {
 

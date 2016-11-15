@@ -91,9 +91,9 @@ public class Network {
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
-				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+				if (!(((INetworkStorage<?, ?>) part).getStorage() instanceof IItemHandler))
 					continue;
-				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				INetworkStorage<IItemHandler, ItemStack> tile = (INetworkStorage<IItemHandler, ItemStack>) part;
 				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
 					continue;
 				if (tile.canInsert()) {
@@ -104,8 +104,8 @@ public class Network {
 							if (result == null) {
 								result = inv.extractItem(i, need, simulate);
 								need -= result.stackSize;
-								if (((INetworkStorage<?>) part).getStoragePosition().getTile(null) != null)
-									((INetworkStorage<?>) part).getStoragePosition().getTile(null).markDirty();
+								if (((INetworkStorage<IItemHandler, ItemStack>) part).getStoragePosition().getTile(null) != null)
+									((INetworkStorage<IItemHandler, ItemStack>) part).getStoragePosition().getTile(null).markDirty();
 								if (need == 0)
 									return result;
 							} else {
@@ -114,8 +114,8 @@ public class Network {
 									int ex = ext.stackSize;
 									need -= ex;
 									result.stackSize += ex;
-									if (((INetworkStorage<?>) part).getStoragePosition().getTile(null) != null)
-										((INetworkStorage<?>) part).getStoragePosition().getTile(null).markDirty();
+									if (((INetworkStorage<IItemHandler, ItemStack>) part).getStoragePosition().getTile(null) != null)
+										((INetworkStorage<IItemHandler, ItemStack>) part).getStoragePosition().getTile(null).markDirty();
 									if (need == 0)
 										return result;
 								}
@@ -137,9 +137,9 @@ public class Network {
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
-				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+				if (!(((INetworkStorage<?, ?>) part).getStorage() instanceof IItemHandler))
 					continue;
-				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				INetworkStorage<IItemHandler, ItemStack> tile = (INetworkStorage<IItemHandler, ItemStack>) part;
 				if (InvHelper.getAmount(tile.getStorage(), new FilterItem(stack, true, false, true)) <= 0)
 					continue;
 				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
@@ -148,8 +148,8 @@ public class Network {
 					IItemHandler inv = tile.getStorage();
 					if (tile.canTransferItem(stack)) {
 						ItemStack restStack = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(stack, rest), simulate);
-						if (((INetworkStorage<?>) part).getStoragePosition().getTile(null) != null)
-							((INetworkStorage<?>) part).getStoragePosition().getTile(null).markDirty();
+						if (((INetworkStorage<IItemHandler, ItemStack>) part).getStoragePosition().getTile(null) != null)
+							((INetworkStorage<IItemHandler, ItemStack>) part).getStoragePosition().getTile(null).markDirty();
 						if (restStack == null)
 							return null;
 						rest = restStack.stackSize;
@@ -159,9 +159,9 @@ public class Network {
 		}
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
-				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+				if (!(((INetworkStorage<?, ?>) part).getStorage() instanceof IItemHandler))
 					continue;
-				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				INetworkStorage<IItemHandler, ItemStack> tile = (INetworkStorage<IItemHandler, ItemStack>) part;
 				if (InvHelper.getAmount(tile.getStorage(), new FilterItem(stack, true, false, true)) > 0)
 					continue;
 				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
@@ -250,9 +250,9 @@ public class Network {
 		List<ItemStack> lis = Lists.newArrayList();
 		for (INetworkPart part : noCables) {
 			if (part instanceof INetworkStorage) {
-				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
+				if (!(((INetworkStorage<?, ?>) part).getStorage() instanceof IItemHandler))
 					continue;
-				INetworkStorage<IItemHandler> tile = (INetworkStorage<IItemHandler>) part;
+				INetworkStorage<IItemHandler, ItemStack> tile = (INetworkStorage<IItemHandler, ItemStack>) part;
 				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
 					continue;
 				if (tile.canInsert()) {

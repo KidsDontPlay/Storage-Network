@@ -34,7 +34,7 @@ public class Enums {
 			return name;
 		}
 	}
-	
+
 	public enum Sort {
 		AMOUNT, NAME, MOD;
 		private static Sort[] vals = values();
@@ -42,8 +42,6 @@ public class Enums {
 		public Sort next() {
 			return vals[(this.ordinal() + 1) % vals.length];
 		}
-}
-	
-	
+	}
 
 }

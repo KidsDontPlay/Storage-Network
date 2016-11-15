@@ -1,16 +1,19 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.storagenetwork.container.ContainerBox;
 import mrriegel.storagenetwork.container.ContainerItemAttractor;
 import mrriegel.storagenetwork.container.ContainerItemConnect;
 import mrriegel.storagenetwork.container.ContainerItemFilter;
 import mrriegel.storagenetwork.container.ContainerRequestItem;
 import mrriegel.storagenetwork.container.ContainerRequestTable;
+import mrriegel.storagenetwork.gui.GuiBox;
 import mrriegel.storagenetwork.gui.GuiEnergyInterface;
 import mrriegel.storagenetwork.gui.GuiItemAttractor;
 import mrriegel.storagenetwork.gui.GuiItemConnect;
 import mrriegel.storagenetwork.gui.GuiItemFilter;
 import mrriegel.storagenetwork.gui.GuiNetworkCore;
 import mrriegel.storagenetwork.gui.GuiRequest;
+import mrriegel.storagenetwork.tile.TileBox;
 import mrriegel.storagenetwork.tile.TileItemAttractor;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
@@ -40,6 +43,8 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerItemAttractor(player.inventory, (TileItemAttractor) world.getTileEntity(new BlockPos(x, y, z)));
 		case WIRELESS_ITEM:
 			return new ContainerRequestItem(player.inventory, player.getHeldItemMainhand());
+		case BOX:
+			return new ContainerBox(player.inventory, (TileBox<?, ?>) world.getTileEntity(new BlockPos(x, y, z)));
 		default:
 			return null;
 		}
@@ -62,13 +67,15 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiItemAttractor(new ContainerItemAttractor(player.inventory, (TileItemAttractor) world.getTileEntity(new BlockPos(x, y, z))));
 		case WIRELESS_ITEM:
 			return new GuiRequest(new ContainerRequestItem(player.inventory, player.getHeldItemMainhand()));
+		case BOX:
+			return new GuiBox(new ContainerBox(player.inventory, (TileBox<?, ?>) world.getTileEntity(new BlockPos(x, y, z))));
 		default:
 			return null;
 		}
 	}
 
 	public enum GuiID {
-		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR, REQUEST_TABLE, ITEM_ATTRACTOR, WIRELESS_ITEM;
+		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR, REQUEST_TABLE, ITEM_ATTRACTOR, WIRELESS_ITEM, BOX;
 	}
 
 }

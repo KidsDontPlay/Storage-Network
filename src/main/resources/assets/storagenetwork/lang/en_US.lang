@@ -1,13 +1,14 @@
 tile.storagenetwork:block_network_core.name=Network Core
 tile.storagenetwork:block_network_cable.name=Network Cable
-tile.storagenetwork:block_network_exporter.name=Network Export
-tile.storagenetwork:block_network_importer.name=Network Import
-tile.storagenetwork:block_network_storage.name=Network Storage
-tile.storagenetwork:block_network_energy_interface.name=Network Energy Interface
-tile.storagenetwork:block_network_energy_cell.name=Network Energy Cell
+tile.storagenetwork:block_network_exporter.name=Network Export Device
+tile.storagenetwork:block_network_importer.name=Network Import Device
+tile.storagenetwork:block_network_storage.name=Network Storage Device
 tile.storagenetwork:block_network_toggle_cable.name=Network Toggle Cable
+tile.storagenetwork:block_network_energy_interface.name=Network Energy Interface
+tile.storagenetwork:block_network_energy_cell.name=Energy Cell
 tile.storagenetwork:block_request_table.name=Request Table
 tile.storagenetwork:block_item_attractor.name=Item Attractor
+tile.storagenetwork:block_item_box.name=Item Box
 
 item.storagenetwork:item_wrench.name=O'Wrench
 item.storagenetwork:item_item_filter.name=Item Filter

@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class GuiEnergyInterface extends CommonGuiScreen {
-	
+
 	TileNetworkEnergyInterface tile;
 	GuiButtonSimple button;
 

@@ -69,8 +69,8 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 		});
 		initSlots("matrix", 8, 138, 3, 3);
 		initPlayerSlots(80, 138);
-//		if (!invPlayer.player.worldObj.isRemote)
-//			PacketHandler.sendTo(new MessageItemListRequest(getNetworkCore(invPlayer.player.worldObj).network.getItemstacks()), (EntityPlayerMP) invPlayer.player);
+		//		if (!invPlayer.player.worldObj.isRemote)
+		//			PacketHandler.sendTo(new MessageItemListRequest(getNetworkCore(invPlayer.player.worldObj).network.getItemstacks()), (EntityPlayerMP) invPlayer.player);
 	}
 
 	abstract public List<ItemStack> getMatrixList();
@@ -163,8 +163,8 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		
-		if (!playerIn.worldObj.isRemote && ((WorldServer)playerIn.worldObj).getMinecraftServer().getTickCounter() % 100 == 0)
+
+		if (!playerIn.worldObj.isRemote && ((WorldServer) playerIn.worldObj).getMinecraftServer().getTickCounter() % 100 == 0)
 			PacketHandler.sendTo(new MessageItemListRequest(getNetworkCore().network.getItemstacks()), (EntityPlayerMP) invPlayer.player);
 		return super.canInteractWith(playerIn);
 	}

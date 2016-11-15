@@ -40,12 +40,6 @@ public class ItemWirelessAccessor extends CommonSubtypeItem {
 	}
 
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-
-		return super.onItemUseFirst(stack, player, world, pos, side, hitX, hitY, hitZ, hand);
-	}
-
-	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) instanceof TileNetworkCore && playerIn.isSneaking()) {
 			NBTStackHelper.setLong(stack, "POS", pos.toLong());
@@ -89,7 +83,7 @@ public class ItemWirelessAccessor extends CommonSubtypeItem {
 					} else
 						playerIn.addChatComponentMessage(new TextComponentString("Network Core was removed."));
 				} else {
-					playerIn.addChatComponentMessage(new TextComponentString("No Network Core set."));
+					playerIn.addChatComponentMessage(new TextComponentString("No Network Core set. Shift-right click the Network Core."));
 				}
 			}
 			if (!worldIn.isRemote && playerIn.isSneaking()) {
@@ -101,7 +95,7 @@ public class ItemWirelessAccessor extends CommonSubtypeItem {
 	}
 
 	public static TileNetworkCore getCore(ItemStack stack) {
-		TileEntity e = DimensionManager.getWorld(NBTStackHelper.getInt(stack, "dim")).getTileEntity(BlockPos.fromLong(NBTStackHelper.getLong(stack, "POS")));
+		TileEntity e = NBTStackHelper.hasTag(stack, "dim") ? DimensionManager.getWorld(NBTStackHelper.getInt(stack, "dim")).getTileEntity(BlockPos.fromLong(NBTStackHelper.getLong(stack, "POS"))) : null;
 		if (e instanceof TileNetworkCore)
 			return (TileNetworkCore) e;
 		return null;

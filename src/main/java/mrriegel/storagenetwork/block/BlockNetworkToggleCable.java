@@ -1,5 +1,7 @@
 package mrriegel.storagenetwork.block;
 
+import mrriegel.storagenetwork.tile.TileNetworkCable;
+import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -9,8 +11,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import mrriegel.storagenetwork.tile.TileNetworkCable;
-import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 
 public class BlockNetworkToggleCable extends BlockNetworkCable {
 
@@ -42,7 +42,7 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		TileNetworkToggleCable tile = (TileNetworkToggleCable) worldIn.getTileEntity(pos);
-//		tile.markForSync();
+		//		tile.markForSync();
 		if (tile.getNetworkCore() != null) {
 			tile.getNetworkCore().markForNetworkInit();
 		}

@@ -4,6 +4,7 @@ import mrriegel.limelib.block.CommonBlock;
 import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.item.CommonItem;
 import mrriegel.storagenetwork.block.BlockItemAttractor;
+import mrriegel.storagenetwork.block.BlockItemBox;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
@@ -24,6 +25,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import com.google.common.collect.Lists;
 
@@ -37,11 +41,12 @@ public class Registry {
 	public static final CommonBlock networkExporter = new BlockNetworkExporter();
 	public static final CommonBlock networkImporter = new BlockNetworkImporter();
 	public static final CommonBlock networkStorage = new BlockNetworkStorage();
+	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
-	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
 	public static final CommonBlock requestTable = new BlockRequestTable();
 	public static final CommonBlock itemAttractor = new BlockItemAttractor();
+	public static final CommonBlock itemBox = new BlockItemBox();
 
 	public static final CommonItem wrench = new ItemWrench();
 	public static final CommonItem itemFilter = new ItemItemFilter();
@@ -54,11 +59,12 @@ public class Registry {
 		networkExporter.registerBlock();
 		networkImporter.registerBlock();
 		networkStorage.registerBlock();
+		networkToggleCable.registerBlock();
 		networkEnergyInterface.registerBlock();
 		networkEnergyCell.registerBlock();
-		networkToggleCable.registerBlock();
 		requestTable.registerBlock();
 		itemAttractor.registerBlock();
+		itemBox.registerBlock();
 
 		wrench.registerItem();
 		itemFilter.registerItem();
@@ -74,11 +80,12 @@ public class Registry {
 		networkExporter.initModel();
 		networkImporter.initModel();
 		networkStorage.initModel();
+		networkToggleCable.initModel();
 		networkEnergyInterface.initModel();
 		networkEnergyCell.initModel();
-		networkToggleCable.initModel();
 		requestTable.initModel();
 		itemAttractor.initModel();
+		itemBox.initModel();
 
 		wrench.initModel();
 		itemFilter.initModel();
@@ -98,21 +105,23 @@ public class Registry {
 		GameRegistry.addShapedRecipe(new ItemStack(networkEnergyCell), "cgc", "iri", "cgc", 'c', networkCable, 'i', Items.IRON_INGOT, 'r', Blocks.REDSTONE_BLOCK, 'g', Items.GOLD_INGOT);
 		GameRegistry.addShapedRecipe(new ItemStack(requestTable), "cbc", "gwg", "ckc", 'c', networkCable, 'g', Items.GOLD_INGOT, 'b', Items.BUCKET, 'w', Blocks.CRAFTING_TABLE, 'k', Blocks.CHEST);
 		GameRegistry.addShapedRecipe(new ItemStack(itemAttractor, 2), "iei", "chc", 'i', Items.IRON_INGOT, 'c', networkCable, 'h', Blocks.HOPPER, 'e', Items.ENDER_PEARL);
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemBox), "imi", "mgm", "imi", 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT, 'm', "logWood"));
 
 		GameRegistry.addShapedRecipe(new ItemStack(wrench), "i i", " c ", " i ", 'i', Items.IRON_INGOT, 'c', networkCable);
 		GameRegistry.addShapedRecipe(new ItemStack(itemFilter, 4), " i ", "isi", " i ", 'i', Blocks.IRON_BARS, 's', Items.STRING);
-		GameRegistry.addRecipe(new ShapelessRecipes(NBTStackHelper.setBoolean(new ItemStack(itemFilter, 2), "copy", true), Lists.newArrayList(new ItemStack(itemFilter), new ItemStack(itemFilter))) {
+		ShapelessRecipes r = new ShapelessRecipes(NBTStackHelper.setBoolean(new ItemStack(itemFilter, 2), "copy", true), Lists.newArrayList(new ItemStack(itemFilter), new ItemStack(itemFilter))) {
 			@Override
 			public ItemStack getCraftingResult(InventoryCrafting inv) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					ItemStack s = inv.getStackInSlot(i);
 					if (s != null && s.hasTagCompound())
 						return ItemHandlerHelper.copyStackWithSize(s, 2);
-
 				}
 				return super.getCraftingResult(inv);
 			}
-		});
+		};
+		RecipeSorter.register(StorageNetwork.MODID + ":itemFilterCopy", r.getClass(), Category.SHAPELESS, "after:minecraft:shapeless");
+		GameRegistry.addRecipe(r);
 		GameRegistry.addShapedRecipe(new ItemStack(upgrade, 2, 0), " c ", "gig", " c ", 'c', Blocks.REDSTONE_BLOCK, 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT);
 		GameRegistry.addShapedRecipe(new ItemStack(upgrade, 2, 1), " c ", "gig", " c ", 'c', Blocks.REDSTONE_BLOCK, 'i', Items.IRON_INGOT, 'g', Items.BLAZE_POWDER);
 		GameRegistry.addShapedRecipe(new ItemStack(wireless, 1, 0), " c ", "eie", " c ", 'c', Items.GOLD_NUGGET, 'i', requestTable, 'e', Items.ENDER_PEARL);
