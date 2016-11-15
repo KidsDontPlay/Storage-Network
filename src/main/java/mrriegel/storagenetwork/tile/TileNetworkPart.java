@@ -30,7 +30,7 @@ public abstract class TileNetworkPart extends CommonTile implements INetworkPart
 			corePos = null;
 		else
 			corePos = new GlobalBlockPos(core.getPos(), core.getWorld());
-		markDirty();
+		markForSync();
 	}
 
 	@Override

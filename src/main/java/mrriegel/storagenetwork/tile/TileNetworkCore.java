@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.helper.StackHelper;
 import mrriegel.limelib.tile.CommonTile;
@@ -12,7 +11,6 @@ import mrriegel.storagenetwork.Network;
 import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
-import mrriegel.storagenetwork.network.InventoryNetworkPart;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -87,8 +85,6 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 						markForNetworkInit();
 					} else if (tile instanceof INetworkPart && !network.networkParts.contains(tile)) {
 						network.addPart((INetworkPart) tile);
-					} else if (InvHelper.hasItemHandler(tile, facing.getOpposite()) && !network.networkParts.contains(InvHelper.getItemHandler(tile, facing.getOpposite()))) {
-						network.addPart(new InventoryNetworkPart(tile.getWorld(), searchPos, InvHelper.getItemHandler(tile, facing.getOpposite())));
 					} else
 						continue;
 					runThroughNetwork(searchPos);
@@ -103,8 +99,11 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	@Override
 	public void update() {
-		if (worldObj.getTotalWorldTime() + (pos.hashCode() % 80) % (network == null ? 80 : 300) == 0) {
+//		System.out.println("kill "+(worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300));
+		if ((worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300) == 0) {
 			needsUpdate = true;
+			//Lag
+			needsUpdate=false;
 		}
 		if ((needsUpdate || network == null) && onServer()) {
 			needsUpdate = false;

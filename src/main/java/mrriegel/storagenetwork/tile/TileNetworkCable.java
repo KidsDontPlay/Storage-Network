@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,11 +13,11 @@ import net.minecraft.util.EnumFacing;
 
 import com.google.common.collect.Sets;
 
-public class TileNetworkCable extends TileNetworkPart{
-	
+public class TileNetworkCable extends TileNetworkPart {
+
 	protected Map<EnumFacing, Boolean> validSides = new HashMap<>();
-	
-	public TileNetworkCable(){
+
+	public TileNetworkCable() {
 		for (EnumFacing f : EnumFacing.VALUES) {
 			validSides.put(f, true);
 		}
@@ -29,12 +28,12 @@ public class TileNetworkCable extends TileNetworkPart{
 		return validSides;
 	}
 
-	public void setSide(EnumFacing side, boolean state){
+	public void setSide(EnumFacing side, boolean state) {
 		this.getValidSides().put(side, state);
 		this.markForSync();
 	}
 
-	public boolean isSideValid(EnumFacing side){
+	public boolean isSideValid(EnumFacing side) {
 		return this.getValidSides().get(side);
 	}
 
@@ -53,7 +52,7 @@ public class TileNetworkCable extends TileNetworkPart{
 		}
 		return super.writeToNBT(compound);
 	}
-	
+
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		super.onDataPacket(net, pkt);
@@ -61,14 +60,13 @@ public class TileNetworkCable extends TileNetworkPart{
 	}
 
 	@Override
-	public EnumSet<EnumFacing> getNeighborFaces() {
-		Set<EnumFacing> set=Sets.newHashSet();
+	public Set<EnumFacing> getNeighborFaces() {
+		Set<EnumFacing> set = Sets.newHashSet();
 		for (EnumFacing f : EnumFacing.VALUES) {
-			if(getValidSides().get(f))
+			if (getValidSides().get(f))
 				set.add(f);
 		}
-		return EnumSet.<EnumFacing>copyOf(set);
+		return set;
 	}
-	
 
 }

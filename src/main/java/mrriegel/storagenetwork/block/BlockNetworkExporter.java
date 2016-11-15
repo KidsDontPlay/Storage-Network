@@ -6,7 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockNetworkExporter extends BlockNetworkConnection{
+public class BlockNetworkExporter extends BlockNetworkConnection {
 
 	public BlockNetworkExporter() {
 		super("block_network_exporter");

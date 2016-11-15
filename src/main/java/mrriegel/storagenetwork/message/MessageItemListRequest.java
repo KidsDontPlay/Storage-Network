@@ -2,16 +2,16 @@ package mrriegel.storagenetwork.message;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
+import mrriegel.limelib.network.AbstractMessage;
+import mrriegel.limelib.util.StackWrapper;
+import mrriegel.storagenetwork.gui.GuiRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
-import mrriegel.limelib.network.AbstractMessage;
-import mrriegel.limelib.util.StackWrapper;
-import mrriegel.storagenetwork.gui.GuiRequestTable;
+
+import com.google.common.collect.Lists;
 
 public class MessageItemListRequest extends AbstractMessage<MessageItemListRequest> {
 
@@ -34,8 +34,8 @@ public class MessageItemListRequest extends AbstractMessage<MessageItemListReque
 		for (int i = 0; i < nbt.getInteger("size"); i++) {
 			lis.add(StackWrapper.loadStackWrapperFromNBT(nbt.getCompoundTag("" + i)));
 		}
-		if (Minecraft.getMinecraft().currentScreen instanceof GuiRequestTable) {
-			((GuiRequestTable) Minecraft.getMinecraft().currentScreen).wrappers=lis;
+		if (Minecraft.getMinecraft().currentScreen instanceof GuiRequest) {
+			((GuiRequest) Minecraft.getMinecraft().currentScreen).wrappers = lis;
 		}
 
 	}

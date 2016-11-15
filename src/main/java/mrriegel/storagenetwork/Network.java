@@ -210,7 +210,7 @@ public class Network {
 						if (!ItemItemFilter.canTransferItem(tile.filter, stack))
 							continue;
 						ItemStack ins = insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
-						int maxInsert = Math.min(stack.stackSize, tile.getTransferAmount(Item.class)) - (ins == null ? 0 : ins.stackSize);
+						int maxInsert = Math.min(Math.min(stack.stackSize, tile.getTransferAmount(Item.class)), (ins == null ? stack.stackSize : stack.stackSize - ins.stackSize));
 						ItemStack ext = inv.extractItem(i, maxInsert, true);
 						int ex = ext != null ? ext.stackSize : 0;
 						ex = Math.min(ex, maxInsert);

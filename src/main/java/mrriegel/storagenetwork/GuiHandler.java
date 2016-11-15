@@ -1,13 +1,17 @@
 package mrriegel.storagenetwork;
 
+import mrriegel.storagenetwork.container.ContainerItemAttractor;
 import mrriegel.storagenetwork.container.ContainerItemConnect;
 import mrriegel.storagenetwork.container.ContainerItemFilter;
+import mrriegel.storagenetwork.container.ContainerRequestItem;
 import mrriegel.storagenetwork.container.ContainerRequestTable;
 import mrriegel.storagenetwork.gui.GuiEnergyInterface;
+import mrriegel.storagenetwork.gui.GuiItemAttractor;
 import mrriegel.storagenetwork.gui.GuiItemConnect;
 import mrriegel.storagenetwork.gui.GuiItemFilter;
 import mrriegel.storagenetwork.gui.GuiNetworkCore;
-import mrriegel.storagenetwork.gui.GuiRequestTable;
+import mrriegel.storagenetwork.gui.GuiRequest;
+import mrriegel.storagenetwork.tile.TileItemAttractor;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
 import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
@@ -31,7 +35,11 @@ public class GuiHandler implements IGuiHandler {
 		case ITEM_CONNECTOR:
 			return new ContainerItemConnect(player.inventory, (TileNetworkItemConnection) world.getTileEntity(new BlockPos(x, y, z)));
 		case REQUEST_TABLE:
-			return new ContainerRequestTable(player.inventory,(TileRequestTable) world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerRequestTable(player.inventory, (TileRequestTable) world.getTileEntity(new BlockPos(x, y, z)));
+		case ITEM_ATTRACTOR:
+			return new ContainerItemAttractor(player.inventory, (TileItemAttractor) world.getTileEntity(new BlockPos(x, y, z)));
+		case WIRELESS_ITEM:
+			return new ContainerRequestItem(player.inventory, player.getHeldItemMainhand());
 		default:
 			return null;
 		}
@@ -49,14 +57,18 @@ public class GuiHandler implements IGuiHandler {
 		case ITEM_CONNECTOR:
 			return new GuiItemConnect(new ContainerItemConnect(player.inventory, (TileNetworkItemConnection) world.getTileEntity(new BlockPos(x, y, z))));
 		case REQUEST_TABLE:
-			return new GuiRequestTable(new ContainerRequestTable(player.inventory,(TileRequestTable) world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiRequest(new ContainerRequestTable(player.inventory, (TileRequestTable) world.getTileEntity(new BlockPos(x, y, z))));
+		case ITEM_ATTRACTOR:
+			return new GuiItemAttractor(new ContainerItemAttractor(player.inventory, (TileItemAttractor) world.getTileEntity(new BlockPos(x, y, z))));
+		case WIRELESS_ITEM:
+			return new GuiRequest(new ContainerRequestItem(player.inventory, player.getHeldItemMainhand()));
 		default:
 			return null;
 		}
 	}
 
 	public enum GuiID {
-		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR, REQUEST_TABLE;
+		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR, REQUEST_TABLE, ITEM_ATTRACTOR, WIRELESS_ITEM;
 	}
 
 }

@@ -30,24 +30,25 @@ public class ItemItemFilter extends CommonItem {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (itemStackIn.hasTagCompound()) {
-			NBTStackHelper.setBoolean(itemStackIn, "meta", true);
-			NBTStackHelper.setBoolean(itemStackIn, "nbt", false);
-			NBTStackHelper.setBoolean(itemStackIn, "ore", false);
-			NBTStackHelper.setBoolean(itemStackIn, "mod", false);
-			NBTStackHelper.setBoolean(itemStackIn, "white", true);
-			List<ItemStack> stacks = Lists.newArrayList();
-			for (int i = 0; i < 24; i++)
-				stacks.add(null);
-			NBTStackHelper.setItemStackList(itemStackIn, "inv", stacks);
-		}
-		if (!worldIn.isRemote && !playerIn.isSneaking()) {
-			playerIn.openGui(StorageNetwork.instance, GuiID.ITEM_FILTER.ordinal(), worldIn, 0, 0, 0);
-//			System.out.println(NBTStackHelper.getItemStackList(itemStackIn, "inv"));
-			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-		} else if (!worldIn.isRemote && playerIn.isSneaking()) {
-			itemStackIn.setTagCompound(null);
-			playerIn.addChatComponentMessage(new TextComponentString("Filter cleared."));
+		if (hand == EnumHand.MAIN_HAND) {
+			if (!itemStackIn.hasTagCompound() || !itemStackIn.getTagCompound().hasKey("white")) {
+				NBTStackHelper.setBoolean(itemStackIn, "meta", true);
+				NBTStackHelper.setBoolean(itemStackIn, "nbt", false);
+				NBTStackHelper.setBoolean(itemStackIn, "ore", false);
+				NBTStackHelper.setBoolean(itemStackIn, "mod", false);
+				NBTStackHelper.setBoolean(itemStackIn, "white", true);
+				List<ItemStack> stacks = Lists.newArrayList();
+				for (int i = 0; i < 24; i++)
+					stacks.add(null);
+				NBTStackHelper.setItemStackList(itemStackIn, "inv", stacks);
+			}
+			if (!worldIn.isRemote && !playerIn.isSneaking()) {
+				playerIn.openGui(StorageNetwork.instance, GuiID.ITEM_FILTER.ordinal(), worldIn, 0, 0, 0);
+				return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+			} else if (!worldIn.isRemote && playerIn.isSneaking()) {
+				itemStackIn.setTagCompound(null);
+				playerIn.addChatComponentMessage(new TextComponentString("Filter cleared."));
+			}
 		}
 		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}

@@ -9,17 +9,18 @@ import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mrriegel.limelib.helper.NBTHelper;
-import mrriegel.storagenetwork.container.ContainerRequestTable;
-import mrriegel.storagenetwork.tile.TileRequestTable;
+import mrriegel.limelib.network.PacketHandler;
+import mrriegel.storagenetwork.container.ContainerAbstractRequest;
+import mrriegel.storagenetwork.message.MessageRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class RequestRecipeTransferHandler implements IRecipeTransferHandler<ContainerRequestTable> {
+public class RequestRecipeTransferHandler implements IRecipeTransferHandler<ContainerAbstractRequest> {
 
 	@Override
-	public Class<ContainerRequestTable> getContainerClass() {
-		return ContainerRequestTable.class;
+	public Class<ContainerAbstractRequest> getContainerClass() {
+		return ContainerAbstractRequest.class;
 	}
 
 	@Override
@@ -28,9 +29,8 @@ public class RequestRecipeTransferHandler implements IRecipeTransferHandler<Cont
 	}
 
 	@Override
-	public IRecipeTransferError transferRecipe(ContainerRequestTable container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+	public IRecipeTransferError transferRecipe(ContainerAbstractRequest container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
 		if (doTransfer) {
-			TileRequestTable tile = container.tile;
 			Map<Integer, ? extends IGuiIngredient<ItemStack>> inputs = recipeLayout.getItemStacks().getGuiIngredients();
 			NBTTagCompound nbt = new NBTTagCompound();
 			for (int i = 1; i < 10; i++) {
@@ -40,7 +40,7 @@ public class RequestRecipeTransferHandler implements IRecipeTransferHandler<Cont
 					NBTHelper.setItemStackList(nbt, i - 1 + "l", inputs.get(i).getAllIngredients());
 			}
 			nbt.setInteger("button", 2000);
-			tile.sendMessage(nbt);
+			PacketHandler.sendToServer(new MessageRequest(nbt));
 		}
 		return null;
 	}

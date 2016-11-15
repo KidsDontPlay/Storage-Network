@@ -7,6 +7,7 @@ import mrriegel.limelib.gui.slot.SlotGhost;
 import mrriegel.limelib.helper.NBTStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -27,8 +28,6 @@ public class ContainerItemFilter extends CommonContainer {
 			for (int i = 0; i < inv.getSizeInventory(); i++) {
 				inv.setInventorySlotContents(i, NBTStackHelper.getItemStackList(stack, "inv").get(i));
 			}
-//		System.out.println("2");
-//		System.out.println(NBTStackHelper.getItemStackList(stack, "inv"));
 
 	}
 
@@ -55,6 +54,13 @@ public class ContainerItemFilter extends CommonContainer {
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		return stack != null && stack.isItemEqual(playerIn.getHeldItemMainhand());
+	}
+
+	@Override
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+		if (slotId >= 0 && getSlot(slotId) != null && getSlot(slotId).getStack() == player.getHeldItemMainhand())
+			return null;
+		return super.slotClick(slotId, dragType, clickTypeIn, player);
 	}
 
 	@Override

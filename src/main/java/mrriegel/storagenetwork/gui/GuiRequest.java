@@ -15,10 +15,11 @@ import mrriegel.limelib.gui.GuiDrawer.Direction;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
 import mrriegel.limelib.gui.element.AbstractSlot.ItemSlot;
 import mrriegel.limelib.helper.ColorHelper;
+import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.util.StackWrapper;
 import mrriegel.limelib.util.Utils;
-import mrriegel.storagenetwork.container.ContainerRequestTable;
-import mrriegel.storagenetwork.tile.TileRequestTable;
+import mrriegel.storagenetwork.container.ContainerAbstractRequest;
+import mrriegel.storagenetwork.message.MessageRequest;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Keyboard;
@@ -33,9 +35,8 @@ import org.lwjgl.input.Mouse;
 
 import com.google.common.collect.Lists;
 
-public class GuiRequestTable extends CommonGuiContainer {
+public class GuiRequest extends CommonGuiContainer {
 
-	TileRequestTable tile;
 	public List<StackWrapper> wrappers;
 	protected List<ItemSlot> items = Lists.newArrayList();
 	protected long lastClick;
@@ -44,17 +45,20 @@ public class GuiRequestTable extends CommonGuiContainer {
 	protected int currentPos = 0, maxPos = 0;
 	protected ItemSlot over;
 
-	protected boolean canClick() {
+	public boolean canClick() {
 		return System.currentTimeMillis() > lastClick + 300L;
 	}
 
-	public GuiRequestTable(ContainerRequestTable inventorySlotsIn) {
+	public GuiRequest(ContainerAbstractRequest<?> inventorySlotsIn) {
 		super(inventorySlotsIn);
-		tile = inventorySlotsIn.tile;
 		ySize = 220;
 		xSize += 36 + 36;
 		lastClick = System.currentTimeMillis();
 		sendRequest(null, 0);
+	}
+
+	private ContainerAbstractRequest<?> getContainer() {
+		return (ContainerAbstractRequest<?>) inventorySlots;
 	}
 
 	@Override
@@ -66,8 +70,8 @@ public class GuiRequestTable extends CommonGuiContainer {
 		searchBar.setVisible(true);
 		searchBar.setTextColor(16777215);
 		searchBar.setFocused(true);
-		buttonList.add(sort = new GuiButtonSimple(0, guiLeft + 7, guiTop +116, 45, 12, "sort", null));
-		buttonList.add(direction = new GuiButtonSimple(1, guiLeft + 55, guiTop+116, 20, 12, "direct", null));
+		buttonList.add(sort = new GuiButtonSimple(0, guiLeft + 7, guiTop + 116, 45, 12, "sort", null));
+		buttonList.add(direction = new GuiButtonSimple(1, guiLeft + 55, guiTop + 116, 20, 12, "direct", null));
 		buttonList.add(clear = new GuiButtonSimple(2, guiLeft + 62, guiTop + 137, 11, 11, "x", Lists.newArrayList("Clear grid")));
 		if (Loader.isModLoaded("JEI"))
 			buttonList.add(jei = new GuiButtonSimple(3, guiLeft + 125, guiTop + 116, 24, 12, "", null));
@@ -86,6 +90,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 		drawer.drawSlot(43, 195);
 		drawer.drawColoredRectangle(7, 7, 13 * 18, 6 * 18, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
 		over = null;
+		//		System.out.println(wrappers);
 		if (wrappers != null) {
 			int invisible = wrappers.size() - 13 * 6;
 			if (invisible <= 0)
@@ -114,6 +119,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 			}
 
 			for (ItemSlot slot : items) {
+//				drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
 				slot.draw(mouseX, mouseY);
 				if (slot.isMouseOver(mouseX, mouseY)) {
 					over = slot;
@@ -137,12 +143,12 @@ public class GuiRequestTable extends CommonGuiContainer {
 		if (searchBar.isFocused() && Loader.isModLoaded("JEI") && Internal.getRuntime().getItemListOverlay().hasKeyboardFocus()) {
 			searchBar.setFocused(false);
 		}
-		sort.setTooltip("Sort by " + tile.sort.name().toLowerCase());
-		sort.displayString = tile.sort.name();
-		direction.setTooltip("Sort direction: " + (tile.topDown ? "top-down" : "bottom-up"));
-		direction.displayString = tile.topDown ? "TD" : "BU";
+		sort.setTooltip("Sort by " + getContainer().getSort().name().toLowerCase());
+		sort.displayString = getContainer().getSort().name();
+		direction.setTooltip("Sort direction: " + (getContainer().isTopdown() ? "top-down" : "bottom-up"));
+		direction.displayString = getContainer().isTopdown() ? "TD" : "BU";
 		if (jei != null)
-			jei.displayString = (tile.jei ? TextFormatting.GREEN : TextFormatting.RED) + "JEI";
+			jei.displayString = (getContainer().isJEI() ? TextFormatting.GREEN : TextFormatting.RED) + "JEI";
 
 	}
 
@@ -151,8 +157,8 @@ public class GuiRequestTable extends CommonGuiContainer {
 		super.actionPerformed(button);
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setInteger("button", button.id);
-		tile.sendMessage(nbt);
-		tile.handleMessage(mc.thePlayer, nbt);
+		PacketHandler.sendToServer(new MessageRequest(nbt));
+		new MessageRequest().handleMessage(mc.thePlayer, nbt, Side.CLIENT);
 	}
 
 	protected void sendRequest(ItemSlot slot, int mouseButton) {
@@ -163,8 +169,8 @@ public class GuiRequestTable extends CommonGuiContainer {
 		nbt.setInteger("mouse", mouseButton);
 		nbt.setBoolean("shift", isShiftKeyDown());
 		nbt.setBoolean("ctrl", isCtrlKeyDown());
-		nbt.setInteger("SIZE", slot!=null?slot.amount:0);
-		tile.sendMessage(nbt);
+		nbt.setInteger("SIZE", slot != null ? slot.amount : 0);
+		PacketHandler.sendToServer(new MessageRequest(nbt));
 	}
 
 	@Override
@@ -173,7 +179,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 		searchBar.setFocused(isPointInRegion(searchBar.xPosition, searchBar.yPosition, searchBar.width, searchBar.height, mouseX + guiLeft, mouseY + guiTop));
 		if (searchBar.isFocused() && mouseButton == 1) {
 			searchBar.setText("");
-			if (tile.jei && Loader.isModLoaded("JEI"))
+			if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
 				Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 		}
 		if (canClick()) {
@@ -184,7 +190,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 				mc.thePlayer.inventory.getItemStack().writeToNBT(nbt);
 				nbt.setInteger("button", 1001);
 				nbt.setInteger("mouse", mouseButton);
-				tile.sendMessage(nbt);
+				PacketHandler.sendToServer(new MessageRequest(nbt));
 			}
 			lastClick = System.currentTimeMillis();
 		}
@@ -215,8 +221,7 @@ public class GuiRequestTable extends CommonGuiContainer {
 			} else
 
 			if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
-				//				System.out.println(searchBar.getText());
-				if (tile.jei && Loader.isModLoaded("JEI"))
+				if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
 					Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 				sendRequest(null, 0);
 			}
@@ -265,11 +270,11 @@ public class GuiRequestTable extends CommonGuiContainer {
 
 			}
 		Collections.sort(tmp, new Comparator<StackWrapper>() {
-			int mul = !tile.topDown ? -1 : 1;
+			int mul = !getContainer().isTopdown() ? -1 : 1;
 
 			@Override
 			public int compare(StackWrapper o2, StackWrapper o1) {
-				switch (tile.sort) {
+				switch (getContainer().getSort()) {
 				case AMOUNT:
 					return Integer.compare(o1.getSize(), o2.getSize()) * mul;
 				case NAME:

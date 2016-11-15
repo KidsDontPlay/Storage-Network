@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.block;
 
 import mrriegel.storagenetwork.GuiHandler.GuiID;
+import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.tile.TileNetworkConnection;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
@@ -31,7 +32,8 @@ public class BlockNetworkEnergyInterface extends BlockNetworkConnection {
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		player.openGui(StorageNetwork.instance, GuiID.ENERGY_INTERFACE.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
+		if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() != Registry.wrench)
+			player.openGui(StorageNetwork.instance, GuiID.ENERGY_INTERFACE.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 

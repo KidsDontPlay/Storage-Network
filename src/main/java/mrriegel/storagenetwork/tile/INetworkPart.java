@@ -1,9 +1,10 @@
 package mrriegel.storagenetwork.tile;
 
 import java.util.EnumSet;
+import java.util.Set;
 
-import net.minecraft.util.EnumFacing;
 import mrriegel.limelib.util.GlobalBlockPos;
+import net.minecraft.util.EnumFacing;
 
 /**
  * @author canitzp
@@ -16,7 +17,7 @@ public interface INetworkPart {
     
     void setNetworkCore(TileNetworkCore core);
     
-	default EnumSet<EnumFacing> getNeighborFaces() {
+	default Set<EnumFacing> getNeighborFaces() {
 		return EnumSet.allOf(EnumFacing.class);}
 
     default int getInventorySpace(){
