@@ -31,7 +31,7 @@ public class TileRequestTable extends TileNetworkPart {
 				player.openGui(StorageNetwork.instance, GuiID.REQUEST_TABLE.ordinal(), worldObj, getX(), getY(), getZ());
 			return true;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

@@ -8,18 +8,25 @@ import java.util.Set;
 import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.util.FilterItem;
 import mrriegel.limelib.util.GlobalBlockPos;
+import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.item.ItemItemFilter;
+import mrriegel.storagenetwork.item.ItemUpgrade.UpgradeType;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.INetworkStorage;
 import mrriegel.storagenetwork.tile.IPriority;
 import mrriegel.storagenetwork.tile.IRedstoneActive;
+import mrriegel.storagenetwork.tile.TileNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -34,20 +41,29 @@ public class Network {
 
 	public GlobalBlockPos corePosition;
 	public Set<INetworkPart> networkParts = Sets.newHashSet();
+	public Set<INetworkPart> noCables = Sets.newHashSet();
 
 	public void addPart(INetworkPart part) {
 		networkParts.add(part);
+		if (part.getClass() != TileNetworkCable.class)
+			noCables.add(part);
 		part.setNetworkCore((TileNetworkCore) corePosition.getTile(null));
 	}
 
 	public void removePart(INetworkPart part) {
 		networkParts.remove(part);
+		if (part.getClass() != TileNetworkCable.class)
+			noCables.remove(part);
 		part.setNetworkCore(null);
 	}
 
 	@Override
 	public String toString() {
 		return "Network at '" + corePosition.toString() + "'. Data: {" + networkParts.toString() + "}";
+	}
+
+	TileNetworkCore getCore() {
+		return (TileNetworkCore) corePosition.getTile(null);
 	}
 
 	//item start
@@ -71,7 +87,7 @@ public class Network {
 			return null;
 		ItemStack result = null;
 		int need = size;
-		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
+		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
@@ -117,7 +133,7 @@ public class Network {
 		if (stack == null)
 			return null;
 		int rest = stack.stackSize;
-		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
+		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
@@ -165,7 +181,7 @@ public class Network {
 	}
 
 	public void exportItems() {
-		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
+		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkExporter) {
@@ -178,9 +194,12 @@ public class Network {
 						int maxStacksize = Math.min(item.getStack().getMaxStackSize(), tile.getTransferAmount(Item.class));
 						ItemStack rest = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(item.getStack(), maxStacksize), true);
 						int maxInsert = maxStacksize - (rest == null ? 0 : rest.stackSize);
+						if (!getCore().consumeRF(maxInsert * 5 + tile.getUpgradeAmount(UpgradeType.SPEED) * 3, true))
+							continue;
 						ItemStack req = requestItem(item, maxInsert, false);
 						if (req == null)
 							continue;
+						getCore().consumeRF(req.stackSize * 5 + tile.getUpgradeAmount(UpgradeType.SPEED) * 3, false);
 						ItemHandlerHelper.insertItemStacked(inv, req, false);
 						if (tile.getTile() != null)
 							tile.getTile().markDirty();
@@ -194,7 +213,7 @@ public class Network {
 	}
 
 	public void importItems() {
-		List<INetworkPart> networkParts = Lists.newArrayList(this.networkParts);
+		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkImporter) {
@@ -214,7 +233,7 @@ public class Network {
 						ItemStack ext = inv.extractItem(i, maxInsert, true);
 						int ex = ext != null ? ext.stackSize : 0;
 						ex = Math.min(ex, maxInsert);
-						if (ex == 0)
+						if (ex == 0 || !getCore().consumeRF(ex * 5 + tile.getUpgradeAmount(UpgradeType.SPEED) * 3, false))
 							continue;
 						insertItem(inv.extractItem(i, ex, false), new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), false);
 						if (tile.getTile() != null)
@@ -229,7 +248,7 @@ public class Network {
 
 	public List<ItemStack> getItemstacks() {
 		List<ItemStack> lis = Lists.newArrayList();
-		for (INetworkPart part : networkParts) {
+		for (INetworkPart part : noCables) {
 			if (part instanceof INetworkStorage) {
 				if (!(((INetworkStorage<?>) part).getStorage() instanceof IItemHandler))
 					continue;
@@ -246,6 +265,9 @@ public class Network {
 				}
 			}
 		}
+		//		for(ItemStack s:lis)
+		//			if(s!=null&&s.getItem()==Item.getItemFromBlock(Registry.networkCore))
+		//				System.out.println("get "+s.getTagCompound());
 		return lis;
 	}
 
@@ -278,5 +300,52 @@ public class Network {
 	}
 
 	//fluid end
+
+	@SubscribeEvent
+	public static void place(NeighborNotifyEvent event) {
+		if (!event.getWorld().isAirBlock(event.getPos()) && !event.getState().getBlock().hasTileEntity(event.getState()))
+			return;
+		if (event.getWorld().getTileEntity(event.getPos()) instanceof INetworkPart) {
+			boolean invalid = false;
+			TileNetworkCore core = null;
+			for (EnumFacing face : event.getNotifiedSides()) {
+				BlockPos neighbor = event.getPos().offset(face);
+				if (event.getWorld().getTileEntity(neighbor) != null) {
+					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart) {
+						INetworkPart part = (INetworkPart) event.getWorld().getTileEntity(neighbor);
+						if (part.getNeighborFaces().contains(face.getOpposite()))
+							if (part.getNetworkCore() != null) {
+								if (core == null) {
+									core = part.getNetworkCore();
+								} else {
+									if (!core.getPos().equals(part.getNetworkCore().getPos()))
+										invalid = true;
+								}
+							} else
+								invalid = true;
+					} else
+						invalid = true;
+				}
+			}
+			if (!invalid && core != null) {
+				core.network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
+				return;
+			}
+		}
+
+		for (EnumFacing face : event.getNotifiedSides()) {
+			BlockPos neighbor = event.getPos().offset(face);
+			TileEntity tile = event.getWorld().getTileEntity(neighbor);
+			if (!(event.getWorld().getTileEntity(event.getPos()) instanceof INetworkPart) && !event.getWorld().isAirBlock(event.getPos()) && tile != null && tile.getClass() == TileNetworkCable.class)
+				continue;
+			if (tile instanceof INetworkPart && ((INetworkPart) tile).getNetworkCore() != null && ((INetworkPart) tile).getNeighborFaces().contains(face.getOpposite())) {
+				((INetworkPart) tile).getNetworkCore().markForNetworkInit();
+				BlockNetworkCable.releaseNetworkParts(event.getWorld(), tile.getPos(), ((INetworkPart) tile).getNetworkCore().getPos());
+			} else if (tile instanceof TileNetworkCore) {
+				((TileNetworkCore) tile).markForNetworkInit();
+				BlockNetworkCable.releaseNetworkParts(event.getWorld(), tile.getPos(), tile.getPos());
+			}
+		}
+	}
 
 }

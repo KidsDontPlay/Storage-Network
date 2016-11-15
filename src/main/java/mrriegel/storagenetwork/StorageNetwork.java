@@ -4,31 +4,25 @@ import java.awt.Color;
 
 import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.limelib.network.PacketHandler;
-import mrriegel.storagenetwork.block.BlockNetworkCable;
+import mrriegel.storagenetwork.message.MessageCoreSync;
 import mrriegel.storagenetwork.message.MessageItemFilter;
 import mrriegel.storagenetwork.message.MessageItemListRequest;
 import mrriegel.storagenetwork.message.MessageRequest;
 import mrriegel.storagenetwork.proxy.CommonProxy;
-import mrriegel.storagenetwork.tile.INetworkPart;
-import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -67,10 +61,11 @@ public class StorageNetwork {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(Network.class);
 		PacketHandler.registerMessage(MessageItemFilter.class, Side.SERVER);
 		PacketHandler.registerMessage(MessageItemListRequest.class, Side.CLIENT);
 		PacketHandler.registerMessage(MessageRequest.class, Side.SERVER);
+		PacketHandler.registerMessage(MessageCoreSync.class, Side.CLIENT);
 		if (event.getSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(ModelCover.class);
 
@@ -90,50 +85,6 @@ public class StorageNetwork {
 					return ColorHelper.brighter(Color.green.getRGB(), 0.5);
 				}
 			}, Registry.networkToggleCable);
-		}
-	}
-
-	@SubscribeEvent
-	public void place(NeighborNotifyEvent event) {
-		if (!event.getWorld().isAirBlock(event.getPos()) && !event.getState().getBlock().hasTileEntity(event.getState()))
-			return;
-		if (event.getWorld().getTileEntity(event.getPos()) instanceof INetworkPart) {
-			boolean invalid = false;
-			TileNetworkCore core = null;
-			for (EnumFacing face : event.getNotifiedSides()) {
-				BlockPos neighbor = event.getPos().offset(face);
-				if (event.getWorld().getTileEntity(neighbor) != null) {
-					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart) {
-						INetworkPart part = (INetworkPart) event.getWorld().getTileEntity(neighbor);
-						if (part.getNeighborFaces().contains(face.getOpposite()))
-							if (part.getNetworkCore() != null) {
-								if (core == null) {
-									core = part.getNetworkCore();
-								} else {
-									if (!core.getPos().equals(part.getNetworkCore().getPos()))
-										invalid = true;
-								}
-							} else
-								invalid = true;
-					} else
-						invalid = true;
-				}
-			}
-			if (!invalid && core != null) {
-				core.network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
-				return;
-			}
-		}
-		for (EnumFacing face : event.getNotifiedSides()) {
-			BlockPos neighbor = event.getPos().offset(face);
-			TileEntity tile = event.getWorld().getTileEntity(neighbor);
-			if (tile instanceof INetworkPart && ((INetworkPart) tile).getNetworkCore() != null && ((INetworkPart) tile).getNeighborFaces().contains(face.getOpposite())) {
-				((INetworkPart) tile).getNetworkCore().markForNetworkInit();
-				BlockNetworkCable.releaseNetworkParts(event.getWorld(), tile.getPos(), ((INetworkPart) tile).getNetworkCore().getPos());
-			} else if (tile instanceof TileNetworkCore) {
-				((TileNetworkCore) tile).markForNetworkInit();
-				BlockNetworkCable.releaseNetworkParts(event.getWorld(), tile.getPos(), tile.getPos());
-			}
 		}
 	}
 

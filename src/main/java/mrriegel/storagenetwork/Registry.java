@@ -90,17 +90,18 @@ public class Registry {
 	private static void initRecipes() {
 		GameRegistry.addShapedRecipe(new ItemStack(networkCable, 6), "sss", "i i", "sss", 's', new ItemStack(Blocks.STONE_SLAB), 'i', Items.IRON_INGOT);
 		GameRegistry.addShapelessRecipe(new ItemStack(networkToggleCable), networkCable, Blocks.REDSTONE_TORCH);
+		GameRegistry.addShapedRecipe(new ItemStack(networkCore), "dkd", "kck", "dkd", 'd', Blocks.QUARTZ_BLOCK, 'k', networkCable, 'c', Items.DIAMOND);
 		GameRegistry.addShapedRecipe(new ItemStack(networkExporter, 2), "ipi", "crc", 'i', Items.IRON_INGOT, 'p', Blocks.PISTON, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkImporter, 2), "iri", "cpc", 'i', Items.IRON_INGOT, 'p', Blocks.PISTON, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkStorage, 2), "iri", "cpc", 'i', Items.IRON_INGOT, 'p', Blocks.CHEST, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkEnergyInterface, 2), "grg", "crc", 'g', Items.GOLD_NUGGET, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkEnergyCell), "cgc", "iri", "cgc", 'c', networkCable, 'i', Items.IRON_INGOT, 'r', Blocks.REDSTONE_BLOCK, 'g', Items.GOLD_INGOT);
 		GameRegistry.addShapedRecipe(new ItemStack(requestTable), "cbc", "gwg", "ckc", 'c', networkCable, 'g', Items.GOLD_INGOT, 'b', Items.BUCKET, 'w', Blocks.CRAFTING_TABLE, 'k', Blocks.CHEST);
+		GameRegistry.addShapedRecipe(new ItemStack(itemAttractor, 2), "iei", "chc", 'i', Items.IRON_INGOT, 'c', networkCable, 'h', Blocks.HOPPER, 'e', Items.ENDER_PEARL);
 
+		GameRegistry.addShapedRecipe(new ItemStack(wrench), "i i", " c ", " i ", 'i', Items.IRON_INGOT, 'c', networkCable);
 		GameRegistry.addShapedRecipe(new ItemStack(itemFilter, 4), " i ", "isi", " i ", 'i', Blocks.IRON_BARS, 's', Items.STRING);
-		ItemStack filter = new ItemStack(itemFilter, 2);
-		NBTStackHelper.setBoolean(filter, "copy", true);
-		GameRegistry.addRecipe(new ShapelessRecipes(filter, Lists.newArrayList(new ItemStack(itemFilter), new ItemStack(itemFilter))) {
+		GameRegistry.addRecipe(new ShapelessRecipes(NBTStackHelper.setBoolean(new ItemStack(itemFilter, 2), "copy", true), Lists.newArrayList(new ItemStack(itemFilter), new ItemStack(itemFilter))) {
 			@Override
 			public ItemStack getCraftingResult(InventoryCrafting inv) {
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -112,6 +113,10 @@ public class Registry {
 				return super.getCraftingResult(inv);
 			}
 		});
+		GameRegistry.addShapedRecipe(new ItemStack(upgrade, 2, 0), " c ", "gig", " c ", 'c', Blocks.REDSTONE_BLOCK, 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT);
+		GameRegistry.addShapedRecipe(new ItemStack(upgrade, 2, 1), " c ", "gig", " c ", 'c', Blocks.REDSTONE_BLOCK, 'i', Items.IRON_INGOT, 'g', Items.BLAZE_POWDER);
+		GameRegistry.addShapedRecipe(new ItemStack(wireless, 1, 0), " c ", "eie", " c ", 'c', Items.GOLD_NUGGET, 'i', requestTable, 'e', Items.ENDER_PEARL);
+		GameRegistry.addShapedRecipe(new ItemStack(wireless, 1, 1), "c", "i", "d", 'c', Items.NETHER_STAR, 'i', wireless, 'd', Items.DIAMOND);
 	}
 
 }

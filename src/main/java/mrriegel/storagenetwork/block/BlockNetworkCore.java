@@ -5,11 +5,13 @@ import java.util.Random;
 import mrriegel.limelib.block.CommonBlockContainer;
 import mrriegel.limelib.helper.StackHelper;
 import mrriegel.limelib.item.CommonItemBlock;
+import mrriegel.limelib.network.PacketHandler;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.Registry;
 import mrriegel.storagenetwork.StorageNetwork;
+import mrriegel.storagenetwork.message.MessageCoreSync;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import net.minecraft.block.Block;
@@ -19,6 +21,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -34,21 +37,21 @@ import net.minecraft.world.World;
  * @author canitzp
  */
 public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
-	
-	public static final PropertyBool ACTIVE=PropertyBool.create("on");
 
-    public BlockNetworkCore() {
-        super(Material.IRON, "block_network_core");
-        setHardness(2.5F);
-        setCreativeTab(CreativeTab.TAB);
-        setDefaultState(getDefaultState().withProperty(ACTIVE, !ModConfig.needsEnergy));
-    }
+	public static final PropertyBool ACTIVE = PropertyBool.create("on");
 
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+	public BlockNetworkCore() {
+		super(Material.IRON, "block_network_core");
+		setHardness(2.5F);
+		setCreativeTab(CreativeTab.TAB);
+		setDefaultState(getDefaultState().withProperty(ACTIVE, !ModConfig.needsEnergy));
+	}
+
+	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (!worldIn.isRemote) {
 			for (EnumFacing face : EnumFacing.VALUES) {
-				if (worldIn.getTileEntity(pos.offset(face)) instanceof INetworkPart&&((INetworkPart) worldIn.getTileEntity(pos.offset(face))).getNeighborFaces().contains(face.getOpposite()) && ((INetworkPart) worldIn.getTileEntity(pos.offset(face))).getNetworkCore() != null) {
+				if (worldIn.getTileEntity(pos.offset(face)) instanceof INetworkPart && ((INetworkPart) worldIn.getTileEntity(pos.offset(face))).getNeighborFaces().contains(face.getOpposite()) && ((INetworkPart) worldIn.getTileEntity(pos.offset(face))).getNetworkCore() != null) {
 					worldIn.setBlockToAir(pos);
 					worldIn.playEvent(2001, pos, Block.getIdFromBlock(Registry.networkCore));
 					if (!(placer instanceof EntityPlayer) || !((EntityPlayer) placer).isCreative())
@@ -59,8 +62,8 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 			TileNetworkCore tile = (TileNetworkCore) worldIn.getTileEntity(pos);
 			tile.initializeNetwork();
 		}
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    }
+		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+	}
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
@@ -68,32 +71,32 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 			if (worldIn.getTileEntity(pos.offset(face)) instanceof INetworkPart) {
 				INetworkPart part = (INetworkPart) worldIn.getTileEntity(pos.offset(face));
 				if (part.getNetworkCore() != null && part.getNetworkCore().getPos().equals(pos))
-//		TODO enable			BlockNetworkCable.releaseNetworkParts(worldIn, part.getPosition().getPos());
-				;
-				else if(part.getNetworkCore() != null && !part.getNetworkCore().getPos().equals(pos))
+					//		TODO enable			BlockNetworkCable.releaseNetworkParts(worldIn, part.getPosition().getPos());
+					;
+				else if (part.getNetworkCore() != null && !part.getNetworkCore().getPos().equals(pos))
 					part.getNetworkCore().markForNetworkInit();
 			}
 		}
 		super.breakBlock(worldIn, pos, state);
 	}
-	
-    @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(!worldIn.isRemote){
-        	System.out.println("Network size: "+((TileNetworkCore)worldIn.getTileEntity(pos)).network.networkParts.size());
-            System.out.println(((TileNetworkCore)worldIn.getTileEntity(pos)).network);
-            ((TileNetworkCore)worldIn.getTileEntity(pos)).sync();
-        }
-        playerIn.openGui(StorageNetwork.instance, GuiID.NETWORK_CORE.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
-        return true;
-    }
-    
-    @Override
-    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
-    	super.randomTick(worldIn, pos, state, random);
-    }
-    
-    @Override
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (!worldIn.isRemote && ((TileNetworkCore) worldIn.getTileEntity(pos)).network != null) {
+			System.out.println("Network size: " + ((TileNetworkCore) worldIn.getTileEntity(pos)).network.networkParts.size());
+			((TileNetworkCore) worldIn.getTileEntity(pos)).sync();
+			PacketHandler.sendTo(new MessageCoreSync((TileNetworkCore) worldIn.getTileEntity(pos)), (EntityPlayerMP) playerIn);
+		}
+		playerIn.openGui(StorageNetwork.instance, GuiID.NETWORK_CORE.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
+		return true;
+	}
+
+	@Override
+	public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
+		super.randomTick(worldIn, pos, state, random);
+	}
+
+	@Override
 	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, ACTIVE);
 	}
@@ -108,16 +111,16 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 		return getDefaultState().withProperty(ACTIVE, meta > 0);
 	}
 
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileNetworkCore();
-    }
+	@Override
+	public TileEntity createTileEntity(World world, IBlockState state) {
+		return new TileNetworkCore();
+	}
 
-    @Override
-    protected Class<? extends TileNetworkCore> getTile() {
-        return TileNetworkCore.class;
-    }
-    
+	@Override
+	protected Class<? extends TileNetworkCore> getTile() {
+		return TileNetworkCore.class;
+	}
+
 	@Override
 	protected ItemBlock getItemBlock() {
 		return new CommonItemBlock(this) {

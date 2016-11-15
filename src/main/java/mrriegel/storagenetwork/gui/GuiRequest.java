@@ -119,7 +119,7 @@ public class GuiRequest extends CommonGuiContainer {
 			}
 
 			for (ItemSlot slot : items) {
-//				drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
+				//				drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
 				slot.draw(mouseX, mouseY);
 				if (slot.isMouseOver(mouseX, mouseY)) {
 					over = slot;

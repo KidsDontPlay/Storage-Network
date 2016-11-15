@@ -50,12 +50,10 @@ public class ItemWirelessAccessor extends CommonSubtypeItem {
 		if (worldIn.getTileEntity(pos) instanceof TileNetworkCore && playerIn.isSneaking()) {
 			NBTStackHelper.setLong(stack, "POS", pos.toLong());
 			NBTStackHelper.setInt(stack, "dim", worldIn.provider.getDimension());
-			System.out.println("komm");
 			if (!worldIn.isRemote)
 				playerIn.addChatComponentMessage(new TextComponentString("Network Core added."));
 			return EnumActionResult.SUCCESS;
 		}
-		//		return EnumActionResult.SUCCESS;
 		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 

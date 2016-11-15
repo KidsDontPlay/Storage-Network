@@ -27,13 +27,14 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()))
 					continue;
 				Vec3d vec = new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).normalize().scale(0.12);
-				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01&&new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9)
+				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01 && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9)
 					ei.motionY = 0.1;
 				ei.motionX = vec.xCoord;
 				ei.motionZ = vec.zCoord;
-				if (!worldObj.isRemote && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
+				if (!worldObj.isRemote && getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true) && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
 					ItemStack stack = ei.getEntityItem().copy();
 					ItemStack rest = getNetworkCore().network.insertItem(stack, null, false);
+					getNetworkCore().consumeRF((rest == null ? stack.stackSize : stack.stackSize - rest.stackSize) * 5, false);
 					if (rest == null)
 						ei.setDead();
 					else

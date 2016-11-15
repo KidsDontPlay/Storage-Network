@@ -84,7 +84,7 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 			case 1000:
 				if (stack != null) {
 					int mouse = nbt.getInteger("mouse");
-					int size = nbt.getBoolean("ctrl") ? 1 : mouse == 1 ? (nbt.getInteger("SIZE") < stack.getMaxStackSize() ? nbt.getInteger("SIZE") / 2 : stack.getMaxStackSize() / 2) : mouse == 0 ? stack.getMaxStackSize() : 0;
+					int size = nbt.getBoolean("ctrl") ? 1 : mouse == 1 ? (nbt.getInteger("SIZE") < stack.getMaxStackSize() ? Math.max(nbt.getInteger("SIZE") / 2, 1) : stack.getMaxStackSize() / 2) : mouse == 0 ? stack.getMaxStackSize() : 0;
 					ItemStack req = core.network.requestItem(new FilterItem(stack, true, false, true), size, false);
 					if (req != null) {
 						if (nbt.getBoolean("shift")) {

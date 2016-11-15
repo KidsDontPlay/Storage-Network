@@ -63,7 +63,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		} catch (StackOverflowError error) {
 			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 		}
-		System.out.println("network size: " + network.networkParts.size());
+		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
 	}
 
 	private void runThroughNetwork(BlockPos pos) {
@@ -99,11 +99,11 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	@Override
 	public void update() {
-//		System.out.println("kill "+(worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300));
+		//		System.out.println("kill "+(worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300));
 		if ((worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300) == 0) {
 			needsUpdate = true;
 			//Lag
-			needsUpdate=false;
+			needsUpdate = false;
 		}
 		if ((needsUpdate || network == null) && onServer()) {
 			needsUpdate = false;
@@ -194,6 +194,18 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		NBTHelper.setInt(compound, "receiver", receiver.getEnergyStored());
 		NBTHelper.setInt(compound, "extractor", extractor.getEnergyStored());
 		return super.writeToNBT(compound);
+	}
+
+	public boolean consumeRF(int num, boolean simulate) {
+		if (!ModConfig.needsEnergy)
+			return true;
+		int value = (int) (num * ModConfig.energyMultiplier);
+		if (getEnergyStorage().getEnergyStored() < value)
+			return false;
+		if (!simulate) {
+			getEnergyStorage().extractEnergy(value, false);
+		}
+		return true;
 	}
 
 	@Override
