@@ -142,7 +142,7 @@ public class GuiRequest extends CommonGuiContainer {
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		if (searchBar.isFocused() && Loader.isModLoaded("JEI") && Internal.getRuntime().getItemListOverlay().hasKeyboardFocus()) {
+		if (searchBar.isFocused() && Loader.isModLoaded("JEI") && Internal.getRuntime().getItemListOverlay().getInternal().hasKeyboardFocus()) {
 			searchBar.setFocused(false);
 		}
 		sort.setTooltip("Sort by " + getContainer().getSort().name().toLowerCase());

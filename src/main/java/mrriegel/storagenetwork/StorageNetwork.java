@@ -1,17 +1,20 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.limelib.network.PacketHandler;
+import mrriegel.storagenetwork.container.ContainerAbstractRequest;
 import mrriegel.storagenetwork.message.MessageCoreSync;
 import mrriegel.storagenetwork.message.MessageItemFilter;
 import mrriegel.storagenetwork.message.MessageItemListRequest;
 import mrriegel.storagenetwork.message.MessageRequest;
 import mrriegel.storagenetwork.proxy.ClientProxy;
 import mrriegel.storagenetwork.proxy.CommonProxy;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,6 +60,14 @@ public class StorageNetwork {
 		PacketHandler.registerMessage(MessageItemListRequest.class, Side.CLIENT);
 		PacketHandler.registerMessage(MessageRequest.class, Side.SERVER);
 		PacketHandler.registerMessage(MessageCoreSync.class, Side.CLIENT);
+
+		NBTTagCompound tagCompound = new NBTTagCompound();
+		tagCompound.setString("ContainerClass", ContainerAbstractRequest.class.getName());
+		tagCompound.setBoolean("PhantomItems", false);
+		tagCompound.setInteger("GridSlotNumber", 1);
+		tagCompound.setInteger("ButtonOffsetX", 62); 
+		tagCompound.setInteger("ButtonOffsetY", 161);
+		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
 		if (event.getSide().isClient()) {
 			ClientProxy.init();
 		}

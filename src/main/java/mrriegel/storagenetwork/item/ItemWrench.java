@@ -45,12 +45,12 @@ public class ItemWrench extends CommonItem {
 						((TileNetworkCable) newTile).getNetworkCore().markForNetworkInit();
 						BlockNetworkCable.releaseNetworkParts(world, newTile.getPos(), ((TileNetworkCable) newTile).getNetworkCore().getPos());
 					}
-					if (tile.getNetworkCore() != null) {
-						tile.getNetworkCore().markForNetworkInit();
-						BlockNetworkCable.releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
-					}
 				}
-				tile.markForSync();
+				if (tile.getNetworkCore() != null) {
+					tile.getNetworkCore().markForNetworkInit();
+					BlockNetworkCable.releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
+				}
+//				tile.markForSync();
 			} else {
 				if (state.getValue(BlockNetworkCable.bimap.get(side)) == Connect.NULL && !tile.isSideValid(side)) {
 					tile.setSide(side, true);
@@ -62,12 +62,12 @@ public class ItemWrench extends CommonItem {
 							((TileNetworkCable) newTile).getNetworkCore().markForNetworkInit();
 							BlockNetworkCable.releaseNetworkParts(world, newTile.getPos(), ((TileNetworkCable) newTile).getNetworkCore().getPos());
 						}
-						if (tile.getNetworkCore() != null) {
-							tile.getNetworkCore().markForNetworkInit();
-							BlockNetworkCable.releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
-						}
 					}
-					tile.markForSync();
+					if (tile.getNetworkCore() != null) {
+						tile.getNetworkCore().markForNetworkInit();
+						BlockNetworkCable.releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
+					}
+//					tile.markForSync();
 				}
 			}
 			return EnumActionResult.SUCCESS;

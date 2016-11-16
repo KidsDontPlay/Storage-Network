@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.message;
 
 import java.util.List;
 
+import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.network.AbstractMessage;
@@ -140,10 +141,16 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 						}
 						ItemStack ingredient = null;
 						for (ItemStack s : stacks) {
-							ingredient = core.network.requestItem(new FilterItem(s, true, ore, true), 1, false);
+							ingredient = InvHelper.extractItem(new PlayerMainInvWrapper(player.inventory), new FilterItem(s, true, ore, true), 1, false);
 							if (ingredient != null)
 								break;
 						}
+						if (ingredient == null)
+							for (ItemStack s : stacks) {
+								ingredient = core.network.requestItem(new FilterItem(s, true, ore, true), 1, false);
+								if (ingredient != null)
+									break;
+							}
 						if (ingredient != null) {
 							con.inventorySlots.get(i + 1).putStack(ingredient);
 							player.openContainer.detectAndSendChanges();
