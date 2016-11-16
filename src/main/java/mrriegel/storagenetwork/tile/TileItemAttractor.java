@@ -24,7 +24,7 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 			int range = 4;
 			List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range, getZ() + range));
 			for (EntityItem ei : list) {
-				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()))
+				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()) || !getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true))
 					continue;
 				Vec3d vec = new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).normalize().scale(0.12);
 				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01 && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9)

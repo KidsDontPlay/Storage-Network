@@ -87,6 +87,8 @@ public class ItemWirelessAccessor extends CommonSubtypeItem {
 				}
 			}
 			if (!worldIn.isRemote && playerIn.isSneaking()) {
+				for (ItemStack stack : NBTStackHelper.getItemStackList(itemStackIn, "matrix"))
+					playerIn.dropItem(stack, false);
 				itemStackIn.setTagCompound(null);
 				playerIn.addChatComponentMessage(new TextComponentString("Network Core cleared."));
 			}

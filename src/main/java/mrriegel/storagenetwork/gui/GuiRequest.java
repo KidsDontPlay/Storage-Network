@@ -113,11 +113,12 @@ public class GuiRequest extends CommonGuiContainer {
 					if (index >= tmp.size())
 						break line;
 					StackWrapper w = tmp.get(index);
-					items.add(new ItemSlot(w.getStack(), index, guiLeft + 8 + j * 18, guiTop + 8 + i * 18, w.getSize(), drawer, true, true, true, true));
+					items.add(new ItemSlot(w.getStack(), index, guiLeft + 8 + j * 18, guiTop + 8 + i * 18, w.getSize(), drawer, true, true, !true, true));
 					index++;
 				}
 			}
-
+			boolean uni = fontRendererObj.getUnicodeFlag();
+			fontRendererObj.setUnicodeFlag(true);
 			for (ItemSlot slot : items) {
 				//				drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
 				slot.draw(mouseX, mouseY);
@@ -125,6 +126,7 @@ public class GuiRequest extends CommonGuiContainer {
 					over = slot;
 				}
 			}
+			fontRendererObj.setUnicodeFlag(uni);
 		}
 	}
 

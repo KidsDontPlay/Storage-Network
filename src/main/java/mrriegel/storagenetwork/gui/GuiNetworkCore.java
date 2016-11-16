@@ -1,5 +1,6 @@
 package mrriegel.storagenetwork.gui;
 
+import java.awt.Color;
 import java.util.List;
 
 import mrriegel.limelib.gui.CommonGuiScreen;
@@ -11,7 +12,7 @@ import com.google.common.collect.Lists;
 
 public class GuiNetworkCore extends CommonGuiScreen {
 
-	TileNetworkCore core;
+	public TileNetworkCore core;
 	public NBTTagCompound data;
 
 	public GuiNetworkCore(TileNetworkCore core) {
@@ -23,17 +24,24 @@ public class GuiNetworkCore extends CommonGuiScreen {
 		drawDefaultBackground();
 		drawer.drawBackgroundTexture();
 		super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+		drawer.drawColoredRectangle(9, 9, 10, 103, Color.BLACK.getRGB());
+		drawer.drawFramedRectangle(26, 9, 130, 128);
 		drawer.drawEnergyBarV(10, 10, 100, (float) core.getEnergyStored(null) / (float) core.getMaxEnergyStored(null));
-		if (data != null && data.getInteger("maxcell") > 0)
+		if (data != null && data.getInteger("maxcell") > 0) {
+			drawer.drawColoredRectangle(9, 139, 103, 10, Color.BLACK.getRGB());
 			drawer.drawEnergyBarH(10, 140, 100, (float) data.getInteger("cell") / (float) data.getInteger("maxcell"));
+		}
 		if (data != null) {
-			List<String> lis = Lists.newArrayList("Network Size: " + data.getInteger("nsize"));
+			List<String> lis = Lists.newArrayList("Network size: " + data.getInteger("nsize"));
 			lis.addAll(NBTHelper.getStringList(data, "parts"));
-			for (int i = 0; i < 13; i++)
+			boolean uni = fontRendererObj.getUnicodeFlag();
+			fontRendererObj.setUnicodeFlag(true);
+			for (int i = 0; i < 16; i++)
 				if (lis.size() <= i)
 					break;
 				else
-					this.fontRendererObj.drawString(lis.get(i), guiLeft + 30, guiTop + 10 + i * 10, 4210752);
+					this.fontRendererObj.drawString(lis.get(i), guiLeft + 30, guiTop + 10 + i * 8, 0);
+			fontRendererObj.setUnicodeFlag(uni);
 		}
 	}
 

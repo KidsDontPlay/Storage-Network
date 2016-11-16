@@ -34,30 +34,41 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	public Network network;
 	protected boolean needsUpdate;
-	//	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 1000) {
-	//		@Override
-	//		public int extractEnergy(int maxExtract, boolean simulate) {
-	//			if (worldObj.getTotalWorldTime() % 4 == 0)
-	//				markForSync();
-	//			if ((double) getEnergyStored() / (double) getMaxEnergyStored() > 0.75)
-	//				return super.extractEnergy(Math.min(maxExtract, getMaxEnergyStored() / 10), simulate);
-	//			return 0;
-	//		};
-	//	};
-
-	protected EnergyStorageExt receiver = new EnergyStorageExt(100000, 1000) {
-	};
-
-	protected EnergyStorageExt extractor = new EnergyStorageExt(100000, 1000) {
+	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 1000) {
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
 			if (worldObj.getTotalWorldTime() % 4 == 0)
 				markForSync();
-			if ((double) getEnergyStorage().getEnergyStored() / (double) getEnergyStorage().getMaxEnergyStored() > 0.5)
+			if ((double) getEnergyStored() / (double) getMaxEnergyStored() > 0.75)
 				return super.extractEnergy(Math.min(maxExtract, getMaxEnergyStored() / 10), simulate);
 			return 0;
 		};
 	};
+
+	protected IEnergyStorage receiver = new CombinedEnergyStorageExt(energy) {
+		@Override
+		public int extractEnergy(int maxExtract, boolean simulate) {
+			return 0;
+		}
+	};
+	protected IEnergyStorage extractor = new CombinedEnergyStorageExt(energy) {
+		@Override
+		public int receiveEnergy(int maxReceive, boolean simulate) {
+			return 0;
+		}
+	};
+
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		energy.setEnergyStored(NBTHelper.getInt(compound, "energy"));
+		super.readFromNBT(compound);
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		NBTHelper.setInt(compound, "energy", energy.getEnergyStored());
+		return super.writeToNBT(compound);
+	}
 
 	public void initializeNetwork() {
 		this.network = new Network();
@@ -105,7 +116,6 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	@Override
 	public void update() {
-		//		System.out.println("kill "+(worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300));
 		if ((worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300) == 0) {
 			needsUpdate = true;
 			//Lag
@@ -134,10 +144,8 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	private void distributeEnergy() {
 		if (worldObj.getTotalWorldTime() % 20 == 0) {
-			extractor.setMaxExtract(getTotalTransfer());
-			extractor.setMaxReceive(getTotalTransfer());
-			receiver.setMaxExtract(getTotalTransfer());
-			receiver.setMaxReceive(getTotalTransfer());
+			energy.setMaxExtract(getTotalTransfer());
+			energy.setMaxReceive(getTotalTransfer());
 		}
 		int maxTransfer = getTotalTransfer();
 		for (INetworkPart part : network.networkParts)
@@ -188,22 +196,8 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		return max;
 	}
 
-	public IEnergyStorage getEnergyStorage() {
-		return new CombinedEnergyStorageExt(receiver, extractor);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		receiver.setEnergyStored(NBTHelper.getInt(compound, "receiver"));
-		extractor.setEnergyStored(NBTHelper.getInt(compound, "extractor"));
-		super.readFromNBT(compound);
-	}
-
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		NBTHelper.setInt(compound, "receiver", receiver.getEnergyStored());
-		NBTHelper.setInt(compound, "extractor", extractor.getEnergyStored());
-		return super.writeToNBT(compound);
+	public EnergyStorageExt getEnergyStorage() {
+		return energy;
 	}
 
 	public boolean consumeRF(int num, boolean simulate) {
@@ -213,7 +207,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		if (getEnergyStorage().getEnergyStored() < value)
 			return false;
 		if (!simulate) {
-			getEnergyStorage().extractEnergy(value, false);
+			getEnergyStorage().modifyEnergyStored(-value);
 		}
 		return true;
 	}

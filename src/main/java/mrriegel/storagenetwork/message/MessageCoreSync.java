@@ -11,11 +11,11 @@ import mrriegel.limelib.network.AbstractMessage;
 import mrriegel.storagenetwork.gui.GuiNetworkCore;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
-import mrriegel.storagenetwork.tile.TileNetworkEnergyCell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.Lists;
@@ -27,15 +27,10 @@ public class MessageCoreSync extends AbstractMessage<MessageCoreSync> {
 	}
 
 	public MessageCoreSync(TileNetworkCore core) {
+		nbt.setLong("ppp", core.getPos().toLong());
 		nbt.setInteger("nsize", core.network.networkParts.size());
-		int cell = 0, maxcell = 0;
-		for (INetworkPart part : core.network.noCables)
-			if (part instanceof TileNetworkEnergyCell) {
-				cell += ((TileNetworkEnergyCell) part).getEnergy().getEnergyStored();
-				maxcell += ((TileNetworkEnergyCell) part).getEnergy().getMaxEnergyStored();
-			}
-		nbt.setInteger("cell", cell);
-		nbt.setInteger("maxcell", maxcell);
+		nbt.setInteger("cell", core.getTotalEnergy() - core.getEnergyStorage().getEnergyStored());
+		nbt.setInteger("maxcell", core.getTotalMaxEnergy() - core.getEnergyStorage().getMaxEnergyStored());
 		Map<String, Integer> map = Maps.newHashMap();
 		for (INetworkPart p : core.network.networkParts) {
 			String block = ((TileEntity) p).getBlockType().getLocalizedName();
@@ -62,7 +57,9 @@ public class MessageCoreSync extends AbstractMessage<MessageCoreSync> {
 	public void handleMessage(EntityPlayer player, NBTTagCompound nbt, Side side) {
 		if (Minecraft.getMinecraft().currentScreen instanceof GuiNetworkCore) {
 			GuiNetworkCore gui = (GuiNetworkCore) Minecraft.getMinecraft().currentScreen;
-			gui.data = nbt;
+			if (gui.core != null && gui.core.getPos().equals(BlockPos.fromLong(nbt.getLong("ppp"))))
+				gui.data = nbt;
+			//			System.out.println("ding");
 		}
 	}
 

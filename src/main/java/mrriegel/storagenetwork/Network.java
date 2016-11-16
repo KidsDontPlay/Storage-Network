@@ -66,8 +66,6 @@ public class Network {
 		return (TileNetworkCore) corePosition.getTile(null);
 	}
 
-	//item start
-
 	Comparator<INetworkPart> comparator = new Comparator<INetworkPart>() {
 		@Override
 		public int compare(INetworkPart o1, INetworkPart o2) {
@@ -81,6 +79,8 @@ public class Network {
 				return 0;
 		}
 	};
+
+	//item start
 
 	public ItemStack requestItem(FilterItem fil, final int size, boolean simulate) {
 		if (size == 0 || fil == null)
