@@ -39,6 +39,7 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 						ei.setDead();
 					else
 						ei.setEntityItemStack(rest);
+					break;
 				}
 			}
 

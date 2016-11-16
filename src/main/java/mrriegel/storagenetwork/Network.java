@@ -265,12 +265,9 @@ public class Network {
 				}
 			}
 		}
-		//		for(ItemStack s:lis)
-		//			if(s!=null&&s.getItem()==Item.getItemFromBlock(Registry.networkCore))
-		//				System.out.println("get "+s.getTagCompound());
 		return lis;
 	}
-
+	
 	//item end
 
 	//fluid start
@@ -327,7 +324,7 @@ public class Network {
 						invalid = true;
 				}
 			}
-			if (!invalid && core != null) {
+			if (!invalid && core != null && core.network != null) {
 				core.network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
 				return;
 			}

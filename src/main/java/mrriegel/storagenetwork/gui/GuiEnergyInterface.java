@@ -23,7 +23,7 @@ public class GuiEnergyInterface extends CommonGuiScreen {
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonList.add(button = new GuiButtonSimple(0, guiLeft + 10, guiTop + 10, 20, 20, "", null));
+		buttonList.add(button = new GuiButtonSimple(0, guiLeft + 9, guiTop + 10, 22, 18, "", null));
 	}
 
 	@Override

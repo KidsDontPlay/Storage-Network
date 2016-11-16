@@ -34,14 +34,14 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 
 	@Override
 	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-		if (getNetworkCore() != null && iomode.canExtract())
+		if (getNetworkCore() != null && iomode.canExtract() && (from == null || from.equals(tileFace)))
 			return getNetworkCore().extractor.extractEnergy(maxExtract, simulate);
 		return 0;
 	}
 
 	@Override
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-		if (getNetworkCore() != null && iomode.canInsert())
+		if (getNetworkCore() != null && iomode.canInsert() && (from == null || from.equals(tileFace)))
 			return getNetworkCore().receiveEnergy(from, maxReceive, simulate);
 		return 0;
 	}
@@ -60,8 +60,7 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null) {
-			//TODO untested
+		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null && (facing == null || facing.equals(tileFace))) {
 			if (iomode.canExtract() && iomode.canInsert())
 				return getNetworkCore().getCapability(capability, facing);
 			else if (iomode.canExtract())
@@ -74,7 +73,7 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null)
+		if (capability == CapabilityEnergy.ENERGY && getNetworkCore() != null && (facing == null || facing.equals(tileFace)))
 			return true;
 		return super.hasCapability(capability, facing);
 	}
@@ -82,6 +81,8 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 	@Override
 	public void handleMessage(EntityPlayer player, NBTTagCompound nbt) {
 		iomode = iomode.next();
+		for (EnumFacing f : EnumFacing.VALUES)
+			worldObj.notifyBlockOfStateChange(pos.offset(f), worldObj.getBlockState(pos.offset(f)).getBlock());
 	}
 
 }

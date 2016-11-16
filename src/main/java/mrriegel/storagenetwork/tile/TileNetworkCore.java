@@ -139,6 +139,13 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 				for (EntityPlayerMP p : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos.add(10, 10, 10), pos.add(-10, -10, -10)))) {
 					PacketHandler.sendTo(new MessageCoreSync(this), p);
 				}
+			if (worldObj.getTotalWorldTime() % 300 == 0) {
+				for (INetworkPart part : network.noCables)
+					if (part.getNetworkCore() == null || !part.getNetworkCore().getPos().equals(pos)) {
+						markForNetworkInit();
+						break;
+					}
+			}
 		}
 	}
 
