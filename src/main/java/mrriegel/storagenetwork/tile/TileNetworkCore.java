@@ -80,6 +80,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		} catch (Error error) {
 			error.printStackTrace();
 		}
+		worldObj.getChunkFromBlockCoords(pos).setModified(true);
 		//		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
 	}
 
@@ -146,6 +147,8 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 						break;
 					}
 			}
+			//			if (worldObj.getTotalWorldTime() % 40 == 0)
+			//				System.out.println(network.networkParts.size()+" parts");
 		}
 	}
 

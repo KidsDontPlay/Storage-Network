@@ -125,9 +125,9 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 
 	@Override
 	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+		TileNetworkCore core = getNetworkCore();
 		if (ctrl && shift && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer) {
 			ItemStack stack = getSlot(slotId).getStack();
-			TileNetworkCore core = getNetworkCore();
 			for (Slot s : getSlotsFor(player.inventory)) {
 				if (s.getHasStack() && s.getStack().isItemEqual(stack)) {
 					ItemStack rest = core.network.insertItem(s.getStack(), null, false);
@@ -141,7 +141,6 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 			return null;
 		}
 		if (ctrl && space && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer && getSlot(slotId).getSlotIndex() > 8) {
-			TileNetworkCore core = getNetworkCore();
 			for (Slot s : getSlotsFor(player.inventory)) {
 				if (s.getSlotIndex() <= 8)
 					continue;

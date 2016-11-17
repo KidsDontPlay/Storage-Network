@@ -50,7 +50,7 @@ public class ItemWrench extends CommonItem {
 					tile.getNetworkCore().markForNetworkInit();
 					BlockNetworkCable.releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
 				}
-//				tile.markForSync();
+				//				tile.markForSync();
 			} else {
 				if (state.getValue(BlockNetworkCable.bimap.get(side)) == Connect.NULL && !tile.isSideValid(side)) {
 					tile.setSide(side, true);
@@ -67,7 +67,7 @@ public class ItemWrench extends CommonItem {
 						tile.getNetworkCore().markForNetworkInit();
 						BlockNetworkCable.releaseNetworkParts(world, tile.getPos(), tile.getNetworkCore().getPos());
 					}
-//					tile.markForSync();
+					//					tile.markForSync();
 				}
 			}
 			return EnumActionResult.SUCCESS;

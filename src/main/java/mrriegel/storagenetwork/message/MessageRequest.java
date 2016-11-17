@@ -75,8 +75,8 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 					else
 						NBTStackHelper.setItemStackList(wireless, "matrix", lis);
 					player.openContainer.detectAndSendChanges();
-					break;
 				}
+				break;
 			case 3:
 				if (tile != null)
 					tile.jei = !tile.jei;

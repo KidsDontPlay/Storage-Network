@@ -91,7 +91,6 @@ public class GuiRequest extends CommonGuiContainer {
 		drawer.drawSlot(43, 195);
 		drawer.drawColoredRectangle(7, 7, 13 * 18, 6 * 18, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
 		over = null;
-		//		System.out.println(wrappers);
 		if (wrappers != null) {
 			int invisible = wrappers.size() - 13 * 6;
 			if (invisible <= 0)
@@ -121,7 +120,7 @@ public class GuiRequest extends CommonGuiContainer {
 			boolean uni = fontRendererObj.getUnicodeFlag();
 			fontRendererObj.setUnicodeFlag(true);
 			for (ItemSlot slot : items) {
-				//				drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
+				//drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
 				slot.draw(mouseX, mouseY);
 				if (slot.isMouseOver(mouseX, mouseY)) {
 					over = slot;
@@ -221,7 +220,7 @@ public class GuiRequest extends CommonGuiContainer {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (!this.checkHotbarKeys(keyCode)) {
-			if (over != null && Loader.isModLoaded("JEI") && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U)) {
+			if (over != null && Loader.isModLoaded("JEI") && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U) && (!searchBar.isFocused() || searchBar.getText().isEmpty())) {
 				if (keyCode == Keyboard.KEY_R)
 					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.OUTPUT, over.stack));
 				else

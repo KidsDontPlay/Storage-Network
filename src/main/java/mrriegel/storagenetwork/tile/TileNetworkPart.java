@@ -49,4 +49,13 @@ public abstract class TileNetworkPart extends CommonTile implements INetworkPart
 		return super.writeToNBT(compound);
 	}
 
+	@Override
+	public void onChunkUnload() {
+		// TODO Auto-generated method stub
+		super.onChunkUnload();
+		System.out.println("unload");
+		//		if(getNetworkCore()!=null)
+		//			getNetworkCore().markForNetworkInit();
+	}
+
 }

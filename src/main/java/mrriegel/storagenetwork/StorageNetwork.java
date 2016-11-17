@@ -67,7 +67,7 @@ public class StorageNetwork {
 		tagCompound.setString("ContainerClass", ContainerAbstractRequest.class.getName());
 		tagCompound.setBoolean("PhantomItems", false);
 		tagCompound.setInteger("GridSlotNumber", 1);
-		tagCompound.setInteger("ButtonOffsetX", 62); 
+		tagCompound.setInteger("ButtonOffsetX", 62);
 		tagCompound.setInteger("ButtonOffsetY", 161);
 		FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
 		if (event.getSide().isClient()) {
