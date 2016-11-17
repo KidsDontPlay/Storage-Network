@@ -34,7 +34,6 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	public Network network;
 	protected boolean needsUpdate;
-	protected long lastUpdate = 0L;
 	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 1000) {
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
@@ -122,10 +121,9 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 			//Lag
 			needsUpdate = false;
 		}
-		if (network == null || (needsUpdate && onServer() /*&& System.currentTimeMillis() > lastUpdate + 2000L*/)) {
+		if ((network == null || needsUpdate) && onServer()) {
 			needsUpdate = false;
 			initializeNetwork();
-			lastUpdate = System.currentTimeMillis();
 		}
 		if (onServer() && network != null) {
 			if (worldObj.getTotalWorldTime() % 15 == 0) {

@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.tile.TileNetworkCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -30,6 +31,7 @@ import com.google.common.collect.Lists;
 public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 
 	protected T object;
+	public boolean space, shift, ctrl;
 
 	public ContainerAbstractRequest(InventoryPlayer invPlayer, T object) {
 		super(invPlayer, Pair.of("matrix", new InventoryBasic("matrix", false, 9)), Pair.of("result", new InventoryCraftResult()));
@@ -107,7 +109,9 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 			TileNetworkCore core = getNetworkCore();
 			IInventory inv = slot.inventory;
 			if (inv instanceof InventoryPlayer) {
-				slot.putStack(core.network.insertItem(slot.getStack(), null, false));
+				if (!ctrl && !space) {
+					slot.putStack(core.network.insertItem(slot.getStack(), null, false));
+				}
 				detectAndSendChanges();
 				PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) playerIn);
 				return null;
@@ -117,6 +121,40 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 			}
 		}
 		return super.transferStackInSlot(playerIn, index);
+	}
+
+	@Override
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+		if (ctrl && shift && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer) {
+			ItemStack stack = getSlot(slotId).getStack();
+			TileNetworkCore core = getNetworkCore();
+			for (Slot s : getSlotsFor(player.inventory)) {
+				if (s.getHasStack() && s.getStack().isItemEqual(stack)) {
+					ItemStack rest = core.network.insertItem(s.getStack(), null, false);
+					s.putStack(rest);
+					if (rest != null)
+						break;
+				}
+			}
+			detectAndSendChanges();
+			PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
+			return null;
+		}
+		if (ctrl && space && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer && getSlot(slotId).getSlotIndex() > 8) {
+			TileNetworkCore core = getNetworkCore();
+			for (Slot s : getSlotsFor(player.inventory)) {
+				if (s.getSlotIndex() <= 8)
+					continue;
+				if (s.getHasStack()) {
+					ItemStack rest = core.network.insertItem(s.getStack(), null, false);
+					s.putStack(rest);
+				}
+			}
+			detectAndSendChanges();
+			PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
+			return null;
+		}
+		return super.slotClick(slotId, dragType, clickTypeIn, player);
 	}
 
 	@Override

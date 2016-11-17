@@ -19,6 +19,7 @@ import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.util.StackWrapper;
 import mrriegel.limelib.util.Utils;
 import mrriegel.storagenetwork.container.ContainerAbstractRequest;
+import mrriegel.storagenetwork.message.MessageInvTweaks;
 import mrriegel.storagenetwork.message.MessageRequest;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -209,6 +210,12 @@ public class GuiRequest extends CommonGuiContainer {
 			if (mouse < 0 && currentPos < maxPos)
 				currentPos++;
 		}
+	}
+
+	@Override
+	public void handleKeyboardInput() throws IOException {
+		super.handleKeyboardInput();
+		PacketHandler.sendToServer(new MessageInvTweaks(Keyboard.isKeyDown(Keyboard.KEY_SPACE), isShiftKeyDown(), isCtrlKeyDown()));
 	}
 
 	@Override
