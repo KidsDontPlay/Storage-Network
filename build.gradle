@@ -19,7 +19,7 @@ apply plugin: 'eclipse'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-version = "2.0.1"
+version = "2.0.2"
 group= "mrriegel.storagenetwork"
 archivesBaseName = "storagenetwork"
 

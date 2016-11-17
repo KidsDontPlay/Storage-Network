@@ -119,7 +119,6 @@ public class Network {
 									if (need == 0)
 										return result;
 								}
-
 							}
 						}
 					}
@@ -204,10 +203,8 @@ public class Network {
 						if (tile.getTile() != null)
 							tile.getTile().markDirty();
 						break;
-
 					}
 				}
-
 			}
 		}
 	}
@@ -239,7 +236,6 @@ public class Network {
 						if (tile.getTile() != null)
 							tile.getTile().markDirty();
 						break;
-
 					}
 				}
 			}

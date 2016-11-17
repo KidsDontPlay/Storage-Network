@@ -125,33 +125,35 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 
 	@Override
 	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-		TileNetworkCore core = getNetworkCore();
-		if (ctrl && shift && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer) {
-			ItemStack stack = getSlot(slotId).getStack();
-			for (Slot s : getSlotsFor(player.inventory)) {
-				if (s.getHasStack() && s.getStack().isItemEqual(stack)) {
-					ItemStack rest = core.network.insertItem(s.getStack(), null, false);
-					s.putStack(rest);
-					if (rest != null)
-						break;
+		if (!player.worldObj.isRemote) {
+			TileNetworkCore core = getNetworkCore();
+			if (ctrl && shift && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer) {
+				ItemStack stack = getSlot(slotId).getStack();
+				for (Slot s : getSlotsFor(player.inventory)) {
+					if (s.getHasStack() && s.getStack().isItemEqual(stack)) {
+						ItemStack rest = core.network.insertItem(s.getStack(), null, false);
+						s.putStack(rest);
+						if (rest != null)
+							break;
+					}
 				}
+				detectAndSendChanges();
+				PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
+				return null;
 			}
-			detectAndSendChanges();
-			PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
-			return null;
-		}
-		if (ctrl && space && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer && getSlot(slotId).getSlotIndex() > 8) {
-			for (Slot s : getSlotsFor(player.inventory)) {
-				if (s.getSlotIndex() <= 8)
-					continue;
-				if (s.getHasStack()) {
-					ItemStack rest = core.network.insertItem(s.getStack(), null, false);
-					s.putStack(rest);
+			if (ctrl && space && getSlot(slotId) != null && getSlot(slotId).getHasStack() && getSlot(slotId).inventory instanceof InventoryPlayer && getSlot(slotId).getSlotIndex() > 8) {
+				for (Slot s : getSlotsFor(player.inventory)) {
+					if (s.getSlotIndex() <= 8)
+						continue;
+					if (s.getHasStack()) {
+						ItemStack rest = core.network.insertItem(s.getStack(), null, false);
+						s.putStack(rest);
+					}
 				}
+				detectAndSendChanges();
+				PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
+				return null;
 			}
-			detectAndSendChanges();
-			PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
-			return null;
 		}
 		return super.slotClick(slotId, dragType, clickTypeIn, player);
 	}

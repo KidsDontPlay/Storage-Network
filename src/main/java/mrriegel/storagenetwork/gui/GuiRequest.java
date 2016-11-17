@@ -225,9 +225,7 @@ public class GuiRequest extends CommonGuiContainer {
 					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.OUTPUT, over.stack));
 				else
 					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.INPUT, over.stack));
-			} else
-
-			if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
+			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
 					Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
 				sendRequest(null, 0);
