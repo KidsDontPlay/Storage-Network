@@ -2,6 +2,7 @@ package mrriegel.storagenetwork.item;
 
 import java.util.List;
 
+import mrriegel.limelib.helper.InvHelper;
 import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.item.CommonItem;
 import mrriegel.limelib.util.FilterItem;
@@ -14,10 +15,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 
 import com.google.common.collect.Lists;
 
@@ -51,6 +55,26 @@ public class ItemItemFilter extends CommonItem {
 			}
 		}
 		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+	}
+
+	@Override
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (InvHelper.hasItemHandler(worldIn, pos, null)) {
+			IItemHandler handler = InvHelper.getItemHandler(worldIn, pos, null);
+			List<ItemStack> lis = Lists.newArrayList();
+			for (int i = 0; i < handler.getSlots(); i++)
+				if (handler.getStackInSlot(i) != null)
+					lis.add(handler.getStackInSlot(i));
+			while (lis.size() > 24)
+				lis.remove(lis.size() - 1);
+			while (lis.size() < 24)
+				lis.add(null);
+			NBTStackHelper.setItemStackList(stack, "inv", lis);
+			if (!worldIn.isRemote)
+				playerIn.addChatComponentMessage(new TextComponentString("Copied items to filter."));
+			return EnumActionResult.SUCCESS;
+		}
+		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 
 	@Override

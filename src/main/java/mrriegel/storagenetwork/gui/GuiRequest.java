@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import mezz.jei.Internal;
-import mezz.jei.api.recipe.IFocus.Mode;
-import mezz.jei.gui.Focus;
 import mrriegel.limelib.gui.CommonGuiContainer;
 import mrriegel.limelib.gui.GuiDrawer;
 import mrriegel.limelib.gui.GuiDrawer.Direction;
@@ -19,12 +16,12 @@ import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.util.StackWrapper;
 import mrriegel.limelib.util.Utils;
 import mrriegel.storagenetwork.container.ContainerAbstractRequest;
+import mrriegel.storagenetwork.jei.JEI;
 import mrriegel.storagenetwork.message.MessageInvTweaks;
 import mrriegel.storagenetwork.message.MessageRequest;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
@@ -142,7 +139,7 @@ public class GuiRequest extends CommonGuiContainer {
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		if (searchBar.isFocused() && Loader.isModLoaded("JEI") && Internal.getRuntime().getItemListOverlay().getInternal().hasKeyboardFocus()) {
+		if (searchBar.isFocused() && Loader.isModLoaded("JEI") && JEI.hasKeyboardFocus()) {
 			searchBar.setFocused(false);
 		}
 		sort.setTooltip("Sort by " + getContainer().getSort().name().toLowerCase());
@@ -181,7 +178,7 @@ public class GuiRequest extends CommonGuiContainer {
 		if (searchBar.isFocused() && mouseButton == 1) {
 			searchBar.setText("");
 			if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
-				Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
+				JEI.setFilterText(searchBar.getText());
 		}
 		if (canClick()) {
 			if (over != null && mc.thePlayer.inventory.getItemStack() == null)
@@ -222,12 +219,12 @@ public class GuiRequest extends CommonGuiContainer {
 		if (!this.checkHotbarKeys(keyCode)) {
 			if (over != null && Loader.isModLoaded("JEI") && (keyCode == Keyboard.KEY_R || keyCode == Keyboard.KEY_U) && (!searchBar.isFocused() || searchBar.getText().isEmpty())) {
 				if (keyCode == Keyboard.KEY_R)
-					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.OUTPUT, over.stack));
+					JEI.showRecipes(over.stack);
 				else
-					Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(Mode.INPUT, over.stack));
+					JEI.showUsage(over.stack);
 			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
-					Internal.getRuntime().getItemListOverlay().setFilterText(searchBar.getText());
+					JEI.setFilterText(searchBar.getText());
 				sendRequest(null, 0);
 			}
 		}

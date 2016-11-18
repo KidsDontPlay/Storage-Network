@@ -1,14 +1,19 @@
 package mrriegel.storagenetwork.jei;
 
+import mezz.jei.Internal;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.gui.Focus;
 import mrriegel.storagenetwork.container.ContainerRequestItem;
 import mrriegel.storagenetwork.container.ContainerRequestTable;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 @JEIPlugin
 public class JEI implements IModPlugin {
@@ -32,6 +37,30 @@ public class JEI implements IModPlugin {
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 
+	}
+
+	public static boolean hasKeyboardFocus() {
+		return Internal.getRuntime().getItemListOverlay().getInternal().hasKeyboardFocus();
+	}
+
+	public static void setFilterText(String s) {
+		Internal.getRuntime().getItemListOverlay().setFilterText(s);
+	}
+
+	public static void showRecipes(ItemStack stack) {
+		Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(IFocus.Mode.OUTPUT, stack));
+	}
+
+	public static void showUsage(ItemStack stack) {
+		Internal.getRuntime().getRecipesGui().show(new Focus<ItemStack>(IFocus.Mode.INPUT, stack));
+	}
+
+	public static void showRecipes(FluidStack stack) {
+		Internal.getRuntime().getRecipesGui().show(new Focus<FluidStack>(IFocus.Mode.OUTPUT, stack));
+	}
+
+	public static void showUsage(FluidStack stack) {
+		Internal.getRuntime().getRecipesGui().show(new Focus<FluidStack>(IFocus.Mode.INPUT, stack));
 	}
 
 }

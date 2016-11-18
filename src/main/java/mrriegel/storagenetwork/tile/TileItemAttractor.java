@@ -8,6 +8,7 @@ import mrriegel.storagenetwork.item.ItemItemFilter;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
@@ -20,8 +21,8 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 
 	@Override
 	public void update() {
-		if (!worldObj.isBlockPowered(pos) && getNetworkCore() != null) {
-			int range = 4;
+		if (!worldObj.isBlockPowered(pos) && !worldObj.isRemote && getNetworkCore() != null) {
+			int range = 5;
 			List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range, getZ() + range));
 			for (EntityItem ei : list) {
 				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()) || !getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true))
@@ -31,7 +32,10 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 					ei.motionY = 0.1;
 				ei.motionX = vec.xCoord;
 				ei.motionZ = vec.zCoord;
-				if (!worldObj.isRemote && getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true) && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
+				if (worldObj.getTotalWorldTime() % 2 == 0)
+					for (EntityPlayerMP player : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(ei.posX - 17, ei.posY - 17, ei.posZ - 17, ei.posX + 17, ei.posY + 17, ei.posZ + 17)))
+						player.connection.sendPacket(new SPacketEntityVelocity(ei));
+				if (getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true) && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
 					ItemStack stack = ei.getEntityItem().copy();
 					ItemStack rest = getNetworkCore().network.insertItem(stack, null, false);
 					getNetworkCore().consumeRF((rest == null ? stack.stackSize : stack.stackSize - rest.stackSize) * 5, false);
@@ -44,10 +48,6 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 			}
 
 		}
-	}
-
-	public boolean isDisabled() {
-		return worldObj.isBlockPowered(pos);
 	}
 
 	@Override

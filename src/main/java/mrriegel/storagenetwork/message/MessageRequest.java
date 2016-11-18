@@ -46,8 +46,8 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 				wireless = (ItemStack) con.getObject();
 			else
 				return;
-			TileNetworkCore core = tile != null ? tile.getNetworkCore() : ItemWirelessAccessor.getCore(wireless);
-			if (core == null)
+			TileNetworkCore core = player.worldObj.isRemote ? null : tile != null ? tile.getNetworkCore() : ItemWirelessAccessor.getCore(wireless);
+			if (core == null && !player.worldObj.isRemote)
 				return;
 			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt);
 			switch (nbt.getInteger("button")) {
@@ -84,76 +84,82 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 					NBTStackHelper.setBoolean(wireless, "jei", !NBTStackHelper.getBoolean(wireless, "jei"));
 				break;
 			case 1000:
-				if (stack != null) {
-					int mouse = nbt.getInteger("mouse");
-					int size = nbt.getBoolean("ctrl") ? 1 : mouse == 1 ? (nbt.getInteger("SIZE") < stack.getMaxStackSize() ? Math.max(nbt.getInteger("SIZE") / 2, 1) : stack.getMaxStackSize() / 2) : mouse == 0 ? stack.getMaxStackSize() : 0;
-					ItemStack req = core.network.requestItem(new FilterItem(stack, true, false, true), size, false);
-					if (req != null) {
-						if (nbt.getBoolean("shift")) {
-							player.dropItem(ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(player.inventory), req, false), false);
-						} else {
-							((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(-1, 0, req));
-							player.inventory.setItemStack(req);
-						}
+				if (!player.worldObj.isRemote) {
+					if (stack != null) {
+						int mouse = nbt.getInteger("mouse");
+						int size = nbt.getBoolean("ctrl") ? 1 : mouse == 1 ? (nbt.getInteger("SIZE") < stack.getMaxStackSize() ? Math.max(nbt.getInteger("SIZE") / 2, 1) : stack.getMaxStackSize() / 2) : mouse == 0 ? stack.getMaxStackSize() : 0;
+						ItemStack req = core.network.requestItem(new FilterItem(stack, true, false, true), size, false);
+						if (req != null) {
+							if (nbt.getBoolean("shift")) {
+								player.dropItem(ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(player.inventory), req, false), false);
+							} else {
+								((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(-1, 0, req));
+								player.inventory.setItemStack(req);
+							}
 
+						}
 					}
-				}
-				player.openContainer.detectAndSendChanges();
-				PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
-				break;
-			case 1001:
-				int mouse = nbt.getInteger("mouse");
-				if (mouse == 0 || mouse == 1) {
-					ItemStack rest = null;
-					if (mouse == 0)
-						rest = core.network.insertItem(stack, null, false);
-					else {
-						ItemStack x = core.network.insertItem(ItemHandlerHelper.copyStackWithSize(stack, 1), null, false);
-						if (x == null)
-							rest = ItemHandlerHelper.copyStackWithSize(stack, stack.stackSize - 1);
-						else
-							rest = stack;
-					}
-					((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(-1, 0, rest));
-					player.inventory.setItemStack(rest);
 					player.openContainer.detectAndSendChanges();
 					PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
 				}
 				break;
-			case 2000:
-				NBTTagCompound n = new NBTTagCompound();
-				n.setInteger("button", 2);
-				handleMessage(player, n, side);
-				boolean isempty = true;
-				for (ItemStack s : con.getMatrixList()) {
-					if (s != null) {
-						isempty = false;
-						break;
+			case 1001:
+				if (!player.worldObj.isRemote) {
+					int mouse = nbt.getInteger("mouse");
+					if (mouse == 0 || mouse == 1) {
+						ItemStack rest = null;
+						if (mouse == 0)
+							rest = core.network.insertItem(stack, null, false);
+						else {
+							ItemStack x = core.network.insertItem(ItemHandlerHelper.copyStackWithSize(stack, 1), null, false);
+							if (x == null)
+								rest = ItemHandlerHelper.copyStackWithSize(stack, stack.stackSize - 1);
+							else
+								rest = stack;
+						}
+						((EntityPlayerMP) player).connection.sendPacket(new SPacketSetSlot(-1, 0, rest));
+						player.inventory.setItemStack(rest);
+						player.openContainer.detectAndSendChanges();
+						PacketHandler.sendTo(new MessageItemListRequest(core.network.getItemstacks()), (EntityPlayerMP) player);
 					}
 				}
-				if (isempty) {
-					for (int i = 0; i < 9; i++) {
-						boolean ore = false;
-						List<ItemStack> stacks = NBTHelper.getItemStackList(nbt, i + "l");
-						if (stacks.isEmpty()) {
-							stacks = OreDictionary.getOres(NBTHelper.getString(nbt, i + "s"));
-							ore = true;
+				break;
+			case 2000:
+				if (!player.worldObj.isRemote) {
+					NBTTagCompound n = new NBTTagCompound();
+					n.setInteger("button", 2);
+					handleMessage(player, n, side);
+					boolean isempty = true;
+					for (ItemStack s : con.getMatrixList()) {
+						if (s != null) {
+							isempty = false;
+							break;
 						}
-						ItemStack ingredient = null;
-						for (ItemStack s : stacks) {
-							ingredient = InvHelper.extractItem(new PlayerMainInvWrapper(player.inventory), new FilterItem(s, true, ore, true), 1, false);
-							if (ingredient != null)
-								break;
-						}
-						if (ingredient == null)
+					}
+					if (isempty) {
+						for (int i = 0; i < 9; i++) {
+							boolean ore = false;
+							List<ItemStack> stacks = NBTHelper.getItemStackList(nbt, i + "l");
+							if (stacks.isEmpty()) {
+								stacks = OreDictionary.getOres(NBTHelper.getString(nbt, i + "s"));
+								ore = true;
+							}
+							ItemStack ingredient = null;
 							for (ItemStack s : stacks) {
-								ingredient = core.network.requestItem(new FilterItem(s, true, ore, true), 1, false);
+								ingredient = InvHelper.extractItem(new PlayerMainInvWrapper(player.inventory), new FilterItem(s, true, ore, true), 1, false);
 								if (ingredient != null)
 									break;
 							}
-						if (ingredient != null) {
-							con.inventorySlots.get(i + 1).putStack(ingredient);
-							player.openContainer.detectAndSendChanges();
+							if (ingredient == null)
+								for (ItemStack s : stacks) {
+									ingredient = core.network.requestItem(new FilterItem(s, true, ore, true), 1, false);
+									if (ingredient != null)
+										break;
+								}
+							if (ingredient != null) {
+								con.inventorySlots.get(i + 1).putStack(ingredient);
+								player.openContainer.detectAndSendChanges();
+							}
 						}
 					}
 				}
