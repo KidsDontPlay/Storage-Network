@@ -1,0 +1,28 @@
+{
+    "forge_marker" : 1, 
+    "defaults" : {
+        "model" : "minecraft:cube_all", 
+        "textures" : {
+            "all" : "storagenetwork:blocks/item_indicator_off"
+        }, 
+        "transform" : "forge:default-block"
+    }, 
+    "variants" : {
+        "normal" : [{
+                
+            }], 
+        "inventory" : [{
+                
+            }], 
+        "state" : {
+            "true" : {
+                "textures" : {
+                    "all" : "storagenetwork:blocks/item_indicator_on"
+                }
+            }, 
+            "false" : {
+                
+            }
+        }
+    }
+}

@@ -4,6 +4,7 @@ import mrriegel.storagenetwork.container.ContainerBox;
 import mrriegel.storagenetwork.container.ContainerItemAttractor;
 import mrriegel.storagenetwork.container.ContainerItemConnect;
 import mrriegel.storagenetwork.container.ContainerItemFilter;
+import mrriegel.storagenetwork.container.ContainerItemIndicator;
 import mrriegel.storagenetwork.container.ContainerRequestItem;
 import mrriegel.storagenetwork.container.ContainerRequestTable;
 import mrriegel.storagenetwork.gui.GuiBox;
@@ -11,10 +12,12 @@ import mrriegel.storagenetwork.gui.GuiEnergyInterface;
 import mrriegel.storagenetwork.gui.GuiItemAttractor;
 import mrriegel.storagenetwork.gui.GuiItemConnect;
 import mrriegel.storagenetwork.gui.GuiItemFilter;
+import mrriegel.storagenetwork.gui.GuiItemIndicator;
 import mrriegel.storagenetwork.gui.GuiNetworkCore;
 import mrriegel.storagenetwork.gui.GuiRequest;
 import mrriegel.storagenetwork.tile.TileBox;
 import mrriegel.storagenetwork.tile.TileItemAttractor;
+import mrriegel.storagenetwork.tile.TileItemIndicator;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
 import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
@@ -45,6 +48,8 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerRequestItem(player.inventory, player.getHeldItemMainhand());
 		case BOX:
 			return new ContainerBox(player.inventory, (TileBox<?, ?>) world.getTileEntity(new BlockPos(x, y, z)));
+		case ITEM_INDICATOR:
+			return new ContainerItemIndicator(player.inventory, (TileItemIndicator) world.getTileEntity(new BlockPos(x, y, z)));
 		default:
 			return null;
 		}
@@ -69,13 +74,15 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiRequest(new ContainerRequestItem(player.inventory, player.getHeldItemMainhand()));
 		case BOX:
 			return new GuiBox(new ContainerBox(player.inventory, (TileBox<?, ?>) world.getTileEntity(new BlockPos(x, y, z))));
+		case ITEM_INDICATOR:
+			return new GuiItemIndicator(new ContainerItemIndicator(player.inventory, (TileItemIndicator) world.getTileEntity(new BlockPos(x, y, z))));
 		default:
 			return null;
 		}
 	}
 
 	public enum GuiID {
-		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR, REQUEST_TABLE, ITEM_ATTRACTOR, WIRELESS_ITEM, BOX;
+		NETWORK_CORE, ITEM_FILTER, ENERGY_INTERFACE, ITEM_CONNECTOR, REQUEST_TABLE, ITEM_ATTRACTOR, WIRELESS_ITEM, BOX, ITEM_INDICATOR;
 	}
 
 }

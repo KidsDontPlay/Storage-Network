@@ -10,6 +10,7 @@ tile.storagenetwork:block_request_table.name=Request Table
 tile.storagenetwork:block_item_attractor.name=Item Attractor
 tile.storagenetwork:block_item_box.name=Item Box
 tile.storagenetwork:block_item_mirror.name=Item Mirror
+tile.storagenetwork:block_item_indicator.name=Item Indicator
 
 item.storagenetwork:item_wrench.name=O'Wrench
 item.storagenetwork:item_item_filter.name=Item Filter

@@ -11,6 +11,7 @@ import mrriegel.storagenetwork.tile.TileItemMirror;
 import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -65,7 +66,7 @@ public class ClientProxy extends CommonProxy {
 				int h = BlockItemMirror.getQuadrant(mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos()), f1, f2, f3);
 				if (h >= 0 && h <= 3 && tile.wraps.get(h) != null) {
 					String text = /*tile.wraps.get(h).getStack().getRarity().rarityColor +*/(tile.wraps.get(h).getSize() + " ") + tile.wraps.get(h).getStack().getDisplayName();
-					mc.fontRendererObj.drawString(text, (sr.getScaledWidth() - mc.fontRendererObj.getStringWidth(text)) / 2, (sr.getScaledHeight() - 15 - mc.fontRendererObj.FONT_HEIGHT) / 2, ColorHelper.getRGB(0xffff00, mc.thePlayer.isSneaking()?255:50), true);
+					mc.fontRendererObj.drawString(text, (sr.getScaledWidth() - mc.fontRendererObj.getStringWidth(text)) / 2, (sr.getScaledHeight() - 15 - mc.fontRendererObj.FONT_HEIGHT) / 2, ColorHelper.getRGB(0xffff00, GuiScreen.isShiftKeyDown() ? 255 : 50), true);
 				}
 			}
 		}
