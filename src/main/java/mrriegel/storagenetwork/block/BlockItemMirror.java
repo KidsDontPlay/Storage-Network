@@ -2,6 +2,8 @@ package mrriegel.storagenetwork.block;
 
 import static net.minecraft.block.BlockHorizontal.FACING;
 import mrriegel.limelib.block.CommonBlockContainer;
+import mrriegel.limelib.util.FilterItem;
+import mrriegel.limelib.util.StackWrapper;
 import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.tile.TileItemMirror;
 import net.minecraft.block.material.Material;
@@ -9,13 +11,18 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 
@@ -48,6 +55,26 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		int h = getQuadrant(state, hitX, hitY, hitZ);
+		TileItemMirror tile = (TileItemMirror) worldIn.getTileEntity(pos);
+		if (h >= 0 && h <= 3) {
+			if (playerIn.isSneaking() && heldItem == null)
+				tile.wraps.set(h, null);
+			else if (!playerIn.isSneaking() && heldItem != null)
+				if (tile.wraps.get(h) == null)
+					tile.wraps.set(h, new StackWrapper(heldItem, 0));
+				else if (new FilterItem(tile.wraps.get(h).getStack()).match(heldItem) && !worldIn.isRemote && tile.getNetworkCore() != null) {
+					ItemStack remain = tile.getNetworkCore().network.insertItem(heldItem, null, false);
+					playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = remain;
+					playerIn.openContainer.detectAndSendChanges();
+					tile.markForSync();
+				}
+			return true;
+		}
+		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+	}
+
+	public static int getQuadrant(IBlockState state, float hitX, float hitY, float hitZ) {
 		int h = 1000;
 		switch (state.getValue(FACING)) {
 		case EAST:
@@ -93,14 +120,7 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 		default:
 			break;
 		}
-
-		
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
-	}
-	@Override
-	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
-		// TODO Auto-generated method stub
-		super.onBlockClicked(worldIn, pos, playerIn);
+		return h;
 	}
 
 	@Override
@@ -132,6 +152,38 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
+	}
+
+	@SubscribeEvent
+	public static void leftclick(LeftClickBlock event) {
+		if (event.getEntityPlayer() != null) {
+			EntityPlayer player = event.getEntityPlayer();
+			TileEntity t = event.getWorld().getTileEntity(event.getPos());
+			if (t instanceof TileItemMirror) {
+				TileItemMirror tile = (TileItemMirror) t;
+				if (event.getFace() == tile.face) {
+					float f1 = (float) (event.getHitVec().xCoord - (double) event.getPos().getX());
+					float f2 = (float) (event.getHitVec().yCoord - (double) event.getPos().getY());
+					float f3 = (float) (event.getHitVec().zCoord - (double) event.getPos().getZ());
+					int h = getQuadrant(event.getWorld().getBlockState(event.getPos()), f1, f2, f3);
+					if (h >= 0 && h <= 3 && tile.wraps.get(h) != null && !event.getWorld().isRemote && tile.getNetworkCore() != null && tile.canExtract()) {
+						ItemStack req = tile.getNetworkCore().network.requestItem(new FilterItem(tile.wraps.get(h).getStack()), player.isSneaking() ? tile.wraps.get(h).getStack().getMaxStackSize() : 1, false);
+						if (req != null) {
+							EntityItem ei = new EntityItem(event.getWorld(), event.getPos().offset(tile.face).getX() + .5, event.getPos().getY() + .3, event.getPos().offset(tile.face).getZ() + .5, req);
+							event.getWorld().spawnEntityInWorld(ei);
+							Vec3d vec = new Vec3d(player.posX - ei.posX, player.posY - ei.posY, player.posZ - ei.posZ).normalize().scale(1.5);
+							ei.motionX = vec.xCoord;
+							ei.motionY = vec.yCoord;
+							ei.motionZ = vec.zCoord;
+						}
+						tile.markForSync();
+					}
+					event.setCanceled(true);
+					event.setResult(Result.DENY);
+					event.setUseBlock(Result.DENY);
+				}
+			}
+		}
 	}
 
 }

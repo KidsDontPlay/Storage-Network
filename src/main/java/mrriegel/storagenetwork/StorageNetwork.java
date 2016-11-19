@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork;
 
 import mrriegel.limelib.network.PacketHandler;
+import mrriegel.storagenetwork.block.BlockItemMirror;
 import mrriegel.storagenetwork.container.ContainerAbstractRequest;
 import mrriegel.storagenetwork.message.MessageCoreSync;
 import mrriegel.storagenetwork.message.MessageInvTweaks;
@@ -56,6 +57,7 @@ public class StorageNetwork {
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		MinecraftForge.EVENT_BUS.register(Network.class);
+		MinecraftForge.EVENT_BUS.register(BlockItemMirror.class);
 		logger.info("[Initialize] Registering Messages");
 		PacketHandler.registerMessage(MessageItemFilter.class, Side.SERVER);
 		PacketHandler.registerMessage(MessageItemListRequest.class, Side.CLIENT);

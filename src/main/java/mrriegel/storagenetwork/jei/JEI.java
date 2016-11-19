@@ -40,11 +40,14 @@ public class JEI implements IModPlugin {
 	}
 
 	public static boolean hasKeyboardFocus() {
-		return Internal.getRuntime().getItemListOverlay().getInternal().hasKeyboardFocus();
+		if (Internal.getRuntime().getItemListOverlay() != null && Internal.getRuntime().getItemListOverlay().getInternal() != null)
+			return Internal.getRuntime().getItemListOverlay().getInternal().hasKeyboardFocus();
+		return false;
 	}
 
 	public static void setFilterText(String s) {
-		Internal.getRuntime().getItemListOverlay().setFilterText(s);
+		if (Internal.getRuntime().getItemListOverlay() != null)
+			Internal.getRuntime().getItemListOverlay().setFilterText(s);
 	}
 
 	public static void showRecipes(ItemStack stack) {

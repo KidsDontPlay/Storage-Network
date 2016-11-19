@@ -1,46 +1,39 @@
 package mrriegel.storagenetwork.tile;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import mrriegel.limelib.util.FilterItem;
 import mrriegel.limelib.util.StackWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
-public class TileItemMirror extends TileNetworkPart implements ITickable{
+public class TileItemMirror extends TileNetworkPart implements ITickable {
 
-	public StackWrapper topLeft, topRight, bottomLeft, bottomRight;
+	public List<StackWrapper> wraps = Lists.newArrayList(null, null, null, null);
 	public EnumFacing face = EnumFacing.DOWN;
+	private long lastEx = System.currentTimeMillis();
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		topLeft = StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("topLeft"));
-		topRight = StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("topRight"));
-		bottomLeft = StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("bottomLeft"));
-		bottomRight = StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag("bottomRight"));
+		wraps.clear();
+		for (int i = 0; i < 4; i++) {
+			wraps.add(StackWrapper.loadStackWrapperFromNBT(compound.getCompoundTag(i + "wrap")));
+		}
 		face = EnumFacing.VALUES[compound.getInteger("face")];
 		super.readFromNBT(compound);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		if (topLeft != null) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			topLeft.writeToNBT(nbt);
-			compound.setTag("topLeft", nbt);
-		}
-		if (topRight != null) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			topRight.writeToNBT(nbt);
-			compound.setTag("topRight", nbt);
-		}
-		if (bottomLeft != null) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			bottomLeft.writeToNBT(nbt);
-			compound.setTag("bottomLeft", nbt);
-		}
-		if (bottomRight != null) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			bottomRight.writeToNBT(nbt);
-			compound.setTag("bottomRight", nbt);
+		for (int i = 0; i < 4; i++) {
+			if (wraps.get(i) != null) {
+				NBTTagCompound nbt = new NBTTagCompound();
+				wraps.get(i).writeToNBT(nbt);
+				compound.setTag(i + "wrap", nbt);
+			}
 		}
 		compound.setInteger("face", face.ordinal());
 		return super.writeToNBT(compound);
@@ -48,8 +41,27 @@ public class TileItemMirror extends TileNetworkPart implements ITickable{
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		if (!worldObj.isRemote && getNetworkCore() == null) {
+			for (StackWrapper w : wraps)
+				if (w != null)
+					w.setSize(0);
+		}
+		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 50 == 0 && getNetworkCore() != null) {
+			markForSync();
+		}
+	}
+
+	@Override
+	public void markForSync() {
+		for (StackWrapper w : wraps)
+			if (w != null && !worldObj.isRemote && getNetworkCore() != null && getNetworkCore().network != null)
+				w.setSize(getNetworkCore().network.getAmountOf(new FilterItem(w.getStack())));
+		super.markForSync();
+		lastEx = System.currentTimeMillis();
+	}
+
+	public boolean canExtract() {
+		return System.currentTimeMillis() - lastEx > 130L;
 	}
 
 }

@@ -110,6 +110,7 @@ public class Registry {
 		GameRegistry.addShapedRecipe(new ItemStack(requestTable), "cbc", "gwg", "ckc", 'c', networkCable, 'g', Items.GOLD_INGOT, 'b', Items.BUCKET, 'w', Blocks.CRAFTING_TABLE, 'k', Blocks.CHEST);
 		GameRegistry.addShapedRecipe(new ItemStack(itemAttractor, 2), "iei", "chc", 'i', Items.IRON_INGOT, 'c', networkCable, 'h', Blocks.HOPPER, 'e', Items.ENDER_PEARL);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemBox), "imi", "mgm", "imi", 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT, 'm', "logWood"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemMirror), "qgq", "cGc", 'q', Items.QUARTZ, 'g', "blockGlass", 'c', networkCable, 'G', Items.GOLD_INGOT));
 
 		GameRegistry.addShapedRecipe(new ItemStack(wrench), "i i", " c ", " i ", 'i', Items.IRON_INGOT, 'c', networkCable);
 		GameRegistry.addShapedRecipe(new ItemStack(itemFilter, 4), " i ", "isi", " i ", 'i', Blocks.IRON_BARS, 's', Items.STRING);

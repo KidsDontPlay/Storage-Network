@@ -15,6 +15,8 @@ public abstract class TileNetworkPart extends CommonTile implements INetworkPart
 
 	@Override
 	public TileNetworkCore getNetworkCore() {
+		if(worldObj.isRemote)
+			return null;
 		if (corePos != null)
 			if (corePos.getTile(worldObj) instanceof TileNetworkCore)
 				return (TileNetworkCore) corePos.getTile(worldObj);
@@ -53,7 +55,6 @@ public abstract class TileNetworkPart extends CommonTile implements INetworkPart
 	public void onChunkUnload() {
 		// TODO Auto-generated method stub
 		super.onChunkUnload();
-		System.out.println("unload");
 		//		if(getNetworkCore()!=null)
 		//			getNetworkCore().markForNetworkInit();
 	}
