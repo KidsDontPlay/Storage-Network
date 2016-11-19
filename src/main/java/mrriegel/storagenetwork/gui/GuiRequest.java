@@ -22,6 +22,7 @@ import mrriegel.storagenetwork.message.MessageRequest;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
@@ -232,42 +233,11 @@ public class GuiRequest extends CommonGuiContainer {
 	}
 
 	private List<StackWrapper> getFilteredList() {
-		String search = searchBar.getText().toLowerCase();
+		String search = searchBar.getText().toLowerCase().trim();
 		List<StackWrapper> tmp = !search.isEmpty() ? Lists.<StackWrapper> newArrayList() : Lists.newArrayList(wrappers);
 		if (!search.isEmpty())
 			for (StackWrapper w : wrappers) {
-				if (search.startsWith("@")) {
-					String modID = Utils.getModID(w.getStack().getItem());
-					if (modID.toLowerCase().contains(search.substring(1)))
-						tmp.add(w);
-				} else if (search.startsWith("#")) {
-					List<String> tooltip = w.getStack().getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
-					for (String s : tooltip) {
-						s.replaceAll(w.getStack().getDisplayName(), " ");
-						if (TextFormatting.getTextWithoutFormattingCodes(s).toLowerCase().contains(search.substring(1))) {
-							tmp.add(w);
-							break;
-						}
-					}
-				} else if (search.startsWith("$")) {
-					StringBuilder builder = new StringBuilder();
-					for (int oreId : OreDictionary.getOreIDs(w.getStack())) {
-						String oreName = OreDictionary.getOreName(oreId);
-						builder.append(oreName).append(' ');
-					}
-					if (builder.toString().toLowerCase().contains(search.substring(1)))
-						tmp.add(w);
-				} else if (search.startsWith("%")) {
-					StringBuilder builder = new StringBuilder();
-					for (CreativeTabs creativeTab : w.getStack().getItem().getCreativeTabs()) {
-						if (creativeTab != null) {
-							String creativeTabName = creativeTab.getTranslatedTabLabel();
-							builder.append(creativeTabName).append(' ');
-						}
-					}
-					if (builder.toString().toLowerCase().contains(search.substring(1)))
-						tmp.add(w);
-				} else if (TextFormatting.getTextWithoutFormattingCodes(w.getStack().getDisplayName()).toLowerCase().contains(search))
+				if (match(w.getStack(), search))
 					tmp.add(w);
 
 			}
@@ -288,5 +258,47 @@ public class GuiRequest extends CommonGuiContainer {
 			}
 		});
 		return tmp;
+	}
+
+	private boolean match(ItemStack stack, String text) {
+		String[] list = text.split("\\|");
+		for (String word : list) {
+			word = word.trim();
+			if (word.startsWith("@")) {
+				String modID = Utils.getModID(stack.getItem());
+				if (modID.toLowerCase().contains(word.substring(1)))
+					return true;
+			} else if (word.startsWith("#")) {
+				List<String> tooltip = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
+				for (String s : tooltip) {
+					s.replaceAll(stack.getDisplayName(), " ");
+					if (TextFormatting.getTextWithoutFormattingCodes(s).toLowerCase().contains(word.substring(1))) {
+						return true;
+					}
+				}
+			} else if (word.startsWith("$")) {
+				StringBuilder builder = new StringBuilder();
+				for (int oreId : OreDictionary.getOreIDs(stack)) {
+					String oreName = OreDictionary.getOreName(oreId);
+					builder.append(oreName).append(' ');
+				}
+				if (builder.toString().toLowerCase().contains(word.substring(1)))
+					return true;
+			} else if (word.startsWith("%")) {
+				StringBuilder builder = new StringBuilder();
+				for (CreativeTabs creativeTab : stack.getItem().getCreativeTabs()) {
+					if (creativeTab != null) {
+						String creativeTabName = creativeTab.getTranslatedTabLabel();
+						builder.append(creativeTabName).append(' ');
+					}
+				}
+				if (builder.toString().toLowerCase().contains(word.substring(1)))
+					return true;
+			} else {
+				if (TextFormatting.getTextWithoutFormattingCodes(stack.getDisplayName()).toLowerCase().contains(word))
+					return true;
+			}
+		}
+		return false;
 	}
 }

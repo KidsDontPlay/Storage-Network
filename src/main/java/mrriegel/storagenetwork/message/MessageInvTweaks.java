@@ -20,9 +20,9 @@ public class MessageInvTweaks extends AbstractMessage<MessageInvTweaks> {
 	@Override
 	public void handleMessage(EntityPlayer player, NBTTagCompound nbt, Side side) {
 		if (player.openContainer instanceof ContainerAbstractRequest) {
-			((ContainerAbstractRequest) player.openContainer).ctrl = nbt.getBoolean("ctrl");
-			((ContainerAbstractRequest) player.openContainer).shift = nbt.getBoolean("shift");
-			((ContainerAbstractRequest) player.openContainer).space = nbt.getBoolean("space");
+			((ContainerAbstractRequest<?>) player.openContainer).ctrl = nbt.getBoolean("ctrl");
+			((ContainerAbstractRequest<?>) player.openContainer).shift = nbt.getBoolean("shift");
+			((ContainerAbstractRequest<?>) player.openContainer).space = nbt.getBoolean("space");
 		}
 	}
 

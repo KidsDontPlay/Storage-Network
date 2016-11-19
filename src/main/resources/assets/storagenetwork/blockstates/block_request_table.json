@@ -3,7 +3,7 @@
     "defaults" : {
         "model" : "minecraft:cube", 
         "textures" : {
-            "particle" : "blocks/hopper_inside", 
+            "particle" : "storagenetwork:blocks/base", 
             "down" : "storagenetwork:blocks/base", 
             "up" : "storagenetwork:blocks/request_table", 
             "north" : "storagenetwork:blocks/base", 
@@ -18,7 +18,7 @@
                 
             }], 
         "inventory" : [{
-                
+                "x":90
             }], 
         "facing" : {
             "down" : {

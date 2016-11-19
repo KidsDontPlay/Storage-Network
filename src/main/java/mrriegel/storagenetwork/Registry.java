@@ -5,6 +5,7 @@ import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.item.CommonItem;
 import mrriegel.storagenetwork.block.BlockItemAttractor;
 import mrriegel.storagenetwork.block.BlockItemBox;
+import mrriegel.storagenetwork.block.BlockItemMirror;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.block.BlockNetworkCore;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
@@ -47,6 +48,7 @@ public class Registry {
 	public static final CommonBlock requestTable = new BlockRequestTable();
 	public static final CommonBlock itemAttractor = new BlockItemAttractor();
 	public static final CommonBlock itemBox = new BlockItemBox();
+	public static final CommonBlock itemMirror = new BlockItemMirror();
 
 	public static final CommonItem wrench = new ItemWrench();
 	public static final CommonItem itemFilter = new ItemItemFilter();
@@ -65,6 +67,7 @@ public class Registry {
 		requestTable.registerBlock();
 		itemAttractor.registerBlock();
 		itemBox.registerBlock();
+		itemMirror.registerBlock();
 
 		wrench.registerItem();
 		itemFilter.registerItem();
@@ -86,6 +89,7 @@ public class Registry {
 		requestTable.initModel();
 		itemAttractor.initModel();
 		itemBox.initModel();
+		itemMirror.initModel();
 
 		wrench.initModel();
 		itemFilter.initModel();

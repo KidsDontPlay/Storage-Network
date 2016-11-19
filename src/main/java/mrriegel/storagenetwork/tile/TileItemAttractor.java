@@ -32,7 +32,7 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 					ei.motionY = 0.1;
 				ei.motionX = vec.xCoord;
 				ei.motionZ = vec.zCoord;
-				if (worldObj.getTotalWorldTime() % 2 == 0)
+				if (worldObj.getTotalWorldTime() % 2 == 0 && !(Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01))
 					for (EntityPlayerMP player : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(ei.posX - 17, ei.posY - 17, ei.posZ - 17, ei.posX + 17, ei.posY + 17, ei.posZ + 17)))
 						player.connection.sendPacket(new SPacketEntityVelocity(ei));
 				if (getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true) && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {

@@ -264,6 +264,28 @@ public class Network {
 		return lis;
 	}
 
+	public int getAmountOf(FilterItem filter) {
+		int amount = 0;
+		for (INetworkPart part : noCables) {
+			if (part instanceof INetworkStorage) {
+				if (!(((INetworkStorage<?, ?>) part).getStorage() instanceof IItemHandler))
+					continue;
+				INetworkStorage<IItemHandler, ItemStack> tile = (INetworkStorage<IItemHandler, ItemStack>) part;
+				if (tile instanceof IRedstoneActive && ((IRedstoneActive) tile).isDisabled())
+					continue;
+				//				if (tile.canInsert()) {
+				IItemHandler inv = tile.getStorage();
+				for (int i = 0; i < inv.getSlots(); i++) {
+					ItemStack stack = inv.getStackInSlot(i);
+					if (filter.match(stack))
+						amount += stack.stackSize;
+				}
+				//				}
+			}
+		}
+		return amount;
+	}
+
 	//item end
 
 	//fluid start

@@ -5,6 +5,8 @@ import java.awt.Color;
 import mrriegel.limelib.helper.ColorHelper;
 import mrriegel.storagenetwork.ModelCover;
 import mrriegel.storagenetwork.Registry;
+import mrriegel.storagenetwork.render.TESRItemMirror;
+import mrriegel.storagenetwork.tile.TileItemMirror;
 import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -14,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends CommonProxy {
 
@@ -36,6 +39,7 @@ public class ClientProxy extends CommonProxy {
 				return ColorHelper.brighter(Color.green.getRGB(), 0.5);
 			}
 		}, Registry.networkToggleCable);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileItemMirror.class, new TESRItemMirror());
 	}
 
 }
