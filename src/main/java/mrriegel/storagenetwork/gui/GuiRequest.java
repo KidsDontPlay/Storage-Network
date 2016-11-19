@@ -227,6 +227,7 @@ public class GuiRequest extends CommonGuiContainer {
 				if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
 					JEI.setFilterText(searchBar.getText());
 				sendRequest(null, 0);
+				return;
 			}
 		}
 		super.keyTyped(typedChar, keyCode);

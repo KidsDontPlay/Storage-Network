@@ -44,7 +44,7 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 30 == 0) {
 			boolean old = worldObj.getBlockState(pos).getValue(BlockItemIndicator.STATE);
 			boolean neu = false;
-			if (getNetworkCore() != null && stack != null) {
+			if (getNetworkCore() != null && getNetworkCore().network != null && stack != null) {
 				int total = getNetworkCore().network.getAmountOf(new FilterItem(stack));
 				if (more) {
 					neu = number > total;
