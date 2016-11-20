@@ -68,7 +68,7 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		for (EnumFacing face : EnumFacing.VALUES) {
-			if (worldIn.getTileEntity(pos.offset(face)) instanceof INetworkPart) {
+			if (worldIn.getTileEntity(pos.offset(face)) instanceof INetworkPart && !worldIn.isRemote) {
 				INetworkPart part = (INetworkPart) worldIn.getTileEntity(pos.offset(face));
 				if (part.getNetworkCore() != null && part.getNetworkCore().getPos().equals(pos))
 					//		TODO enable			BlockNetworkCable.releaseNetworkParts(worldIn, part.getPosition().getPos());
@@ -128,9 +128,9 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 			public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 				BlockPos result = (!block.isReplaceable(worldIn, pos)) ? pos.offset(facing) : pos;
 				for (EnumFacing face : EnumFacing.VALUES) {
-					if (worldIn.getTileEntity(result.offset(face)) instanceof INetworkPart && ((INetworkPart) worldIn.getTileEntity(result.offset(face))).getNeighborFaces().contains(face.getOpposite()) && ((INetworkPart) worldIn.getTileEntity(result.offset(face))).getNetworkCore() != null) {
-						if (!worldIn.isRemote)
-							playerIn.addChatMessage(new TextComponentString(TextFormatting.DARK_RED + "There is already a network."));
+					if (!worldIn.isRemote && worldIn.getTileEntity(result.offset(face)) instanceof INetworkPart && ((INetworkPart) worldIn.getTileEntity(result.offset(face))).getNeighborFaces().contains(face.getOpposite()) && ((INetworkPart) worldIn.getTileEntity(result.offset(face))).getNetworkCore() != null) {
+						//						if (!worldIn.isRemote)
+						playerIn.addChatMessage(new TextComponentString(TextFormatting.DARK_RED + "There is already a network."));
 						return EnumActionResult.FAIL;
 					}
 				}

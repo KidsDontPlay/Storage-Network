@@ -2,13 +2,13 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import mrriegel.limelib.util.FilterItem;
 import mrriegel.limelib.util.StackWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+
+import com.google.common.collect.Lists;
 
 public class TileItemMirror extends TileNetworkPart implements ITickable {
 

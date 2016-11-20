@@ -43,7 +43,7 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		TileNetworkToggleCable tile = (TileNetworkToggleCable) worldIn.getTileEntity(pos);
 		//		tile.markForSync();
-		if (tile.getNetworkCore() != null) {
+		if (!worldIn.isRemote && tile.getNetworkCore() != null) {
 			tile.getNetworkCore().markForNetworkInit();
 		}
 		super.neighborChanged(state, worldIn, pos, blockIn);

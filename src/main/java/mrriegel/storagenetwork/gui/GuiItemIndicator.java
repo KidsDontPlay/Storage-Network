@@ -3,8 +3,6 @@ package mrriegel.storagenetwork.gui;
 import java.awt.Color;
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
-
 import mrriegel.limelib.gui.CommonGuiContainer;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
 import mrriegel.storagenetwork.container.ContainerItemIndicator;
@@ -12,6 +10,8 @@ import mrriegel.storagenetwork.tile.TileItemIndicator;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.nbt.NBTTagCompound;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class GuiItemIndicator extends CommonGuiContainer {
 

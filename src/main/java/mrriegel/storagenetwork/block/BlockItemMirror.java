@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 
@@ -60,7 +61,22 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 		if (h >= 0 && h <= 3) {
 			if (playerIn.isSneaking() && heldItem == null)
 				tile.wraps.set(h, null);
-			else if (!playerIn.isSneaking() && heldItem != null)
+			else if (!playerIn.isSneaking() && heldItem == null) {
+				if (tile.wraps.get(h) != null && !worldIn.isRemote && tile.getNetworkCore() != null) {
+					PlayerMainInvWrapper handler = new PlayerMainInvWrapper(playerIn.inventory);
+					for (int i = 0; i < handler.getSlots(); i++) {
+						if (new FilterItem(tile.wraps.get(h).getStack()).match(handler.getStackInSlot(i))) {
+							ItemStack remain = tile.getNetworkCore().network.insertItem(handler.getStackInSlot(i), null, false);
+							handler.setStackInSlot(i, remain);
+							if (remain != null)
+								break;
+
+						}
+					}
+					playerIn.openContainer.detectAndSendChanges();
+					tile.markForSync();
+				}
+			} else if (!playerIn.isSneaking() && heldItem != null)
 				if (tile.wraps.get(h) == null)
 					tile.wraps.set(h, new StackWrapper(heldItem, 0));
 				else if (new FilterItem(tile.wraps.get(h).getStack()).match(heldItem) && !worldIn.isRemote && tile.getNetworkCore() != null) {
@@ -162,9 +178,9 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 			if (t instanceof TileItemMirror) {
 				TileItemMirror tile = (TileItemMirror) t;
 				if (event.getFace() == tile.face) {
-					float f1 = (float) (event.getHitVec().xCoord - (double) event.getPos().getX());
-					float f2 = (float) (event.getHitVec().yCoord - (double) event.getPos().getY());
-					float f3 = (float) (event.getHitVec().zCoord - (double) event.getPos().getZ());
+					float f1 = (float) (event.getHitVec().xCoord - event.getPos().getX());
+					float f2 = (float) (event.getHitVec().yCoord - event.getPos().getY());
+					float f3 = (float) (event.getHitVec().zCoord - event.getPos().getZ());
 					int h = getQuadrant(event.getWorld().getBlockState(event.getPos()), f1, f2, f3);
 					if (h >= 0 && h <= 3 && tile.wraps.get(h) != null && !event.getWorld().isRemote && tile.getNetworkCore() != null && tile.canExtract()) {
 						ItemStack req = tile.getNetworkCore().network.requestItem(new FilterItem(tile.wraps.get(h).getStack()), player.isSneaking() ? tile.wraps.get(h).getStack().getMaxStackSize() : 1, false);

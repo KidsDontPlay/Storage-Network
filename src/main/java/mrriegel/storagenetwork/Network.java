@@ -318,6 +318,8 @@ public class Network {
 
 	@SubscribeEvent
 	public static void place(NeighborNotifyEvent event) {
+		if (event.getWorld().isRemote)
+			return;
 		if (!event.getWorld().isAirBlock(event.getPos()) && !event.getState().getBlock().hasTileEntity(event.getState()))
 			return;
 		if (event.getWorld().getTileEntity(event.getPos()) instanceof INetworkPart) {

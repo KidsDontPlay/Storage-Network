@@ -60,9 +60,9 @@ public class ClientProxy extends CommonProxy {
 			ScaledResolution sr = event.getResolution();
 			TileItemMirror tile = (TileItemMirror) t;
 			if (mc.objectMouseOver.sideHit == tile.face) {
-				float f1 = (float) (mc.objectMouseOver.hitVec.xCoord - (double) mc.objectMouseOver.getBlockPos().getX());
-				float f2 = (float) (mc.objectMouseOver.hitVec.yCoord - (double) mc.objectMouseOver.getBlockPos().getY());
-				float f3 = (float) (mc.objectMouseOver.hitVec.zCoord - (double) mc.objectMouseOver.getBlockPos().getZ());
+				float f1 = (float) (mc.objectMouseOver.hitVec.xCoord - mc.objectMouseOver.getBlockPos().getX());
+				float f2 = (float) (mc.objectMouseOver.hitVec.yCoord - mc.objectMouseOver.getBlockPos().getY());
+				float f3 = (float) (mc.objectMouseOver.hitVec.zCoord - mc.objectMouseOver.getBlockPos().getZ());
 				int h = BlockItemMirror.getQuadrant(mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos()), f1, f2, f3);
 				if (h >= 0 && h <= 3 && tile.wraps.get(h) != null) {
 					String text = /*tile.wraps.get(h).getStack().getRarity().rarityColor +*/(tile.wraps.get(h).getSize() + " ") + tile.wraps.get(h).getStack().getDisplayName();

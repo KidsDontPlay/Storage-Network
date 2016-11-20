@@ -15,7 +15,7 @@ public abstract class TileNetworkPart extends CommonTile implements INetworkPart
 
 	@Override
 	public TileNetworkCore getNetworkCore() {
-		if(worldObj.isRemote)
+		if (worldObj.isRemote)
 			return null;
 		if (corePos != null)
 			if (corePos.getTile(worldObj) instanceof TileNetworkCore)

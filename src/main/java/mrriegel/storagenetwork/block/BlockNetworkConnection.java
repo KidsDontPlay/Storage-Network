@@ -80,7 +80,7 @@ public abstract class BlockNetworkConnection extends BlockNetworkCable {
 		tile.setSide(oldFace, true);
 		for (EnumFacing f : EnumFacing.VALUES) {
 			BlockPos p = pos.offset(f);
-			if (world.getTileEntity(p) instanceof INetworkPart) {
+			if (world.getTileEntity(p) instanceof INetworkPart && world.isRemote) {
 				INetworkPart part = (INetworkPart) world.getTileEntity(p);
 				if (part.getNetworkCore() != null) {
 					part.getNetworkCore().markForNetworkInit();

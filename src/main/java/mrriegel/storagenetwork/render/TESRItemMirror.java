@@ -65,9 +65,9 @@ public class TESRItemMirror extends TileEntitySpecialRenderer<TileItemMirror> {
 		GlStateManager.translate(0, 0, -n);
 		boolean uni = mc.fontRendererObj.getUnicodeFlag();
 		mc.fontRendererObj.setUnicodeFlag(true);
-		
+
 		GlStateManager.disableLighting();
-//		GlStateManager.disableDepth();
+		//		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
 		if (te.wraps.get(0) != null && te.wraps.get(0).getStack().getItem() != null) {
 			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(0).getSize()), -17, -17 + 7, Color.white.getRGB(), !true);
@@ -82,7 +82,7 @@ public class TESRItemMirror extends TileEntitySpecialRenderer<TileItemMirror> {
 			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(3).getSize()), 1, 1 + 7, Color.white.getRGB(), !true);
 		}
 		GlStateManager.enableLighting();
-//		GlStateManager.enableDepth();
+		//		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
 		mc.fontRendererObj.setUnicodeFlag(uni);
 

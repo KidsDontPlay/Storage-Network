@@ -21,7 +21,7 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 
 	@Override
 	public void update() {
-		if (!worldObj.isBlockPowered(pos) && !worldObj.isRemote && getNetworkCore() != null) {
+		if (!worldObj.isBlockPowered(pos) && !worldObj.isRemote && getNetworkCore() != null && getNetworkCore().network != null) {
 			int range = 5;
 			List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range, getZ() + range));
 			for (EntityItem ei : list) {
