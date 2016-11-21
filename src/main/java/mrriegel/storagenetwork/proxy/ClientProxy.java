@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
@@ -53,7 +54,7 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	public static void render(Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if (mc.objectMouseOver.getBlockPos() == null || mc.theWorld.getTileEntity(mc.objectMouseOver.getBlockPos()) == null)
+		if (mc == null || mc.theWorld == null || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != RayTraceResult.Type.BLOCK || mc.objectMouseOver.getBlockPos() == null || mc.theWorld.getTileEntity(mc.objectMouseOver.getBlockPos()) == null)
 			return;
 		TileEntity t = mc.theWorld.getTileEntity(mc.objectMouseOver.getBlockPos());
 		if (event.getType() == ElementType.TEXT && t instanceof TileItemMirror/*&&mc.thePlayer.isSneaking()*/) {

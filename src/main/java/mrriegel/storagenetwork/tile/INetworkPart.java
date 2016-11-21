@@ -21,8 +21,4 @@ public interface INetworkPart {
 		return EnumSet.allOf(EnumFacing.class);
 	}
 
-	default int getInventorySpace() {
-		return 0;
-	}
-
 }
