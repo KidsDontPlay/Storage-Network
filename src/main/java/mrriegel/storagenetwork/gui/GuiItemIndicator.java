@@ -55,11 +55,6 @@ public class GuiItemIndicator extends CommonGuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-	}
-
-	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (!this.checkHotbarKeys(keyCode)) {
 			if ((StringUtils.isNumeric(typedChar + "") || typedChar == 8) && this.textField.textboxKeyTyped(typedChar, keyCode)) {
@@ -72,6 +67,7 @@ public class GuiItemIndicator extends CommonGuiContainer {
 				nbt.setString("text", textField.getText());
 				nbt.setInteger("buttonID", 1000);
 				tile.sendMessage(nbt);
+				return;
 			}
 		}
 		super.keyTyped(typedChar, keyCode);

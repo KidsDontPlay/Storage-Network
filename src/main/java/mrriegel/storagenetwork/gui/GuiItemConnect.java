@@ -62,7 +62,6 @@ public class GuiItemConnect extends CommonGuiContainer {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		if (!inventorySlots.getSlot(0).getHasStack() && isPointInRegion(inventorySlots.getSlot(0).xDisplayPosition, inventorySlots.getSlot(0).yDisplayPosition, 16, 16, mouseX, mouseY)) {
 			drawHoveringText(Lists.newArrayList("Drop Item Filter here."), mouseX - guiLeft, mouseY - guiTop);
-			//			new AbstractSlot.FluidSlot(FluidRegistry.WATER, 0, mouseX, mouseY, 1, drawer, false, false, false, false).draw(mouseX-guiLeft, mouseY-guiTop);
 		}
 		for (int i = 1; i < 5; i++)
 			if (!inventorySlots.getSlot(i).getHasStack() && isPointInRegion(inventorySlots.getSlot(i).xDisplayPosition, inventorySlots.getSlot(i).yDisplayPosition, 16, 16, mouseX, mouseY))

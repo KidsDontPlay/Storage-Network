@@ -7,6 +7,7 @@ import mrriegel.storagenetwork.container.ContainerItemFilter;
 import mrriegel.storagenetwork.container.ContainerItemIndicator;
 import mrriegel.storagenetwork.container.ContainerRequestItem;
 import mrriegel.storagenetwork.container.ContainerRequestTable;
+import mrriegel.storagenetwork.container.ContainerStock;
 import mrriegel.storagenetwork.gui.GuiBox;
 import mrriegel.storagenetwork.gui.GuiEnergyInterface;
 import mrriegel.storagenetwork.gui.GuiItemAttractor;
@@ -15,12 +16,14 @@ import mrriegel.storagenetwork.gui.GuiItemFilter;
 import mrriegel.storagenetwork.gui.GuiItemIndicator;
 import mrriegel.storagenetwork.gui.GuiNetworkCore;
 import mrriegel.storagenetwork.gui.GuiRequest;
+import mrriegel.storagenetwork.gui.GuiStock;
 import mrriegel.storagenetwork.tile.TileBox;
 import mrriegel.storagenetwork.tile.TileItemAttractor;
 import mrriegel.storagenetwork.tile.TileItemIndicator;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
 import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
+import mrriegel.storagenetwork.tile.TileNetworkStock;
 import mrriegel.storagenetwork.tile.TileRequestTable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -50,6 +53,8 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerBox(player.inventory, (TileBox<?, ?>) world.getTileEntity(new BlockPos(x, y, z)));
 		case ITEM_INDICATOR:
 			return new ContainerItemIndicator(player.inventory, (TileItemIndicator) world.getTileEntity(new BlockPos(x, y, z)));
+		case STOCK:
+			return new ContainerStock(player.inventory, (TileNetworkStock) world.getTileEntity(new BlockPos(x, y, z)));
 		default:
 			return null;
 		}
@@ -76,6 +81,8 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiBox(new ContainerBox(player.inventory, (TileBox<?, ?>) world.getTileEntity(new BlockPos(x, y, z))));
 		case ITEM_INDICATOR:
 			return new GuiItemIndicator(new ContainerItemIndicator(player.inventory, (TileItemIndicator) world.getTileEntity(new BlockPos(x, y, z))));
+		case STOCK:
+			return new GuiStock(new ContainerStock(player.inventory, (TileNetworkStock) world.getTileEntity(new BlockPos(x, y, z))));
 		default:
 			return null;
 		}
@@ -90,7 +97,8 @@ public class GuiHandler implements IGuiHandler {
 		ITEM_ATTRACTOR, //
 		WIRELESS_ITEM, //
 		BOX, //
-		ITEM_INDICATOR;
+		ITEM_INDICATOR, //
+		STOCK;
 	}
 
 }

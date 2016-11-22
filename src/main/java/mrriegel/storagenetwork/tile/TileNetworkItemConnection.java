@@ -80,6 +80,7 @@ public class TileNetworkItemConnection extends TileNetworkConnection implements 
 		default:
 			break;
 		}
+		markDirty();
 	}
 
 	public int getUpgradeAmount(UpgradeType type) {

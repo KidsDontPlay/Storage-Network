@@ -1,0 +1,72 @@
+{
+    "elements" : [{
+            "from" : [4, 14.5, 4], 
+            "to" : [12, 16, 12], 
+            "faces" : {
+                "down" : {
+                    "texture" : "#connect"
+                }, 
+                "up" : {
+                    "texture" : "#connect"
+                }, 
+                "north" : {
+                    "texture" : "#connect_side"
+                }, 
+                "south" : {
+                    "texture" : "#connect_side"
+                }, 
+                "west" : {
+                    "texture" : "#connect_side"
+                }, 
+                "east" : {
+                    "texture" : "#connect_side"
+                }
+            }
+        }, {
+            "from" : [5, 13, 5], 
+            "to" : [11, 14.5, 11], 
+            "faces" : {
+                "down" : {
+                    "texture" : "#connect"
+                }, 
+                "up" : {
+                    "texture" : "#connect"
+                }, 
+                "north" : {
+                    "texture" : "#connect_side"
+                }, 
+                "south" : {
+                    "texture" : "#connect_side"
+                }, 
+                "west" : {
+                    "texture" : "#connect_side"
+                }, 
+                "east" : {
+                    "texture" : "#connect_side"
+                }
+            }
+        }, {
+            "from" : [4, 11.5, 4], 
+            "to" : [12, 13, 12], 
+            "faces" : {
+                "down" : {
+                    "texture" : "#connect"
+                }, 
+                "up" : {
+                    "texture" : "#connect"
+                }, 
+                "north" : {
+                    "texture" : "#connect_side"
+                }, 
+                "south" : {
+                    "texture" : "#connect_side"
+                }, 
+                "west" : {
+                    "texture" : "#connect_side"
+                }, 
+                "east" : {
+                    "texture" : "#connect_side"
+                }
+            }
+        }]
+}

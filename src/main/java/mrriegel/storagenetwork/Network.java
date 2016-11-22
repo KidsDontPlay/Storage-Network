@@ -19,6 +19,7 @@ import mrriegel.storagenetwork.tile.TileNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
+import mrriegel.storagenetwork.tile.TileNetworkStock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -221,12 +222,10 @@ public class Network {
 					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 					for (int i = 0; i < inv.getSlots(); i++) {
 						ItemStack stack = inv.getStackInSlot(i);
-						if (stack == null)
-							continue;
 						if (!ItemItemFilter.canTransferItem(tile.filter, stack))
 							continue;
-						ItemStack ins = insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
-						int maxInsert = Math.min(Math.min(stack.stackSize, tile.getTransferAmount(Item.class)), (ins == null ? stack.stackSize : stack.stackSize - ins.stackSize));
+						ItemStack rest = insertItem(stack, new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
+						int maxInsert = Math.min(Math.min(stack.stackSize, tile.getTransferAmount(Item.class)), (rest == null ? stack.stackSize : stack.stackSize - rest.stackSize));
 						ItemStack ext = inv.extractItem(i, maxInsert, true);
 						int ex = ext != null ? ext.stackSize : 0;
 						ex = Math.min(ex, maxInsert);
@@ -236,6 +235,59 @@ public class Network {
 						if (tile.getTile() != null)
 							tile.getTile().markDirty();
 						break;
+					}
+				}
+			}
+		}
+	}
+
+	public void stockItems() {
+		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
+		Collections.sort(networkParts, comparator);
+		for (INetworkPart part : networkParts) {
+			if (part instanceof TileNetworkStock) {
+				TileNetworkStock tile = (TileNetworkStock) part;
+				if (tile.isDisabled() || tile.getWorld().getTotalWorldTime() % (Math.max(1, 30 / tile.getSpeed())) != 0)
+					continue;
+				if (tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) != null) {
+					IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+					for (int i = 0; i < tile.items.size(); i++) {
+						if (tile.items.get(i) == null)
+							continue;
+						ItemStack s = tile.items.get(i);
+						final int stock = tile.numbers.get(i);
+						int content = InvHelper.getAmount(inv, new FilterItem(s));
+						if (content == stock)
+							continue;
+						if (content < stock) {
+							int maxStacksize = Math.min(s.getMaxStackSize(), tile.getTransferAmount(Item.class));
+							maxStacksize = Math.min(maxStacksize, stock - content);
+							ItemStack rest = ItemHandlerHelper.insertItemStacked(inv, ItemHandlerHelper.copyStackWithSize(s, maxStacksize), true);
+							int maxInsert = maxStacksize - (rest == null ? 0 : rest.stackSize);
+							if (!getCore().consumeRF(maxInsert * 5 + tile.getUpgradeAmount(UpgradeType.SPEED) * 3, true))
+								continue;
+							ItemStack req = requestItem(new FilterItem(s), maxInsert, false);
+							if (req == null)
+								continue;
+							getCore().consumeRF(req.stackSize * 5 + tile.getUpgradeAmount(UpgradeType.SPEED) * 3, false);
+							ItemHandlerHelper.insertItemStacked(inv, req, false);
+							if (tile.getTile() != null)
+								tile.getTile().markDirty();
+							break;
+						} else {
+							ItemStack rest = insertItem(ItemHandlerHelper.copyStackWithSize(s, s.getMaxStackSize()), new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), true);
+							int maxInsert = Math.min(Math.min(content - stock, tile.getTransferAmount(Item.class)), (rest == null ? s.getMaxStackSize() : s.getMaxStackSize() - rest.stackSize));
+							ItemStack ext = InvHelper.extractItem(inv, new FilterItem(s), maxInsert, true);
+							int ex = ext != null ? ext.stackSize : 0;
+							ex = Math.min(ex, maxInsert);
+							if (ex == 0 || !getCore().consumeRF(ex * 5 + tile.getUpgradeAmount(UpgradeType.SPEED) * 3, false))
+								continue;
+							insertItem(InvHelper.extractItem(inv, new FilterItem(s), maxInsert, false), new GlobalBlockPos(tile.getTile().getPos(), tile.getWorld()), false);
+							if (tile.getTile() != null)
+								tile.getTile().markDirty();
+							break;
+						}
+
 					}
 				}
 			}

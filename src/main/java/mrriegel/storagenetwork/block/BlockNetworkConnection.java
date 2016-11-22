@@ -90,7 +90,7 @@ public abstract class BlockNetworkConnection extends BlockNetworkCable {
 		}
 		world.markBlockRangeForRenderUpdate(pos.add(-1, -1, -1), pos.add(1, 1, 1));
 		tile.sync();
-		return super.rotateBlock(world, pos, axis);
+		return true;
 	}
 
 }

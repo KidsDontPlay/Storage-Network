@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyInterface;
 import mrriegel.storagenetwork.block.BlockNetworkExporter;
 import mrriegel.storagenetwork.block.BlockNetworkImporter;
+import mrriegel.storagenetwork.block.BlockNetworkStock;
 import mrriegel.storagenetwork.block.BlockNetworkStorage;
 import mrriegel.storagenetwork.block.BlockNetworkToggleCable;
 import mrriegel.storagenetwork.block.BlockRequestTable;
@@ -43,6 +44,7 @@ public class Registry {
 	public static final CommonBlock networkExporter = new BlockNetworkExporter();
 	public static final CommonBlock networkImporter = new BlockNetworkImporter();
 	public static final CommonBlock networkStorage = new BlockNetworkStorage();
+	public static final CommonBlock networkStock = new BlockNetworkStock();
 	public static final CommonBlock networkToggleCable = new BlockNetworkToggleCable();
 	public static final CommonBlock networkEnergyInterface = new BlockNetworkEnergyInterface();
 	public static final CommonBlock networkEnergyCell = new BlockNetworkEnergyCell();
@@ -63,6 +65,7 @@ public class Registry {
 		networkExporter.registerBlock();
 		networkImporter.registerBlock();
 		networkStorage.registerBlock();
+		networkStock.registerBlock();
 		networkToggleCable.registerBlock();
 		networkEnergyInterface.registerBlock();
 		networkEnergyCell.registerBlock();
@@ -86,6 +89,7 @@ public class Registry {
 		networkExporter.initModel();
 		networkImporter.initModel();
 		networkStorage.initModel();
+		networkStock.initModel();
 		networkToggleCable.initModel();
 		networkEnergyInterface.initModel();
 		networkEnergyCell.initModel();
@@ -109,6 +113,7 @@ public class Registry {
 		GameRegistry.addShapedRecipe(new ItemStack(networkExporter, 2), "ipi", "crc", 'i', Items.IRON_INGOT, 'p', Blocks.PISTON, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkImporter, 2), "iri", "cpc", 'i', Items.IRON_INGOT, 'p', Blocks.PISTON, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkStorage, 2), "iri", "cpc", 'i', Items.IRON_INGOT, 'p', Blocks.CHEST, 'c', networkCable, 'r', Items.REDSTONE);
+		GameRegistry.addShapelessRecipe(new ItemStack(networkStock, 2), networkImporter, networkExporter);
 		GameRegistry.addShapedRecipe(new ItemStack(networkEnergyInterface, 2), "grg", "crc", 'g', Items.GOLD_NUGGET, 'c', networkCable, 'r', Items.REDSTONE);
 		GameRegistry.addShapedRecipe(new ItemStack(networkEnergyCell), "cgc", "iri", "cgc", 'c', networkCable, 'i', Items.IRON_INGOT, 'r', Blocks.REDSTONE_BLOCK, 'g', Items.GOLD_INGOT);
 		GameRegistry.addShapedRecipe(new ItemStack(requestTable), "cbc", "gwg", "ckc", 'c', networkCable, 'g', Items.GOLD_INGOT, 'b', Items.BUCKET, 'w', Blocks.CRAFTING_TABLE, 'k', Blocks.CHEST);

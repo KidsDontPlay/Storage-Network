@@ -27,9 +27,9 @@ public class ItemWrench extends CommonItem {
 	@Override
 	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		if (!player.isSneaking()) {
-			world.getBlockState(pos).getBlock().rotateBlock(world, pos, player.getHorizontalFacing().getOpposite());
-			if (!world.isRemote)
-				return EnumActionResult.SUCCESS;
+			if (world.getBlockState(pos).getBlock().rotateBlock(world, pos, player.getHorizontalFacing().getOpposite()))
+				if (!world.isRemote)
+					return EnumActionResult.SUCCESS;
 		} else if (!world.isRemote && world.getBlockState(pos).getBlock() instanceof BlockNetworkCable && player.isSneaking()) {
 			IBlockState state = world.getBlockState(pos);
 			EnumFacing f = ((BlockNetworkCable) world.getBlockState(pos).getBlock()).getFace(hitX, hitY, hitZ, state);

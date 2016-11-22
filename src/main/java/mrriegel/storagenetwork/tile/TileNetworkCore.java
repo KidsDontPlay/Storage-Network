@@ -75,6 +75,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		network.corePosition = new GlobalBlockPos(pos, worldObj);
 		try {
 			runThroughNetwork(pos);
+			markDirty();
 		} catch (StackOverflowError error) {
 			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 		} catch (Error error) {
@@ -93,20 +94,18 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 				continue;
 			if (worldObj.getTileEntity(searchPos) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(searchPos)).getNeighborFaces().contains(facing.getOpposite()))
 				continue;
-			if (!getWorld().isAirBlock(searchPos)) {
+			if (worldObj.getBlockState(searchPos).getBlock().hasTileEntity(worldObj.getBlockState(searchPos))) {
 				TileEntity tile = getWorld().getTileEntity(searchPos);
-				if (tile != null) {
-					if (tile instanceof TileNetworkCore && !tile.getPos().equals(this.pos)) {
-						worldObj.setBlockToAir(searchPos);
-						worldObj.playEvent(2001, searchPos, Block.getIdFromBlock(Registry.networkCore));
-						StackHelper.spawnItemStack(worldObj, searchPos, new ItemStack(Registry.networkCore));
-						markForNetworkInit();
-					} else if (tile instanceof INetworkPart && !network.networkParts.contains(tile)) {
-						network.addPart((INetworkPart) tile);
-					} else
-						continue;
-					runThroughNetwork(searchPos);
-				}
+				if (tile instanceof TileNetworkCore && !tile.getPos().equals(this.pos)) {
+					worldObj.setBlockToAir(searchPos);
+					worldObj.playEvent(2001, searchPos, Block.getIdFromBlock(Registry.networkCore));
+					StackHelper.spawnItemStack(worldObj, searchPos, new ItemStack(Registry.networkCore));
+					markForNetworkInit();
+				} else if (tile instanceof INetworkPart && !network.networkParts.contains(tile)) {
+					network.addPart((INetworkPart) tile);
+				} else
+					continue;
+				runThroughNetwork(searchPos);
 			}
 		}
 	}
@@ -122,7 +121,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 			//Lag
 			needsUpdate = false;
 		}
-		if ((network == null || needsUpdate) && onServer()) {
+		if ((network == null || needsUpdate) && onServer() && worldObj.getTotalWorldTime() % 7 == 0) {
 			needsUpdate = false;
 			initializeNetwork();
 		}
@@ -136,6 +135,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 			distributeEnergy();
 			network.importItems();
 			network.exportItems();
+			network.stockItems();
 			if (worldObj.getTotalWorldTime() % 20 == 0)
 				for (EntityPlayerMP p : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos.add(10, 10, 10), pos.add(-10, -10, -10)))) {
 					PacketHandler.sendTo(new MessageCoreSync(this), p);
