@@ -45,6 +45,7 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 		//		tile.markForSync();
 		if (!worldIn.isRemote && tile.getNetworkCore() != null) {
 			tile.getNetworkCore().markForNetworkInit();
+			BlockNetworkCable.releaseNetworkParts(worldIn, pos, tile.getNetworkCore().getPos());
 		}
 		super.neighborChanged(state, worldIn, pos, blockIn);
 	}

@@ -135,10 +135,8 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		return tile instanceof INetworkPart || tile instanceof TileNetworkCore;
 	}
 
-	private static boolean TEST_RECURSIVE = true;
-
 	public static void releaseNetworkParts(World world, BlockPos pos, final BlockPos core) {
-		if (TEST_RECURSIVE || core == null || !(world.getTileEntity(core) instanceof TileNetworkCore)) {
+		if (core == null || !(world.getTileEntity(core) instanceof TileNetworkCore)) {
 			TileEntity current = world.getTileEntity(pos);
 			if (current instanceof INetworkPart && ((INetworkPart) current).getNetworkCore() != null && ((INetworkPart) current).getNetworkCore().getPos().equals(core)) {
 				INetworkPart part = (INetworkPart) current;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import mrriegel.limelib.util.FilterItem;
 import mrriegel.limelib.util.StackWrapper;
+import mrriegel.storagenetwork.ModConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -41,6 +42,8 @@ public class TileItemMirror extends TileNetworkPart implements ITickable {
 
 	@Override
 	public void update() {
+		if (ModConfig.STOPTICK)
+			return;
 		if (!worldObj.isRemote && getNetworkCore() == null) {
 			for (StackWrapper w : wraps)
 				if (w != null)

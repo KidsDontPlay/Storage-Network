@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.tile;
 import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.util.FilterItem;
 import mrriegel.storagenetwork.GuiHandler.GuiID;
+import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.block.BlockItemIndicator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,6 +42,8 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 
 	@Override
 	public void update() {
+		if (ModConfig.STOPTICK)
+			return;
 		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 30 == 0) {
 			boolean old = worldObj.getBlockState(pos).getValue(BlockItemIndicator.STATE);
 			boolean neu = false;

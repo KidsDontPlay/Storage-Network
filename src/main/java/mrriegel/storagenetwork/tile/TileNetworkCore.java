@@ -1,5 +1,9 @@
 package mrriegel.storagenetwork.tile;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.helper.StackHelper;
 import mrriegel.limelib.network.PacketHandler;
@@ -26,6 +30,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author canitzp
@@ -74,8 +81,10 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		this.network = new Network();
 		network.corePosition = new GlobalBlockPos(pos, worldObj);
 		try {
-			runThroughNetwork(pos);
+//			runThroughNetworkRecursive(pos);
+			runThroughNetworkIterative();
 			markDirty();
+			System.out.println("size: "+network.networkParts.size());
 		} catch (StackOverflowError error) {
 			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 		} catch (Error error) {
@@ -85,7 +94,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		//		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
 	}
 
-	private void runThroughNetwork(BlockPos pos) {
+	private void runThroughNetworkRecursive(BlockPos pos) {
 		for (EnumFacing facing : EnumFacing.values()) {
 			BlockPos searchPos = pos.offset(facing);
 			if (worldObj.getTileEntity(pos) instanceof IToggleable && !((IToggleable) worldObj.getTileEntity(pos)).isActive())
@@ -105,8 +114,42 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 					network.addPart((INetworkPart) tile);
 				} else
 					continue;
-				runThroughNetwork(searchPos);
+				runThroughNetworkRecursive(searchPos);
 			}
+		}
+	}
+
+	private void runThroughNetworkIterative() {
+		List<BlockPos> research = Lists.newLinkedList(Collections.singleton(pos));
+		Set<BlockPos> done = Sets.newHashSet();
+		while (!research.isEmpty()) {
+			BlockPos current=research.get(0);
+			research.remove(0);
+			for (EnumFacing facing : EnumFacing.values()) {
+				BlockPos searchPos = current.offset(facing);
+				if (worldObj.getTileEntity(current) instanceof IToggleable && !((IToggleable) worldObj.getTileEntity(current)).isActive())
+					continue;
+				if (worldObj.getTileEntity(current) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(current)).getNeighborFaces().contains(facing))
+					continue;
+				if (worldObj.getTileEntity(searchPos) instanceof INetworkPart && !((INetworkPart) worldObj.getTileEntity(searchPos)).getNeighborFaces().contains(facing.getOpposite()))
+					continue;
+				if (worldObj.getBlockState(searchPos).getBlock().hasTileEntity(worldObj.getBlockState(searchPos))) {
+					TileEntity tile = getWorld().getTileEntity(searchPos);
+					if (tile instanceof TileNetworkCore && !tile.getPos().equals(pos)) {
+						worldObj.setBlockToAir(searchPos);
+						worldObj.playEvent(2001, searchPos, Block.getIdFromBlock(Registry.networkCore));
+						StackHelper.spawnItemStack(worldObj, searchPos, new ItemStack(Registry.networkCore));
+						markForNetworkInit();
+					} else if (tile instanceof INetworkPart && !done.contains(searchPos)) {
+							done.add(searchPos);
+							research.add(searchPos);
+					}
+				}
+			}
+		}
+
+		for (BlockPos p : done) {
+			network.addPart((INetworkPart) worldObj.getTileEntity(p));
 		}
 	}
 
@@ -116,6 +159,8 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	@Override
 	public void update() {
+		if (ModConfig.STOPTICK)
+			return;
 		if ((worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300) == 0) {
 			needsUpdate = true;
 			//Lag

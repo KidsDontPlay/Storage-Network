@@ -8,7 +8,7 @@ public class ModConfig {
 
 	public static Configuration config;
 
-	public static boolean needsEnergy;
+	public static boolean needsEnergy, STOPTICK;
 	public static int rangeWirelessAccessor, itemboxCapacity, energycellCapacity;
 	public static float energyMultiplier;
 
@@ -17,6 +17,7 @@ public class ModConfig {
 		config.load();
 
 		needsEnergy = config.getBoolean("needsEnergy", Configuration.CATEGORY_GENERAL, true, "If enabled the network core needs energy to operate.");
+		STOPTICK = config.getBoolean("STOPTICK", "DEBUG", false, "If enabled the network won't work. For the case that you cannot enter your world.");
 		rangeWirelessAccessor = config.getInt("rangeWirelessAccessor", Configuration.CATEGORY_GENERAL, 64, 8, 256, "The range the wireless accessor works within.");
 		itemboxCapacity = config.getInt("itemboxCapacity", Configuration.CATEGORY_GENERAL, 100, 25, 99999, "Capacity of item box.");
 		energycellCapacity = config.getInt("energycellCapacity", Configuration.CATEGORY_GENERAL, 500000, 100000, 8000000, "Capacity of item box.");

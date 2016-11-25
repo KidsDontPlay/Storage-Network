@@ -3,6 +3,7 @@ package mrriegel.storagenetwork.tile;
 import java.util.List;
 
 import mrriegel.storagenetwork.GuiHandler.GuiID;
+import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.StorageNetwork;
 import mrriegel.storagenetwork.item.ItemItemFilter;
 import net.minecraft.entity.item.EntityItem;
@@ -21,6 +22,8 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 
 	@Override
 	public void update() {
+		if (ModConfig.STOPTICK)
+			return;
 		if (!worldObj.isBlockPowered(pos) && !worldObj.isRemote && getNetworkCore() != null && getNetworkCore().network != null) {
 			int range = 5;
 			List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range, getZ() + range));
