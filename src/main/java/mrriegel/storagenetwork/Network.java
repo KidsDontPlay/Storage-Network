@@ -101,7 +101,7 @@ public class Network {
 					IItemHandler inv = tile.getStorage();
 					for (int i = 0; i < inv.getSlots(); i++) {
 						ItemStack stack = inv.getStackInSlot(i);
-						if (tile.canTransferItem(stack) && fil.match(stack)) {
+						if (tile.canTransferItem(stack) && fil.match(stack) && inv.extractItem(i, need, true) != null) {
 							if (result == null) {
 								result = inv.extractItem(i, need, simulate);
 								need -= result.stackSize;
