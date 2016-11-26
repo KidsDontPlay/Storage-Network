@@ -13,6 +13,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
@@ -60,6 +61,8 @@ public class ClientProxy extends CommonProxy {
 		if (event.getType() == ElementType.TEXT && t instanceof TileItemMirror/*&&mc.thePlayer.isSneaking()*/) {
 			ScaledResolution sr = event.getResolution();
 			TileItemMirror tile = (TileItemMirror) t;
+			GlStateManager.pushMatrix();
+			GlStateManager.enableBlend();
 			if (mc.objectMouseOver.sideHit == tile.face) {
 				float f1 = (float) (mc.objectMouseOver.hitVec.xCoord - mc.objectMouseOver.getBlockPos().getX());
 				float f2 = (float) (mc.objectMouseOver.hitVec.yCoord - mc.objectMouseOver.getBlockPos().getY());
@@ -70,6 +73,8 @@ public class ClientProxy extends CommonProxy {
 					mc.fontRendererObj.drawString(text, (sr.getScaledWidth() - mc.fontRendererObj.getStringWidth(text)) / 2, (sr.getScaledHeight() - 15 - mc.fontRendererObj.FONT_HEIGHT) / 2, ColorHelper.getRGB(0xffff00, GuiScreen.isShiftKeyDown() ? 255 : 50), true);
 				}
 			}
+			GlStateManager.disableBlend();
+			GlStateManager.popMatrix();
 		}
 	}
 

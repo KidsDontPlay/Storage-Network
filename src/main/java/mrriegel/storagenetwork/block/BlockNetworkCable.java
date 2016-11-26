@@ -135,30 +135,6 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		return tile instanceof INetworkPart || tile instanceof TileNetworkCore;
 	}
 
-	public static void releaseNetworkParts(World world, BlockPos pos, final BlockPos core) {
-		if (core == null || !(world.getTileEntity(core) instanceof TileNetworkCore)) {
-			TileEntity current = world.getTileEntity(pos);
-			if (current instanceof INetworkPart && ((INetworkPart) current).getNetworkCore() != null && ((INetworkPart) current).getNetworkCore().getPos().equals(core)) {
-				INetworkPart part = (INetworkPart) current;
-				part.setNetworkCore(null);
-			}
-			Set<EnumFacing> f = (world.getTileEntity(pos) instanceof INetworkPart) ? ((INetworkPart) world.getTileEntity(pos)).getNeighborFaces() : Sets.newHashSet(EnumFacing.VALUES);
-			for (EnumFacing face : f) {
-				BlockPos nei = pos.offset(face);
-				if (world.getTileEntity(nei) instanceof INetworkPart) {
-					INetworkPart part = (INetworkPart) world.getTileEntity(nei);
-					if (part.getNetworkCore() != null) {
-						releaseNetworkParts(world, nei, core);
-					}
-				}
-			}
-		} else {
-			for (INetworkPart part : ((TileNetworkCore) world.getTileEntity(core)).network.networkParts) {
-				part.setNetworkCore(null);
-			}
-		}
-	}
-
 	public EnumFacing getFace(float hitX, float hitY, float hitZ, IBlockState state) {
 		if (!center(hitY) && !center(hitZ))
 			if (hitX < .25F)
@@ -232,4 +208,27 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		return new AxisAlignedBB(f, f4, f2, f1, f5, f3);
 	}
 
+	public static void releaseNetworkParts(World world, BlockPos pos, final BlockPos core) {
+		if (core == null || !(world.getTileEntity(core) instanceof TileNetworkCore)) {
+			TileEntity current = world.getTileEntity(pos);
+			if (current instanceof INetworkPart && ((INetworkPart) current).getNetworkCore() != null && ((INetworkPart) current).getNetworkCore().getPos().equals(core)) {
+				INetworkPart part = (INetworkPart) current;
+				part.setNetworkCore(null);
+			}
+			Set<EnumFacing> f = (world.getTileEntity(pos) instanceof INetworkPart) ? ((INetworkPart) world.getTileEntity(pos)).getNeighborFaces() : Sets.newHashSet(EnumFacing.VALUES);
+			for (EnumFacing face : f) {
+				BlockPos nei = pos.offset(face);
+				if (world.getTileEntity(nei) instanceof INetworkPart) {
+					INetworkPart part = (INetworkPart) world.getTileEntity(nei);
+					if (part.getNetworkCore() != null) {
+						releaseNetworkParts(world, nei, core);
+					}
+				}
+			}
+		} else {
+			for (INetworkPart part : ((TileNetworkCore) world.getTileEntity(core)).network.networkParts) {
+				part.setNetworkCore(null);
+			}
+		}
+	}
 }

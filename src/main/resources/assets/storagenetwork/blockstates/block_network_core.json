@@ -3,7 +3,7 @@
     "defaults" : {
         "model" : "minecraft:cube_all", 
         "textures" : {
-            "all" : "storagenetwork:blocks/network_core_off"
+            "all" : "storagenetwork:blocks/network_core_on"
         }, 
         "transform" : "forge:default-block"
     }, 
@@ -16,12 +16,12 @@
             }], 
         "on" : {
             "true" : {
-                "textures" : {
-                    "all" : "storagenetwork:blocks/network_core_on"
-                }
+                
             }, 
             "false" : {
-                
+                "textures" : {
+                    "all" : "storagenetwork:blocks/network_core_off"
+                }
             }
         }
     }

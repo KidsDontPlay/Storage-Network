@@ -81,10 +81,9 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		this.network = new Network();
 		network.corePosition = new GlobalBlockPos(pos, worldObj);
 		try {
-//			runThroughNetworkRecursive(pos);
+			//			runThroughNetworkRecursive(pos);
 			runThroughNetworkIterative();
 			markDirty();
-			System.out.println("size: "+network.networkParts.size());
 		} catch (StackOverflowError error) {
 			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
 		} catch (Error error) {
@@ -123,7 +122,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		List<BlockPos> research = Lists.newLinkedList(Collections.singleton(pos));
 		Set<BlockPos> done = Sets.newHashSet();
 		while (!research.isEmpty()) {
-			BlockPos current=research.get(0);
+			BlockPos current = research.get(0);
 			research.remove(0);
 			for (EnumFacing facing : EnumFacing.values()) {
 				BlockPos searchPos = current.offset(facing);
@@ -141,8 +140,8 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 						StackHelper.spawnItemStack(worldObj, searchPos, new ItemStack(Registry.networkCore));
 						markForNetworkInit();
 					} else if (tile instanceof INetworkPart && !done.contains(searchPos)) {
-							done.add(searchPos);
-							research.add(searchPos);
+						done.add(searchPos);
+						research.add(searchPos);
 					}
 				}
 			}

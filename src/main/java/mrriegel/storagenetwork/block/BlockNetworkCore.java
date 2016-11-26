@@ -131,9 +131,12 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 					if (!worldIn.isRemote && worldIn.getTileEntity(result.offset(face)) instanceof INetworkPart && ((INetworkPart) worldIn.getTileEntity(result.offset(face))).getNeighborFaces().contains(face.getOpposite()) && ((INetworkPart) worldIn.getTileEntity(result.offset(face))).getNetworkCore() != null) {
 						//						if (!worldIn.isRemote)
 						playerIn.addChatMessage(new TextComponentString(TextFormatting.DARK_RED + "There is already a network."));
+						playerIn.openContainer.detectAndSendChanges();
 						return EnumActionResult.FAIL;
 					}
 				}
+				if(worldIn.isRemote)
+					return EnumActionResult.FAIL;
 				return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 			}
 		};
