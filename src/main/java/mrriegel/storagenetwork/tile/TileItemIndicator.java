@@ -74,7 +74,6 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 				number = 0;
 			}
 		}
-		markDirty();
 	}
 
 }

@@ -71,7 +71,7 @@ public class GuiRequest extends CommonGuiContainer {
 		searchBar.setFocused(true);
 		buttonList.add(sort = new GuiButtonSimple(0, guiLeft + 7, guiTop + 116, 45, 12, "sort", null));
 		buttonList.add(direction = new GuiButtonSimple(1, guiLeft + 55, guiTop + 116, 20, 12, "direct", null));
-		buttonList.add(clear = new GuiButtonSimple(2, guiLeft + 62, guiTop + 137, 11, 11, "x", Lists.newArrayList("Clear grid")));
+		buttonList.add(clear = new GuiButtonSimple(2, guiLeft + 62, guiTop + 137, 7, 7, "", Lists.newArrayList("Clear grid")));
 		if (Loader.isModLoaded("JEI"))
 			buttonList.add(jei = new GuiButtonSimple(3, guiLeft + 125, guiTop + 116, 24, 12, "", Lists.newArrayList("Enable synchronized search with JEI")));
 	}
@@ -82,7 +82,6 @@ public class GuiRequest extends CommonGuiContainer {
 		drawer.drawBackgroundTexture();
 		drawer.drawPlayerSlots(79, 137);
 		drawer.drawSlots(7, 7, 13, 6);
-		//		drawer.drawTextfield(searchBar);
 		searchBar.drawTextBox();
 		drawer.drawSlots(7, 137, 3, 3);
 		drawer.drawProgressArrow(13, 196, 0F, Direction.RIGHT);
@@ -118,7 +117,7 @@ public class GuiRequest extends CommonGuiContainer {
 			boolean uni = fontRendererObj.getUnicodeFlag();
 			fontRendererObj.setUnicodeFlag(true);
 			for (ItemSlot slot : items) {
-				//drawer.drawColoredRectangle(slot.x-guiLeft, slot.y-guiTop, 16, 16, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
+				drawer.drawColoredRectangle(slot.x - guiLeft, slot.y - guiTop, 16, 16, ColorHelper.getRGB(Color.WHITE.getRGB(), 80));
 				slot.draw(mouseX, mouseY);
 				if (slot.isMouseOver(mouseX, mouseY)) {
 					over = slot;
@@ -130,6 +129,7 @@ public class GuiRequest extends CommonGuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		fontRendererObj.drawString("x", 63, 136, 0xE0E0E0);
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		for (ItemSlot slot : items) {
 			if (slot.isMouseOver(mouseX, mouseY))

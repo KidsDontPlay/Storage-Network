@@ -81,6 +81,15 @@ public class Network {
 		}
 	};
 
+	public <T extends INetworkPart> List<T> getTileParts(Class<T> clazz) {
+		List<T> lis = Lists.newArrayList();
+		for (INetworkPart part : noCables) {
+			if (clazz.isInstance(part))
+				lis.add((T) part);
+		}
+		return lis;
+	}
+
 	//item start
 
 	public ItemStack requestItem(FilterItem fil, final int size, boolean simulate) {
@@ -88,7 +97,7 @@ public class Network {
 			return null;
 		ItemStack result = null;
 		int need = size;
-		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
+		List<INetworkPart> networkParts = Lists.newArrayList(noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
@@ -133,7 +142,7 @@ public class Network {
 		if (stack == null)
 			return null;
 		int rest = stack.stackSize;
-		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
+		List<INetworkPart> networkParts = Lists.newArrayList(noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof INetworkStorage) {
@@ -181,7 +190,7 @@ public class Network {
 	}
 
 	public void exportItems() {
-		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
+		List<INetworkPart> networkParts = Lists.newArrayList(noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkExporter) {
@@ -211,7 +220,7 @@ public class Network {
 	}
 
 	public void importItems() {
-		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
+		List<INetworkPart> networkParts = Lists.newArrayList(noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkImporter) {
@@ -242,7 +251,7 @@ public class Network {
 	}
 
 	public void stockItems() {
-		List<INetworkPart> networkParts = Lists.newArrayList(this.noCables);
+		List<INetworkPart> networkParts = Lists.newArrayList(noCables);
 		Collections.sort(networkParts, comparator);
 		for (INetworkPart part : networkParts) {
 			if (part instanceof TileNetworkStock) {

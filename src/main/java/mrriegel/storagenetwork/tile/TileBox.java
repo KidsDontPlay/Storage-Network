@@ -78,7 +78,6 @@ public abstract class TileBox<T, S> extends TileNetworkPart implements INetworkS
 		default:
 			break;
 		}
-		markDirty();
 	}
 
 }

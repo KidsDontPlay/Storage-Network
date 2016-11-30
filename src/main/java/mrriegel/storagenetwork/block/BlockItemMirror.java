@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
@@ -187,10 +188,16 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 						if (req != null) {
 							EntityItem ei = new EntityItem(event.getWorld(), event.getPos().offset(tile.face).getX() + .5, event.getPos().getY() + .3, event.getPos().offset(tile.face).getZ() + .5, req);
 							event.getWorld().spawnEntityInWorld(ei);
-							Vec3d vec = new Vec3d(player.posX - ei.posX, player.posY - ei.posY, player.posZ - ei.posZ).normalize().scale(1.5);
-							ei.motionX = vec.xCoord;
-							ei.motionY = vec.yCoord;
-							ei.motionZ = vec.zCoord;
+							Vec3d vec = new Vec3d(player.posX - ei.posX, player.posY + .5 - ei.posY, player.posZ - ei.posZ).normalize().scale(1.5);
+							if (ItemHandlerHelper.insertItem(new PlayerMainInvWrapper(player.inventory), ei.getEntityItem(), true) == null) {
+								ei.motionX = vec.xCoord;
+								ei.motionY = vec.yCoord;
+								ei.motionZ = vec.zCoord;
+							} else {
+								ei.motionX = 0;
+								ei.motionY = 0;
+								ei.motionZ = 0;
+							}
 						}
 						tile.markForSync();
 					}

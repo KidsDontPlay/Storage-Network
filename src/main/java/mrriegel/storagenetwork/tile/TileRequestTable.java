@@ -1,6 +1,5 @@
 package mrriegel.storagenetwork.tile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import mrriegel.limelib.helper.NBTHelper;
@@ -12,9 +11,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.google.common.collect.Lists;
+
 public class TileRequestTable extends TileNetworkPart {
 
-	public List<ItemStack> matrix = new ArrayList<ItemStack>(9);
+	public List<ItemStack> matrix = Lists.newArrayList();
 	public Sort sort = Sort.NAME;
 	public boolean topDown = true, jei = false;
 	public ItemStack fill, empty;
@@ -26,12 +27,12 @@ public class TileRequestTable extends TileNetworkPart {
 
 	@Override
 	public boolean openGUI(EntityPlayerMP player) {
-		if (getNetworkCore() != null) {
+		if (getNetworkCore() != null && getNetworkCore().network != null) {
 			if (worldObj.getBlockState(pos).getBlock() == Registry.requestTable)
 				player.openGui(StorageNetwork.instance, GuiID.REQUEST_TABLE.ordinal(), worldObj, getX(), getY(), getZ());
 			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override

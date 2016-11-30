@@ -83,7 +83,6 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 		iomode = iomode.next();
 		for (EnumFacing f : EnumFacing.VALUES)
 			worldObj.notifyBlockOfStateChange(pos.offset(f), worldObj.getBlockState(pos.offset(f)).getBlock());
-		markDirty();
 	}
 
 }

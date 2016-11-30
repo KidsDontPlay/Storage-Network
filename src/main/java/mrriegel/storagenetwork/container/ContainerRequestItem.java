@@ -54,8 +54,8 @@ public class ContainerRequestItem extends ContainerAbstractRequest<ItemStack> {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		super.canInteractWith(playerIn);
-		return object != null && object.isItemEqual(playerIn.getHeldItemMainhand());
+		boolean sup = super.canInteractWith(playerIn);
+		return object != null && object.isItemEqual(playerIn.getHeldItemMainhand()) && sup;
 	}
 
 	@Override

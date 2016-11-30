@@ -70,16 +70,19 @@ public class ItemWirelessAccessor extends CommonSubtypeItem {
 					World world = DimensionManager.getWorld(dim);
 					if (!world.isBlockLoaded(corePos))
 						playerIn.addChatComponentMessage(new TextComponentString("Network Core is unloaded."));
-					if (world.isBlockLoaded(corePos) && world.getTileEntity(corePos) instanceof TileNetworkCore) {
-						if (isAdvanced(itemStackIn) || Math.sqrt(corePos.distanceSq(new BlockPos(playerIn))) < ModConfig.rangeWirelessAccessor) {
-							if (!isFluid(itemStackIn))
-								playerIn.openGui(StorageNetwork.instance, GuiID.WIRELESS_ITEM.ordinal(), worldIn, 0, 0, 0);
-							else
-								//TODO fluid
-								;
-							return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+					if (getCore(itemStackIn) != null) {
+						if (world.isBlockLoaded(corePos)) {
+							if (isAdvanced(itemStackIn) || Math.sqrt(corePos.distanceSq(new BlockPos(playerIn))) < ModConfig.rangeWirelessAccessor) {
+								if (!isFluid(itemStackIn))
+									playerIn.openGui(StorageNetwork.instance, GuiID.WIRELESS_ITEM.ordinal(), worldIn, 0, 0, 0);
+								else
+									//TODO fluid
+									;
+								return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+							} else
+								playerIn.addChatComponentMessage(new TextComponentString("Network Core out of range."));
 						} else
-							playerIn.addChatComponentMessage(new TextComponentString("Network Core out of range."));
+							playerIn.addChatComponentMessage(new TextComponentString("Network Core isn't loaded."));
 					} else
 						playerIn.addChatComponentMessage(new TextComponentString("Network Core was removed."));
 				} else {

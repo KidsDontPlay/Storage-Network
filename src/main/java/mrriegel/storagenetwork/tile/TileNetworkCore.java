@@ -8,7 +8,7 @@ import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.limelib.helper.StackHelper;
 import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.tile.CommonTile;
-import mrriegel.limelib.util.CombinedEnergyStorageExt;
+import mrriegel.limelib.util.CombinedEnergyStorage;
 import mrriegel.limelib.util.EnergyStorageExt;
 import mrriegel.limelib.util.GlobalBlockPos;
 import mrriegel.storagenetwork.ModConfig;
@@ -52,13 +52,13 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		};
 	};
 
-	protected IEnergyStorage receiver = new CombinedEnergyStorageExt(energy) {
+	protected IEnergyStorage receiver = new CombinedEnergyStorage(energy) {
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
 			return 0;
 		}
 	};
-	protected IEnergyStorage extractor = new CombinedEnergyStorageExt(energy) {
+	protected IEnergyStorage extractor = new CombinedEnergyStorage(energy) {
 		@Override
 		public int receiveEnergy(int maxReceive, boolean simulate) {
 			return 0;
@@ -93,6 +93,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		//		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
 	}
 
+	@SuppressWarnings("unused")
 	private void runThroughNetworkRecursive(BlockPos pos) {
 		for (EnumFacing facing : EnumFacing.values()) {
 			BlockPos searchPos = pos.offset(facing);

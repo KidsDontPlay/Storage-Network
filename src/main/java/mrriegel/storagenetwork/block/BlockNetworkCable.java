@@ -76,10 +76,6 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		return false;
 	}
 
-	public static boolean renderCover(IBlockState state) {
-		return true;
-	}
-
 	@Override
 	public boolean isFullCube(IBlockState state) {
 		return false;

@@ -55,8 +55,6 @@ public abstract class TileNetworkPart extends CommonTile implements INetworkPart
 	public void onChunkUnload() {
 		// TODO Auto-generated method stub
 		super.onChunkUnload();
-		//		if(getNetworkCore()!=null)
-		//			getNetworkCore().markForNetworkInit();
 	}
 
 }

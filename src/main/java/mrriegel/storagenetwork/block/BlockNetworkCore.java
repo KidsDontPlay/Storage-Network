@@ -135,7 +135,7 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 						return EnumActionResult.FAIL;
 					}
 				}
-				if(worldIn.isRemote)
+				if (worldIn.isRemote)
 					return EnumActionResult.FAIL;
 				return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 			}

@@ -21,6 +21,7 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
@@ -173,10 +174,11 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 			lis.add(getMatrix().getStackInSlot(i));
 		ItemStack res = result.getStackInSlot(0);
 		detectAndSendChanges();
+		IItemHandler inv = new PlayerMainInvWrapper(invPlayer);
 		while (crafted + res.stackSize <= res.getMaxStackSize()) {
-			if (ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(invPlayer), res.copy(), true) != null)
+			if (ItemHandlerHelper.insertItemStacked(inv, res.copy(), true) != null)
 				break;
-			ItemHandlerHelper.insertItemStacked(new PlayerMainInvWrapper(invPlayer), res.copy(), false);
+			ItemHandlerHelper.insertItemStacked(inv, res.copy(), false);
 			sl.onPickupFromSlot(invPlayer.player, res);
 			crafted += res.stackSize;
 			for (int i = 0; i < getMatrix().getSizeInventory(); i++)
@@ -202,6 +204,8 @@ public abstract class ContainerAbstractRequest<T> extends CommonContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
+		if (object == null || getNetworkCore() == null || getNetworkCore().network == null)
+			return false;
 		if (!playerIn.worldObj.isRemote && ((WorldServer) playerIn.worldObj).getMinecraftServer().getTickCounter() % 60 == 0)
 			PacketHandler.sendTo(new MessageItemListRequest(getNetworkCore().network.getItemstacks()), (EntityPlayerMP) invPlayer.player);
 		return super.canInteractWith(playerIn);
