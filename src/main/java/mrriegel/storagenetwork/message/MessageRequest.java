@@ -47,7 +47,7 @@ public class MessageRequest extends AbstractMessage<MessageRequest> {
 			else
 				return;
 			TileNetworkCore core = player.worldObj.isRemote ? null : tile != null ? tile.getNetworkCore() : ItemWirelessAccessor.getCore(wireless);
-			if (core == null && !player.worldObj.isRemote)
+			if ((core == null || core.network == null) && !player.worldObj.isRemote)
 				return;
 			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt);
 			switch (nbt.getInteger("button")) {

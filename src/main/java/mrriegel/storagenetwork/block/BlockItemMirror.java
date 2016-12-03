@@ -63,7 +63,7 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 			if (playerIn.isSneaking() && heldItem == null)
 				tile.wraps.set(h, null);
 			else if (!playerIn.isSneaking() && heldItem == null) {
-				if (tile.wraps.get(h) != null && !worldIn.isRemote && tile.getNetworkCore() != null) {
+				if (tile.wraps.get(h) != null && !worldIn.isRemote && tile.getNetworkCore() != null && tile.getNetworkCore().network != null) {
 					PlayerMainInvWrapper handler = new PlayerMainInvWrapper(playerIn.inventory);
 					for (int i = 0; i < handler.getSlots(); i++) {
 						if (new FilterItem(tile.wraps.get(h).getStack()).match(handler.getStackInSlot(i))) {
@@ -183,7 +183,7 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 					float f2 = (float) (event.getHitVec().yCoord - event.getPos().getY());
 					float f3 = (float) (event.getHitVec().zCoord - event.getPos().getZ());
 					int h = getQuadrant(event.getWorld().getBlockState(event.getPos()), f1, f2, f3);
-					if (h >= 0 && h <= 3 && tile.wraps.get(h) != null && !event.getWorld().isRemote && tile.getNetworkCore() != null && tile.canExtract()) {
+					if (h >= 0 && h <= 3 && tile.wraps.get(h) != null && !event.getWorld().isRemote && tile.getNetworkCore() != null && tile.getNetworkCore().network != null && tile.canExtract()) {
 						ItemStack req = tile.getNetworkCore().network.requestItem(new FilterItem(tile.wraps.get(h).getStack()), player.isSneaking() ? tile.wraps.get(h).getStack().getMaxStackSize() : 1, false);
 						if (req != null) {
 							EntityItem ei = new EntityItem(event.getWorld(), event.getPos().offset(tile.face).getX() + .5, event.getPos().getY() + .3, event.getPos().offset(tile.face).getZ() + .5, req);

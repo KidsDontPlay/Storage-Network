@@ -222,9 +222,11 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 				}
 			}
 		} else {
-			for (INetworkPart part : ((TileNetworkCore) world.getTileEntity(core)).network.networkParts) {
-				part.setNetworkCore(null);
-			}
+			TileNetworkCore c = (TileNetworkCore) world.getTileEntity(core);
+			if (c.network != null)
+				for (INetworkPart part : c.network.networkParts) {
+					part.setNetworkCore(null);
+				}
 		}
 	}
 }

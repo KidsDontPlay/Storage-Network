@@ -36,7 +36,6 @@ public class JEI implements IModPlugin {
 
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-
 	}
 
 	public static boolean hasKeyboardFocus() {
