@@ -2,6 +2,8 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.List;
 
+import javax.vecmath.Vector2d;
+
 import mrriegel.storagenetwork.GuiHandler.GuiID;
 import mrriegel.storagenetwork.ModConfig;
 import mrriegel.storagenetwork.StorageNetwork;
@@ -31,11 +33,11 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()) || !getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true))
 					continue;
 				Vec3d vec = new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).normalize().scale(0.12);
-				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01 && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9)
+				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01 && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9 && new Vector2d(ei.posX - (getX() + .5), ei.posZ - (getZ() + .5)).length() > 0.3)
 					ei.motionY = 0.1;
 				ei.motionX = vec.xCoord;
 				ei.motionZ = vec.zCoord;
-				if (worldObj.getTotalWorldTime() % 2 == 0 && !(Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01))
+				if (worldObj.getTotalWorldTime() % 2 == 0/* && !(Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01)*/)
 					for (EntityPlayerMP player : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(ei.posX - 17, ei.posY - 17, ei.posZ - 17, ei.posX + 17, ei.posY + 17, ei.posZ + 17)))
 						player.connection.sendPacket(new SPacketEntityVelocity(ei));
 				if (getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true) && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
