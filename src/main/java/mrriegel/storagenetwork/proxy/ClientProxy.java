@@ -58,7 +58,7 @@ public class ClientProxy extends CommonProxy {
 		if (mc == null || mc.theWorld == null || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != RayTraceResult.Type.BLOCK || mc.objectMouseOver.getBlockPos() == null || mc.theWorld.getTileEntity(mc.objectMouseOver.getBlockPos()) == null)
 			return;
 		TileEntity t = mc.theWorld.getTileEntity(mc.objectMouseOver.getBlockPos());
-		if (event.getType() == ElementType.TEXT && t instanceof TileItemMirror/*&&mc.thePlayer.isSneaking()*/) {
+		if (event.getType() == ElementType.TEXT && t instanceof TileItemMirror) {
 			ScaledResolution sr = event.getResolution();
 			TileItemMirror tile = (TileItemMirror) t;
 			GlStateManager.pushMatrix();

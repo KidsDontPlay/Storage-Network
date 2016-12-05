@@ -169,6 +169,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		if ((network == null || needsUpdate) && onServer() && worldObj.getTotalWorldTime() % 7 == 0) {
 			needsUpdate = false;
 			initializeNetwork();
+			network.getTileParts(TileNetworkInterface.class).forEach(p -> p.refreshItemhandler());
 		}
 		if (onServer() && network != null) {
 			if (worldObj.getTotalWorldTime() % 15 == 0) {

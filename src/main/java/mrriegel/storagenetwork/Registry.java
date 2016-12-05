@@ -13,6 +13,7 @@ import mrriegel.storagenetwork.block.BlockNetworkEnergyCell;
 import mrriegel.storagenetwork.block.BlockNetworkEnergyInterface;
 import mrriegel.storagenetwork.block.BlockNetworkExporter;
 import mrriegel.storagenetwork.block.BlockNetworkImporter;
+import mrriegel.storagenetwork.block.BlockNetworkInterface;
 import mrriegel.storagenetwork.block.BlockNetworkStock;
 import mrriegel.storagenetwork.block.BlockNetworkStorage;
 import mrriegel.storagenetwork.block.BlockNetworkToggleCable;
@@ -53,6 +54,7 @@ public class Registry {
 	public static final CommonBlock itemBox = new BlockItemBox();
 	public static final CommonBlock itemMirror = new BlockItemMirror();
 	public static final CommonBlock itemIndicator = new BlockItemIndicator();
+	public static final CommonBlock networkInterface = new BlockNetworkInterface();
 
 	public static final CommonItem wrench = new ItemWrench();
 	public static final CommonItem itemFilter = new ItemItemFilter();
@@ -74,6 +76,7 @@ public class Registry {
 		itemBox.registerBlock();
 		itemMirror.registerBlock();
 		itemIndicator.registerBlock();
+		networkInterface.registerBlock();
 
 		wrench.registerItem();
 		itemFilter.registerItem();
@@ -98,6 +101,7 @@ public class Registry {
 		itemBox.initModel();
 		itemMirror.initModel();
 		itemIndicator.initModel();
+		networkInterface.initModel();
 
 		wrench.initModel();
 		itemFilter.initModel();
@@ -121,6 +125,7 @@ public class Registry {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemBox), "imi", "mgm", "imi", 'i', Items.IRON_INGOT, 'g', Items.GOLD_INGOT, 'm', "logWood"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemMirror), "qgq", "cGc", 'q', Items.QUARTZ, 'g', "blockGlass", 'c', networkCable, 'G', Items.GOLD_INGOT));
 		GameRegistry.addShapedRecipe(new ItemStack(itemIndicator), "cic", "ioi", "cic", 'i', Items.IRON_INGOT, 'o', Items.COMPARATOR, 'c', networkCable);
+		GameRegistry.addShapedRecipe(new ItemStack(networkInterface), "cpc", "grg", "cpc", 'c', networkCable, 'p', Blocks.PISTON, 'g', Items.GOLD_INGOT, 'r', Items.REDSTONE);
 
 		GameRegistry.addShapedRecipe(new ItemStack(wrench), "i i", " c ", " i ", 'i', Items.IRON_INGOT, 'c', networkCable);
 		GameRegistry.addShapedRecipe(new ItemStack(itemFilter, 4), " i ", "isi", " i ", 'i', Blocks.IRON_BARS, 's', Items.STRING);

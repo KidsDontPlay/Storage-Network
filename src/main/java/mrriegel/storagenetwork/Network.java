@@ -19,6 +19,7 @@ import mrriegel.storagenetwork.tile.TileNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
+import mrriegel.storagenetwork.tile.TileNetworkInterface;
 import mrriegel.storagenetwork.tile.TileNetworkStock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -391,7 +392,7 @@ public class Network {
 				if (event.getWorld().getTileEntity(neighbor) != null) {
 					if (event.getWorld().getTileEntity(neighbor) instanceof INetworkPart) {
 						INetworkPart part = (INetworkPart) event.getWorld().getTileEntity(neighbor);
-						if (part.getNeighborFaces().contains(face.getOpposite()))
+						if (part.getNeighborFaces().contains(face.getOpposite()) && ((INetworkPart) event.getWorld().getTileEntity(event.getPos())).getNeighborFaces().contains(face))
 							if (part.getNetworkCore() != null) {
 								if (core == null) {
 									core = part.getNetworkCore();
@@ -407,6 +408,7 @@ public class Network {
 			}
 			if (!invalid && core != null && core.network != null) {
 				core.network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
+				core.network.getTileParts(TileNetworkInterface.class).forEach(p -> p.refreshItemhandler());
 				return;
 			}
 		}

@@ -12,6 +12,7 @@ tile.storagenetwork:block_item_attractor.name=Item Attractor
 tile.storagenetwork:block_item_box.name=Item Box
 tile.storagenetwork:block_item_mirror.name=Item Mirror
 tile.storagenetwork:block_item_indicator.name=Item Indicator
+tile.storagenetwork:block_network_interface.name=Network Interface
 
 item.storagenetwork:item_wrench.name=Network Wrench
 item.storagenetwork:item_item_filter.name=Item Filter
