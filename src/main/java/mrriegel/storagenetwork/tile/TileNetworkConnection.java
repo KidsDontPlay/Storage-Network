@@ -2,10 +2,12 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.Map;
 
+import mrriegel.limelib.helper.InvHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TileNetworkConnection extends TileNetworkCable implements IRedstoneActive {
 
@@ -16,6 +18,8 @@ public class TileNetworkConnection extends TileNetworkCable implements IRedstone
 	}
 
 	public <T> T getCapability(Capability<T> capa) {
+		if (capa == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && InvHelper.hasItemHandler(getTile(), tileFace.getOpposite()))
+			return (T) InvHelper.getItemHandler(getTile(), tileFace.getOpposite());
 		if (getTile() == null || !getTile().hasCapability(capa, tileFace.getOpposite()))
 			return null;
 		return getTile().getCapability(capa, tileFace.getOpposite());

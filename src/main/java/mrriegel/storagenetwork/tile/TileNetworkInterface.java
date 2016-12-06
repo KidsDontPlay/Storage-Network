@@ -36,7 +36,7 @@ public class TileNetworkInterface extends TileNetworkPart {
 		else {
 			List<INetworkStorage<IItemHandler, ItemStack>> lis = Lists.newArrayList();
 			for (INetworkPart part : getNetworkCore().network.noCables) {
-				if (part instanceof INetworkStorage && ((INetworkStorage) part).getStorage() instanceof IItemHandler) {
+				if (part instanceof INetworkStorage && ((INetworkStorage<?, ?>) part).getStorage() instanceof IItemHandler) {
 					lis.add((INetworkStorage<IItemHandler, ItemStack>) part);
 				}
 			}
