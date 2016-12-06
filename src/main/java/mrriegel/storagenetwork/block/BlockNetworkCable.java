@@ -12,6 +12,7 @@ import mrriegel.storagenetwork.Enums.Connect;
 import mrriegel.storagenetwork.tile.INetworkPart;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCore;
+import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -123,6 +124,8 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 			return Connect.NULL;
 		TileEntity tileSide = worldIn.getTileEntity(pos.offset(facing));
 		if (isNetworkPart(tileSide) && tile.isSideValid(facing) && tileSide != null && (!(tileSide instanceof TileNetworkCable) || ((TileNetworkCable) tileSide).isSideValid(facing.getOpposite())))
+			return Connect.CABLE;
+		if (tile instanceof TileNetworkToggleCable && worldIn.getBlockState(pos.offset(facing)).canProvidePower())
 			return Connect.CABLE;
 		return Connect.NULL;
 	}

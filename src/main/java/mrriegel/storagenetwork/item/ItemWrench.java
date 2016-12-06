@@ -5,6 +5,7 @@ import mrriegel.storagenetwork.CreativeTab;
 import mrriegel.storagenetwork.Enums.Connect;
 import mrriegel.storagenetwork.block.BlockNetworkCable;
 import mrriegel.storagenetwork.tile.TileNetworkCable;
+import mrriegel.storagenetwork.tile.TileNetworkToggleCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,9 +28,19 @@ public class ItemWrench extends CommonItem {
 	@Override
 	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		if (!player.isSneaking()) {
-			if (world.getBlockState(pos).getBlock().rotateBlock(world, pos, player.getHorizontalFacing().getOpposite()))
+			if (world.getBlockState(pos).getBlock().rotateBlock(world, pos, player.getHorizontalFacing().getOpposite())) {
 				if (!world.isRemote)
 					return EnumActionResult.SUCCESS;
+			} else if (world.getTileEntity(pos) instanceof TileNetworkToggleCable) {
+				TileNetworkToggleCable tile = (TileNetworkToggleCable) world.getTileEntity(pos);
+				tile.inverted ^= true;
+				if (!world.isRemote && tile.getNetworkCore() != null) {
+					tile.getNetworkCore().markForNetworkInit();
+					BlockNetworkCable.releaseNetworkParts(world, pos, tile.getNetworkCore().getPos());
+					player.addChatComponentMessage(new TextComponentString("Toggle Cable inverted."));
+					return EnumActionResult.SUCCESS;
+				}
+			}
 		} else if (!world.isRemote && world.getBlockState(pos).getBlock() instanceof BlockNetworkCable && player.isSneaking()) {
 			IBlockState state = world.getBlockState(pos);
 			EnumFacing f = ((BlockNetworkCable) world.getBlockState(pos).getBlock()).getFace(hitX, hitY, hitZ, state);
