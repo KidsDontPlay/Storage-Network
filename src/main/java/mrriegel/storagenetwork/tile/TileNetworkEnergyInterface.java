@@ -9,9 +9,10 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 
-public class TileNetworkEnergyInterface extends TileNetworkConnection implements IEnergyReceiver, IEnergyProvider {
+public class TileNetworkEnergyInterface extends TileNetworkConnection implements IEnergyReceiver, IEnergyProvider, IPriority {
 
 	public IOMODE iomode = IOMODE.INOUT;
+	private int priority;
 
 	@Override
 	public int getEnergyStored(EnumFacing from) {
@@ -49,12 +50,14 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		iomode = IOMODE.values()[compound.getInteger("iomode")];
+		priority = compound.getInteger("priority");
 		super.readFromNBT(compound);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger("iomode", iomode.ordinal());
+		compound.setInteger("priority", priority);
 		return super.writeToNBT(compound);
 	}
 
@@ -80,9 +83,26 @@ public class TileNetworkEnergyInterface extends TileNetworkConnection implements
 
 	@Override
 	public void handleMessage(EntityPlayer player, NBTTagCompound nbt) {
-		iomode = iomode.next();
-		for (EnumFacing f : EnumFacing.VALUES)
-			worldObj.notifyBlockOfStateChange(pos.offset(f), worldObj.getBlockState(pos.offset(f)).getBlock());
+		switch (nbt.getInteger("buttonID")) {
+		case 0:
+			priority = Math.max(priority - (nbt.getBoolean("shift") ? 10 : 1), -99);
+			break;
+		case 1:
+			priority = Math.min(priority + (nbt.getBoolean("shift") ? 10 : 1), 99);
+			break;
+		case 2:
+			iomode = iomode.next();
+			for (EnumFacing f : EnumFacing.VALUES)
+				worldObj.notifyBlockOfStateChange(pos.offset(f), worldObj.getBlockState(pos.offset(f)).getBlock());
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public int getPriority() {
+		return priority;
 	}
 
 }

@@ -9,7 +9,7 @@ public class ModConfig {
 	public static Configuration config;
 
 	public static boolean needsEnergy, STOPTICK;
-	public static int rangeWirelessAccessor, itemboxCapacity, energycellCapacity;
+	public static int rangeWirelessAccessor, itemboxCapacity, energycellCapacity, energyinterfaceTransferRate;
 	public static float energyMultiplier;
 
 	public static void refreshConfig(File file) {
@@ -21,6 +21,7 @@ public class ModConfig {
 		rangeWirelessAccessor = config.getInt("rangeWirelessAccessor", Configuration.CATEGORY_GENERAL, 64, 8, 256, "The range the wireless accessor works within.");
 		itemboxCapacity = config.getInt("itemboxCapacity", Configuration.CATEGORY_GENERAL, 100, 25, 99999, "Capacity of item box.");
 		energycellCapacity = config.getInt("energycellCapacity", Configuration.CATEGORY_GENERAL, 500000, 100000, 8000000, "Capacity of item box.");
+		energyinterfaceTransferRate = config.getInt("energyinterfaceTransferRate", Configuration.CATEGORY_GENERAL, 800, 80, 80000, "Transfer rate per energy cell.");
 		energyMultiplier = config.getFloat("energyMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.1F, 100F, "How much energy the network drains.");
 
 		if (config.hasChanged()) {

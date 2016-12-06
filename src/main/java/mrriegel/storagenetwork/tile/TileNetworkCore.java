@@ -1,6 +1,7 @@
 package mrriegel.storagenetwork.tile;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -41,12 +42,12 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 
 	public Network network;
 	protected boolean needsUpdate;
-	protected EnergyStorageExt energy = new EnergyStorageExt(200000, 1000) {
+	protected EnergyStorageExt energy = new EnergyStorageExt(200000, ModConfig.energyinterfaceTransferRate) {
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
 			if (worldObj.getTotalWorldTime() % 4 == 0)
 				markForSync();
-			if ((double) getEnergyStored() / (double) getMaxEnergyStored() > 0.75)
+			if ((double) getEnergyStored() / (double) getMaxEnergyStored() > 0.95)
 				return super.extractEnergy(Math.min(maxExtract, getMaxEnergyStored() / 10), simulate);
 			return 0;
 		};
@@ -204,18 +205,23 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 			energy.setMaxReceive(getTotalTransfer());
 		}
 		int maxTransfer = getTotalTransfer();
-		for (INetworkPart part : network.networkParts)
-			if (part instanceof TileNetworkEnergyInterface) {
-				TileNetworkEnergyInterface tile = (TileNetworkEnergyInterface) part;
-				boolean simulate = false;
-				if (tile.getTile() instanceof IEnergyReceiver && tile.iomode.canExtract()) {
-					int maxReceive = ((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), maxTransfer, true);
-					((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), extractor.extractEnergy(maxReceive, simulate), simulate);
-				} else if (tile.getTile() != null && tile.getTile().hasCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()) && tile.iomode.canExtract()) {
-					int maxReceive = tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(maxTransfer, true);
-					tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(extractor.extractEnergy(maxReceive, simulate), simulate);
-				}
+		List<TileNetworkEnergyInterface> inters = network.getTileParts(TileNetworkEnergyInterface.class);
+		inters.sort(new Comparator<TileNetworkEnergyInterface>() {
+			@Override
+			public int compare(TileNetworkEnergyInterface o1, TileNetworkEnergyInterface o2) {
+				return Integer.compare(o2.getPriority(), o1.getPriority());
 			}
+		});
+		for (TileNetworkEnergyInterface tile : inters) {
+			boolean simulate = false;
+			if (tile.getTile() instanceof IEnergyReceiver && tile.iomode.canExtract()) {
+				int maxReceive = ((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), maxTransfer, true);
+				((IEnergyReceiver) tile.getTile()).receiveEnergy(tile.tileFace.getOpposite(), extractor.extractEnergy(maxReceive, simulate), simulate);
+			} else if (tile.getTile() != null && tile.getTile().hasCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()) && tile.iomode.canExtract()) {
+				int maxReceive = tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(maxTransfer, true);
+				tile.getTile().getCapability(CapabilityEnergy.ENERGY, tile.tileFace.getOpposite()).receiveEnergy(extractor.extractEnergy(maxReceive, simulate), simulate);
+			}
+		}
 		for (INetworkPart part : network.networkParts)
 			if (part instanceof TileNetworkEnergyCell) {
 				if (getEnergyStored(null) != getMaxEnergyStored(null)) {
@@ -229,11 +235,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	}
 
 	public int getTotalTransfer() {
-		int max = 1000;
-		for (INetworkPart part : network.networkParts)
-			if (part instanceof TileNetworkEnergyCell)
-				max += 1000;
-		return max;
+		return ModConfig.energyinterfaceTransferRate + network.getTileParts(TileNetworkEnergyCell.class).size() * ModConfig.energyinterfaceTransferRate;
 	}
 
 	public int getTotalEnergy() {

@@ -1,6 +1,9 @@
 package mrriegel.storagenetwork.gui;
 
+import java.awt.Color;
 import java.io.IOException;
+
+import com.google.common.collect.Lists;
 
 import mrriegel.limelib.gui.CommonGuiScreen;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
@@ -16,14 +19,16 @@ public class GuiEnergyInterface extends CommonGuiScreen {
 
 	public GuiEnergyInterface(TileNetworkEnergyInterface tile) {
 		this.tile = tile;
-		this.xSize = 40;
+		this.xSize = 80;
 		this.ySize = 40;
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonList.add(button = new GuiButtonSimple(0, guiLeft + 9, guiTop + 10, 22, 18, "", null));
+		buttonList.add(new GuiButtonSimple(0, guiLeft + 36, guiTop + 10, 10, 18, "-", Color.BLACK.getRGB(), Color.GRAY.getRGB(), Lists.newArrayList("-Priority")));
+		buttonList.add(new GuiButtonSimple(1, guiLeft + 65, guiTop + 10, 10, 18, "+", Color.BLACK.getRGB(), Color.GRAY.getRGB(), Lists.newArrayList("+Priority")));
+		buttonList.add(button = new GuiButtonSimple(2, guiLeft + 9, guiTop + 10, 22, 18, "", null));
 	}
 
 	@Override
@@ -39,12 +44,22 @@ public class GuiEnergyInterface extends CommonGuiScreen {
 		drawer.drawBackgroundTexture();
 		super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 	}
+	
+	@Override
+	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		String p = "" + tile.getPriority();
+		fontRendererObj.drawString(p, 56 - fontRendererObj.getStringWidth(p) / 2, 15, Color.DARK_GRAY.getRGB(), false);
+		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		tile.sendMessage(new NBTTagCompound());
-		tile.handleMessage(null, null);
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setBoolean("shift", isShiftKeyDown());
+		nbt.setInteger("buttonID", button.id);
+		tile.sendMessage(nbt);
+		tile.handleMessage(mc.thePlayer, nbt);
 	}
 
 	@Override
