@@ -226,7 +226,7 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 			}
 		} else {
 			TileNetworkCore c = (TileNetworkCore) world.getTileEntity(core);
-			if (c.network != null)
+			if (c != null && c.network != null)
 				for (INetworkPart part : c.network.networkParts) {
 					part.setNetworkCore(null);
 				}
