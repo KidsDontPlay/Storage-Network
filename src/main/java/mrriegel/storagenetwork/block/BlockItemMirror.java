@@ -52,41 +52,44 @@ public class BlockItemMirror extends CommonBlockContainer<TileItemMirror> {
 
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-		((TileItemMirror) worldIn.getTileEntity(pos)).face = state.getValue(FACING);
+		if (worldIn.getTileEntity(pos) instanceof TileItemMirror)
+			((TileItemMirror) worldIn.getTileEntity(pos)).face = state.getValue(FACING);
 	}
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		int h = getQuadrant(state, hitX, hitY, hitZ);
-		TileItemMirror tile = (TileItemMirror) worldIn.getTileEntity(pos);
-		if (h >= 0 && h <= 3) {
-			if (playerIn.isSneaking() && heldItem == null)
-				tile.wraps.set(h, null);
-			else if (!playerIn.isSneaking() && heldItem == null) {
-				if (tile.wraps.get(h) != null && !worldIn.isRemote && tile.getNetworkCore() != null && tile.getNetworkCore().network != null) {
-					PlayerMainInvWrapper handler = new PlayerMainInvWrapper(playerIn.inventory);
-					for (int i = 0; i < handler.getSlots(); i++) {
-						if (new FilterItem(tile.wraps.get(h).getStack()).match(handler.getStackInSlot(i))) {
-							ItemStack remain = tile.getNetworkCore().network.insertItem(handler.getStackInSlot(i), null, false);
-							handler.setStackInSlot(i, remain);
-							if (remain != null)
-								break;
+		if (worldIn.getTileEntity(pos) instanceof TileItemMirror) {
+			int h = getQuadrant(state, hitX, hitY, hitZ);
+			TileItemMirror tile = (TileItemMirror) worldIn.getTileEntity(pos);
+			if (h >= 0 && h <= 3 && side == tile.face) {
+				if (playerIn.isSneaking() && heldItem == null)
+					tile.wraps.set(h, null);
+				else if (!playerIn.isSneaking() && heldItem == null) {
+					if (tile.wraps.get(h) != null && !worldIn.isRemote && tile.getNetworkCore() != null && tile.getNetworkCore().network != null) {
+						PlayerMainInvWrapper handler = new PlayerMainInvWrapper(playerIn.inventory);
+						for (int i = 0; i < handler.getSlots(); i++) {
+							if (new FilterItem(tile.wraps.get(h).getStack()).match(handler.getStackInSlot(i))) {
+								ItemStack remain = tile.getNetworkCore().network.insertItem(handler.getStackInSlot(i), null, false);
+								handler.setStackInSlot(i, remain);
+								if (remain != null)
+									break;
 
+							}
 						}
+						playerIn.openContainer.detectAndSendChanges();
+						tile.markForSync();
 					}
-					playerIn.openContainer.detectAndSendChanges();
-					tile.markForSync();
-				}
-			} else if (!playerIn.isSneaking() && heldItem != null)
-				if (tile.wraps.get(h) == null)
-					tile.wraps.set(h, new StackWrapper(heldItem, 0));
-				else if (new FilterItem(tile.wraps.get(h).getStack()).match(heldItem) && !worldIn.isRemote && tile.getNetworkCore() != null) {
-					ItemStack remain = tile.getNetworkCore().network.insertItem(heldItem, null, false);
-					playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = remain;
-					playerIn.openContainer.detectAndSendChanges();
-					tile.markForSync();
-				}
-			return true;
+				} else if (!playerIn.isSneaking() && heldItem != null)
+					if (tile.wraps.get(h) == null)
+						tile.wraps.set(h, new StackWrapper(heldItem, 0));
+					else if (new FilterItem(tile.wraps.get(h).getStack()).match(heldItem) && !worldIn.isRemote && tile.getNetworkCore() != null) {
+						ItemStack remain = tile.getNetworkCore().network.insertItem(heldItem, null, false);
+						playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = remain;
+						playerIn.openContainer.detectAndSendChanges();
+						tile.markForSync();
+					}
+				return true;
+			}
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
 	}

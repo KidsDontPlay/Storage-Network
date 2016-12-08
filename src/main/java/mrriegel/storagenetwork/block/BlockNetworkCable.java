@@ -119,6 +119,8 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 	}
 
 	public Connect getConnect(IBlockAccess worldIn, BlockPos pos, EnumFacing facing) {
+		if (!(worldIn.getTileEntity(pos) instanceof TileNetworkCable))
+			return Connect.NULL;
 		TileNetworkCable tile = (TileNetworkCable) worldIn.getTileEntity(pos);
 		if (tile == null || !tile.getValidSides().get(facing))
 			return Connect.NULL;

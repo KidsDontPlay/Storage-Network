@@ -70,16 +70,16 @@ public class TESRItemMirror extends TileEntitySpecialRenderer<TileItemMirror> {
 		//		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
 		if (te.wraps.get(0) != null && te.wraps.get(0).getStack().getItem() != null) {
-			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(0).getSize()), -17, -17 + 7, Color.white.getRGB(), !true);
+			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(0).getSize()), -17, -17 + 7, te.wraps.get(0).getSize() == 0 ? Color.gray.getRGB() : Color.white.getRGB(), !true);
 		}
 		if (te.wraps.get(1) != null && te.wraps.get(1).getStack().getItem() != null) {
-			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(1).getSize()), 1, -17 + 7, Color.white.getRGB(), !true);
+			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(1).getSize()), 1, -17 + 7, te.wraps.get(1).getSize() == 0 ? Color.gray.getRGB() : Color.white.getRGB(), !true);
 		}
 		if (te.wraps.get(2) != null && te.wraps.get(2).getStack().getItem() != null) {
-			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(2).getSize()), -17, 1 + 7, Color.white.getRGB(), !true);
+			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(2).getSize()), -17, 1 + 7, te.wraps.get(2).getSize() == 0 ? Color.gray.getRGB() : Color.white.getRGB(), !true);
 		}
 		if (te.wraps.get(3) != null && te.wraps.get(3).getStack().getItem() != null) {
-			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(3).getSize()), 1, 1 + 7, Color.white.getRGB(), !true);
+			mc.fontRendererObj.drawString(TextFormatting.BOLD + Utils.formatNumber(te.wraps.get(3).getSize()), 1, 1 + 7, te.wraps.get(3).getSize() == 0 ? Color.gray.getRGB() : Color.white.getRGB(), !true);
 		}
 		GlStateManager.enableLighting();
 		//		GlStateManager.enableDepth();

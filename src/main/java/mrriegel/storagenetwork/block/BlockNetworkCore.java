@@ -59,8 +59,10 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 					return;
 				}
 			}
-			TileNetworkCore tile = (TileNetworkCore) worldIn.getTileEntity(pos);
-			tile.initializeNetwork();
+			if (worldIn.getTileEntity(pos) instanceof TileNetworkCore) {
+				TileNetworkCore tile = (TileNetworkCore) worldIn.getTileEntity(pos);
+				tile.initializeNetwork();
+			}
 		}
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}

@@ -30,7 +30,8 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		((TileNetworkToggleCable) worldIn.getTileEntity(pos)).markForSync();
+		if (worldIn.getTileEntity(pos) instanceof TileNetworkToggleCable)
+			((TileNetworkToggleCable) worldIn.getTileEntity(pos)).markForSync();
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 
@@ -41,11 +42,13 @@ public class BlockNetworkToggleCable extends BlockNetworkCable {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-		TileNetworkToggleCable tile = (TileNetworkToggleCable) worldIn.getTileEntity(pos);
-		//		tile.markForSync();
-		if (!worldIn.isRemote && tile.getNetworkCore() != null) {
-			tile.getNetworkCore().markForNetworkInit();
-			BlockNetworkCable.releaseNetworkParts(worldIn, pos, tile.getNetworkCore().getPos());
+		if (worldIn.getTileEntity(pos) instanceof TileNetworkToggleCable) {
+			TileNetworkToggleCable tile = (TileNetworkToggleCable) worldIn.getTileEntity(pos);
+			//		tile.markForSync();
+			if (!worldIn.isRemote && tile.getNetworkCore() != null) {
+				tile.getNetworkCore().markForNetworkInit();
+				BlockNetworkCable.releaseNetworkParts(worldIn, pos, tile.getNetworkCore().getPos());
+			}
 		}
 		super.neighborChanged(state, worldIn, pos, blockIn);
 	}
