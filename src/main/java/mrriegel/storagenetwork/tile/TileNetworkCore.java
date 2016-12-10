@@ -170,7 +170,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		if ((network == null || needsUpdate) && onServer() && worldObj.getTotalWorldTime() % 7 == 0) {
 			needsUpdate = false;
 			initializeNetwork();
-			network.getTileParts(TileNetworkInterface.class).forEach(p -> p.refreshItemhandler());
+			network.onChange();
 		}
 		if (onServer() && network != null) {
 			if (worldObj.getTotalWorldTime() % 15 == 0) {
@@ -224,7 +224,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		}
 		for (INetworkPart part : network.networkParts)
 			if (part instanceof TileNetworkEnergyCell) {
-				if (getEnergyStored(null) != getMaxEnergyStored(null)) {
+				if ((double) getEnergyStored(null) / (double) getMaxEnergyStored(null) < .9) {
 					int maxReceive = receiveEnergy(null, maxTransfer, true);
 					receiveEnergy(null, ((TileNetworkEnergyCell) part).getEnergy().extractEnergy(maxReceive, false), false);
 				} else if ((double) getEnergyStored(null) / (double) getMaxEnergyStored(null) > .6) {

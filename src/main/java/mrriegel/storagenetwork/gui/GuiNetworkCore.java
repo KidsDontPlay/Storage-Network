@@ -48,7 +48,7 @@ public class GuiNetworkCore extends CommonGuiScreen {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		if (isPointInRegion(10, 10, 8, 100, mouseX, mouseY))
-			drawHoveringText(Lists.newArrayList(core.getEnergyStored(null) + "/" + core.getMaxEnergyStored(null) + " RF"), mouseX - guiLeft, mouseY - guiTop);
+			drawHoveringText(Lists.newArrayList(core.getEnergyStored(null) + "/" + core.getMaxEnergyStored(null) + " RF", data.getInteger("transfer") + " RF/t"), mouseX - guiLeft, mouseY - guiTop);
 		if (isPointInRegion(10, 140, 100, 8, mouseX, mouseY) && data != null)
 			drawHoveringText(Lists.newArrayList(data.getInteger("cell") + "/" + data.getInteger("maxcell") + " RF in Energy Cells"), mouseX - guiLeft, mouseY - guiTop);
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);

@@ -31,6 +31,7 @@ public class MessageCoreSync extends AbstractMessage<MessageCoreSync> {
 		nbt.setInteger("nsize", core.network.networkParts.size());
 		nbt.setInteger("cell", core.getTotalEnergy() - core.getEnergyStorage().getEnergyStored());
 		nbt.setInteger("maxcell", core.getTotalMaxEnergy() - core.getEnergyStorage().getMaxEnergyStored());
+		nbt.setInteger("transfer", core.getTotalTransfer());
 		Map<String, Integer> map = Maps.newHashMap();
 		for (INetworkPart p : core.network.networkParts) {
 			String block = ((TileEntity) p).getBlockType().getLocalizedName();
@@ -59,7 +60,6 @@ public class MessageCoreSync extends AbstractMessage<MessageCoreSync> {
 			GuiNetworkCore gui = (GuiNetworkCore) Minecraft.getMinecraft().currentScreen;
 			if (gui.core != null && gui.core.getPos().equals(BlockPos.fromLong(nbt.getLong("ppp"))))
 				gui.data = nbt;
-			//			System.out.println("ding");
 		}
 	}
 

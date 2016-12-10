@@ -20,6 +20,7 @@ import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
 import mrriegel.storagenetwork.tile.TileNetworkInterface;
+import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
 import mrriegel.storagenetwork.tile.TileNetworkStock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -66,6 +67,10 @@ public class Network {
 
 	TileNetworkCore getCore() {
 		return (TileNetworkCore) corePosition.getTile(null);
+	}
+
+	public void onChange() {
+		getTileParts(TileNetworkInterface.class).forEach(p -> p.refreshItemhandler());
 	}
 
 	Comparator<INetworkPart> comparator = new Comparator<INetworkPart>() {
@@ -408,7 +413,7 @@ public class Network {
 			}
 			if (!invalid && core != null && core.network != null) {
 				core.network.addPart((INetworkPart) event.getWorld().getTileEntity(event.getPos()));
-				core.network.getTileParts(TileNetworkInterface.class).forEach(p -> p.refreshItemhandler());
+				core.network.onChange();
 				return;
 			}
 		}

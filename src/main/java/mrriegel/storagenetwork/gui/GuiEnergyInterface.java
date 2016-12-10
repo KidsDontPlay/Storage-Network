@@ -3,14 +3,14 @@ package mrriegel.storagenetwork.gui;
 import java.awt.Color;
 import java.io.IOException;
 
-import com.google.common.collect.Lists;
-
 import mrriegel.limelib.gui.CommonGuiScreen;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
 import mrriegel.storagenetwork.Enums.IOMODE;
 import mrriegel.storagenetwork.tile.TileNetworkEnergyInterface;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
+
+import com.google.common.collect.Lists;
 
 public class GuiEnergyInterface extends CommonGuiScreen {
 
@@ -44,7 +44,7 @@ public class GuiEnergyInterface extends CommonGuiScreen {
 		drawer.drawBackgroundTexture();
 		super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 	}
-	
+
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String p = "" + tile.getPriority();

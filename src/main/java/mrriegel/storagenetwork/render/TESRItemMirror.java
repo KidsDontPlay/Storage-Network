@@ -19,6 +19,27 @@ public class TESRItemMirror extends TileEntitySpecialRenderer<TileItemMirror> {
 		RenderItem itemRenderer = mc.getRenderItem();
 		if (new BlockPos(mc.thePlayer).getDistance(te.getX(), te.getY(), te.getZ()) > 32)
 			return;
+		switch (te.face) {
+		case EAST:
+			if (mc.thePlayer.posX < te.getX() + .5)
+				return;
+			break;
+		case NORTH:
+			if (mc.thePlayer.posZ > te.getZ() + .5)
+				return;
+			break;
+		case SOUTH:
+			if (mc.thePlayer.posZ < te.getZ() + .5)
+				return;
+			break;
+		case WEST:
+			if (mc.thePlayer.posX > te.getX() + .5)
+				return;
+			break;
+		default:
+			break;
+
+		}
 		GlStateManager.pushMatrix();
 		GlStateManager.color(1F, 1F, 1F, 1F);
 		GlStateManager.translate(x + .5, y + .5, z + .5);
@@ -43,7 +64,6 @@ public class TESRItemMirror extends TileEntitySpecialRenderer<TileItemMirror> {
 			break;
 		default:
 			break;
-
 		}
 		GlStateManager.scale(0.025f, 0.025f, -0.0001f);
 

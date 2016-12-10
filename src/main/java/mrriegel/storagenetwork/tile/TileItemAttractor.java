@@ -32,27 +32,39 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 			for (EntityItem ei : list) {
 				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()) || !getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true))
 					continue;
-				Vec3d vec = new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).normalize().scale(0.12);
-				if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01 && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9 && new Vector2d(ei.posX - (getX() + .5), ei.posZ - (getZ() + .5)).length() > 0.3)
-					ei.motionY = 0.1;
-				ei.motionX = vec.xCoord;
-				ei.motionZ = vec.zCoord;
-				if (worldObj.getTotalWorldTime() % 2 == 0/* && !(Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01)*/)
-					for (EntityPlayerMP player : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(ei.posX - 17, ei.posY - 17, ei.posZ - 17, ei.posX + 17, ei.posY + 17, ei.posZ + 17)))
-						player.connection.sendPacket(new SPacketEntityVelocity(ei));
-				if (getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true) && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9) {
-					ItemStack stack = ei.getEntityItem().copy();
-					ItemStack rest = getNetworkCore().network.insertItem(stack, null, false);
-					getNetworkCore().consumeRF((rest == null ? stack.stackSize : stack.stackSize - rest.stackSize) * 5, false);
-					if (rest == null)
-						ei.setDead();
-					else
-						ei.setEntityItemStack(rest);
-					break;
+				if (ModConfig.teleportItems) {
+					if (insert(ei))
+						break;
+				} else {
+					Vec3d vec = new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).normalize().scale(0.12);
+					if (Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01 && new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() > .9 && new Vector2d(ei.posX - (getX() + .5), ei.posZ - (getZ() + .5)).length() > 0.3)
+						ei.motionY = 0.1;
+					ei.motionX = vec.xCoord;
+					ei.motionZ = vec.zCoord;
+					if (worldObj.getTotalWorldTime() % 2 == 0/* && !(Math.abs(ei.motionX) < 0.01 && Math.abs(ei.motionZ) < 0.01)*/)
+						for (EntityPlayerMP player : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(ei.posX - 17, ei.posY - 17, ei.posZ - 17, ei.posX + 17, ei.posY + 17, ei.posZ + 17)))
+							player.connection.sendPacket(new SPacketEntityVelocity(ei));
+					if (new Vec3d(getX() + .5 - ei.posX, getY() + .5 - ei.posY, getZ() + .5 - ei.posZ).lengthVector() < .9)
+						if (insert(ei))
+							break;
 				}
 			}
 
 		}
+	}
+
+	private boolean insert(EntityItem ei) {
+		if (getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true)) {
+			ItemStack stack = ei.getEntityItem().copy();
+			ItemStack rest = getNetworkCore().network.insertItem(stack, null, false);
+			getNetworkCore().consumeRF((rest == null ? stack.stackSize : stack.stackSize - rest.stackSize) * 5, false);
+			if (rest == null)
+				ei.setDead();
+			else
+				ei.setEntityItemStack(rest);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

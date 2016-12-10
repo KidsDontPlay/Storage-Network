@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -49,6 +50,14 @@ public class TileNetworkItemConnection extends TileNetworkConnection implements 
 	@Override
 	public int getPriority() {
 		return priority;
+	}
+
+	@Override
+	public TileEntity getTile() {
+		TileEntity sup = super.getTile();
+		if (sup instanceof TileNetworkInterface && ((TileNetworkInterface) sup).getNetworkCore() == getNetworkCore())
+			return null;
+		return sup;
 	}
 
 	@Override
