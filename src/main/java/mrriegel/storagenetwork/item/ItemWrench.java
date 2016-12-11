@@ -63,7 +63,7 @@ public class ItemWrench extends CommonItem {
 				}
 				//				tile.markForSync();
 			} else {
-				if (state.getValue(BlockNetworkCable.bimap.get(side)) == Connect.NULL && !tile.isSideValid(side)) {
+				if (state.getValue(BlockNetworkCable.bimap.get(side)) == Connect.NULL && !tile.getValidSides().get(side)) {
 					tile.setSide(side, true);
 					player.addChatMessage(new TextComponentString("Cable connected."));
 					TileEntity newTile = world.getTileEntity(pos.offset(side));

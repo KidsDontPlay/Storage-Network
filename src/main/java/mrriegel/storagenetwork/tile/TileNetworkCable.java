@@ -33,10 +33,6 @@ public class TileNetworkCable extends TileNetworkPart {
 		this.markForSync();
 	}
 
-	public boolean isSideValid(EnumFacing side) {
-		return this.getValidSides().get(side);
-	}
-
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		for (EnumFacing f : EnumFacing.VALUES) {

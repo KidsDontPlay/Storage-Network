@@ -20,7 +20,6 @@ import mrriegel.storagenetwork.tile.TileNetworkCore;
 import mrriegel.storagenetwork.tile.TileNetworkExporter;
 import mrriegel.storagenetwork.tile.TileNetworkImporter;
 import mrriegel.storagenetwork.tile.TileNetworkInterface;
-import mrriegel.storagenetwork.tile.TileNetworkItemConnection;
 import mrriegel.storagenetwork.tile.TileNetworkStock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -302,7 +301,6 @@ public class Network {
 								tile.getTile().markDirty();
 							break;
 						}
-
 					}
 				}
 			}

@@ -125,7 +125,7 @@ public class BlockNetworkCable extends CommonBlockContainer<CommonTile> {
 		if (tile == null || !tile.getValidSides().get(facing))
 			return Connect.NULL;
 		TileEntity tileSide = worldIn.getTileEntity(pos.offset(facing));
-		if (isNetworkPart(tileSide) && tile.isSideValid(facing) && tileSide != null && (!(tileSide instanceof TileNetworkCable) || ((TileNetworkCable) tileSide).isSideValid(facing.getOpposite())))
+		if (isNetworkPart(tileSide) && tile.getValidSides().get(facing) && tileSide != null && (!(tileSide instanceof TileNetworkCable) || ((TileNetworkCable) tileSide).getValidSides().get(facing.getOpposite())))
 			return Connect.CABLE;
 		if (tile instanceof TileNetworkToggleCable && worldIn.getBlockState(pos.offset(facing)).canProvidePower())
 			return Connect.CABLE;
