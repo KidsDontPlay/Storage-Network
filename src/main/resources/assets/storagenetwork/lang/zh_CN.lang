@@ -12,6 +12,7 @@ tile.storagenetwork:block_item_attractor.name=物品收集设备
 tile.storagenetwork:block_item_box.name=物品存储设备
 tile.storagenetwork:block_item_mirror.name=物品显示器
 tile.storagenetwork:block_item_indicator.name=物品触发器
+tile.storagenetwork:block_network_interface.name=外部存储接口
 
 item.storagenetwork:item_wrench.name=接口扳手
 item.storagenetwork:item_item_filter.name=物品过滤器
