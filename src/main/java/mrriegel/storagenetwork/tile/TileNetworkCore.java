@@ -2,13 +2,16 @@ package mrriegel.storagenetwork.tile;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import mrriegel.limelib.helper.NBTHelper;
+import mrriegel.limelib.helper.NBTStackHelper;
 import mrriegel.limelib.helper.StackHelper;
 import mrriegel.limelib.network.PacketHandler;
 import mrriegel.limelib.tile.CommonTile;
+import mrriegel.limelib.tile.IDataKeeper;
 import mrriegel.limelib.util.CombinedEnergyStorage;
 import mrriegel.limelib.util.EnergyStorageExt;
 import mrriegel.limelib.util.GlobalBlockPos;
@@ -38,10 +41,10 @@ import com.google.common.collect.Sets;
 /**
  * @author canitzp
  */
-public class TileNetworkCore extends CommonTile implements ITickable, IEnergyReceiver {
+public class TileNetworkCore extends CommonTile implements ITickable, IEnergyReceiver, IDataKeeper {
 
 	public Network network;
-	protected boolean needsUpdate;
+	protected boolean needsRebuild;
 	protected EnergyStorageExt energy = new EnergyStorageExt(200000, ModConfig.energyinterfaceTransferRate) {
 		@Override
 		public int extractEnergy(int maxExtract, boolean simulate) {
@@ -81,15 +84,21 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	public void initializeNetwork() {
 		this.network = new Network();
 		network.corePosition = new GlobalBlockPos(pos, worldObj);
-		try {
-			//			runThroughNetworkRecursive(pos);
-			runThroughNetworkIterative();
-			markDirty();
-		} catch (StackOverflowError error) {
-			StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
-		} catch (Error error) {
-			error.printStackTrace();
-		}
+		Runnable run = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					//			runThroughNetworkRecursive(pos);
+					runThroughNetworkIterative();
+					markDirty();
+				} catch (StackOverflowError error) {
+					StorageNetwork.logger.error("Couldn't build the network due to a StackOverflowError.");
+				} catch (Error error) {
+					error.printStackTrace();
+				}
+			}
+		};
+		run.run();
 		worldObj.getChunkFromBlockCoords(pos).setModified(true);
 		//		System.out.println("network size: " + network.networkParts.size() + ", no cables: " + network.noCables.size());
 	}
@@ -121,11 +130,10 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	}
 
 	private void runThroughNetworkIterative() {
-		List<BlockPos> research = Lists.newLinkedList(Collections.singleton(pos));
+		LinkedList<BlockPos> research = Lists.newLinkedList(Collections.singleton(pos));
 		Set<BlockPos> done = Sets.newHashSet();
 		while (!research.isEmpty()) {
-			BlockPos current = research.get(0);
-			research.remove(0);
+			BlockPos current = research.poll();
 			for (EnumFacing facing : EnumFacing.values()) {
 				BlockPos searchPos = current.offset(facing);
 				if (worldObj.getTileEntity(current) instanceof IToggleable && !((IToggleable) worldObj.getTileEntity(current)).isActive())
@@ -155,7 +163,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	}
 
 	public void markForNetworkInit() {
-		needsUpdate = true;
+		needsRebuild = true;
 	}
 
 	@Override
@@ -163,12 +171,12 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 		if (ModConfig.STOPTICK)
 			return;
 		if ((worldObj.getTotalWorldTime() + (pos.hashCode() % 300)) % (network == null ? 80 : 300) == 0) {
-			needsUpdate = true;
+			needsRebuild = true;
 			//Lag
-			needsUpdate = false;
+			needsRebuild = false;
 		}
-		if ((network == null || needsUpdate) && onServer() && worldObj.getTotalWorldTime() % 7 == 0) {
-			needsUpdate = false;
+		if ((network == null || needsRebuild) && onServer() && worldObj.getTotalWorldTime() % 7 == 0) {
+			needsRebuild = false;
 			initializeNetwork();
 			network.onChange();
 		}
@@ -180,6 +188,10 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 					worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockNetworkCore.ACTIVE, true), 2);
 			}
 			distributeEnergy();
+			if ((worldObj.getTotalWorldTime() + pos.hashCode()) % 200 == 0) {
+				network.dirtyMap = true;
+				network.dirtyList = true;
+			}
 			network.importItems();
 			network.exportItems();
 			network.stockItems();
@@ -187,7 +199,7 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 				for (EntityPlayerMP p : worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos.add(10, 10, 10), pos.add(-10, -10, -10)))) {
 					PacketHandler.sendTo(new MessageCoreSync(this), p);
 				}
-			if (worldObj.getTotalWorldTime() % 300 == 0) {
+			if ((worldObj.getTotalWorldTime() + pos.hashCode()) % 300 == 0) {
 				for (INetworkPart part : network.noCables)
 					if (part.getNetworkCore() == null || !part.getNetworkCore().getPos().equals(pos)) {
 						markForNetworkInit();
@@ -302,6 +314,16 @@ public class TileNetworkCore extends CommonTile implements ITickable, IEnergyRec
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 		return ModConfig.needsEnergy;
+	}
+
+	@Override
+	public void writeToStack(ItemStack stack) {
+		NBTStackHelper.setInt(stack, "energy", energy.getEnergyStored());
+	}
+
+	@Override
+	public void readFromStack(ItemStack stack) {
+		NBTStackHelper.getInt(stack, "energy");
 	}
 
 }

@@ -45,6 +45,7 @@ public class BlockNetworkCore extends CommonBlockContainer<TileNetworkCore> {
 		setHardness(2.5F);
 		setCreativeTab(CreativeTab.TAB);
 		setDefaultState(getDefaultState().withProperty(ACTIVE, !ModConfig.needsEnergy));
+		clearRecipe = false;
 	}
 
 	@Override

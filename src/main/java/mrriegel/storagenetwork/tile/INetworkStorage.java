@@ -14,7 +14,7 @@ import net.minecraftforge.items.IItemHandler;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public interface INetworkStorage<T, S> {
+public interface INetworkStorage<T, S> extends INetworkPart {
 
 	T getStorage();
 
@@ -25,6 +25,8 @@ public interface INetworkStorage<T, S> {
 	boolean canExtract();
 
 	boolean canTransferItem(S stack);
+
+	//	boolean isDirty();
 
 	public static class ItemHandlerWrapper implements IItemHandler, IFluidHandler {
 

@@ -9,7 +9,7 @@ public class ModConfig {
 	public static Configuration config;
 
 	public static boolean needsEnergy, STOPTICK, teleportItems;
-	public static int rangeWirelessAccessor, itemboxCapacity, energycellCapacity, energyinterfaceTransferRate;
+	public static int rangeWirelessAccessor, rangeItemAttractor, itemboxCapacity, energycellCapacity, energyinterfaceTransferRate;
 	public static float energyMultiplier;
 
 	public static void refreshConfig(File file) {
@@ -20,6 +20,7 @@ public class ModConfig {
 		teleportItems = config.getBoolean("teleportItems", Configuration.CATEGORY_GENERAL, false, "If enabled items will be teleported to the item attractor.");
 		STOPTICK = config.getBoolean("STOPTICK", "DEBUG", false, "If enabled the network won't work. For the case that you cannot enter your world.");
 		rangeWirelessAccessor = config.getInt("rangeWirelessAccessor", Configuration.CATEGORY_GENERAL, 64, 8, 256, "The range the wireless accessor works within.");
+		rangeItemAttractor = config.getInt("rangeItemAttractor", Configuration.CATEGORY_GENERAL, 64, 8, 256, "The range the item attractor works within.");
 		itemboxCapacity = config.getInt("itemboxCapacity", Configuration.CATEGORY_GENERAL, 100, 25, 99999, "Capacity of item box.");
 		energycellCapacity = config.getInt("energycellCapacity", Configuration.CATEGORY_GENERAL, 500000, 10000, 8000000, "Capacity of item box.");
 		energyinterfaceTransferRate = config.getInt("energyinterfaceTransferRate", Configuration.CATEGORY_GENERAL, 800, 80, 80000, "Transfer rate per energy cell.");

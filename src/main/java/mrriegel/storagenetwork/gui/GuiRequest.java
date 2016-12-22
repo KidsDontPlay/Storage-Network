@@ -86,7 +86,7 @@ public class GuiRequest extends CommonGuiContainer {
 		drawer.drawSlots(7, 137, 3, 3);
 		drawer.drawProgressArrow(13, 196, 0F, Direction.RIGHT);
 		drawer.drawSlot(43, 195);
-		drawer.drawColoredRectangle(7, 7, 13 * 18, 6 * 18, ColorHelper.getRGB(Color.DARK_GRAY.getRGB(), 80));
+		drawer.drawColoredRectangle(7, 7, 13 * 18, 6 * 18, ColorHelper.getRGB(Color.GRAY.getRGB(), 80));
 		over = null;
 		if (wrappers != null) {
 			int invisible = wrappers.size() - 13 * 6;
@@ -117,7 +117,6 @@ public class GuiRequest extends CommonGuiContainer {
 			boolean uni = fontRendererObj.getUnicodeFlag();
 			fontRendererObj.setUnicodeFlag(true);
 			for (ItemSlot slot : items) {
-				drawer.drawColoredRectangle(slot.x - guiLeft, slot.y - guiTop, 16, 16, ColorHelper.getRGB(Color.WHITE.getRGB(), 80));
 				slot.draw(mouseX, mouseY);
 				if (slot.isMouseOver(mouseX, mouseY)) {
 					over = slot;
@@ -223,6 +222,7 @@ public class GuiRequest extends CommonGuiContainer {
 					JEI.showRecipes(over.stack);
 				else
 					JEI.showUsage(over.stack);
+				return;
 			} else if (this.searchBar.textboxKeyTyped(typedChar, keyCode)) {
 				if (getContainer().isJEI() && Loader.isModLoaded("JEI"))
 					JEI.setFilterText(searchBar.getText());

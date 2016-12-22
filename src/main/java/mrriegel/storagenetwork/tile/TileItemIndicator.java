@@ -17,6 +17,7 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 	public ItemStack stack;
 	public boolean more;
 	public int number;
+	private boolean dirty = true;
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -44,7 +45,8 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 	public void update() {
 		if (ModConfig.STOPTICK)
 			return;
-		if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 30 == 0) {
+		if (!worldObj.isRemote && (dirty || worldObj.getTotalWorldTime() % 100 == 0)) {
+			dirty = false;
 			boolean old = worldObj.getBlockState(pos).getValue(BlockItemIndicator.STATE);
 			boolean neu = false;
 			if (getNetworkCore() != null && getNetworkCore().network != null && stack != null) {
@@ -65,7 +67,7 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 
 	@Override
 	public void handleMessage(EntityPlayer player, NBTTagCompound nbt) {
-		if (nbt.getInteger("buttonID") == 0)
+		if (nbt.getInteger("buttonID") == 1)
 			more = !more;
 		if (nbt.getInteger("buttonID") == 1000) {
 			try {
@@ -74,6 +76,8 @@ public class TileItemIndicator extends TileNetworkPart implements ITickable {
 				number = 0;
 			}
 		}
+		if (nbt.getBoolean("close"))
+			dirty = true;
 	}
 
 }

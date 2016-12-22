@@ -27,8 +27,8 @@ public class TileItemAttractor extends TileNetworkPart implements ITickable {
 		if (ModConfig.STOPTICK)
 			return;
 		if (!worldObj.isBlockPowered(pos) && !worldObj.isRemote && getNetworkCore() != null && getNetworkCore().network != null) {
-			int range = 5;
-			List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range, getZ() + range));
+			int range = ModConfig.rangeItemAttractor;
+			List<EntityItem> list = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB((getX() + .5) - range, (getY() + .5) - range, (getZ() + .5) - range, getX() + .5 + range, getY() + .5 + range, getZ() + .5 + range));
 			for (EntityItem ei : list) {
 				if (ei.isDead || ei.ticksExisted < 10 || !ItemItemFilter.canTransferItem(filter, ei.getEntityItem()) || !getNetworkCore().consumeRF(ei.getEntityItem().stackSize * 5, true))
 					continue;

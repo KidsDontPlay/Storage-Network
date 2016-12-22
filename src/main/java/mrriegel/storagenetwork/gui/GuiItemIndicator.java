@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import mrriegel.limelib.gui.CommonGuiContainer;
 import mrriegel.limelib.gui.button.GuiButtonSimple;
+import mrriegel.limelib.helper.NBTHelper;
 import mrriegel.storagenetwork.container.ContainerItemIndicator;
 import mrriegel.storagenetwork.tile.TileItemIndicator;
 import net.minecraft.client.gui.GuiButton;
@@ -55,6 +56,12 @@ public class GuiItemIndicator extends CommonGuiContainer {
 	}
 
 	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		tile.sendMessage(NBTHelper.setBoolean(new NBTTagCompound(), "close", true));
+	}
+
+	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (!this.checkHotbarKeys(keyCode)) {
 			if ((StringUtils.isNumeric(typedChar + "") || typedChar == 8) && this.textField.textboxKeyTyped(typedChar, keyCode)) {
@@ -77,7 +84,7 @@ public class GuiItemIndicator extends CommonGuiContainer {
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("buttonID", button.id);
+		nbt.setInteger("buttonID", 1);
 		tile.sendMessage(nbt);
 		tile.handleMessage(mc.thePlayer, nbt);
 	}

@@ -103,7 +103,7 @@ public class TESRItemMirror extends TileEntitySpecialRenderer<TileItemMirror> {
 		}
 		GlStateManager.enableLighting();
 		//		GlStateManager.enableDepth();
-		GlStateManager.enableBlend();
+		//		GlStateManager.enableBlend();
 		mc.fontRendererObj.setUnicodeFlag(uni);
 
 		GlStateManager.translate(0, 0, n);

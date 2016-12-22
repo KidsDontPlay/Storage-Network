@@ -79,8 +79,9 @@ public class ContainerItemConnect extends CommonContainer {
 			return Lists.newArrayList(getAreaForEntireInv(invs.get("filter")));
 		else if (inv instanceof InventoryPlayer && stack.getItem() == Registry.upgrade)
 			return Lists.newArrayList(getAreaForEntireInv(invs.get("upgrades")));
-		else
+		else if (!(inv instanceof InventoryPlayer))
 			return Lists.newArrayList(getAreaForEntireInv(invPlayer));
+		return null;
 	}
 
 }
